@@ -13,6 +13,12 @@
   @apply pt-1 pb-3 rounded-[9px] bg-white drop-shadow-[0px_2px_3px_#00000029];
 }
 
+@layer components {
+  .btn-ghost {
+    @apply hover:bg-translucent rounded-[4px] py-[9px] pl-[5px] pr-[8px] font-Lato text-16px text-primary;
+  }
+}
+
 /* :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

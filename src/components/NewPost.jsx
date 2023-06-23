@@ -57,6 +57,13 @@ export default function NewPost({ ...props }) {
   ]
 
   const hashtags = ['OneTeam', 'TeamBuilding', 'Vision', 'Culture', 'Training']
+  const points_colors = [
+    'text-[#03BFC7]',
+    'text-[#0374C7]',
+    'text-[#6554E3]',
+    'text-[#B754E3]',
+    'text-[#F46CE9]',
+  ]
 
   const user = {
     points: 260,
@@ -95,18 +102,18 @@ export default function NewPost({ ...props }) {
               + <span className="font-Lato"> Points</span>
             </p>
             <div className="p-2 rounded-full absolute z-10 shadow bg-white text-black gap-2 hidden group-hover:flex">
-              {[10, 20, 30, 40, 50].map((point) => (
+              {[10, 20, 30, 40, 50].map((point, i) => (
                 <button
                   key={point}
                   type="button"
-                  className={`w-7 h-7 flex items-center justify-center rounded-full hover:bg-primary  hover:text-white ${
-                    form.points === point ? 'bg-primary text-white' : ''
-                  }`}
+                  className={`w-8 h-8 flex items-center justify-center rounded-full font-bold hover:bg-primary  hover:text-white ${
+                    form.points === point ? 'bg-translucent' : ''
+                  } ${points_colors[i]}`}
                   onClick={() => {
                     setForm((prev) => ({ ...prev, points: point }))
                   }}
                 >
-                  {point}
+                  +{point}
                 </button>
               ))}
             </div>

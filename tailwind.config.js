@@ -29,7 +29,8 @@ export default {
     },
     extend: {
       spacing: {
-        "11px": "0.6875rem",
+        8.5: '2.125rem',
+        '11px': '0.6875rem',
         nav: '87px',
         'nav-lg': '76px',
         'avoid-nav': 'calc(100vh - 87px)',
@@ -60,6 +61,10 @@ export default {
         // borderColors
         300: '#efefef',
         400: '#dbdbdb',
+      },
+      fontSize: {
+        '16px': ['16px', '19px'],
+        '18px': ['18px', '22px'],
       },
       fontFamily: {
         Lato: ['Lato'],

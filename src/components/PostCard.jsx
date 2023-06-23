@@ -20,23 +20,6 @@ import { addPoints, addReaction, addComment, addCommentReaction } from '../redux
 import { useSelector } from 'react-redux'
 import HoveringWidget from '@/components/HoveringWidget'
 
-function Comment(commentData, user, reactions = [], ...replies) {
-  return {
-    id: Math.random().toString(),
-    user: Object.assign(user, { img: PostUser, id: Math.random().toString() }),
-    reactions: reactions.map((emoji) => ({
-      user: { id: Math.random().toString() },
-      emoji,
-    })),
-    message: '',
-    image: null,
-    gif: null,
-    ...commentData,
-    timestamp: new Date(),
-    replies: replies || [],
-  }
-}
-
 const POINTS = [
   {
     points: 10,
@@ -78,13 +61,15 @@ const PostCard = ({ post, ...props }) => {
                 {post.sender.map((user) => (
                   <img
                     key={user.id}
-                    className="h-12 w-12 object-cover rounded-full"
+                    className="h-8.5 w-8.5 object-cover rounded-full"
                     src={user.img}
                     alt="post-user"
                   />
                 ))}
 
-                <p className="text-lg font-Lato font-bold text-primary">+{post.sender[0].points}</p>
+                <p className="text-18px font-Lato font-bold text-primary">
+                  +{post.sender[0].points}
+                </p>
               </div>
               <div>
                 <p className="font-Lato font-normal text-[#919191]">
@@ -99,21 +84,19 @@ const PostCard = ({ post, ...props }) => {
         </div>
 
         <div className="mt-4">
-          <p className="font-Lato font-bold text-[16px] leading-5">
-            <span className="text-[#464646]">
+          <p className="font-Lato font-bold text-18px">
+            <span className={`${PROFILE_USERNAME.text}`}>
               {post.sender[0].firstName} {post.sender[0].lastName}:
-            </span>
+            </span>{' '}
             <span className="text-primary">
               {post.recipients.map((user) => `@${user.firstName} ${user.lastName}`).join(' ')}
-            </span>
-            <span className="text-[#ABACAC]">
+            </span>{' '}
+            <span className={`${HASHTAG.text}`}>
               {post.hashtags.map((hash) => `#${hash}`).join(' ')}
             </span>
           </p>
 
-          <p className="font-Lato font-normal mt-2 text-[#464646] text-[16px] leading-5">
-            {post.message}
-          </p>
+          <p className="font-Lato font-normal text-18px mt-1.5 text-[#464646]">{post.message}</p>
 
           {post.link && (
             <div className="mt-2">
@@ -140,7 +123,7 @@ const PostCard = ({ post, ...props }) => {
         </div>
 
         <div>
-          <div className="flex items-center gap-5 mt-4">
+          <div className="flex items-center gap-2 mt-2.5">
             {hasAddedPoints ? (
               <div>
                 <p className="p-2 font-Lato text-[16px] text-primary">
@@ -149,10 +132,8 @@ const PostCard = ({ post, ...props }) => {
               </div>
             ) : (
               <div className="relative">
-                <button className="hover:bg-translucent rounded-[4px] peer p-2 font-Lato flex items-center gap-1 font-light text-[16px] text-primary">
-                  <span>
-                    <BsPlusCircleFill />
-                  </span>
+                <button className="btn-ghost peer flex items-center gap-2">
+                  <BsPlusCircleFill className="w-5 h-5" />
                   Add Points
                 </button>
 
@@ -173,9 +154,9 @@ const PostCard = ({ post, ...props }) => {
 
             {/* post reaction button */}
             <div className="relative ">
-              <button className="hover:bg-translucent rounded-[4px] peer p-2 font-Lato flex items-center gap-1 font-light text-[16px] text-primary">
+              <button className="btn-ghost peer flex items-center gap-2">
                 <span>
-                  <BiHeartCircle />
+                  <BiHeartCircle className='text-[20px]' />
                 </span>
                 React
               </button>
@@ -194,13 +175,13 @@ const PostCard = ({ post, ...props }) => {
             </div>
             <div>
               <button
-                className="hover:bg-translucent rounded-[4px] peer p-2 font-Lato flex items-center gap-1 font-light text-[16px] text-primary"
+                className="btn-ghost peer flex items-center gap-1"
                 onClick={() =>
                   setShowCommentsFor((p) => (p === post.comment.id ? '' : post.comment.id))
                 }
               >
                 <span>
-                  <BsFillChatRightTextFill />
+                  <BsFillChatRightTextFill className='w-5 h-5' />
                 </span>
                 Comment
               </button>
@@ -268,8 +249,10 @@ const PostCard = ({ post, ...props }) => {
                         <HiEmojiHappy className="text-[#D1D1D1] text-2xl" />
 
                         {modal === 'emoji' && (
-                          <HoveringWidget className="px-0" style={{backgroundColor: "transparent", border:"none"}}
-                          onClose={() => setModal("")}
+                          <HoveringWidget
+                            className="px-0"
+                            style={{ backgroundColor: 'transparent', border: 'none' }}
+                            onClose={() => setModal('')}
                           >
                             <EmojiPicker
                               onEmojiClick={(emoji) => {
@@ -384,3 +367,27 @@ const PostCard = ({ post, ...props }) => {
 }
 
 export default PostCard
+
+function Comment(commentData, user, reactions = [], ...replies) {
+  return {
+    id: Math.random().toString(),
+    user: Object.assign(user, { img: PostUser, id: Math.random().toString() }),
+    reactions: reactions.map((emoji) => ({
+      user: { id: Math.random().toString() },
+      emoji,
+    })),
+    message: '',
+    image: null,
+    gif: null,
+    ...commentData,
+    timestamp: new Date(),
+    replies: replies || [],
+  }
+}
+
+const PROFILE_USERNAME = {
+  text: 'text-[#464646]',
+}
+const HASHTAG = {
+  text: 'text-[#00BC9F]',
+}
