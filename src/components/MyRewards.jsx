@@ -120,7 +120,7 @@ const MyRewards = () => {
 function RewardCard({ img, title, tagLine, onRedeem }) {
   return (
     <div className="flex flex-col justify-between items-center border-[1px] border-[#EFEFEF] rounded-[4px] px-4 py-3">
-      <div className="p-2  my-3 flex justify-center items-center ">
+      <div className="p-2 my-3 flex justify-center items-center">
         <img className="m-auto" src={img} alt="logo" />
       </div>
 

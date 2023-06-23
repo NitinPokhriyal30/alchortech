@@ -23,7 +23,7 @@ export default function HomePage() {
   return (
     <>
       <div className="lg:pl-0 xxl:pt-3 xs:pt-0 pl-3 pr-3">
-        <div className="mt-3">
+        <div className="md:mt-3 mt-2">
           <ImageSlider />
         </div>
         <div className="mt-3 relative z-20">

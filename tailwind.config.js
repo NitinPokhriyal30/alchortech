@@ -29,6 +29,7 @@ export default {
     },
     extend: {
       spacing: {
+        "11px": "0.6875rem",
         nav: '87px',
         'nav-lg': '76px',
         'avoid-nav': 'calc(100vh - 87px)',
