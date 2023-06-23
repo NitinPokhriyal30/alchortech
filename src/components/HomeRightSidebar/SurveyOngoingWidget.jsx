@@ -27,7 +27,7 @@ export default function SurveyOngoingWidget({ ...props }) {
   return (
     <div className="right-sidebar-container">
       <div className="border-b border-[#EDEDED] py-1 px-3">
-        <p className="text-[16px] font-Lato font-medium text-[#747474] text-center ">
+        <p className="text-[16px] font-Lato font-semibold text-[#464646] text-center ">
           Ongoing Survey
         </p>
         <span className="text-[12px] font-Lato font-normal text-[#A7A7A7] flex justify-center">

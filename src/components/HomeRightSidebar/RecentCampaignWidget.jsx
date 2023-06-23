@@ -18,7 +18,7 @@ export default function RecentCampaignWidget({ ...props }) {
     <div>
       <div className="right-sidebar-container">
         <div className="border-b border-[#EDEDED] py-1 px-3">
-          <p className="text-[16px] font-Lato font-medium text-[#747474] text-center ">
+          <p className="text-[16px] font-Lato font-semibold text-[#464646] text-center ">
             Recent Campaigns
           </p>
         </div>
