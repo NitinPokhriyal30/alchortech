@@ -22,7 +22,7 @@ export default function HomePage() {
 
   return (
     <>
-      <div className="lg:pl-0 xxl:pt-3 xs:pt-0 pl-3 pr-3">
+      <div className="lg:pl-0 xxl:pt-3 xs:pt-0 pl-3 pr-3 lg:py-3">
         <div>
           <ImageSlider />
         </div>
