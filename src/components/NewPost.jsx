@@ -14,6 +14,7 @@ import EmojiPicker from 'emoji-picker-react'
 import * as React from 'react'
 import PostUser from '../assets/images/post-img/post-user.png'
 import GifPicker from './GifPicker'
+import HoveringWidget from '@/components/HoveringWidget'
 
 const me = {
   id: 101,
@@ -220,8 +221,9 @@ export default function NewPost({ ...props }) {
       </div>
 
       {/* text field */}
-      <div className="bg-white rounded-b-lg drop-shadow-normal px-6 py-6 text-gray-400">
-        <div>
+
+      <div className="bg-white rounded-b-lg drop-shadow-normal _px-6 py-6 text-gray-400">
+        <div className='px-6'>
           +{form.points}{' '}
           {form.recipients.map((user) => (
             <button key={user.id} type="button">
@@ -235,7 +237,7 @@ export default function NewPost({ ...props }) {
           ))}
         </div>
 
-        <div className="border-b focus-within:border-primary focus-within:border-b">
+        <div className="px-6 border-b focus-within:border-primary focus-within:border-b">
           <textarea
             spellCheck={false}
             className="resize-none h-20 block w-full outline-none  transition-all"
@@ -291,7 +293,7 @@ export default function NewPost({ ...props }) {
         </div>
 
         {/* footer */}
-        <div id="new-post-footer" className="flex items-baseline pt-3 gap-4">
+        <div id="new-post-footer" className="flex items-baseline px-6 pt-3 gap-4 relative z-10">
           <button
             className="text-iconColor group cursor-pointer relative inline-block"
             type="button"
@@ -429,14 +431,23 @@ export default function NewPost({ ...props }) {
           </button>
 
           {footerShow === 'emoji' ? (
-            <div id="footerShow" className="absolute z-10">
+            <HoveringWidget
+              id="footerShow"
+              className="absolute z-10 md:w-[350px] w-full"
+              style={{
+                paddingLeft: 0,
+                paddingRight: 0,
+                border: 'none',
+              }}
+            >
               <EmojiPicker
+                width="100%"
                 onEmojiClick={(emoji) => {
                   setForm((prev) => ({ ...prev, message: prev.message + emoji.emoji }))
                   setFooterShow('')
                 }}
               />
-            </div>
+            </HoveringWidget>
           ) : footerShow === 'link' ? (
             <div
               id="footerShow"

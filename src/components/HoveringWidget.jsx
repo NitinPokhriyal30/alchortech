@@ -3,7 +3,13 @@ import { AiOutlineLoading } from 'react-icons/ai'
 
 let _id = 0
 let noop = () => {}
-export default function HoveringWidget({ className = "", style = {}, onClose = noop, children, ...props }) {
+export default function HoveringWidget({
+  className = '',
+  style = {},
+  onClose = noop,
+  children,
+  ...props
+}) {
   const [id] = React.useState(props.id || ++_id)
   const [x, setX] = React.useState(0)
   /** @type {{current: HTMLDivElement}} */
@@ -35,7 +41,7 @@ export default function HoveringWidget({ className = "", style = {}, onClose = n
       id={id}
       style={{
         transform: `translateX(${x}%)`,
-        ...style
+        ...style,
       }}
       className={
         'rounded-md shadow-md border border-translucent px-4 bg-white absolute sm:inset-auto inset-x-0 bottom-0  overflow-scroll z-20 ' +

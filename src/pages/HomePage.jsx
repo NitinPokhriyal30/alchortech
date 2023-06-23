@@ -32,7 +32,7 @@ export default function HomePage() {
         <div className="mt-1">
           <SortBy />
         </div>
-        <div className="mt-1 relative z-20" id="post-list">
+        <div className="mt-1 relative" id="post-list">
           {postList.slice(0, 2).map((post, i) => (
             <>
               <PostCard i={i} key={post.id} post={post} />
