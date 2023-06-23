@@ -1,5 +1,6 @@
 import * as React from 'react'
 import UserImage from '../../assets/images/post-img/post-user.png'
+import { Link } from 'react-router-dom'
 
 export default function PersonCard({ name, img, jobTitle, department, location, ...props }) {
   return (
@@ -7,7 +8,7 @@ export default function PersonCard({ name, img, jobTitle, department, location, 
       <div>
         <img
           src={img}
-          className="block rounded-full w-[calc((74/16)*1rem)] h-[calc((74/16)*1rem)] bg-paper mx-auto"
+          className="border-2 border-[#00BC9F] block rounded-full w-[calc((74/16)*1rem)] h-[calc((74/16)*1rem)] bg-paper mx-auto"
         />
         <div className="grid place-items-center h-10 w-10 mx-auto">
           <img
@@ -22,12 +23,12 @@ export default function PersonCard({ name, img, jobTitle, department, location, 
         <p className="text-[#727272] mt-[3px]">{jobTitle}</p>
         <p className="text-[#727272] mt-[3px]">{department}</p>
 
-        <a
-          href="/"
+        <Link
+          to="/myProfile"
           className="mt-[15px] inline-block text-xs py-[calc((6.5/16)*1rem)] px-3 leading-none rounded-md bg-primary text-white "
         >
           Give High5
-        </a>
+        </Link>
       </div>
     </div>
   )

@@ -156,7 +156,7 @@ const PostCard = ({ post, ...props }) => {
             <div className="relative ">
               <button className="btn-ghost peer flex items-center gap-2">
                 <span>
-                  <BiHeartCircle className='text-[20px]' />
+                  <BiHeartCircle className="text-[20px]" />
                 </span>
                 React
               </button>
@@ -181,7 +181,7 @@ const PostCard = ({ post, ...props }) => {
                 }
               >
                 <span>
-                  <BsFillChatRightTextFill className='w-5 h-5' />
+                  <BsFillChatRightTextFill className="w-5 h-5" />
                 </span>
                 Comment
               </button>
@@ -216,7 +216,7 @@ const PostCard = ({ post, ...props }) => {
                   <img className="w-[80%]" src={PostUser} alt="comment" />
                 </div>
                 <div className="flex-1 w-full">
-                  <div className="flex items-center relative  bg-[#EDEDED] rounded-b-xl rounded-tr-xl">
+                  <div className="flex items-center bg-[#EDEDED] rounded-b-xl rounded-tr-xl">
                     <form
                       onSubmit={(ev) => {
                         ev.preventDefault()
@@ -241,7 +241,7 @@ const PostCard = ({ post, ...props }) => {
                       />
                     </form>
 
-                    <div className="ml-auto relative mr-3 gap-2 flex items-baseline  ">
+                    <div className="ml-auto mr-3 gap-2 flex items-baseline">
                       <button
                         type="button"
                         onClick={() => setModal((prev) => (prev === 'emoji' ? '' : 'emoji'))}
@@ -250,11 +250,17 @@ const PostCard = ({ post, ...props }) => {
 
                         {modal === 'emoji' && (
                           <HoveringWidget
-                            className="px-0"
-                            style={{ backgroundColor: 'transparent', border: 'none' }}
+                            className="border-4 border-black px-0 md:w-[350px] w-full"
+                            style={{
+                              backgroundColor: 'transparent',
+                              border: 'none',
+                              paddingLeft: 0,
+                              paddingRight: 0,
+                            }}
                             onClose={() => setModal('')}
                           >
                             <EmojiPicker
+                              width="100%"
                               onEmojiClick={(emoji) => {
                                 setForm((prev) => ({
                                   ...prev,

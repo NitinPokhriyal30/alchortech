@@ -1,14 +1,17 @@
-@import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Roboto+Slab:wght@100;200;300;400;500;600;700;800;900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Roboto+Slab:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 .nav-item-container {
-  @apply flex  rounded py-2.5 gap-2 items-center text-white text-[18px] font-Lato font-light leading-[22px];
+  @apply flex rounded py-2.5 gap-2 items-center text-white text-16px text-opacity-[85%] font-Lato leading-[22px];
 }
 
+.nav-item-container.active {
+  @apply flex rounded py-2.5 gap-2 items-center text-white text-16px font-Lato font-black leading-[22px];
+}
 .right-sidebar-container {
   @apply pt-1 pb-3 rounded-[9px] bg-white drop-shadow-[0px_2px_3px_#00000029];
 }
