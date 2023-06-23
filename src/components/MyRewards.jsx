@@ -43,8 +43,9 @@ const MyRewards = () => {
           </div>
           <div className="py-4 px-6 bg-white rounded-b-lg drop-shadow-normal">
             <div className="grid grid-cols-3 xxl:grid-cols-3 xl:grid-cols-3 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-2 gap-4">
-              {recommendedCoupon.map((coupon) => (
+              {recommendedCoupon.map((coupon,index) => (
                 <RewardCard
+                  key={index}
                   onRedeem={() => {
                     setModal('redeem')
                     setCoupon(coupon)
@@ -62,8 +63,9 @@ const MyRewards = () => {
           </div>
           <div className="py-4 px-6 bg-white rounded-b-lg drop-shadow-normal">
             <div className="grid grid-cols-3 xxl:grid-cols-3 xl:grid-cols-3 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-2 gap-4">
-              {recommendedCoupon.map((coupon) => (
+              {recommendedCoupon.map((coupon,index) => (
                 <RewardCard
+                  key={index}
                   onRedeem={() => {
                     setModal('redeem')
                     setCoupon(coupon)
@@ -81,8 +83,9 @@ const MyRewards = () => {
           </div>
           <div className="py-4 px-6 bg-white rounded-b-lg drop-shadow-normal">
             <div className="grid grid-cols-3 xxl:grid-cols-3 xl:grid-cols-3 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-2 gap-4">
-              {recommendedCoupon.map((coupon) => (
+              {recommendedCoupon.map((coupon,index) => (
                 <RewardCard
+                  key={index}
                   onRedeem={() => {
                     setModal('redeem')
                     setCoupon(coupon)
