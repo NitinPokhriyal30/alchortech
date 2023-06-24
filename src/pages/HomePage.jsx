@@ -13,7 +13,7 @@ import SortBy from '../components/SortBy'
 import ImageSlider from '../components/ImageSlider'
 import { useSelector } from 'react-redux'
 import { AchievementBanner } from '../components/AchievementBanner'
-import GifPicker from '@/components/GifPicker'
+import GifPicker from '@/components/GifPickerPopover'
 
 export default function HomePage() {
   const postList = useSelector((store) => store.post)

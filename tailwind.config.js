@@ -29,6 +29,7 @@ export default {
     },
     extend: {
       spacing: {
+        "2/5": "40%",
         8.5: '2.125rem',
         '11px': '0.6875rem',
         nav: '87px',

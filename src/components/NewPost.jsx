@@ -9,12 +9,16 @@ import {
   Image,
   Link,
 } from '@mui/icons-material'
-import { TextField } from '@mui/material'
+import { Portal, TextField } from '@mui/material'
 import EmojiPicker from 'emoji-picker-react'
 import * as React from 'react'
 import PostUser from '../assets/images/post-img/post-user.png'
-import GifPicker from './GifPicker'
+import GifPicker from './GifPickerPopover'
 import HoveringWidget from '@/components/HoveringWidget'
+import * as Popover from '@radix-ui/react-popover'
+import * as HoverCard from '@radix-ui/react-hover-card'
+import ToolTip from '@/components/ToolTip'
+import { RxCross2 } from 'react-icons/rx'
 
 const me = {
   id: 101,
@@ -24,7 +28,6 @@ const me = {
 }
 export default function NewPost({ ...props }) {
   const [searchUserQuery, setSearchUserQuery] = React.useState('')
-  const [footerShow, setFooterShow] = React.useState('')
   const [form, setForm] = React.useState({
     points: 30,
     recipients: [],
@@ -75,22 +78,6 @@ export default function NewPost({ ...props }) {
   )
   const emptyRows = Math.max(0, 5 - searchedUser.length)
   const USER_BTN_HEIGHT = 28
-
-  React.useEffect(() => {
-    function handleClick(ev) {
-      const footerShowElm = document.querySelector('#footerShow')
-      const footerElm = document.querySelector('#new-post-footer')
-
-      if (footerShowElm == null || footerElm == null) return
-
-      if (!footerShowElm.contains(ev.target) && !footerElm.contains(ev.target)) {
-        setFooterShow('')
-      }
-    }
-    document.addEventListener('click', handleClick)
-
-    return () => document.removeEventListener('click', handleClick)
-  }, [])
 
   return (
     <div>
@@ -205,17 +192,22 @@ export default function NewPost({ ...props }) {
           </li>
 
           <li style={{ borderWidth: 0 }} className="md:flex-shrink md:basis-auto basis-full">
-            <p className="flex font-Lato cursor-pointer items-center leading-4">
-              You Have {user.points} points to give
-              <span className="relative group ml-2 w-4 h-4 bg-white text-black inline-flex items-center justify-center rounded-full ">
-                <span>?</span>
+            <HoverCard.Root>
+              <p className="flex font-Lato cursor-pointer items-center leading-4">
+                You Have {user.points} points to give
+                <HoverCard.Trigger className="ml-2 w-4 h-4 bg-white text-black inline-flex items-center justify-center rounded-full">
+                  <span>?</span>
+                </HoverCard.Trigger>
+              </p>
 
-                <p className="-translate-x-1/4 w-52 bg-white shadow p-2 rounded z-20 top-[25px] right-[-68px] absolute hidden group-hover:block">
+              <HoverCard.Portal>
+                <HoverCard.Content className="w-screen max-w-xs bg-white shadow p-2 rounded z-20">
+                  <HoverCard.Arrow className='fill-white' />
                   You monthly allowance will refresh on 1st March. You have 6 days to spend 160
                   points.
-                </p>
-              </span>
-            </p>
+                </HoverCard.Content>
+              </HoverCard.Portal>
+            </HoverCard.Root>
           </li>
         </ul>
       </div>
@@ -223,7 +215,7 @@ export default function NewPost({ ...props }) {
       {/* text field */}
 
       <div className="bg-white rounded-b-lg drop-shadow-normal _px-6 py-6 text-gray-400">
-        <div className='px-6'>
+        <div className="px-6">
           +{form.points}{' '}
           {form.recipients.map((user) => (
             <button key={user.id} type="button">
@@ -293,41 +285,28 @@ export default function NewPost({ ...props }) {
         </div>
 
         {/* footer */}
-        <div id="new-post-footer" className="flex items-baseline px-6 pt-3 gap-4 relative z-10">
-          <button
-            className="text-iconColor group cursor-pointer relative inline-block"
-            type="button"
-            onClick={() => setFooterShow('emoji')}
-          >
-            <EmojiEmotions />
-            <div className="opacity-0 w-24 bg-white drop-shadow-tooltipShadow text-[#747474] text-center text-xs rounded-lg py-2 absolute z-10 group-hover:opacity-100 bottom-full left-[-20px]  px-3 pointer-events-none">
-              Add an emoji
-              <svg
-                class="absolute text-white drop-shadow-tooltipShadow h-2 w-full -left-4 top-full"
-                x="0px"
-                y="0px"
-                viewBox="0 0 255 255"
-                xml:space="preserve"
-              >
-                <polygon class="fill-current" points="0,0 127.5,127.5 255,0" />
-              </svg>
-            </div>
-          </button>
+        <div id="new-post-footer" className="flex items-baseline px-6 pt-3 gap-4">
+          <Popover.Root>
+            <Popover.Trigger className="text-iconColor group cursor-pointer relative inline-block">
+              <EmojiEmotions />
+              <ToolTip title="Add an emoji" />
+            </Popover.Trigger>
+
+            <Popover.Portal>
+              <Popover.Content className="z-20">
+                <EmojiPicker
+                  onEmojiClick={(emoji) => {
+                    setForm((prev) => ({ ...prev, message: prev.message + emoji.emoji }))
+                  }}
+                />
+              </Popover.Content>
+            </Popover.Portal>
+          </Popover.Root>
 
           <label className="text-iconColor group cursor-pointer relative inline-block">
             <Image />
-            <div className="opacity-0 w-[100px] bg-white drop-shadow-tooltipShadow text-[#747474] text-center text-xs rounded-lg py-2 absolute z-10 group-hover:opacity-100 bottom-full left-[-37px]  px-3 pointer-events-none">
-              Add an image
-              <svg
-                class="absolute text-white drop-shadow-tooltipShadow h-2 w-full left-0 top-full"
-                x="0px"
-                y="0px"
-                viewBox="0 0 255 255"
-                xml:space="preserve"
-              >
-                <polygon class="fill-current" points="0,0 127.5,127.5 255,0" />
-              </svg>
-            </div>
+            <ToolTip title="Add an image" />
+
             <input
               hidden
               type="file"
@@ -341,43 +320,39 @@ export default function NewPost({ ...props }) {
             />
           </label>
 
-          <label
-            className="text-iconColor group cursor-pointer relative inline-block"
-            onClick={() => setFooterShow('gif')}
-          >
-            <GifBox />
-            <div className="opacity-0 w-20 bg-white drop-shadow-tooltipShadow text-[#747474] text-center text-xs rounded-lg py-2 absolute z-10 group-hover:opacity-100 bottom-full left-[-30px]  px-3 pointer-events-none">
-              Add a gif
-              <svg
-                class="absolute text-white drop-shadow-tooltipShadow h-2 w-full left-0 top-full"
-                x="0px"
-                y="0px"
-                viewBox="0 0 255 255"
-                xml:space="preserve"
-              >
-                <polygon class="fill-current" points="0,0 127.5,127.5 255,0" />
-              </svg>
-            </div>
-          </label>
+          <Popover.Root>
+            <Popover.Trigger className="text-iconColor group relative inline-block">
+              <GifBox />
 
-          <button
-            className="text-iconColor group cursor-pointer relative inline-block"
-            onClick={(ev) => setFooterShow('link')}
-          >
-            <Link />
-            <div className="opacity-0 w-20 bg-white drop-shadow-tooltipShadow text-[#747474] text-center text-xs rounded-lg py-2 absolute z-10 group-hover:opacity-100 bottom-full left-[-30px]  px-3 pointer-events-none">
-              Add a link
-              <svg
-                class="absolute text-white drop-shadow-tooltipShadow h-2 w-full left-0 top-full"
-                x="0px"
-                y="0px"
-                viewBox="0 0 255 255"
-                xml:space="preserve"
-              >
-                <polygon class="fill-current" points="0,0 127.5,127.5 255,0" />
-              </svg>
-            </div>
-          </button>
+              <ToolTip title="Add a gif" />
+            </Popover.Trigger>
+
+            <GifPicker
+              onClick={(url) => {
+                setForm((prev) => ({ ...prev, gif: url }))
+              }}
+            />
+          </Popover.Root>
+
+          <Popover.Root>
+            <Popover.Trigger className="text-iconColor group cursor-pointer relative inline-block">
+              <Link />
+              <ToolTip title="Add a link" />
+            </Popover.Trigger>
+
+            <Popover.Portal>
+              <Popover.Content className=" z-50">
+                <AddLinkPopup
+                  onChange={(link) =>
+                    setForm((prev) => {
+                      console.log(link)
+                      return { ...prev, link }
+                    })
+                  }
+                />
+              </Popover.Content>
+            </Popover.Portal>
+          </Popover.Root>
 
           <button
             type="submit"
@@ -429,57 +404,31 @@ export default function NewPost({ ...props }) {
           >
             Give
           </button>
-
-          {footerShow === 'emoji' ? (
-            <HoveringWidget
-              id="footerShow"
-              className="absolute z-10 md:w-[350px] w-full"
-              style={{
-                paddingLeft: 0,
-                paddingRight: 0,
-                border: 'none',
-              }}
-            >
-              <EmojiPicker
-                width="100%"
-                onEmojiClick={(emoji) => {
-                  setForm((prev) => ({ ...prev, message: prev.message + emoji.emoji }))
-                  setFooterShow('')
-                }}
-              />
-            </HoveringWidget>
-          ) : footerShow === 'link' ? (
-            <div
-              id="footerShow"
-              className="absolute z-10 translate-y-8 bg-white border border-translucent shadow p-4 rounded"
-            >
-              <form
-                onSubmit={(ev) => {
-                  ev.preventDefault()
-                  setFooterShow('')
-                }}
-              >
-                <label className="text-sm">URL Link</label>
-                <input
-                  className="mt-1 w-full block bg-translucent p-2 rounded"
-                  placeholder="http://"
-                  onChange={(ev) => setForm((prev) => ({ ...prev, link: ev.target.value }))}
-                />
-
-                <button className="w-full block bg-primary rounded text-white mt-2">OK</button>
-              </form>
-            </div>
-          ) : footerShow === 'gif' ? (
-            <GifPicker
-              id="footerShow"
-              onClick={(url) => {
-                setFooterShow('')
-                setForm((prev) => ({ ...prev, gif: url }))
-              }}
-            />
-          ) : null}
         </div>
       </div>
+    </div>
+  )
+}
+
+function AddLinkPopup({ onChange }) {
+  return (
+    <div className="bg-white border border-[#00bc9f] p-2 pt-1 rounded-md w-screen max-w-xs">
+      <p className="flex justify-between items-center text-18px text-gray-500">
+        Add a link
+        <Popover.Close className="p-px rounded-sm hover:bg-translucent hover:text-primary">
+          <RxCross2 />
+        </Popover.Close>
+      </p>
+
+      <label className="flex justify-between items-center text-sm mt-3 text-gray-600">
+        Link:
+        <input
+          name="link"
+          className="mt-1 w-44 py-2.5 px-5 text-primary leading-5 rounded bg-translucent"
+          placeholder="http://"
+          onChange={(ev) => onChange(ev.target.value)}
+        />
+      </label>
     </div>
   )
 }

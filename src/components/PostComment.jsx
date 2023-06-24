@@ -1,9 +1,10 @@
 import * as React from 'react'
+import * as Popover from '@radix-ui/react-popover'
 import { BsFillImageFill } from 'react-icons/bs'
 import { HiEmojiHappy } from 'react-icons/hi'
 import { AiOutlineFileGif } from 'react-icons/ai'
 import EmojiPicker from 'emoji-picker-react'
-import GifPicker from './GifPicker'
+import GifPicker from './GifPickerPopover'
 import { BiXCircle } from 'react-icons/bi'
 
 let _id = 0
@@ -154,20 +155,17 @@ export default function PostComment({
                         />
                       </label>
 
-                      <div>
-                        <button type="button" onClick={() => setModal(`gif#${id}`)}>
+                      <Popover.Root>
+                        <Popover.Trigger onClick={() => setModal(`gif#${id}`)}>
                           <AiOutlineFileGif className="text-[#D1D1D1] text-2xl" />
-                        </button>
-                        {modal === `gif#${id}` && (
-                          <GifPicker
-                            onClick={(url) => {
-                              setModal('')
-                              setForm((prev) => ({ ...prev, gif: url }))
-                            }}
-                            onClose={() => setModal('')}
-                          />
-                        )}
-                      </div>
+                        </Popover.Trigger>
+
+                        <GifPicker
+                          onClick={(url) => {
+                            setForm((prev) => ({ ...prev, gif: url }))
+                          }}
+                        />
+                      </Popover.Root>
                     </div>
                   </div>
 

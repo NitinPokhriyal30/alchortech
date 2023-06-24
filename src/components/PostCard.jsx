@@ -1,4 +1,5 @@
 import React, { useRef } from 'react'
+import * as Popover from '@radix-ui/react-popover'
 import { store } from '../redux/store'
 import {
   BsFillChatRightTextFill,
@@ -14,7 +15,7 @@ import { AiOutlineCaretDown, AiOutlineFileGif } from 'react-icons/ai'
 import { AchievementBanner } from './AchievementBanner'
 import PostComment from './PostComment'
 import ThumbNailX from '../assets/slider/slider-bg2.png'
-import GifPicker from './GifPicker'
+import GifPicker from './GifPickerPopover'
 import EmojiPicker from 'emoji-picker-react'
 import { addPoints, addReaction, addComment, addCommentReaction } from '../redux/postAction'
 import { useSelector } from 'react-redux'
@@ -289,23 +290,20 @@ const PostCard = ({ post, ...props }) => {
                         />
                       </label>
 
-                      <div>
-                        <button type="button" onClick={() => setModal('gif')}>
+                      <Popover.Root>
+                        <Popover.Trigger>
                           <AiOutlineFileGif className="text-[#D1D1D1] text-2xl" />
-                        </button>
-                        {modal === 'gif' && (
-                          <GifPicker
-                            onClick={(url) => {
-                              setModal('')
-                              setForm((prev) => {
-                                prev.gif = url
-                                return { ...prev }
-                              })
-                            }}
-                            onClose={() => setModal('')}
-                          />
-                        )}
-                      </div>
+                        </Popover.Trigger>
+
+                        <GifPicker
+                          onClick={(url) => {
+                            setForm((prev) => ({
+                              ...prev,
+                              gif: url,
+                            }))
+                          }}
+                        />
+                      </Popover.Root>
                     </div>
                   </div>
                   {form.image && (
