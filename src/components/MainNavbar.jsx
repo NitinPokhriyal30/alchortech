@@ -15,8 +15,6 @@ export default function MainNavbar() {
   const setShowSidebar = (show) => dispatch({ type: 'sidebar', show })
   const properties = useQuery('properties', () => api.properties())
 
-  console.log('props.data', properties.data)
-
   return (
     <div>
       <nav className="block fixed top-0 z-50 w-full xxl:py-[12px] xl:py-[12px] lg:py-[12px] md:py-[12px] sm:py-[11px] xs:py-[11px] bg-white shadow">

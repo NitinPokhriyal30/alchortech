@@ -188,7 +188,7 @@ export default function NewPost({ ...props }) {
                       })
                     }}
                   >
-                    #{tag}
+                    {tag}
                   </button>
                 )
               })}
@@ -228,7 +228,7 @@ export default function NewPost({ ...props }) {
           ))}{' '}
           {form.hashtags.map((tag) => (
             <button key={tag} type="button">
-              #{tag}
+              {tag}
             </button>
           ))}
         </div>
