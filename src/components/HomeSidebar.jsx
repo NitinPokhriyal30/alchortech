@@ -2,7 +2,13 @@ import User from '../assets/images/user-profile/user.png'
 import HighLogo from '../assets/images/navbar/high5mobile.png'
 
 import { AiFillHome, AiFillGift } from 'react-icons/ai'
-import { RiContactsBookFill, RiSurveyFill, RiUserVoiceFill } from 'react-icons/ri'
+import {
+  RiContactsBookFill,
+  RiLogoutCircleFill,
+  RiLogoutCircleRFill,
+  RiSurveyFill,
+  RiUserVoiceFill,
+} from 'react-icons/ri'
 import { SiGoogleanalytics } from 'react-icons/si'
 import { HiSpeakerphone } from 'react-icons/hi'
 import { BsQuestionCircle } from 'react-icons/bs'
@@ -100,6 +106,18 @@ export default function HomeSidebar({}) {
               <RiUserVoiceFill />
               <span>Voice Out</span>
             </MenuLink>
+          </div>
+
+          <div className="px-5 pt-3">
+            <button
+              type="button"
+              to="/voice-out"
+              className="w-full nav-item-container"
+              onClick={() => dispatch({ type: 'user/logout' })}
+            >
+              <RiLogoutCircleFill />
+              <span>Logout</span>
+            </button>
           </div>
 
           {/*--------------- FAQ Section  ----------------*/}

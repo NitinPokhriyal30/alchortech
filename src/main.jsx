@@ -26,22 +26,27 @@ import ResetPassword from './components/Auth/ResetPassword'
 import ManageUsers from './components/AdminPanel/ManageUsers'
 import Earnings from './components/AdminPanel/Earnings'
 import MyProfile from './components/MyProfile'
+import ProtectedRoute from '@/components/ProtectedRoute'
+import { QueryClientProvider } from 'react-query'
+import { queryClient } from '@/queryClient'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
       <Route path="/test" element={<SingleComponentTestPage />} />
-      <Route path="/login" element={<Login/>} />
+      <Route path="/login" element={<Login />} />
       <Route
         path="/"
         element={
-          <main className="bg-paper">
-            <MainNavbar />
-            <div className="pt-nav grid xxl:max-w-7xl lg:max-w-8xl m-auto w-full lg:grid-cols-mediumDevice md:grid-cols-smallDevice grid-cols-[1fr]">
-              <HomeSidebar />
-              <Outlet />
-            </div>
-          </main>
+          <ProtectedRoute>
+            <main className="bg-paper">
+              <MainNavbar />
+              <div className="pt-nav grid xxl:max-w-7xl lg:max-w-8xl m-auto w-full lg:grid-cols-mediumDevice md:grid-cols-smallDevice grid-cols-[1fr]">
+                <HomeSidebar />
+                <Outlet />
+              </div>
+            </main>
+          </ProtectedRoute>
         }
       >
         <Route index element={<HomePage />} />
@@ -51,8 +56,8 @@ const router = createBrowserRouter(
         <Route path="company/users" element={<ManageUsers />} />
         <Route path="company/account" element={<Earnings />} />
       </Route>
-      <Route path='/forgot/password' element= {<ForgotPassword/>}/>
-      <Route path='/reset/password/passwordreset/:uidb64/:token' element= {<ResetPassword/>}/>
+      <Route path="/forgot/password" element={<ForgotPassword />} />
+      <Route path="/reset/password/passwordreset/:uidb64/:token" element={<ResetPassword />} />
       <Route
         path="/survey"
         element={
@@ -71,6 +76,8 @@ const router = createBrowserRouter(
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <Provider store={store}>
-    <RouterProvider router={router} />
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
   </Provider>
 )

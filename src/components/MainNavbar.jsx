@@ -5,11 +5,17 @@ import { useDispatch, useSelector } from 'react-redux'
 import alcoreLogo from '../assets/images/navbar/alcor-logo.png'
 import HighLogo from '../assets/images/navbar/high5.png'
 import Notification from './Notification'
+import { api } from '@/api'
+import { useQuery } from 'react-query'
+import { Link } from 'react-router-dom'
 
 export default function MainNavbar() {
   const showSidebar = useSelector((store) => store.sidebar)
   const dispatch = useDispatch()
   const setShowSidebar = (show) => dispatch({ type: 'sidebar', show })
+  const properties = useQuery('properties', () => api.properties())
+
+  console.log('props.data', properties.data)
 
   return (
     <div>
@@ -26,11 +32,15 @@ export default function MainNavbar() {
               </button>
             </div>
             <div className="flex w-full items-center justify-between xxl:block xl:block lg:block md:block sm:hidden xs:hidden">
-              <a href="javascript:void(0)">
+              <Link to="/">
                 <h2 className="text-2xl font-bold">
-                  <img className="h-12" src={alcoreLogo} alt="alcore-logo" />
+                  <img
+                    className="h-12 w-[126px] object-cover"
+                    src={properties.data?.company.logo}
+                    alt={properties.data?.company.name}
+                  />
                 </h2>
-              </a>
+              </Link>
             </div>
 
             <div className="w-full xxl:ml-28 xl:ml-28 lg:ml-28 md:ml-8 sm:ml-8 xs:ml-2  flex items-center justify-center border-[0.5px] border-[#808080] bg-[#F7F7F7] focus-within:bg-white rounded-[20px] group">

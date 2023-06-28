@@ -19,6 +19,8 @@ import * as Popover from '@radix-ui/react-popover'
 import * as HoverCard from '@radix-ui/react-hover-card'
 import ToolTip from '@/components/ToolTip'
 import { RxCross2 } from 'react-icons/rx'
+import { useQuery } from 'react-query'
+import { api } from '@/api'
 
 const me = {
   id: 101,
@@ -27,6 +29,7 @@ const me = {
   img: PostUser,
 }
 export default function NewPost({ ...props }) {
+  const properties = useQuery("properties", () => api.properties())
   const [searchUserQuery, setSearchUserQuery] = React.useState('')
   const [form, setForm] = React.useState({
     points: 30,
@@ -60,7 +63,8 @@ export default function NewPost({ ...props }) {
     },
   ]
 
-  const hashtags = ['OneTeam', 'TeamBuilding', 'Vision', 'Culture', 'Training']
+  const hashtags = properties.data?.hashtage || []
+  const points_range = properties.data?.points_range || []
   const points_colors = [
     'text-[#03BFC7]',
     'text-[#0374C7]',
@@ -90,7 +94,7 @@ export default function NewPost({ ...props }) {
               + <span className="font-Lato"> Points</span>
             </p>
             <div className="p-2 rounded-full absolute z-10 shadow bg-white text-black gap-2 hidden group-hover:flex">
-              {[10, 20, 30, 40, 50].map((point, i) => (
+              {points_range.map((point, i) => (
                 <button
                   key={point}
                   type="button"

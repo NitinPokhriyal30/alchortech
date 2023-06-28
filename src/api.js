@@ -28,11 +28,11 @@ axios.interceptors.response.use(
 )
 
 const api = {
-
   auth: {
-    login: (data) => axios.post('login/', data),
-  }
-
+    login: (data) => axios.post('login/', data).then((r) => r.data),
+    me: (data) => axios.post('me/', data).then((r) => r.data),
+  },
+  properties: () => axios.get('homepage/properties/').then((r) => r.data[0]),
 }
 
 export { api }

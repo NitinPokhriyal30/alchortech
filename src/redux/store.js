@@ -1,4 +1,5 @@
-import { combineReducers, legacy_createStore as createStore } from 'redux'
+import { applyMiddleware, combineReducers, legacy_createStore as createStore } from 'redux'
+import thunk from 'redux-thunk'
 import userReducer, { userInitialState } from './userReducer'
 import { surveyReducer, surveyInitialState } from './surveyReducer'
 import postReducer, { postInitialState } from './postReducer'
@@ -10,11 +11,15 @@ const rootReducer = combineReducers({
   post: postReducer,
   sidebar: sidebarReducer,
 })
-const store = createStore(rootReducer, {
-  user: userInitialState,
-  survey: surveyInitialState,
-  post: postInitialState,
-  sidebar: false,
-})
+const store = createStore(
+  rootReducer,
+  {
+    user: userInitialState,
+    survey: surveyInitialState,
+    post: postInitialState,
+    sidebar: false,
+  },
+  applyMiddleware(thunk)
+)
 
 export { store }
