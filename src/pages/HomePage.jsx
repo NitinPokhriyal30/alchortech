@@ -14,9 +14,11 @@ import ImageSlider from '../components/ImageSlider'
 import { useSelector } from 'react-redux'
 import { AchievementBanner } from '../components/AchievementBanner'
 import GifPicker from '@/components/GifPickerPopover'
+import { useQuery } from 'react-query'
+import { api } from '@/api'
 
 export default function HomePage() {
-  const postList = useSelector((store) => store.post)
+  const postList = useQuery('transactions', () => api.transactions.all())
 
   console.log(postList)
 
@@ -32,20 +34,27 @@ export default function HomePage() {
         <div className="mt-1">
           <SortBy />
         </div>
+
         <div className="mt-1 relative" id="post-list">
-          {postList.slice(0, 2).map((post, i) => (
-            <>
-              <PostCard i={i} key={post.id} post={post} />
-            </>
-          ))}
+          {postList.isLoading ? (
+            <div className="h-64 bg-gray-300  rounded-md" />
+          ) : (
+            postList.data.slice(0, 2).map((post, i) => (
+              <>
+                <PostCard i={i} key={post.id} post={post} />
+              </>
+            ))
+          )}
         </div>
         <div className="mt-1">
           <AchievementBanner />
         </div>
         <div className="mt-1 relative">
-          {postList.slice(2).map((post) => (
-            <PostCard key={post.id} post={post} />
-          ))}
+          {postList.isLoading ? (
+            <div className="h-64 bg-gray-300  rounded-md" />
+          ) : (
+            postList.data.slice(2).map((post) => <PostCard key={post.id} post={post} />)
+          )}
         </div>
       </div>
 

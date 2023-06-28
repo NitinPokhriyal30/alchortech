@@ -21,6 +21,9 @@ import ToolTip from '@/components/ToolTip'
 import { RxCross2 } from 'react-icons/rx'
 import { useQuery } from 'react-query'
 import { api } from '@/api'
+import Cookies from 'js-cookie'
+import { queryClient } from '@/queryClient'
+import { toast } from 'react-toastify'
 
 const me = {
   id: 101,
@@ -29,60 +32,23 @@ const me = {
   img: PostUser,
 }
 export default function NewPost({ ...props }) {
-  const properties = useQuery("properties", () => api.properties())
-  const [searchUserQuery, setSearchUserQuery] = React.useState('')
+  const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
+
   const [form, setForm] = React.useState({
-    points: 30,
+    point: 30,
     recipients: [],
     hashtags: [],
-    message: '',
     image: null,
-    link: '',
-    sender: [me],
     gif: null,
+    link: '',
+    message: '',
   })
 
-  const users = [
-    {
-      id: 1,
-      firstName: 'John',
-      lastName: 'Doe',
-      img: PostUser,
-    },
-    {
-      id: 2,
-      firstName: 'Lisa',
-      img: PostUser,
-      lastName: 'Clinton',
-    },
-    {
-      id: 3,
-      img: PostUser,
-      firstName: 'Neha',
-      lastName: 'Bhati',
-    },
-  ]
-
-  const hashtags = properties.data?.hashtage || []
-  const points_range = properties.data?.points_range || []
-  const points_colors = [
-    'text-[#03BFC7]',
-    'text-[#0374C7]',
-    'text-[#6554E3]',
-    'text-[#B754E3]',
-    'text-[#F46CE9]',
-  ]
+  console.log(form)
 
   const user = {
     points: 260,
   }
-
-  const searchedUser = users.filter((user) =>
-    JSON.stringify(user).toLocaleLowerCase().includes(searchUserQuery)
-  )
-  const emptyRows = Math.max(0, 5 - searchedUser.length)
-  const USER_BTN_HEIGHT = 28
-
   return (
     <div>
       <div className="bg-primary  text-white text-sm rounded-t-lg py-2 px-6">
@@ -90,109 +56,15 @@ export default function NewPost({ ...props }) {
           {/* points button */}
 
           <li className="group pr-4">
-            <p className="flex gap-[2px] hover:font-bold cursor-pointer">
-              + <span className="font-Lato"> Points</span>
-            </p>
-            <div className="p-2 rounded-full absolute z-10 shadow bg-white text-black gap-2 hidden group-hover:flex">
-              {points_range.map((point, i) => (
-                <button
-                  key={point}
-                  type="button"
-                  className={`w-8 h-8 flex items-center justify-center rounded-full font-bold hover:bg-primary  hover:text-white ${
-                    form.points === point ? 'bg-translucent' : ''
-                  } ${points_colors[i]}`}
-                  onClick={() => {
-                    setForm((prev) => ({ ...prev, points: point }))
-                  }}
-                >
-                  +{point}
-                </button>
-              ))}
-            </div>
+            <PointsRangeDialog {...{ form, setForm }} />
           </li>
 
           <li className="group pr-4">
-            <p className="flex gap-[2px] hover:font-bold cursor-pointer">
-              @ <span className="font-Lato">Recipients</span>
-            </p>
-            <div className="absolute shadow z-10 rounded divide-y bg-white text-black hidden group-hover:block">
-              {searchedUser.map((user) => {
-                const checked = form.recipients.findIndex((x) => x.id === user.id) !== -1
-                return (
-                  <button
-                    style={{ height: USER_BTN_HEIGHT }}
-                    className={`w-full block  px-4 py-1 text-left ${
-                      checked ? 'bg-translucent' : ''
-                    }`}
-                    key={user.id}
-                    type="button"
-                    onClick={() => {
-                      setForm((prev) => {
-                        const checked = form.recipients.findIndex((x) => x.id === user.id) !== -1
-                        if (checked) {
-                          prev.recipients = prev.recipients.filter((x) => x.id !== user.id)
-                        } else {
-                          prev.recipients.push(user)
-                        }
-
-                        return { ...prev }
-                      })
-                    }}
-                  >
-                    {user.firstName} {user.lastName}
-                  </button>
-                )
-              })}
-
-              {emptyRows && (
-                <button
-                  disabled
-                  style={{ height: USER_BTN_HEIGHT * emptyRows }}
-                  className={`w-full block px-4 py-1`}
-                >
-                  &nbsp;
-                </button>
-              )}
-
-              <input
-                className="bg-translucent py-1 px-2"
-                onChange={(e) => setSearchUserQuery(e.target.value)}
-                placeholder="Search @Recipient"
-                value={searchUserQuery}
-              />
-            </div>
+            <RecipientsDropdown {...{ form, setForm }} />
           </li>
 
           <li className="flex-grow group pr-4">
-            <p className="flex gap-[2px] hover:font-bold cursor-pointer">
-              # <span className="font-Lato"> Hashtag</span>
-            </p>
-            <div className="absolute bg-white shadow z-10 text-black flex-col rounded divide-y hidden group-hover:flex">
-              {hashtags.map((tag, i) => {
-                const checked = form.hashtags.includes(tag)
-                return (
-                  <button
-                    key={tag}
-                    type="button"
-                    className={`text-left px-4 py-1 ${checked ? 'bg-translucent' : ''}`}
-                    onClick={() => {
-                      setForm((prev) => {
-                        const checked = prev.hashtags.includes(tag)
-                        if (checked) {
-                          prev.hashtags = prev.hashtags.filter((x) => x !== tag)
-                        } else {
-                          prev.hashtags.push(tag)
-                        }
-
-                        return { ...prev }
-                      })
-                    }}
-                  >
-                    {tag}
-                  </button>
-                )
-              })}
-            </div>
+            <HashTagsDropdown {...{ form, setForm }} />
           </li>
 
           <li style={{ borderWidth: 0 }} className="md:flex-shrink md:basis-auto basis-full">
@@ -206,7 +78,7 @@ export default function NewPost({ ...props }) {
 
               <HoverCard.Portal>
                 <HoverCard.Content className="w-screen max-w-xs bg-white shadow p-2 rounded z-20">
-                  <HoverCard.Arrow className='fill-white' />
+                  <HoverCard.Arrow className="fill-white" />
                   You monthly allowance will refresh on 1st March. You have 6 days to spend 160
                   points.
                 </HoverCard.Content>
@@ -220,16 +92,14 @@ export default function NewPost({ ...props }) {
 
       <div className="bg-white rounded-b-lg drop-shadow-normal _px-6 py-6 text-gray-400">
         <div className="px-6">
-          +{form.points}{' '}
+          +{form.point}{' '}
           {form.recipients.map((user) => (
-            <button key={user.id} type="button">
-              @{user.firstName} {user.lastName}
-            </button>
+            <span key={user.id}>
+              @{user.first_name} {user.last_name}
+            </span>
           ))}{' '}
           {form.hashtags.map((tag) => (
-            <button key={tag} type="button">
-              {tag}
-            </button>
+            <span key={tag}>{tag}</span>
           ))}
         </div>
 
@@ -361,7 +231,7 @@ export default function NewPost({ ...props }) {
           <button
             type="submit"
             className=" ml-auto bg-primary text-white font-Lato px-4 py-1 w-full max-w-[6rem] rounded-sm"
-            onClick={() => {
+            onClick={async () => {
               if (form.hashtags.length === 0) {
                 alert('Add atleast one hashtag')
                 return
@@ -375,35 +245,37 @@ export default function NewPost({ ...props }) {
                 return
               }
 
-              store.dispatch({
-                type: 'redux',
-                fn: (prev) => {
-                  prev.unshift({
-                    ...form,
-                    sender: [{ ...me, points: form.points }],
-                    reactions: [],
-                    timestamp: new Date(),
-                    id: Math.random().toString(),
-                    comment: {
-                      id: Math.random().toString(),
-                      user: me,
-                      reactions: [],
-                      message: '',
-                      timestamp: new Date(),
-                      replies: [],
-                    },
-                  })
-                },
-              })
-              setForm({
-                points: 30,
-                recipients: [],
-                hashtags: [],
-                message: '',
-                image: null,
-                link: '',
-                sender: [me],
-              })
+              const todayDate = new Date()
+              const today =
+                todayDate.getFullYear() + '-' + todayDate.getMonth() + '-' + todayDate.getDate()
+
+              const data = {
+                sender: [me.data],
+                active: true,
+                flag_transaction: false,
+                react_by: {},
+                created_by: me.data.id,
+                updated_by: me.data.id,
+                created: today,
+                updated: today,
+              }
+
+              try {
+                await api.transactions.new({ ...data, ...form })
+                await queryClient.refetchQueries('transactions')
+
+                setForm({
+                  point: 30,
+                  recipients: [],
+                  hashtags: [],
+                  image: null,
+                  gif: null,
+                  link: '',
+                  message: '',
+                })
+              } catch {
+                toast.error("Transaction failed. Server error")
+              }
             }}
           >
             Give
@@ -434,5 +306,164 @@ function AddLinkPopup({ onChange }) {
         />
       </label>
     </div>
+  )
+}
+
+function PointsRangeDialog({ form, setForm }) {
+  const properties = useQuery('properties', () => api.properties())
+  const points_range = properties.data?.points_range
+
+  const points_colors = [
+    'text-[#03BFC7]',
+    'text-[#0374C7]',
+    'text-[#6554E3]',
+    'text-[#B754E3]',
+    'text-[#F46CE9]',
+  ]
+
+  return (
+    <>
+      <p className="flex gap-[2px] hover:font-bold cursor-pointer">
+        + <span className="font-Lato"> Points</span>
+      </p>
+      <div className="p-2 rounded-full absolute z-10 shadow bg-white text-black gap-2 hidden group-hover:flex">
+        {properties.isLoading
+          ? Array(5)
+              .fill()
+              .map((_, i) => (
+                <div
+                  key={i}
+                  className={`w-8 h-8 flex items-center justify-center rounded-full font-bold bg-paper`}
+                />
+              ))
+          : points_range.map((point, i) => (
+              <button
+                key={point}
+                type="button"
+                className={`w-8 h-8 flex items-center justify-center rounded-full font-bold hover:bg-primary  hover:text-white ${
+                  form.point === point ? 'bg-translucent' : ''
+                } ${points_colors[i]}`}
+                onClick={() => {
+                  setForm((prev) => ({ ...prev, point }))
+                }}
+              >
+                +{point}
+              </button>
+            ))}
+      </div>
+    </>
+  )
+}
+
+function RecipientsDropdown({ form, setForm }) {
+  const users = useQuery('users', () => api.users.profiles(), { initialData: [] })
+
+  const [searchUserQuery, setSearchUserQuery] = React.useState('')
+  let searchedUser = users.data?.filter((user) =>
+    JSON.stringify(user).toLocaleLowerCase().includes(searchUserQuery)
+  )
+
+  const USER_BTN_HEIGHT = 28
+
+  return (
+    <>
+      {/* dropdown trigger */}
+      <p className="flex gap-[2px] hover:font-bold cursor-pointer">
+        @ <span className="font-Lato">Recipients</span>
+      </p>
+
+      {/* container */}
+      <div className="absolute shadow z-10 rounded overflow-hidden divide-y bg-white text-black hidden group-hover:block">
+        {/* fixed height list */}
+        <div style={{ height: 5 * USER_BTN_HEIGHT }} className="overflow-y-auto">
+          {users.isRefetching ? (
+            <p className="absolute m-auto inset-0 w-[15ch] h-10 text-center text-gray-500">
+              Loading...
+            </p>
+          ) : (
+            <>
+              {searchedUser.map((user) => {
+                const checked = form.recipients.findIndex((x) => x.id === user.id) !== -1
+                return (
+                  <button
+                    style={{ height: USER_BTN_HEIGHT }}
+                    className={`w-full block  px-4 py-1 text-left ${
+                      checked ? 'bg-translucent' : ''
+                    }`}
+                    key={user.id}
+                    type="button"
+                    onClick={() => {
+                      setForm((prev) => {
+                        const checked = form.recipients.findIndex((x) => x.id === user.id) !== -1
+                        if (checked) {
+                          prev.recipients = prev.recipients.filter((x) => x.id !== user.id)
+                        } else {
+                          prev.recipients.push(user)
+                        }
+
+                        return { ...prev }
+                      })
+                    }}
+                  >
+                    {user.first_name} {user.last_name}
+                  </button>
+                )
+              })}
+            </>
+          )}
+        </div>
+
+        <input
+          className="bg-translucent py-1 px-2"
+          onChange={(e) => setSearchUserQuery(e.target.value)}
+          placeholder="Search @Recipient"
+          value={searchUserQuery}
+        />
+      </div>
+    </>
+  )
+}
+
+function HashTagsDropdown({ form, setForm }) {
+  const properties = useQuery('properties', () => api.properties())
+
+  const hashtags = properties.data?.hashtage
+
+  return (
+    <>
+      <p className="flex gap-[2px] hover:font-bold cursor-pointer">
+        # <span className="font-Lato"> Hashtag</span>
+      </p>
+      <div className="absolute bg-white shadow z-10 text-black flex-col rounded overflow-hidden divide-y hidden group-hover:flex">
+        {properties.isLoading ? (
+          <p className="h-10 w-[15ch] text-center pt-3">Loading</p>
+        ) : (
+          hashtags.map((tag) => {
+            const checked = form.hashtags.includes(tag)
+            return (
+              <button
+                key={tag}
+                type="button"
+                className={`text-left px-4 py-1 ${checked ? 'bg-translucent' : ''}`}
+                onClick={() => {
+                  setForm((prev) => {
+                    const checked = prev.hashtags.includes(tag)
+                    if (checked) {
+                      prev.hashtags = prev.hashtags.filter((x) => x !== tag)
+                    } else {
+                      prev.hashtags.push(tag)
+                    }
+
+                    return { ...prev }
+                  })
+                }}
+              >
+                {tag}
+              </button>
+            )
+          })
+        )}
+      </div>
+    </>
   )
 }

@@ -52,6 +52,9 @@ const PostCard = ({ post, ...props }) => {
   const addedPoints = post.sender.find((x) => x.id === me.id)?.points
   const hasAddedPoints = !!addedPoints
 
+  post.reactions = []
+  post.comment = { replies: [] }
+
   return (
     <div className="mb-3">
       <div className="bg-white shadow-md rounded-lg xxl:px-6 xl:px-6 lg:px-6 md:px-6 sm:px-6 xs:px-4  py-6">
@@ -63,19 +66,15 @@ const PostCard = ({ post, ...props }) => {
                   <img
                     key={user.id}
                     className="h-8.5 w-8.5 object-cover rounded-full"
-                    src={user.img}
+                    src={user.avtar}
                     alt="post-user"
                   />
                 ))}
 
-                <p className="text-18px font-Lato font-bold text-primary">
-                  +{post.sender[0].points}
-                </p>
+                <p className="text-18px font-Lato font-bold text-primary">+{post.point}</p>
               </div>
               <div>
-                <p className="font-Lato font-normal text-[#919191]">
-                  {new Date(post.timestamp).toLocaleDateString()}
-                </p>
+                <p className="font-Lato font-normal text-[#919191]">{post.created}</p>
               </div>
             </div>
           </div>
@@ -87,14 +86,12 @@ const PostCard = ({ post, ...props }) => {
         <div className="mt-4">
           <p className="font-Lato font-bold text-18px">
             <span className={`${PROFILE_USERNAME.text}`}>
-              {post.sender[0].firstName} {post.sender[0].lastName}:
+              {post.sender[0].first_name} {post.sender[0].last_name}:
             </span>{' '}
             <span className="text-primary">
-              {post.recipients.map((user) => `@${user.firstName} ${user.lastName}`).join(' ')}
+              {post.recipients.map((user) => `@${user.first_name} ${user.last_name}`).join(' ')}
             </span>{' '}
-            <span className={`${HASHTAG.text}`}>
-              {post.hashtags.map((hash) => `#${hash}`).join(' ')}
-            </span>
+            <span className={`${HASHTAG.text}`}>{post.hashtags.map((hash) => hash).join(' ')}</span>
           </p>
 
           <p className="font-Lato font-normal text-18px mt-1.5 text-[#464646]">{post.message}</p>

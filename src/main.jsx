@@ -29,6 +29,7 @@ import MyProfile from './components/MyProfile'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import { QueryClientProvider } from 'react-query'
 import { queryClient } from '@/queryClient'
+import { ToastContainer } from 'react-toastify'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -77,6 +78,7 @@ const router = createBrowserRouter(
 ReactDOM.createRoot(document.getElementById('root')).render(
   <Provider store={store}>
     <QueryClientProvider client={queryClient}>
+      <ToastContainer />
       <RouterProvider router={router} />
     </QueryClientProvider>
   </Provider>

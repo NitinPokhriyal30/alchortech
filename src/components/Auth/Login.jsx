@@ -5,11 +5,12 @@ import { Link, Navigate } from 'react-router-dom'
 import LoginBackground from '../../assets/images/login-signup/LoginBackground.png'
 import High5Logo from '../../assets/images/login-signup/High5Logo.png'
 import AlcorLogo from '../../assets/images/login-signup/AlcorLogo.png'
-import { ToastContainer, toast } from 'react-toastify'
+import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { api } from '../../api'
 import { useSelector, useDispatch } from 'react-redux'
 import { RiLoader2Line } from 'react-icons/ri'
+import { queryClient } from '@/queryClient'
 
 const Login = () => {
   const { isLoading, loggedIn } = useSelector((store) => store.user)
@@ -26,7 +27,10 @@ const Login = () => {
       // });
 
       dispatch({ type: 'user/login' })
-      const { token } = await api.auth.login({ email, password })
+      const { token, id } = await api.auth.login({ email, password })
+      Cookies.set("token", token)
+      Cookies.set("user_id", id)
+      await queryClient.fetchQuery("me", () => api.auth.me(id))
       dispatch({ type: 'user/login_done', token })
     } catch (error) {
       dispatch({ type: 'user/login_fail', error })
@@ -104,7 +108,6 @@ const Login = () => {
           </div>
         </div>
       </div>
-      <ToastContainer />
     </div>
   )
 }
