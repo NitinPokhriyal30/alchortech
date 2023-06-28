@@ -33,6 +33,7 @@ const me = {
 }
 export default function NewPost({ ...props }) {
   const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
+  const [loading, setLoading] = React.useState(false)
 
   const [form, setForm] = React.useState({
     point: 30,
@@ -261,6 +262,7 @@ export default function NewPost({ ...props }) {
               }
 
               try {
+                setLoading(true)
                 await api.transactions.new({ ...data, ...form })
                 await queryClient.refetchQueries('transactions')
 
@@ -274,11 +276,13 @@ export default function NewPost({ ...props }) {
                   message: '',
                 })
               } catch {
-                toast.error("Transaction failed. Server error")
+                toast.error('Transaction failed. Server error')
+              } finally {
+                setLoading(false)
               }
             }}
           >
-            Give
+            {loading === true ? <>&middot; &middot; &middot;</> : 'Give'}
           </button>
         </div>
       </div>

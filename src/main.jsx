@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useLayoutEffect, useReducer } from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.css'
 
@@ -27,9 +27,11 @@ import ManageUsers from './components/AdminPanel/ManageUsers'
 import Earnings from './components/AdminPanel/Earnings'
 import MyProfile from './components/MyProfile'
 import ProtectedRoute from '@/components/ProtectedRoute'
-import { QueryClientProvider } from 'react-query'
+import { QueryClientProvider, useQueryClient } from 'react-query'
 import { queryClient } from '@/queryClient'
 import { ToastContainer } from 'react-toastify'
+import Cookies from 'js-cookie'
+import { api } from '@/api'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -79,7 +81,29 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <Provider store={store}>
     <QueryClientProvider client={queryClient}>
       <ToastContainer />
-      <RouterProvider router={router} />
+      <GetUserFromCookies>
+        <RouterProvider router={router} />
+      </GetUserFromCookies>
     </QueryClientProvider>
   </Provider>
 )
+
+function GetUserFromCookies({ children }) {
+  const user_id = Cookies.get('user_id')
+  const [, rerender] = useReducer((p) => ++p, 0)
+
+  const me = queryClient.getQueryData('me')
+  if (user_id && me == null) {
+    queryClient
+      .fetchQuery('me', () => api.auth.me(user_id))
+      .then(() => rerender())
+      .catch(() => {
+        Cookies.remove('user_id')
+        Cookies.remove('token')
+        rerender()
+      })
+    return null
+  }
+
+  return children
+}
