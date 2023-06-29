@@ -17,7 +17,7 @@ export function getTodayDate() {
   const today =
     todayDate.getFullYear() +
     '-' +
-    todayDate.getMonth().toString().padStart(2, '0') +
+    (todayDate.getMonth()+1).toString().padStart(2, '0') +
     '-' +
     todayDate.getDate().toString().padStart(2, '0')
   return today
