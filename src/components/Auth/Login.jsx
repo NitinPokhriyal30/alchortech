@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import Cookies from 'js-cookie'
-import { Link, Navigate } from 'react-router-dom'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
 import LoginBackground from '../../assets/images/login-signup/LoginBackground.png'
 import High5Logo from '../../assets/images/login-signup/High5Logo.png'
 import AlcorLogo from '../../assets/images/login-signup/AlcorLogo.png'
@@ -15,6 +15,7 @@ import { queryClient } from '@/queryClient'
 const Login = () => {
   const { isLoading, loggedIn } = useSelector((store) => store.user)
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -28,10 +29,11 @@ const Login = () => {
 
       dispatch({ type: 'user/login' })
       const { token, id } = await api.auth.login({ email, password })
-      Cookies.set("token", token)
-      Cookies.set("user_id", id)
-      await queryClient.fetchQuery("me", () => api.auth.me(id))
+      Cookies.set('token', token)
+      Cookies.set('user_id', id)
+      await queryClient.fetchQuery('me', () => api.auth.me(id))
       dispatch({ type: 'user/login_done', token })
+      navigate('/', { replace: true })
     } catch (error) {
       dispatch({ type: 'user/login_fail', error })
       console.log(error)
@@ -39,10 +41,6 @@ const Login = () => {
       event.target.email.value = ''
       event.target.password.value = ''
     }
-  }
-
-  if (loggedIn) {
-    return <Navigate to="/" />
   }
 
   return (

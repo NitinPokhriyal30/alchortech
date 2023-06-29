@@ -17,6 +17,8 @@ import Notification from './Notification'
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
 import { BiX } from 'react-icons/bi'
+import Cookies from 'js-cookie'
+import { queryClient } from '@/queryClient'
 
 export default function HomeSidebar({}) {
   const showSidebar = useSelector((store) => store.sidebar)
@@ -113,7 +115,11 @@ export default function HomeSidebar({}) {
               type="button"
               to="/voice-out"
               className="w-full nav-item-container"
-              onClick={() => dispatch({ type: 'user/logout' })}
+              onClick={() => {
+                Cookies.remove("user_id")
+                Cookies.remove("token")
+                queryClient.setQueryData("me", undefined)
+              }}
             >
               <RiLogoutCircleFill />
               <span>Logout</span>
