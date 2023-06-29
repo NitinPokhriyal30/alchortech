@@ -21,6 +21,10 @@ import { addPoints, addReaction, addComment, addCommentReaction } from '../redux
 import { useSelector } from 'react-redux'
 import HoveringWidget from '@/components/HoveringWidget'
 import { SERVER_URL } from '@/constant'
+import { api } from '@/api'
+import Cookies from 'js-cookie'
+import { useQuery } from 'react-query'
+import { getTodayDate } from '@/utils'
 
 const POINTS = [
   {
@@ -49,11 +53,11 @@ const PostCard = ({ post, ...props }) => {
   const [showCommentsFor, setShowCommentsFor] = React.useState('')
   const [modal, setModal] = React.useState('')
   const [form, setForm] = React.useState({ image: '', gif: '', message: '' })
-  const me = useSelector((store) => store.user)
+  const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
   const addedPoints = post.sender.find((x) => x.id === me.id)?.points
   const hasAddedPoints = !!addedPoints
 
-  console.log(post);
+  console.log(post)
 
   post.reactions = []
   post.comment = { replies: [] }
@@ -144,7 +148,40 @@ const PostCard = ({ post, ...props }) => {
                       key={points}
                       style={{ color: color }}
                       className={`w-8 h-8 rounded-full text-sm font-Lato font-black hover:bg-translucent`}
-                      onClick={() => addPoints(post.id, points)}
+                      onClick={async () => {
+                        // if (!confirm("Are you sure?")) return;
+
+                        const today = getTodayDate()
+
+                        const data = {
+                          sender: [me.data],
+                          active: 'True',
+                          flag_transaction: 'False',
+                          react_by: {},
+                          created_by: me.data.id,
+                          updated_by: me.data.id,
+                          created: today,
+                          updated: today,
+                          point: points,
+                          recipients: post.recipients,
+                          hashtags: post.hashtags,
+                          image: '',
+                          gif: '',
+                          link: '',
+                          message: '',
+                          parent_id: post.id,
+                        }
+
+                        const formData = toFormData(data)
+                        try {
+                          // setLoading(true)
+                          await api.transactions.new(formData)
+                          await queryClient.refetchQueries('transactions')
+                        } catch (error) {
+                          console.log(error)
+                          toast.error('Server Error')
+                        }
+                      }}
                     >
                       +{points}
                     </button>
@@ -155,7 +192,7 @@ const PostCard = ({ post, ...props }) => {
 
             {/* post reaction button */}
             <div className="relative ">
-              <button className="btn-ghost peer flex items-center gap-2">
+              <button className="btn-ghost peer flex items-center gap-2" onClick={async () => {}}>
                 <span>
                   <BiHeartCircle className="text-[20px]" />
                 </span>
@@ -394,4 +431,16 @@ const PROFILE_USERNAME = {
 }
 const HASHTAG = {
   text: 'text-[#00BC9F]',
+}
+
+function toFormData(data) {
+  const formData = new FormData()
+  Object.entries(data).forEach(([key, value]) => {
+    let _value = value
+    // stringify only if value is array, object but not image File
+    if (typeof value == 'object' && !(value instanceof File)) _value = JSON.stringify(value)
+
+    formData.set(key, _value)
+  })
+  return formData
 }

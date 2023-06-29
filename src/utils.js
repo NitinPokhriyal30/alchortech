@@ -11,3 +11,14 @@ export function AxiosError(...args) {
 export function dateDiff(second, first) {
   return Math.round((second - first) / (1000 * 60 * 60 * 24))
 }
+
+export function getTodayDate() {
+  const todayDate = new Date()
+  const today =
+    todayDate.getFullYear() +
+    '-' +
+    todayDate.getMonth().toString().padStart(2, '0') +
+    '-' +
+    todayDate.getDate().toString().padStart(2, '0')
+  return today
+}

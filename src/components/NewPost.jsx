@@ -24,6 +24,7 @@ import { api } from '@/api'
 import Cookies from 'js-cookie'
 import { queryClient } from '@/queryClient'
 import { toast } from 'react-toastify'
+import { getTodayDate } from '@/utils'
 
 const me = {
   id: 101,
@@ -39,8 +40,8 @@ export default function NewPost({ ...props }) {
     point: 30,
     recipients: [],
     hashtags: [],
-    image: null,
-    gif: null,
+    image: '',
+    gif: '',
     link: '',
     message: '',
   })
@@ -62,14 +63,16 @@ export default function NewPost({ ...props }) {
             <RecipientsDropdown {...{ form, setForm }} />
           </li>
 
-          <li className="flex-grow group pr-4">
+          <li className="group pr-4">
             <HashTagsDropdown {...{ form, setForm }} />
           </li>
+
+          <li className="flex-grow" />
 
           <li style={{ borderWidth: 0 }} className="md:flex-shrink md:basis-auto basis-full">
             <HoverCard.Root>
               <p className="flex font-Lato cursor-pointer items-center leading-4">
-                You Have {user.points} points to give
+                You Have {me.data.allowance_boost} points to give
                 <HoverCard.Trigger className="ml-2 w-4 h-4 bg-white text-black inline-flex items-center justify-center rounded-full">
                   <span>?</span>
                 </HoverCard.Trigger>
@@ -245,9 +248,7 @@ export default function NewPost({ ...props }) {
                 return
               }
 
-              const todayDate = new Date()
-              const today =
-                todayDate.getFullYear() + '-' + todayDate.getMonth() + '-' + todayDate.getDate()
+              const today = getTodayDate()
 
               const data = {
                 sender: [me.data],
@@ -266,13 +267,14 @@ export default function NewPost({ ...props }) {
                 setLoading(true)
                 await api.transactions.new(formData)
                 await queryClient.refetchQueries('transactions')
+                await queryClient.refetchQueries('me')
 
                 setForm({
                   point: 30,
                   recipients: [],
                   hashtags: [],
-                  image: null,
-                  gif: null,
+                  image: '',
+                  gif: '',
                   link: '',
                   message: '',
                 })

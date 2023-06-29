@@ -59,6 +59,9 @@ const api = {
         .then((data) => data.reverse()),
   },
 
+  todayEvents: () =>
+    axios.get('http://backend.letshigh5.com/api/today-events/').then((r) => r.data),
+
   properties: () => axios.get('homepage/properties/').then((r) => r.data[0]),
 }
 

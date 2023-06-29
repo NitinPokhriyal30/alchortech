@@ -19,8 +19,11 @@ import { useDispatch } from 'react-redux'
 import { BiX } from 'react-icons/bi'
 import Cookies from 'js-cookie'
 import { queryClient } from '@/queryClient'
+import { useQuery } from 'react-query'
+import { api } from '@/api'
 
 export default function HomeSidebar({}) {
+  const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
   const showSidebar = useSelector((store) => store.sidebar)
   const dispatch = useDispatch()
   const setShowSidebar = (show) => dispatch({ type: 'sidebar', show })
@@ -66,14 +69,16 @@ export default function HomeSidebar({}) {
           <div className="px-5">
             <MenuLink
               to="/myProfile"
-              className="flex items-center gap-3 border-b-[1px] border-[#7096DB] xxl:py-5 xl:py-5 lg:py-5 md:py-5 sm:py-3 xs:py-3 "
+              className="flex items-center gap-3 border-b-[1px] border-[#7096DB] xxl:py-5 xl:py-5 lg:py-5 md:py-5 sm:py-3 xs:py-3"
             >
               <div>
-                <img src={User} alt="user avatar" />
+                <img className='w-14 h-14 bg-gray-300 rounded-full overflow-hidden' src={me.data.avtar} alt="user avatar" />
               </div>
               <div>
-                <p className="text-white font-Lato text-[16px] font-black">Hi</p>
-                <span className="text-white font-Lato text-[16px] font-normal">Semad Javed</span>
+                <p className="text-white font-Lato text-[16px] font-black">Hi,</p>
+                <span className="text-white font-Lato text-[16px] font-normal">
+                  {me.data.first_name} {me.data.last_name}
+                </span>
               </div>
             </MenuLink>
           </div>
@@ -116,9 +121,9 @@ export default function HomeSidebar({}) {
               to="/voice-out"
               className="w-full nav-item-container"
               onClick={() => {
-                Cookies.remove("user_id")
-                Cookies.remove("token")
-                queryClient.setQueryData("me", undefined)
+                Cookies.remove('user_id')
+                Cookies.remove('token')
+                queryClient.setQueryData('me', undefined)
               }}
             >
               <RiLogoutCircleFill />
