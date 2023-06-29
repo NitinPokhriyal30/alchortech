@@ -65,27 +65,35 @@ export default function CelebrationWidget() {
               </div>
             ) : (
               <>
-                {birthDays.map((user) => (
-                  <div key={user.id} className="flex pb-2 gap-3">
-                    <p className="text-primary">
-                      <MdOutlineCake />
-                    </p>
-                    <span className="text-primary text-sm font-Lato font-light">
-                      <strong>{user.first_name} </strong> has birth day today
+                <div className="flex pb-2 gap-3">
+                  <p className="text-primary">
+                    <MdOutlineCake />
+                  </p>
+                  <p className="text-primary text-sm font-Lato font-light">
+                    <strong>{birthDays[0].first_name}</strong>
+                    <span>
+                      {birthDays.length > 1
+                        ? ' & ' + pluralize(birthDays.length - 1, 'other', 's') + ' '
+                        : ' '}
                     </span>
-                  </div>
-                ))}
+                    <span>has birth day today</span>
+                  </p>
+                </div>
 
-                {workAniversaries.map((user) => (
-                  <div key={user.id} className="flex pb-2 gap-3">
-                    <p className="text-primary">
-                      <MdOutlineCelebration />
-                    </p>
-                    <span className="text-primary text-sm font-Lato font-light">
-                      <strong>{user.first_name} </strong> has work anniversary today
+                <div className="flex pb-2 gap-3">
+                  <p className="text-primary">
+                    <MdOutlineCelebration />
+                  </p>
+                  <p className="text-primary text-sm font-Lato font-light">
+                    <strong>{workAniversaries[0].first_name}</strong>
+                    <span>
+                      {workAniversaries.length > 1
+                        ? ` & ${pluralize(workAniversaries.length - 1, 'other', 's')} `
+                        : ' '}
                     </span>
-                  </div>
-                ))}
+                    <span>has work anniversary today</span>
+                  </p>
+                </div>
               </>
             )}
           </div>
@@ -93,4 +101,8 @@ export default function CelebrationWidget() {
       </div>
     </div>
   )
+}
+
+function pluralize(count, noun, suffix) {
+  return count + ' ' + noun + (count > 1 ? suffix : '')
 }
