@@ -48,7 +48,10 @@ const api = {
   },
 
   transactions: {
-    new: (data) => axios.post('homepage/transaction/', data).then((r) => r.data),
+    new: (data) =>
+      axios
+        .post('homepage/transaction/', data, { headers: { 'Content-Type': 'multipart/form-data' } })
+        .then((r) => r.data),
     all: () =>
       axios
         .get('homepage/transaction/')

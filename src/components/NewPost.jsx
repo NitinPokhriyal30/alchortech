@@ -230,19 +230,20 @@ export default function NewPost({ ...props }) {
           </Popover.Root>
 
           <button
+            disabled={loading}
             type="submit"
-            className=" ml-auto bg-primary text-white font-Lato px-4 py-1 w-full max-w-[6rem] rounded-sm"
+            className=" ml-auto bg-primary disabled:bg-opacity-80 text-white font-Lato px-4 py-1 w-full max-w-[6rem] rounded-sm"
             onClick={async () => {
-              if (form.hashtags.length === 0) {
-                alert('Add atleast one hashtag')
+              if (form.recipients.length === 0) {
+                toast.error('Add atleast one recipient')
                 return
               }
-              if (form.recipients.length === 0) {
-                alert('Add atleast one recipient')
+              if (form.hashtags.length === 0) {
+                toast.error('Add atleast one hashtag')
                 return
               }
               if (form.message.length === 0) {
-                alert('Add a message')
+                toast.error('Add a message')
                 return
               }
 
@@ -259,11 +260,13 @@ export default function NewPost({ ...props }) {
                 updated_by: me.data.id,
                 created: today,
                 updated: today,
+                ...form,
               }
 
+              const formData = toFormData(data)
               try {
                 setLoading(true)
-                await api.transactions.new({ ...data, ...form })
+                await api.transactions.new(formData)
                 await queryClient.refetchQueries('transactions')
 
                 setForm({
@@ -470,4 +473,16 @@ function HashTagsDropdown({ form, setForm }) {
       </div>
     </>
   )
+}
+
+function toFormData(data) {
+  const formData = new FormData()
+  Object.entries(data).forEach(([key, value]) => {
+    let _value = value
+    // stringify only if value is array, object but not image File
+    if (typeof value == 'object' && !(value instanceof File)) _value = JSON.stringify(value)
+
+    formData.set(key, _value)
+  })
+  return formData
 }
