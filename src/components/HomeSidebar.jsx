@@ -21,6 +21,7 @@ import Cookies from 'js-cookie'
 import { queryClient } from '@/queryClient'
 import { useQuery } from 'react-query'
 import { api } from '@/api'
+import { SERVER_URL } from '@/constant'
 
 export default function HomeSidebar({}) {
   const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
@@ -72,7 +73,7 @@ export default function HomeSidebar({}) {
               className="flex items-center gap-3 border-b-[1px] border-[#7096DB] xxl:py-5 xl:py-5 lg:py-5 md:py-5 sm:py-3 xs:py-3"
             >
               <div>
-                <img className='w-14 h-14 bg-gray-300 rounded-full overflow-hidden' src={me.data.avtar} alt="user avatar" />
+                <img className='w-14 h-14 bg-gray-300 rounded-full overflow-hidden' src={SERVER_URL + me.data.avtar} alt="user avatar" />
               </div>
               <div>
                 <p className="text-white font-Lato text-[16px] font-black">Hi,</p>
