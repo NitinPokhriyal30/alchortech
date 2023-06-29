@@ -20,6 +20,7 @@ import EmojiPicker from 'emoji-picker-react'
 import { addPoints, addReaction, addComment, addCommentReaction } from '../redux/postAction'
 import { useSelector } from 'react-redux'
 import HoveringWidget from '@/components/HoveringWidget'
+import { SERVER_URL } from '@/constant'
 
 const POINTS = [
   {
@@ -52,6 +53,8 @@ const PostCard = ({ post, ...props }) => {
   const addedPoints = post.sender.find((x) => x.id === me.id)?.points
   const hasAddedPoints = !!addedPoints
 
+  console.log(post);
+
   post.reactions = []
   post.comment = { replies: [] }
 
@@ -66,7 +69,7 @@ const PostCard = ({ post, ...props }) => {
                   <img
                     key={user.id}
                     className="h-8.5 w-8.5 object-cover rounded-full"
-                    src={user.avtar}
+                    src={SERVER_URL + user.avtar}
                     alt="post-user"
                   />
                 ))}

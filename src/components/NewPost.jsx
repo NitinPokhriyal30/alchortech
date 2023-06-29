@@ -45,8 +45,6 @@ export default function NewPost({ ...props }) {
     message: '',
   })
 
-  console.log(form)
-
   const user = {
     points: 260,
   }
