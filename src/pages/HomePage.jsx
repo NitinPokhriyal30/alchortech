@@ -17,10 +17,28 @@ import GifPicker from '@/components/GifPickerPopover'
 import { useQuery } from 'react-query'
 import { api } from '@/api'
 
+const getChildTransactionsFor = (parentId, allTransactions) => {
+  return allTransactions.filter((post) => post.parent_id == parentId)
+}
+
+const withIsChild = (allTransactions) => {
+  return allTransactions.map((post) => {
+    const hasParent = allTransactions.some((parentPost) => post.parent_id == parentPost.id)
+    // if a transaction has a parent transaction then its a child transaction
+    post.isChild = hasParent
+
+    return post
+  })
+}
+
 export default function HomePage() {
   const postList = useQuery('transactions', () => api.transactions.all())
 
-  console.log(postList)
+  let allPosts = postList.isLoading ? [] : postList.data
+  allPosts = withIsChild(allPosts)
+  const parentPosts = allPosts.filter(
+    (post) => !post.isChild || getChildTransactionsFor(post.id, allPosts).length > 0
+  )
 
   return (
     <>
@@ -39,9 +57,14 @@ export default function HomePage() {
           {postList.isLoading ? (
             <div className="h-64 bg-gray-300  rounded-md" />
           ) : (
-            postList.data.slice(0, 2).map((post, i) => (
+            parentPosts.slice(0, 2).map((post, i) => (
               <>
-                <PostCard i={i} key={post.id} post={post} />
+                <PostCard
+                  i={i}
+                  key={post.id}
+                  post={post}
+                  childrenTransactions={getChildTransactionsFor(post.id, allPosts)}
+                />
               </>
             ))
           )}
@@ -53,7 +76,15 @@ export default function HomePage() {
           {postList.isLoading ? (
             <div className="h-64 bg-gray-300  rounded-md" />
           ) : (
-            postList.data.slice(2).map((post) => <PostCard key={post.id} post={post} />)
+            parentPosts
+              .slice(2)
+              .map((post) => (
+                <PostCard
+                  key={post.id}
+                  post={post}
+                  childrenTransactions={getChildTransactionsFor(post.id, allPosts)}
+                />
+              ))
           )}
         </div>
       </div>

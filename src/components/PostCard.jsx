@@ -25,6 +25,7 @@ import { api } from '@/api'
 import Cookies from 'js-cookie'
 import { useQuery } from 'react-query'
 import { getTodayDate } from '@/utils'
+import { queryClient } from '@/queryClient'
 
 const POINTS = [
   {
@@ -49,15 +50,13 @@ const POINTS = [
   },
 ]
 
-const PostCard = ({ post, ...props }) => {
+const PostCard = ({ post, childrenTransactions, ...props }) => {
   const [showCommentsFor, setShowCommentsFor] = React.useState('')
   const [modal, setModal] = React.useState('')
   const [form, setForm] = React.useState({ image: '', gif: '', message: '' })
   const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
   const addedPoints = post.sender.find((x) => x.id === me.id)?.points
-  const hasAddedPoints = !!addedPoints
-
-  console.log(post)
+  const [hasAddedPoints, setHasAddedPoints] = React.useState(0)
 
   post.reactions = []
   post.comment = { replies: [] }
@@ -65,6 +64,7 @@ const PostCard = ({ post, ...props }) => {
   return (
     <div className="mb-3">
       <div className="bg-white shadow-md rounded-lg xxl:px-6 xl:px-6 lg:px-6 md:px-6 sm:px-6 xs:px-4  py-6">
+        {post.isChild && 'Its Child Transaction!'}
         <div className="flex justify-between gap-3 items-center">
           <div className="flex-1">
             <div className="flex items-center justify-between gap-8">
@@ -78,7 +78,20 @@ const PostCard = ({ post, ...props }) => {
                   />
                 ))}
 
-                <p className="text-18px font-Lato font-bold text-primary">+{post.point}</p>
+                {childrenTransactions?.map((post) =>
+                  post.sender.map((user) => (
+                    <img
+                      key={user.id}
+                      className="h-8.5 w-8.5 object-cover rounded-full"
+                      src={SERVER_URL + user.avtar}
+                      alt="post-user"
+                    />
+                  ))
+                )}
+                <p className="text-18px font-Lato font-bold text-primary">
+                  +
+                  {post.point + childrenTransactions.reduce((total, post) => total + post.point, 0)}
+                </p>
               </div>
               <div>
                 <p className="font-Lato font-normal text-[#919191]">{post.created}</p>
@@ -129,10 +142,10 @@ const PostCard = ({ post, ...props }) => {
 
         <div>
           <div className="flex items-center gap-2 mt-2.5">
-            {hasAddedPoints ? (
+            {hasAddedPoints != 0 ? (
               <div>
                 <p className="p-2 font-Lato text-[16px] text-primary">
-                  You Added {addedPoints} Points!
+                  You Added {hasAddedPoints} Points!
                 </p>
               </div>
             ) : (
@@ -149,28 +162,9 @@ const PostCard = ({ post, ...props }) => {
                       style={{ color: color }}
                       className={`w-8 h-8 rounded-full text-sm font-Lato font-black hover:bg-translucent`}
                       onClick={async () => {
-                        // if (!confirm("Are you sure?")) return;
-
-                        const today = getTodayDate()
-
-                        const data = {
-                          sender: [me.data],
-                          active: 'True',
-                          flag_transaction: 'False',
-                          react_by: {},
-                          created_by: me.data.id,
-                          updated_by: me.data.id,
-                          created: today,
-                          updated: today,
-                          point: points,
-                          recipients: post.recipients,
-                          hashtags: post.hashtags,
-                          image: '',
-                          gif: '',
-                          link: '',
-                          message: '',
-                          parent_id: post.id,
-                        }
+                        const { id, image, ...data } = post
+                        data.point = points
+                        data.parent_id = post.id
 
                         const formData = toFormData(data)
                         try {
@@ -181,6 +175,7 @@ const PostCard = ({ post, ...props }) => {
                           console.log(error)
                           toast.error('Server Error')
                         }
+                        setHasAddedPoints(points)
                       }}
                     >
                       +{points}
