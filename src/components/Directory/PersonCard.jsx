@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 
 export default function PersonCard({ name, img, jobTitle, department, location, ...props }) {
   return (
-    <div className="border border-300 rounded-md shadow-[0px_2px_7px] shadow-[#0000001d] flex gap-3 pt-[11px] pb-2 px-4">
+    <div className="border border-400 rounded-[4px] shadow-[0px_2px_7px] shadow-[#0000001d] flex gap-3 pt-[11px] pb-2 px-4">
       <div>
         <img
           src={img}

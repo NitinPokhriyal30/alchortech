@@ -56,23 +56,28 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
   const [form, setForm] = React.useState({ image: '', gif: '', message: '' })
   const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
   const addedPoints = post.sender.find((x) => x.id === me.id)?.points
-  const [hasAddedPoints, setHasAddedPoints] = React.useState(0)
+  // const [hasAddedPoints, setHasAddedPoints] = React.useState(0)
 
+  const [, setHasAddedPoints] = React.useState(0)
   post.reactions = []
   post.comment = { replies: [] }
 
+  const isMyPost = post.sender.find((user) => user.id === me.data.id)
+  const hasAddedPoints =
+    childrenTransactions.find((post) => post.sender.find((user) => user.id === me.data.id))
+      ?.point || 0
+
   return (
     <div className="mb-3">
-      <div className="bg-white shadow-md rounded-lg xxl:px-6 xl:px-6 lg:px-6 md:px-6 sm:px-6 xs:px-4  py-6">
-        {post.isChild && 'Its Child Transaction!'}
-        <div className="flex justify-between gap-3 items-center">
+      <div className="rounded-lg bg-white py-6 shadow-md xs:px-4 sm:px-6 md:px-6 lg:px-6 xl:px-6  xxl:px-6">
+        <div className="flex items-center justify-between gap-3">
           <div className="flex-1">
             <div className="flex items-center justify-between gap-8">
               <div className="flex items-center gap-1">
                 {post.sender.map((user) => (
                   <img
                     key={user.id}
-                    className="h-8.5 w-8.5 object-cover rounded-full"
+                    className="h-8.5 w-8.5 rounded-full object-cover"
                     src={SERVER_URL + user.avtar}
                     alt="post-user"
                   />
@@ -82,13 +87,13 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                   post.sender.map((user) => (
                     <img
                       key={user.id}
-                      className="h-8.5 w-8.5 object-cover rounded-full"
+                      className="h-8.5 w-8.5 rounded-full object-cover"
                       src={SERVER_URL + user.avtar}
                       alt="post-user"
                     />
                   ))
                 )}
-                <p className="text-18px font-Lato font-bold text-primary">
+                <p className="font-Lato text-18px font-bold text-primary">
                   +
                   {post.point + childrenTransactions.reduce((total, post) => total + post.point, 0)}
                 </p>
@@ -99,12 +104,12 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
             </div>
           </div>
           <div>
-            <BsThreeDots className="text-[#B1B1B1] text-lg" />
+            <BsThreeDots className="text-lg text-[#B1B1B1]" />
           </div>
         </div>
 
         <div className="mt-4">
-          <p className="font-Lato font-bold text-18px">
+          <p className="font-Lato text-18px font-bold">
             <span className={`${PROFILE_USERNAME.text}`}>
               {post.sender[0].first_name} {post.sender[0].last_name}:
             </span>{' '}
@@ -114,7 +119,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
             <span className={`${HASHTAG.text}`}>{post.hashtags.map((hash) => hash).join(' ')}</span>
           </p>
 
-          <p className="font-Lato font-normal text-18px mt-1.5 text-[#464646]">{post.message}</p>
+          <p className="mt-1.5 font-Lato text-18px font-normal text-[#464646]">{post.message}</p>
 
           {post.link && (
             <div className="mt-2">
@@ -141,8 +146,8 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
         </div>
 
         <div>
-          <div className="flex items-center gap-2 mt-2.5">
-            {hasAddedPoints != 0 ? (
+          <div className="mt-2.5 flex items-center gap-2">
+            {isMyPost ? null : hasAddedPoints != 0 ? (
               <div>
                 <p className="p-2 font-Lato text-[16px] text-primary">
                   You Added {hasAddedPoints} Points!
@@ -151,18 +156,19 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
             ) : (
               <div className="relative">
                 <button className="btn-ghost peer flex items-center gap-2">
-                  <BsPlusCircleFill className="w-5 h-5" />
+                  <BsPlusCircleFill className="h-5 w-5" />
                   Add Points
                 </button>
 
-                <div className="hidden drop-shadow-[0px_2px_3px_#00000029] px-4 py-2 bg-white absolute bottom-10 left-0 peer-hover:flex hover:flex gap-1 rounded-[19px]">
+                <div className="absolute bottom-10 left-0 hidden gap-1 rounded-[19px] bg-white px-4 py-2 drop-shadow-[0px_2px_3px_#00000029] hover:flex peer-hover:flex">
                   {POINTS.map(({ points, color }) => (
                     <button
                       key={points}
                       style={{ color: color }}
-                      className={`w-8 h-8 rounded-full text-sm font-Lato font-black hover:bg-translucent`}
+                      className={`h-8 w-8 rounded-full font-Lato text-sm font-black hover:bg-translucent`}
                       onClick={async () => {
                         const { id, image, ...data } = post
+                        data.sender = [me.data]
                         data.point = points
                         data.parent_id = post.id
 
@@ -194,11 +200,11 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                 React
               </button>
 
-              <div className="hidden drop-shadow-[0px_2px_3px_#00000029] px-4 py-2 bg-white absolute -top-[80%] left-0 peer-hover:flex hover:flex gap-4 rounded-[19px]">
+              <div className="absolute -top-[80%] left-0 hidden gap-4 rounded-[19px] bg-white px-4 py-2 drop-shadow-[0px_2px_3px_#00000029] hover:flex peer-hover:flex">
                 {['❤', '👍', '👏', '✔ ', '😍'].map((emoji) => (
                   <button
                     key={emoji}
-                    className="w-6 h-6 rounded-full inline-block hover:bg-translucent text-sm font-Lato font-black"
+                    className="inline-block h-6 w-6 rounded-full font-Lato text-sm font-black hover:bg-translucent"
                     onClick={() => addReaction(post.id, emoji)}
                   >
                     {emoji}
@@ -214,7 +220,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                 }
               >
                 <span>
-                  <BsFillChatRightTextFill className="w-5 h-5" />
+                  <BsFillChatRightTextFill className="h-5 w-5" />
                 </span>
                 Comment
               </button>
@@ -225,7 +231,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
         <div>
           <div className="flex items-center gap-3 border-b-[1px] border-[#EDEDED] pb-1">
             {post.reactions.length > 0 && (
-              <div className="rounded-[17px] border-[0.6px] border-[#D1D1D1] pr-2 pb-[2px] text-2xl flex items-center gap-1">
+              <div className="text-2xl flex items-center gap-1 rounded-[17px] border-[0.6px] border-[#D1D1D1] pb-[2px] pr-2">
                 {post.reactions[0].emoji}
                 <span className="font-Lato text-xs text-[#747474]">{post.reactions.length}</span>
               </div>
@@ -244,12 +250,12 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
         {showCommentsFor === post.comment.id && (
           <>
             <div>
-              <div className="flex mt-3">
+              <div className="mt-3 flex">
                 <div>
                   <img className="w-[80%]" src={PostUser} alt="comment" />
                 </div>
-                <div className="flex-1 w-full">
-                  <div className="flex items-center bg-[#EDEDED] rounded-b-xl rounded-tr-xl">
+                <div className="w-full flex-1">
+                  <div className="flex items-center rounded-b-xl rounded-tr-xl bg-[#EDEDED]">
                     <form
                       onSubmit={(ev) => {
                         ev.preventDefault()
@@ -270,20 +276,20 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                         name="message"
                         value={form.message}
                         onChange={(e) => setForm((prev) => ({ ...prev, message: e.target.value }))}
-                        className=" bg-transparent w-full px-6 py-3 placeholder:text-[16px] placeholder:text-[#ABACAC] placeholder:font-Lato border-none outline-none"
+                        className=" w-full border-none bg-transparent px-6 py-3 outline-none placeholder:font-Lato placeholder:text-[16px] placeholder:text-[#ABACAC]"
                       />
                     </form>
 
-                    <div className="ml-auto mr-3 gap-2 flex items-baseline">
+                    <div className="ml-auto mr-3 flex items-baseline gap-2">
                       <button
                         type="button"
                         onClick={() => setModal((prev) => (prev === 'emoji' ? '' : 'emoji'))}
                       >
-                        <HiEmojiHappy className="text-[#D1D1D1] text-2xl" />
+                        <HiEmojiHappy className="text-2xl text-[#D1D1D1]" />
 
                         {modal === 'emoji' && (
                           <HoveringWidget
-                            className="border-4 border-black px-0 md:w-[350px] w-full"
+                            className="w-full border-4 border-black px-0 md:w-[350px]"
                             style={{
                               backgroundColor: 'transparent',
                               border: 'none',
@@ -307,7 +313,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                       </button>
 
                       <label className="cursor-pointer">
-                        <BsFillImageFill className="text-[#D1D1D1] text-2xl" />
+                        <BsFillImageFill className="text-2xl text-[#D1D1D1]" />
 
                         <input
                           hidden
@@ -324,7 +330,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
 
                       <Popover.Root>
                         <Popover.Trigger>
-                          <AiOutlineFileGif className="text-[#D1D1D1] text-2xl" />
+                          <AiOutlineFileGif className="text-2xl text-[#D1D1D1]" />
                         </Popover.Trigger>
 
                         <GifPicker
@@ -339,9 +345,9 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                     </div>
                   </div>
                   {form.image && (
-                    <div className="relative inline-flex items-start p-4 group">
+                    <div className="group relative inline-flex items-start p-4">
                       <img
-                        className="block rounded pr-4 flex-1"
+                        className="block flex-1 rounded pr-4"
                         src={
                           typeof form.image === 'string'
                             ? form.image
@@ -351,7 +357,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
 
                       <button
                         type="button"
-                        className="opacity-0 group-hover:opacity-100 transition-opacity text-primary-400"
+                        className="text-primary-400 opacity-0 transition-opacity group-hover:opacity-100"
                         onClick={() =>
                           setForm((prev) => {
                             delete prev.image
@@ -365,12 +371,12 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                   )}
 
                   {form.gif && (
-                    <div className="relative inline-flex items-start p-4 group">
-                      <img className="block rounded pr-4 flex-1" src={form.gif} />
+                    <div className="group relative inline-flex items-start p-4">
+                      <img className="block flex-1 rounded pr-4" src={form.gif} />
 
                       <button
                         type="button"
-                        className="opacity-0 group-hover:opacity-100 transition-opacity text-primary-400"
+                        className="text-primary-400 opacity-0 transition-opacity group-hover:opacity-100"
                         onClick={() =>
                           setForm((prev) => {
                             delete prev.gif
