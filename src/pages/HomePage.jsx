@@ -42,20 +42,21 @@ export default function HomePage() {
 
   return (
     <>
-      <div className="lg:pl-0 xxl:pt-3 xs:pt-0 pl-3 pr-3 lg:py-3">
+      {/* main posts */}
+      <div className="pl-3 pr-3 xs:pt-0 lg:py-3 lg:pl-0 xxl:pt-3">
         <div>
           <ImageSlider />
         </div>
-        <div className="mt-3 relative z-20">
+        <div className="relative z-20 mt-3">
           <NewPost />
         </div>
         <div className="mt-1">
           <SortBy />
         </div>
 
-        <div className="mt-1 relative" id="post-list">
+        <div className="relative mt-1" id="post-list">
           {postList.isLoading ? (
-            <div className="h-64 bg-gray-300  rounded-md" />
+            <div className="h-64 rounded-md  bg-gray-300" />
           ) : (
             parentPosts.slice(0, 2).map((post, i) => (
               <>
@@ -72,9 +73,9 @@ export default function HomePage() {
         <div className="mt-1">
           <AchievementBanner />
         </div>
-        <div className="mt-1 relative">
+        <div className="relative mt-1">
           {postList.isLoading ? (
-            <div className="h-64 bg-gray-300  rounded-md" />
+            <div className="h-64 rounded-md  bg-gray-300" />
           ) : (
             parentPosts
               .slice(2)
@@ -89,7 +90,8 @@ export default function HomePage() {
         </div>
       </div>
 
-      <div className="pt-3 pb-5 lg:pr-6 md:pr-3 md:pl-1 pr-3 pl-3 flex flex-col gap-3 overflow-y-auto xl:w-[325px] lg:w-[235px] md:w-[260px] w-full">
+      {/* right sidebar */}
+      <div className="flex w-full flex-col gap-3 overflow-y-auto pb-5 pl-3 pr-3 pt-3 md:w-[260px] md:pl-1 lg:w-[235px] lg:pr-0 xl:w-[319px]">
         <RedeemPointsWidget />
         <RecommendationWidget />
         <CelebrationWidget />

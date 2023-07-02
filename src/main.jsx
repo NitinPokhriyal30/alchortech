@@ -44,7 +44,7 @@ const router = createBrowserRouter(
           <ProtectedRoute>
             <main className="bg-paper">
               <MainNavbar />
-              <div className="pt-nav grid xxl:max-w-7xl lg:max-w-8xl m-auto w-full lg:grid-cols-mediumDevice md:grid-cols-smallDevice grid-cols-[1fr]">
+              <div className="mx-auto grid w-full max-w-[1440px] grid-cols-[1fr] pl-0 pt-nav md:grid-cols-smallDevice md:pl-9 md:pr-[39px] lg:grid-cols-mediumDevice">
                 <HomeSidebar />
                 <Outlet />
               </div>

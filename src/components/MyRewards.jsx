@@ -34,13 +34,14 @@ const MyRewards = () => {
 
   return (
     <>
-      <div className="lg:pl-0 xxl:pt-3 xs:pt-0 pl-3 pr-3">
+      {/* rewards (center slot) */}
+      <div className="pl-3 pr-3 lg:pl-0">
         <div className="mt-3">
-          <div className="bg-primary text-white text-sm rounded-t-lg py-2 px-6">
+          <div className="rounded-t-lg bg-primary px-6 py-2 text-sm text-white">
             <p className="font-Lato ">Recommended For You</p>
           </div>
-          <div className="py-4 px-6 bg-white rounded-b-lg drop-shadow-normal">
-            <div className="grid grid-cols-3 xxl:grid-cols-3 xl:grid-cols-3 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-2 gap-4">
+          <div className="rounded-b-lg bg-white px-6 py-4 drop-shadow-normal">
+            <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(227px,1fr))]">
               {recommendedCoupon.map((coupon, index) => (
                 <RewardCard key={index} coupon={coupon} />
               ))}
@@ -49,11 +50,11 @@ const MyRewards = () => {
         </div>
 
         <div className="mt-2">
-          <div className="bg-primary text-white text-sm rounded-t-lg py-2 px-6">
+          <div className="rounded-t-lg bg-primary px-6 py-2 text-sm text-white">
             <p className="font-Lato ">Apparel</p>
           </div>
-          <div className="py-4 px-6 bg-white rounded-b-lg drop-shadow-normal">
-            <div className="grid grid-cols-3 xxl:grid-cols-3 xl:grid-cols-3 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-2 gap-4">
+          <div className="rounded-b-lg bg-white px-6 py-4 drop-shadow-normal">
+            <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(227px,1fr))]">
               {recommendedCoupon.map((coupon, index) => (
                 <RewardCard key={index} coupon={coupon} />
               ))}
@@ -62,11 +63,11 @@ const MyRewards = () => {
         </div>
 
         <div className="mt-2">
-          <div className="bg-primary text-white text-sm rounded-t-lg py-2 px-6">
+          <div className="rounded-t-lg bg-primary px-6 py-2 text-sm text-white">
             <p className="font-Lato ">Cash & Points Boots</p>
           </div>
-          <div className="py-4 px-6 bg-white rounded-b-lg drop-shadow-normal">
-            <div className="grid grid-cols-3 xxl:grid-cols-3 xl:grid-cols-3 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-2 gap-4">
+          <div className="rounded-b-lg bg-white px-6 py-4 drop-shadow-normal">
+            <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(227px,1fr))]">
               {recommendedCoupon.map((coupon, index) => (
                 <RewardCard key={index} coupon={coupon} />
               ))}
@@ -76,7 +77,7 @@ const MyRewards = () => {
       </div>
 
       {/* right sidebar */}
-      <div className="pt-3 pb-5 lg:pr-6 md:pr-3 md:pl-1 pr-3 pl-3 flex flex-col gap-3 overflow-y-auto xl:w-[325px] lg:w-[235px] md:w-[260px] w-full">
+      <div className="flex w-full flex-col gap-3 overflow-y-auto pb-5 pl-3 pt-3 md:pl-1 lg:max-w-[250px] xl:max-w-[319px]">
         <RedeemPointsWidget />
         <PopularCategories />
       </div>
@@ -88,17 +89,17 @@ function RewardCard({ coupon }) {
   const { img, title, tagLine, onRedeem } = coupon
   return (
     <Dialog.Root>
-      <div className="flex flex-col justify-between items-center border-[1px] border-[#EFEFEF] rounded-[4px] px-4 py-3">
-        <div className="p-2 my-3 flex justify-center items-center">
+      <div className="flex flex-col items-center justify-between rounded-[4px] border-[1px] border-[#EFEFEF] px-4 py-3">
+        <div className="my-3 flex items-center justify-center p-2">
           <img className="m-auto" src={img} alt="logo" />
         </div>
 
         <div className="text-center">
-          <p className="text-[#7B7B7B] text-[13px] font-Lato">{title}</p>
-          <p className="text-[#7B7B7B] text-[13px] font-Lato font-bold">{tagLine}</p>
+          <p className="font-Lato text-[13px] text-[#7B7B7B]">{title}</p>
+          <p className="font-Lato text-[13px] font-bold text-[#7B7B7B]">{tagLine}</p>
           <div className="py-3">
             <Dialog.Trigger>
-              <button className="rounded font-Lato text-[14px] border border-[#EFEFEF] px-4 text-primary bg-[#f7f7f7] hover:bg-translucent hover:border-translucent">
+              <button className="rounded border border-[#EFEFEF] bg-[#f7f7f7] px-4 font-Lato text-[14px] text-primary hover:border-translucent hover:bg-translucent">
                 Redeem
               </button>
             </Dialog.Trigger>

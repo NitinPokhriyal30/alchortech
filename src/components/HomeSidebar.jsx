@@ -37,7 +37,7 @@ export default function HomeSidebar({}) {
           style={{
             opacity: showSidebar ? '100%' : '',
           }}
-          className=" absolute inset-0 z-[999] bg-black bg-opacity-20 lg:hidden md:hidden lg:opacity-100 opacity-0"
+          className=" absolute inset-0 z-[999] bg-black bg-opacity-20 opacity-0 md:hidden lg:hidden lg:opacity-100"
           onClick={() => setShowSidebar(false)}
         />
       )}
@@ -45,19 +45,19 @@ export default function HomeSidebar({}) {
       {/* sidebar */}
       <div
         style={{ left: showSidebar ? '0px' : '' }}
-        className="transition-all xxl:py-3 xxl:pr-4 xxl:pl-6 xl:py-3  xl:pr-4 xl:pl-6 lg:py-3 lg:pr-4 lg:pl-6 md:py-0 md:pr-0 md:pl-0  sm:p-0 xs:p-0   lg:sticky lg:left-0 fixed -left-full lg:h-avoid-nav-lg lg:top-[87px] h-screen top-0 lg:z-0 z-[999] lg:w-auto md:w-[min(70vw,100%)] w-full"
+        className="fixed -left-full top-0 z-[999] flex h-screen w-full flex-col transition-all xs:p-0 sm:p-0 md:w-[min(70vw,100%)] md:py-0 md:pr-0 lg:sticky lg:left-0 lg:top-[87px] lg:z-0 lg:h-avoid-nav-lg lg:w-auto lg:py-3 lg:pr-[13px]"
       >
-        <div className="h-full overflow-y-auto z-30 bg-primary md:rounded-[9px] flex flex-col">
-          <div className="border-b-2 border-[#7096DB] lg:hidden px-5 pt-3">
+        <div className="z-30 flex flex-grow flex-col overflow-y-auto bg-primary md:rounded-[9px]">
+          <div className="border-b-2 border-[#7096DB] px-5 pt-3 lg:hidden">
             <div className="flex items-center justify-between ">
-              <div className="mb-2 xxl:block xl:block lg:block md:block sm:block xs:block">
-                <img className="h-12 mr-8" src={HighLogo} alt=" High Logo" />
+              <div className="mb-2 xs:block sm:block md:block lg:block xl:block xxl:block">
+                <img className="mr-8 h-12" src={HighLogo} alt=" High Logo" />
               </div>
 
               <div className="flex items-center gap-4">
                 <Notification />
                 <button
-                  className="active:ring-4 active:duration-75 ring-0 ring-white  rounded-full transition-[box-shadow] duration-300"
+                  className="rounded-full ring-0 ring-white transition-[box-shadow]  duration-300 active:ring-4 active:duration-75"
                   type="button"
                   onClick={() => setShowSidebar(false)}
                 >
@@ -67,17 +67,21 @@ export default function HomeSidebar({}) {
             </div>
           </div>
           {/*------------- Profile  ----------------------*/}
-          <div className="px-5">
+          <div className="px-[10px]">
             <MenuLink
               to="/myProfile"
-              className="flex items-center gap-3 border-b-[1px] border-[#7096DB] xxl:py-5 xl:py-5 lg:py-5 md:py-5 sm:py-3 xs:py-3"
+              className="mb-[28px] mt-[11px] flex items-center gap-3 rounded-[5px] px-3 hover:bg-white/[8%] xs:py-[11px] [&.active]:bg-white/[8%]"
             >
               <div>
-                <img className='w-14 h-14 bg-gray-300 rounded-full overflow-hidden' src={SERVER_URL + me.data.avtar} alt="user avatar" />
+                <img
+                  className="h-14 w-14 overflow-hidden rounded-full bg-gray-300"
+                  src={SERVER_URL + me.data.avtar}
+                  alt="user avatar"
+                />
               </div>
               <div>
-                <p className="text-white font-Lato text-[16px] font-black">Hi,</p>
-                <span className="text-white font-Lato text-[16px] font-normal">
+                <p className="font-Lato text-[16px] font-black text-white">Hi,</p>
+                <span className="font-Lato text-[16px] font-normal text-white">
                   {me.data.first_name} {me.data.last_name}
                 </span>
               </div>
@@ -85,66 +89,95 @@ export default function HomeSidebar({}) {
           </div>
           {/*-------------- Nav Items  -------------------*/}
 
-          <div className="flex flex-col px-5 pt-5 border-b-[1px] pb-5  border-[#7096DB]">
-            <MenuLink to="/" className="nav-item-container">
-              <AiFillHome />
+          <div className="xpt-5 flex flex-col border-b-[1px] border-[#7096DB] px-[10px]  pb-5">
+            <MenuLink
+              to="/"
+              className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
+            >
+              <AiFillHome fontSize={22} />
               <span>Home</span>
             </MenuLink>
-            <MenuLink to="/my-rewards" className="nav-item-container">
-              <AiFillGift />
+            <MenuLink
+              to="/my-rewards"
+              className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
+            >
+              <AiFillGift fontSize={22} />
               <span>My Rewards</span>
             </MenuLink>
-            <MenuLink to="/directory" className="nav-item-container">
-              <RiContactsBookFill />
+            <MenuLink
+              to="/directory"
+              className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
+            >
+              <RiContactsBookFill fontSize={22} />
               <span>Directory</span>
             </MenuLink>
-            <MenuLink to="/analytics" className="nav-item-container">
-              <SiGoogleanalytics />
+            <MenuLink
+              to="/analytics"
+              className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
+            >
+              <SiGoogleanalytics fontSize={22} />
               <span>Analytics</span>
             </MenuLink>
-            <MenuLink to="/campaign" className="nav-item-container">
-              <HiSpeakerphone />
+            <MenuLink
+              to="/campaign"
+              className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
+            >
+              <HiSpeakerphone fontSize={22} />
               <span>Campaigns</span>
             </MenuLink>
-            <MenuLink to="/survey" className="nav-item-container">
-              <RiSurveyFill />
+            <MenuLink
+              to="/survey"
+              className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
+            >
+              <RiSurveyFill fontSize={22} />
               <span>Survey</span>
             </MenuLink>
-            <MenuLink to="/voice-out" className="nav-item-container">
-              <RiUserVoiceFill />
+            <MenuLink
+              to="/voice-out"
+              className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
+            >
+              <RiUserVoiceFill fontSize={22} />
               <span>Voice Out</span>
             </MenuLink>
           </div>
 
-          <div className="px-5 pt-3">
+          <div className="px-[10px] pt-3">
             <button
               type="button"
               to="/voice-out"
-              className="w-full nav-item-container"
+              className="flex w-full items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] hover:bg-white/[8%] [&.active]:bg-white/[8%]"
               onClick={() => {
                 Cookies.remove('user_id')
                 Cookies.remove('token')
                 queryClient.setQueryData('me', undefined)
               }}
             >
-              <RiLogoutCircleFill />
+              <RiLogoutCircleFill fontSize={22} />
               <span>Logout</span>
             </button>
           </div>
 
           {/*--------------- FAQ Section  ----------------*/}
 
-          <div className="mt-auto px-5 pt-16 pb-5">
-            <div className="flex gap-3 items-center justify-between">
-              <p className="text-white font-Lato font-light text-[16px] flex items-center gap-1 leading-[19px]">
+          <div className="mt-auto px-5 pb-5 pt-16">
+            <div className="flex items-center justify-between gap-3">
+              <p className="flex items-center gap-1 font-Lato text-[16px] font-light leading-[19px] text-white">
                 <BsQuestionCircle /> FAQs
               </p>
-              <p className="text-white font-Lato font-light text-[16px] flex items-center gap-1 leading-[19px]">
+              <p className="flex items-center gap-1 font-Lato text-[16px] font-light leading-[19px] text-white">
                 <BsQuestionCircle /> Feedback
               </p>
             </div>
           </div>
         </div>
+
+        <p className="mb-[38px] mt-[25px] text-center text-10px">
+          A product of Alcor | All rights reserved 2023
+          <br />
+          <Link to="#" className={COLORS.footer.terms}>
+            Terms & Conditions | Privacy Policy
+          </Link>
+        </p>
       </div>
     </>
   )
@@ -161,4 +194,10 @@ function MenuLink(props) {
     setShowSidebar(false)
   }
   return <NavLink {...props} onClick={handleClick} />
+}
+
+const COLORS = {
+  footer: {
+    terms: 'text-[#0143BC]',
+  },
 }

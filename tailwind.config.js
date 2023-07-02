@@ -64,6 +64,7 @@ export default {
         400: '#dbdbdb',
       },
       fontSize: {
+        '10px': ['10px', '14px'],
         '16px': ['16px', '19px'],
         '18px': ['18px', '22px'],
       },
