@@ -51,8 +51,8 @@ export default function NewPost({ ...props }) {
   }
   return (
     <div>
-      <div className="bg-primary  text-white text-sm rounded-t-lg py-2 px-6">
-        <ul className="flex flex-wrap items-center divide-x divide-primary-400 gap-y-3 first:pl-0 child:pl-4">
+      <div className="rounded-t-lg  bg-primary px-6 py-2 text-sm text-white">
+        <ul className="flex flex-wrap items-center gap-y-3 divide-x divide-primary-400 first:pl-0 child:pl-4">
           {/* points button */}
 
           <li className="group pr-4">
@@ -69,17 +69,17 @@ export default function NewPost({ ...props }) {
 
           <li className="flex-grow" />
 
-          <li style={{ borderWidth: 0 }} className="md:flex-shrink md:basis-auto basis-full">
+          <li style={{ borderWidth: 0 }} className="basis-full md:flex-shrink md:basis-auto">
             <HoverCard.Root>
-              <p className="flex font-Lato cursor-pointer items-center leading-4">
+              <p className="flex cursor-pointer items-center font-Lato leading-4">
                 You Have {me.data.allowance_boost} points to give
-                <HoverCard.Trigger className="ml-2 w-4 h-4 bg-white text-black inline-flex items-center justify-center rounded-full">
+                <HoverCard.Trigger className="ml-2 inline-flex h-4 w-4 items-center justify-center rounded-full bg-white text-black">
                   <span>?</span>
                 </HoverCard.Trigger>
               </p>
 
               <HoverCard.Portal>
-                <HoverCard.Content className="w-screen max-w-xs bg-white shadow p-2 rounded z-20">
+                <HoverCard.Content className="z-20 w-screen max-w-xs rounded bg-white p-2 shadow">
                   <HoverCard.Arrow className="fill-white" />
                   You monthly allowance will refresh on 1st March. You have 6 days to spend 160
                   points.
@@ -92,7 +92,7 @@ export default function NewPost({ ...props }) {
 
       {/* text field */}
 
-      <div className="bg-white rounded-b-lg drop-shadow-normal _px-6 py-6 text-gray-400">
+      <div className="_px-6 rounded-b-lg bg-white py-6 text-gray-400 drop-shadow-normal">
         <div className="px-6">
           +{form.point}{' '}
           {form.recipients.map((user) => (
@@ -105,10 +105,10 @@ export default function NewPost({ ...props }) {
           ))}
         </div>
 
-        <div className="px-6 border-b focus-within:border-primary focus-within:border-b">
+        <div className="border-b px-6 focus-within:border-b focus-within:border-primary">
           <textarea
             spellCheck={false}
-            className="resize-none h-20 block w-full outline-none  transition-all"
+            className="block h-20 w-full resize-none outline-none  transition-all"
             placeholder="Type Here..."
             onChange={(ev) =>
               setForm((prev) => ({ ...prev, message: ev.target.value.substring(0, 270) }))
@@ -132,7 +132,7 @@ export default function NewPost({ ...props }) {
                 <img src={form.gif} key={form.image} className="mt-4 w-40 border" />
 
                 <button
-                  className="hidden group-hover:inline-block ml-4"
+                  className="ml-4 hidden group-hover:inline-block"
                   onClick={() => setForm((prev) => ({ ...prev, gif: '' }))}
                 >
                   <Close fontSize="10" />
@@ -150,7 +150,7 @@ export default function NewPost({ ...props }) {
                   {form.link}
                 </a>
                 <button
-                  className="hidden group-hover:inline-block ml-4"
+                  className="ml-4 hidden group-hover:inline-block"
                   onClick={() => setForm((prev) => ({ ...prev, link: '' }))}
                 >
                   <Close fontSize="10" />
@@ -161,9 +161,9 @@ export default function NewPost({ ...props }) {
         </div>
 
         {/* footer */}
-        <div id="new-post-footer" className="flex items-baseline px-6 pt-3 gap-4">
+        <div id="new-post-footer" className="flex items-baseline gap-4 px-6 pt-3">
           <Popover.Root>
-            <Popover.Trigger className="text-iconColor group cursor-pointer relative inline-block">
+            <Popover.Trigger className="group relative inline-block cursor-pointer text-iconColor">
               <EmojiEmotions />
               <ToolTip title="Add an emoji" />
             </Popover.Trigger>
@@ -179,7 +179,7 @@ export default function NewPost({ ...props }) {
             </Popover.Portal>
           </Popover.Root>
 
-          <label className="text-iconColor group cursor-pointer relative inline-block">
+          <label className="group relative inline-block cursor-pointer text-iconColor">
             <Image />
             <ToolTip title="Add an image" />
 
@@ -197,7 +197,7 @@ export default function NewPost({ ...props }) {
           </label>
 
           <Popover.Root>
-            <Popover.Trigger className="text-iconColor group relative inline-block">
+            <Popover.Trigger className="group relative inline-block text-iconColor">
               <GifBox />
 
               <ToolTip title="Add a gif" />
@@ -211,7 +211,7 @@ export default function NewPost({ ...props }) {
           </Popover.Root>
 
           <Popover.Root>
-            <Popover.Trigger className="text-iconColor group cursor-pointer relative inline-block">
+            <Popover.Trigger className="group relative inline-block cursor-pointer text-iconColor">
               <Link />
               <ToolTip title="Add a link" />
             </Popover.Trigger>
@@ -233,7 +233,7 @@ export default function NewPost({ ...props }) {
           <button
             disabled={loading}
             type="submit"
-            className=" ml-auto bg-primary disabled:bg-opacity-80 text-white font-Lato px-4 py-1 w-full max-w-[6rem] rounded-sm"
+            className=" ml-auto w-full max-w-[6rem] rounded-sm bg-primary px-4 py-1 font-Lato text-white disabled:bg-opacity-80"
             onClick={async () => {
               if (form.recipients.length === 0) {
                 toast.error('Add atleast one recipient')
@@ -295,19 +295,19 @@ export default function NewPost({ ...props }) {
 
 function AddLinkPopup({ onChange }) {
   return (
-    <div className="bg-white border border-[#00bc9f] p-2 pt-1 rounded-md w-screen max-w-xs">
-      <p className="flex justify-between items-center text-18px text-gray-500">
+    <div className="w-screen max-w-xs rounded-md border border-[#00bc9f] bg-white p-2 pt-1">
+      <p className="flex items-center justify-between text-18px text-gray-500">
         Add a link
-        <Popover.Close className="p-px rounded-sm hover:bg-translucent hover:text-primary">
+        <Popover.Close className="rounded-sm p-px hover:bg-translucent hover:text-primary">
           <RxCross2 />
         </Popover.Close>
       </p>
 
-      <label className="flex justify-between items-center text-sm mt-3 text-gray-600">
+      <label className="mt-3 flex items-center justify-between text-sm text-gray-600">
         Link:
         <input
           name="link"
-          className="mt-1 w-44 py-2.5 px-5 text-primary leading-5 rounded bg-translucent"
+          className="mt-1 w-44 rounded bg-translucent px-5 py-2.5 leading-5 text-primary"
           placeholder="http://"
           onChange={(ev) => onChange(ev.target.value)}
         />
@@ -330,24 +330,24 @@ function PointsRangeDialog({ form, setForm }) {
 
   return (
     <>
-      <p className="flex gap-[2px] hover:font-bold cursor-pointer">
+      <p className="flex cursor-pointer gap-[2px] hover:font-bold">
         + <span className="font-Lato"> Points</span>
       </p>
-      <div className="p-2 rounded-full absolute z-10 shadow bg-white text-black gap-2 hidden group-hover:flex">
+      <div className="absolute z-10 hidden gap-2 rounded-full bg-white p-2 text-black shadow group-hover:flex">
         {properties.isLoading
           ? Array(5)
               .fill()
               .map((_, i) => (
                 <div
                   key={i}
-                  className={`w-8 h-8 flex items-center justify-center rounded-full font-bold bg-paper`}
+                  className={`flex h-8 w-8 items-center justify-center rounded-full bg-paper font-bold`}
                 />
               ))
           : points_range.map((point, i) => (
               <button
                 key={point}
                 type="button"
-                className={`w-8 h-8 flex items-center justify-center rounded-full font-bold hover:bg-primary  hover:text-white ${
+                className={`flex h-8 w-8 items-center justify-center rounded-full font-bold hover:bg-primary  hover:text-white ${
                   form.point === point ? 'bg-translucent' : ''
                 } ${points_colors[i]}`}
                 onClick={() => {
@@ -364,9 +364,12 @@ function PointsRangeDialog({ form, setForm }) {
 
 function RecipientsDropdown({ form, setForm }) {
   const users = useQuery('users', () => api.users.profiles(), { initialData: [] })
+  const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
+
+  const usersWithoutMe = users.isLoading ? [] : users.data.filter((x) => x.id !== me.data.id)
 
   const [searchUserQuery, setSearchUserQuery] = React.useState('')
-  let searchedUser = users.data?.filter((user) =>
+  let searchedUser = usersWithoutMe.filter((user) =>
     JSON.stringify(user).toLocaleLowerCase().includes(searchUserQuery)
   )
 
@@ -375,16 +378,16 @@ function RecipientsDropdown({ form, setForm }) {
   return (
     <>
       {/* dropdown trigger */}
-      <p className="flex gap-[2px] hover:font-bold cursor-pointer">
+      <p className="flex cursor-pointer gap-[2px] hover:font-bold">
         @ <span className="font-Lato">Recipients</span>
       </p>
 
       {/* container */}
-      <div className="absolute shadow z-10 rounded overflow-hidden divide-y bg-white text-black hidden group-hover:block">
+      <div className="absolute z-10 hidden divide-y overflow-hidden rounded bg-white text-black shadow group-hover:block">
         {/* fixed height list */}
         <div style={{ height: 5 * USER_BTN_HEIGHT }} className="overflow-y-auto">
-          {users.isRefetching ? (
-            <p className="absolute m-auto inset-0 w-[15ch] h-10 text-center text-gray-500">
+          {users.isLoading ? (
+            <p className="absolute inset-0 m-auto h-10 w-[15ch] text-center text-gray-500">
               Loading...
             </p>
           ) : (
@@ -394,7 +397,7 @@ function RecipientsDropdown({ form, setForm }) {
                 return (
                   <button
                     style={{ height: USER_BTN_HEIGHT }}
-                    className={`w-full block  px-4 py-1 text-left ${
+                    className={`block w-full  px-4 py-1 text-left ${
                       checked ? 'bg-translucent' : ''
                     }`}
                     key={user.id}
@@ -421,7 +424,7 @@ function RecipientsDropdown({ form, setForm }) {
         </div>
 
         <input
-          className="bg-translucent py-1 px-2"
+          className="bg-translucent px-2 py-1"
           onChange={(e) => setSearchUserQuery(e.target.value)}
           placeholder="Search @Recipient"
           value={searchUserQuery}
@@ -438,12 +441,12 @@ function HashTagsDropdown({ form, setForm }) {
 
   return (
     <>
-      <p className="flex gap-[2px] hover:font-bold cursor-pointer">
+      <p className="flex cursor-pointer gap-[2px] hover:font-bold">
         # <span className="font-Lato"> Hashtag</span>
       </p>
-      <div className="absolute bg-white shadow z-10 text-black flex-col rounded overflow-hidden divide-y hidden group-hover:flex">
+      <div className="absolute z-10 hidden flex-col divide-y overflow-hidden rounded bg-white text-black shadow group-hover:flex">
         {properties.isLoading ? (
-          <p className="h-10 w-[15ch] text-center pt-3">Loading</p>
+          <p className="h-10 w-[15ch] pt-3 text-center">Loading</p>
         ) : (
           hashtags.map((tag) => {
             const checked = form.hashtags.includes(tag)
@@ -451,7 +454,7 @@ function HashTagsDropdown({ form, setForm }) {
               <button
                 key={tag}
                 type="button"
-                className={`text-left px-4 py-1 ${checked ? 'bg-translucent' : ''}`}
+                className={`px-4 py-1 text-left ${checked ? 'bg-translucent' : ''}`}
                 onClick={() => {
                   setForm((prev) => {
                     const checked = prev.hashtags.includes(tag)

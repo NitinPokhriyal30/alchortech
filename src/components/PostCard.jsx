@@ -56,13 +56,12 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
   const [form, setForm] = React.useState({ image: '', gif: '', message: '' })
   const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
   const addedPoints = post.sender.find((x) => x.id === me.id)?.points
-  // const [hasAddedPoints, setHasAddedPoints] = React.useState(0)
 
-  const [, setHasAddedPoints] = React.useState(0)
   post.reactions = []
   post.comment = { replies: [] }
 
   const isMyPost = post.sender.find((user) => user.id === me.data.id)
+  const amIReceiver = post.recipients.find((user) => user.id === me.data.id)
   const hasAddedPoints =
     childrenTransactions.find((post) => post.sender.find((user) => user.id === me.data.id))
       ?.point || 0
@@ -147,7 +146,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
 
         <div>
           <div className="mt-2.5 flex items-center gap-2">
-            {isMyPost ? null : hasAddedPoints != 0 ? (
+            {isMyPost || amIReceiver ? null : hasAddedPoints != 0 ? (
               <div>
                 <p className="p-2 font-Lato text-[16px] text-primary">
                   You Added {hasAddedPoints} Points!
@@ -181,7 +180,6 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                           console.log(error)
                           toast.error('Server Error')
                         }
-                        setHasAddedPoints(points)
                       }}
                     >
                       +{points}
