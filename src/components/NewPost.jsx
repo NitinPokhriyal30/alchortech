@@ -188,6 +188,13 @@ export default function NewPost({ ...props }) {
               type="file"
               accept="image/*"
               onChange={(ev) => {
+                if (!ev.target.files[0]) return
+
+                if (ev.target.files[0].size > 1572864) {
+                  toast.error('Image file large than 1.5MB')
+                  return
+                }
+
                 setForm((prev) => ({
                   ...prev,
                   image: ev.target.files[0],
