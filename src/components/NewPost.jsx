@@ -1,30 +1,23 @@
-import { store } from '../redux/store'
+import { api } from '@/api'
+import ToolTip from '@/components/ToolTip'
+import { queryClient } from '@/queryClient'
+import { getTodayDate } from '@/utils'
 import {
-  AttachFile,
   Close,
   EmojiEmotions,
   GifBox,
-  GifBoxOutlined,
-  GifOutlined,
   Image,
-  Link,
+  Link
 } from '@mui/icons-material'
-import { Portal, TextField } from '@mui/material'
-import EmojiPicker from 'emoji-picker-react'
-import * as React from 'react'
-import PostUser from '../assets/images/post-img/post-user.png'
-import GifPicker from './GifPickerPopover'
-import HoveringWidget from '@/components/HoveringWidget'
-import * as Popover from '@radix-ui/react-popover'
 import * as HoverCard from '@radix-ui/react-hover-card'
-import ToolTip from '@/components/ToolTip'
+import * as Popover from '@radix-ui/react-popover'
+import EmojiPicker from 'emoji-picker-react'
+import Cookies from 'js-cookie'
+import * as React from 'react'
 import { RxCross2 } from 'react-icons/rx'
 import { useQuery } from 'react-query'
-import { api } from '@/api'
-import Cookies from 'js-cookie'
-import { queryClient } from '@/queryClient'
 import { toast } from 'react-toastify'
-import { getTodayDate } from '@/utils'
+import GifPicker from './GifPickerPopover'
 
 const MAX_IMAGE_SIZE_MB = 3.1
 export default function NewPost({ ...props }) {
@@ -295,7 +288,7 @@ export default function NewPost({ ...props }) {
   )
 }
 
-function AddLinkPopup({ onChange }) {
+export function AddLinkPopup({ onChange }) {
   return (
     <div className="w-screen max-w-xs rounded-md border border-[#00bc9f] bg-white p-2 pt-1">
       <p className="flex items-center justify-between text-18px text-gray-500">
@@ -318,7 +311,7 @@ function AddLinkPopup({ onChange }) {
   )
 }
 
-function PointsRangeDialog({ form, setForm }) {
+export function PointsRangeDialog({ form, setForm }) {
   const properties = useQuery('properties', () => api.properties())
   const points_range = properties.data?.points_range
 
@@ -364,7 +357,7 @@ function PointsRangeDialog({ form, setForm }) {
   )
 }
 
-function RecipientsDropdown({ form, setForm }) {
+export function RecipientsDropdown({ form, setForm }) {
   const users = useQuery('users', () => api.users.profiles(), { initialData: [] })
   const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
 
@@ -436,7 +429,7 @@ function RecipientsDropdown({ form, setForm }) {
   )
 }
 
-function HashTagsDropdown({ form, setForm }) {
+export function HashTagsDropdown({ form, setForm }) {
   const properties = useQuery('properties', () => api.properties())
 
   const hashtags = properties.data?.hashtage
@@ -480,7 +473,7 @@ function HashTagsDropdown({ form, setForm }) {
   )
 }
 
-function toFormData(data) {
+export function toFormData(data) {
   const formData = new FormData()
   Object.entries(data).forEach(([key, value]) => {
     let _value = value
