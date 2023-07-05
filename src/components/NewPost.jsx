@@ -26,12 +26,7 @@ import { queryClient } from '@/queryClient'
 import { toast } from 'react-toastify'
 import { getTodayDate } from '@/utils'
 
-const me = {
-  id: 101,
-  firstName: 'Semad',
-  lastName: 'Javed',
-  img: PostUser,
-}
+const MAX_IMAGE_SIZE_MB = 3.1
 export default function NewPost({ ...props }) {
   const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
   const [loading, setLoading] = React.useState(false)
@@ -190,7 +185,7 @@ export default function NewPost({ ...props }) {
               onChange={(ev) => {
                 if (!ev.target.files[0]) return
 
-                if (ev.target.files[0].size > 1572864) {
+                if (ev.target.files[0].size / 1024 / 1024 > MAX_IMAGE_SIZE_MB) {
                   toast.error('Image file large than 1.5MB')
                   return
                 }
