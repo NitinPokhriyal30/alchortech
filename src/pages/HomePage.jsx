@@ -47,7 +47,7 @@ export default function HomePage() {
         <div>
           <ImageSlider />
         </div>
-        <div className="relative z-20 mt-3">
+        <div className="xrelative z-20 mt-3">
           <NewPost />
         </div>
         <div className="mt-1">

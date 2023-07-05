@@ -2,13 +2,7 @@ import { api } from '@/api'
 import ToolTip from '@/components/ToolTip'
 import { queryClient } from '@/queryClient'
 import { getTodayDate } from '@/utils'
-import {
-  Close,
-  EmojiEmotions,
-  GifBox,
-  Image,
-  Link
-} from '@mui/icons-material'
+import { Close, EmojiEmotions, GifBox, Image, Link } from '@mui/icons-material'
 import * as HoverCard from '@radix-ui/react-hover-card'
 import * as Popover from '@radix-ui/react-popover'
 import EmojiPicker from 'emoji-picker-react'
@@ -18,11 +12,15 @@ import { RxCross2 } from 'react-icons/rx'
 import { useQuery } from 'react-query'
 import { toast } from 'react-toastify'
 import GifPicker from './GifPickerPopover'
+import { Dialog } from '@radix-ui/react-dialog'
+import Cropper from '@/components/Cropper'
+import UserImg from '@/assets/images/user-profile/pp.png'
 
 const MAX_IMAGE_SIZE_MB = 3.1
 export default function NewPost({ ...props }) {
   const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
   const [loading, setLoading] = React.useState(false)
+  const [processedImage, setProcessedImage] = React.useState('')
 
   const [form, setForm] = React.useState({
     point: 30,
@@ -34,257 +32,269 @@ export default function NewPost({ ...props }) {
     message: '',
   })
 
-  const user = {
-    points: 260,
-  }
   return (
-    <div>
-      <div className="rounded-t-lg  bg-primary px-6 py-2 text-sm text-white">
-        <ul className="flex flex-wrap items-center gap-y-3 divide-x divide-primary-400 first:pl-0 child:pl-4">
-          {/* points button */}
-
-          <li className="group pr-4">
-            <PointsRangeDialog {...{ form, setForm }} />
-          </li>
-
-          <li className="group pr-4">
-            <RecipientsDropdown {...{ form, setForm }} />
-          </li>
-
-          <li className="group pr-4">
-            <HashTagsDropdown {...{ form, setForm }} />
-          </li>
-
-          <li className="flex-grow" />
-
-          <li style={{ borderWidth: 0 }} className="basis-full md:flex-shrink md:basis-auto">
-            <HoverCard.Root>
-              <p className="flex cursor-pointer items-center font-Lato leading-4">
-                You Have {me.data.allowance_boost} points to give
-                <HoverCard.Trigger className="ml-2 inline-flex h-4 w-4 items-center justify-center rounded-full bg-white text-black">
-                  <span>?</span>
-                </HoverCard.Trigger>
-              </p>
-
-              <HoverCard.Portal>
-                <HoverCard.Content className="z-20 w-screen max-w-xs rounded bg-white p-2 shadow">
-                  <HoverCard.Arrow className="fill-white" />
-                  You monthly allowance will refresh on 1st March. You have 6 days to spend 160
-                  points.
-                </HoverCard.Content>
-              </HoverCard.Portal>
-            </HoverCard.Root>
-          </li>
-        </ul>
+    <>
+      <div className="z-[999]">
+        {processedImage && (
+          <Cropper
+            imageFile={processedImage}
+            onClose={(image) => {
+              setProcessedImage('')
+              setForm((prev) => ({ ...prev, image }))
+            }}
+          />
+        )}
       </div>
 
-      {/* text field */}
+      <div>
+        <div className="rounded-t-lg  bg-primary px-6 py-2 text-sm text-white">
+          <ul className="flex flex-wrap items-center gap-y-3 divide-x divide-primary-400 first:pl-0 child:pl-4">
+            {/* points button */}
 
-      <div className="_px-6 rounded-b-lg bg-white py-6 text-gray-400 drop-shadow-normal">
-        <div className="px-6">
-          +{form.point}{' '}
-          {form.recipients.map((user) => (
-            <span key={user.id}>
-              @{user.first_name} {user.last_name}
-            </span>
-          ))}{' '}
-          {form.hashtags.map((tag) => (
-            <span key={tag}>{tag}</span>
-          ))}
+            <li className="group pr-4">
+              <PointsRangeDialog {...{ form, setForm }} />
+            </li>
+
+            <li className="group pr-4">
+              <RecipientsDropdown {...{ form, setForm }} />
+            </li>
+
+            <li className="group pr-4">
+              <HashTagsDropdown {...{ form, setForm }} />
+            </li>
+
+            <li className="flex-grow" />
+
+            <li style={{ borderWidth: 0 }} className="basis-full md:flex-shrink md:basis-auto">
+              <HoverCard.Root>
+                <p className="flex cursor-pointer items-center font-Lato leading-4">
+                  You Have {me.data.allowance_boost} points to give
+                  <HoverCard.Trigger className="ml-2 inline-flex h-4 w-4 items-center justify-center rounded-full bg-white text-black">
+                    <span>?</span>
+                  </HoverCard.Trigger>
+                </p>
+
+                <HoverCard.Portal>
+                  <HoverCard.Content className="z-20 w-screen max-w-xs rounded bg-white p-2 shadow">
+                    <HoverCard.Arrow className="fill-white" />
+                    You monthly allowance will refresh on 1st March. You have 6 days to spend 160
+                    points.
+                  </HoverCard.Content>
+                </HoverCard.Portal>
+              </HoverCard.Root>
+            </li>
+          </ul>
         </div>
 
-        <div className="border-b px-6 focus-within:border-b focus-within:border-primary">
-          <textarea
-            spellCheck={false}
-            className="block h-20 w-full resize-none outline-none  transition-all"
-            placeholder="Type Here..."
-            onChange={(ev) =>
-              setForm((prev) => ({ ...prev, message: ev.target.value.substring(0, 270) }))
-            }
-            value={form.message}
-          ></textarea>
+        {/* text field */}
 
-          {form.image && (
-            <div>
-              <img
-                src={URL.createObjectURL(form.image)}
-                key={form.image}
-                className="mt-4 w-40 border"
-              />
-            </div>
-          )}
+        <div className="_px-6 rounded-b-lg bg-white py-6 text-gray-400 drop-shadow-normal">
+          <div className="px-6">
+            +{form.point}{' '}
+            {form.recipients.map((user) => (
+              <span key={user.id}>
+                @{user.first_name} {user.last_name}
+              </span>
+            ))}{' '}
+            {form.hashtags.map((tag) => (
+              <span key={tag}>{tag}</span>
+            ))}
+          </div>
 
-          {form.gif && (
-            <div>
-              <div className="group flex items-center pb-2">
-                <img src={form.gif} key={form.image} className="mt-4 w-40 border" />
+          <div className="border-b px-6 focus-within:border-b focus-within:border-primary">
+            <textarea
+              spellCheck={false}
+              className="block h-20 w-full resize-none outline-none  transition-all"
+              placeholder="Type Here..."
+              onChange={(ev) =>
+                setForm((prev) => ({ ...prev, message: ev.target.value.substring(0, 270) }))
+              }
+              value={form.message}
+            ></textarea>
 
-                <button
-                  className="ml-4 hidden group-hover:inline-block"
-                  onClick={() => setForm((prev) => ({ ...prev, gif: '' }))}
-                >
-                  <Close fontSize="10" />
-                </button>
-              </div>
-            </div>
-          )}
-
-          {form.link && (
-            <div>
-              <p>URL Link:</p>
-
-              <div className="group flex items-center">
-                <a className="text-primary underline" href={form.link}>
-                  {form.link}
-                </a>
-                <button
-                  className="ml-4 hidden group-hover:inline-block"
-                  onClick={() => setForm((prev) => ({ ...prev, link: '' }))}
-                >
-                  <Close fontSize="10" />
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* footer */}
-        <div id="new-post-footer" className="flex items-baseline gap-4 px-6 pt-3">
-          <Popover.Root>
-            <Popover.Trigger className="group relative inline-block cursor-pointer text-iconColor">
-              <EmojiEmotions />
-              <ToolTip title="Add an emoji" />
-            </Popover.Trigger>
-
-            <Popover.Portal>
-              <Popover.Content className="z-20">
-                <EmojiPicker
-                  onEmojiClick={(emoji) => {
-                    setForm((prev) => ({ ...prev, message: prev.message + emoji.emoji }))
-                  }}
+            {form.image && (
+              <div>
+                <img
+                  src={URL.createObjectURL(form.image)}
+                  key={form.image}
+                  className="mt-4 w-40 border"
                 />
-              </Popover.Content>
-            </Popover.Portal>
-          </Popover.Root>
+              </div>
+            )}
 
-          <label className="group relative inline-block cursor-pointer text-iconColor">
-            <Image />
-            <ToolTip title="Add an image" />
+            {form.gif && (
+              <div>
+                <div className="group flex items-center pb-2">
+                  <img src={form.gif} key={form.image} className="mt-4 w-40 border" />
 
-            <input
-              hidden
-              type="file"
-              accept="image/*"
-              onChange={(ev) => {
-                if (!ev.target.files[0]) return
+                  <button
+                    className="ml-4 hidden group-hover:inline-block"
+                    onClick={() => setForm((prev) => ({ ...prev, gif: '' }))}
+                  >
+                    <Close fontSize="10" />
+                  </button>
+                </div>
+              </div>
+            )}
 
-                if (ev.target.files[0].size / 1024 / 1024 > MAX_IMAGE_SIZE_MB) {
-                  toast.error('Image file large than 1.5MB')
+            {form.link && (
+              <div>
+                <p>URL Link:</p>
+
+                <div className="group flex items-center">
+                  <a className="text-primary underline" href={form.link}>
+                    {form.link}
+                  </a>
+                  <button
+                    className="ml-4 hidden group-hover:inline-block"
+                    onClick={() => setForm((prev) => ({ ...prev, link: '' }))}
+                  >
+                    <Close fontSize="10" />
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* footer */}
+          <div id="new-post-footer" className="flex items-baseline gap-4 px-6 pt-3">
+            <Popover.Root>
+              <Popover.Trigger className="group relative inline-block cursor-pointer text-iconColor">
+                <EmojiEmotions />
+                <ToolTip title="Add an emoji" />
+              </Popover.Trigger>
+
+              <Popover.Portal>
+                <Popover.Content className="z-20">
+                  <EmojiPicker
+                    onEmojiClick={(emoji) => {
+                      setForm((prev) => ({ ...prev, message: prev.message + emoji.emoji }))
+                    }}
+                  />
+                </Popover.Content>
+              </Popover.Portal>
+            </Popover.Root>
+
+            <label className="group relative inline-block cursor-pointer text-iconColor">
+              <Image />
+              <ToolTip title="Add an image" />
+
+              <input
+                hidden
+                type="file"
+                accept="image/*"
+                onChange={(ev) => {
+                  if (!ev.target.files[0]) return
+
+                  if (ev.target.files[0].size / 1024 / 1024 > MAX_IMAGE_SIZE_MB) {
+                    toast.error('Image file large than 1.5MB')
+                    return
+                  }
+
+                  setProcessedImage(ev.target.files[0])
+                  // setForm((prev) => ({
+                  //   ...prev,
+                  //   image: ev.target.files[0],
+                  // }))
+                }}
+              />
+            </label>
+
+            <Popover.Root>
+              <Popover.Trigger className="group relative inline-block text-iconColor">
+                <GifBox />
+
+                <ToolTip title="Add a gif" />
+              </Popover.Trigger>
+
+              <GifPicker
+                onClick={(url) => {
+                  setForm((prev) => ({ ...prev, gif: url }))
+                }}
+              />
+            </Popover.Root>
+
+            <Popover.Root>
+              <Popover.Trigger className="group relative inline-block cursor-pointer text-iconColor">
+                <Link />
+                <ToolTip title="Add a link" />
+              </Popover.Trigger>
+
+              <Popover.Portal>
+                <Popover.Content className=" z-50">
+                  <AddLinkPopup
+                    onChange={(link) =>
+                      setForm((prev) => {
+                        console.log(link)
+                        return { ...prev, link }
+                      })
+                    }
+                  />
+                </Popover.Content>
+              </Popover.Portal>
+            </Popover.Root>
+
+            <button
+              disabled={loading}
+              type="submit"
+              className=" ml-auto w-full max-w-[6rem] rounded-sm bg-primary px-4 py-1 font-Lato text-white disabled:bg-opacity-80"
+              onClick={async () => {
+                if (form.recipients.length === 0) {
+                  toast.error('Add atleast one recipient')
+                  return
+                }
+                if (form.hashtags.length === 0) {
+                  toast.error('Add atleast one hashtag')
+                  return
+                }
+                if (form.message.length === 0) {
+                  toast.error('Add a message')
                   return
                 }
 
-                setForm((prev) => ({
-                  ...prev,
-                  image: ev.target.files[0],
-                }))
+                const today = getTodayDate()
+
+                const data = {
+                  sender: [me.data],
+                  active: true,
+                  flag_transaction: false,
+                  react_by: {},
+                  created_by: me.data.id,
+                  updated_by: me.data.id,
+                  created: today,
+                  updated: today,
+                  ...form,
+                }
+
+                const formData = toFormData(data)
+                try {
+                  setLoading(true)
+                  await api.transactions.new(formData)
+                  await queryClient.refetchQueries('transactions')
+                  await queryClient.refetchQueries('me')
+
+                  setForm({
+                    point: 30,
+                    recipients: [],
+                    hashtags: [],
+                    image: '',
+                    gif: '',
+                    link: '',
+                    message: '',
+                  })
+                } catch {
+                  toast.error('Transaction failed. Server error')
+                } finally {
+                  setLoading(false)
+                }
               }}
-            />
-          </label>
-
-          <Popover.Root>
-            <Popover.Trigger className="group relative inline-block text-iconColor">
-              <GifBox />
-
-              <ToolTip title="Add a gif" />
-            </Popover.Trigger>
-
-            <GifPicker
-              onClick={(url) => {
-                setForm((prev) => ({ ...prev, gif: url }))
-              }}
-            />
-          </Popover.Root>
-
-          <Popover.Root>
-            <Popover.Trigger className="group relative inline-block cursor-pointer text-iconColor">
-              <Link />
-              <ToolTip title="Add a link" />
-            </Popover.Trigger>
-
-            <Popover.Portal>
-              <Popover.Content className=" z-50">
-                <AddLinkPopup
-                  onChange={(link) =>
-                    setForm((prev) => {
-                      console.log(link)
-                      return { ...prev, link }
-                    })
-                  }
-                />
-              </Popover.Content>
-            </Popover.Portal>
-          </Popover.Root>
-
-          <button
-            disabled={loading}
-            type="submit"
-            className=" ml-auto w-full max-w-[6rem] rounded-sm bg-primary px-4 py-1 font-Lato text-white disabled:bg-opacity-80"
-            onClick={async () => {
-              if (form.recipients.length === 0) {
-                toast.error('Add atleast one recipient')
-                return
-              }
-              if (form.hashtags.length === 0) {
-                toast.error('Add atleast one hashtag')
-                return
-              }
-              if (form.message.length === 0) {
-                toast.error('Add a message')
-                return
-              }
-
-              const today = getTodayDate()
-
-              const data = {
-                sender: [me.data],
-                active: true,
-                flag_transaction: false,
-                react_by: {},
-                created_by: me.data.id,
-                updated_by: me.data.id,
-                created: today,
-                updated: today,
-                ...form,
-              }
-
-              const formData = toFormData(data)
-              try {
-                setLoading(true)
-                await api.transactions.new(formData)
-                await queryClient.refetchQueries('transactions')
-                await queryClient.refetchQueries('me')
-
-                setForm({
-                  point: 30,
-                  recipients: [],
-                  hashtags: [],
-                  image: '',
-                  gif: '',
-                  link: '',
-                  message: '',
-                })
-              } catch {
-                toast.error('Transaction failed. Server error')
-              } finally {
-                setLoading(false)
-              }
-            }}
-          >
-            {loading === true ? <>&middot; &middot; &middot;</> : 'Give'}
-          </button>
+            >
+              {loading === true ? <>&middot; &middot; &middot;</> : 'Give'}
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 
@@ -478,7 +488,8 @@ export function toFormData(data) {
   Object.entries(data).forEach(([key, value]) => {
     let _value = value
     // stringify only if value is array, object but not image File
-    if (typeof value == 'object' && !(value instanceof File)) _value = JSON.stringify(value)
+    if (typeof value == 'object' && !(value instanceof File || value instanceof Blob))
+      _value = JSON.stringify(value)
 
     formData.set(key, _value)
   })

@@ -410,6 +410,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
           />
         ))}
 
+        {/* Child Transactions */}
         {showCommentsFor === '' && (
           <div>
             {childrenTransactions.map((post) => (
@@ -418,6 +419,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                   className="h-8.5 w-8.5 rounded-full object-cover"
                   src={SERVER_URL + post.sender[0].avtar}
                 />
+
                 <div className="relative ">
                   <span className="absolute -translate-x-1/2 border-[1rem] border-transparent border-t-paper" />
 
@@ -429,6 +431,21 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                       </span>
                       <span className="ml-2">{post.message}</span>
                     </p>
+
+                    {post.image || post.gif ? (
+                      <div className="mt-6 space-y-6">
+                        {post.image && <img className='w-32' src={post.image} />}
+                        {post.gif && <img src={post.gif} />}
+                      </div>
+                    ) : null}
+
+                    {post.link ? (
+                      <div className="mt-6 space-y-6">
+                        Attached Link: <a className="underline text-blue-500" href={post.link}>
+                          {post.link}
+                        </a>
+                      </div>
+                    ) : null}
                   </div>
                 </div>
               </div>
