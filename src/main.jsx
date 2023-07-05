@@ -4,11 +4,15 @@ import './index.css'
 
 import { Provider } from 'react-redux'
 import {
+  BrowserRouter,
   createBrowserRouter,
   createRoutesFromElements,
+  Navigate,
   Outlet,
   Route,
+  Router,
   RouterProvider,
+  Routes,
 } from 'react-router-dom'
 import AdminNavbar from './components/AdminNavbar'
 import HomePage from './pages/HomePage'
@@ -27,7 +31,7 @@ import ManageUsers from './components/AdminPanel/ManageUsers'
 import Earnings from './components/AdminPanel/Earnings'
 import MyProfile from './components/MyProfile'
 import ProtectedRoute from '@/components/ProtectedRoute'
-import { QueryClientProvider, useQueryClient } from 'react-query'
+import { QueryClientProvider, useQuery, useQueryClient } from 'react-query'
 import { queryClient } from '@/queryClient'
 import { ToastContainer } from 'react-toastify'
 import Cookies from 'js-cookie'
@@ -41,15 +45,13 @@ const router = createBrowserRouter(
       <Route
         path="/"
         element={
-          <ProtectedRoute>
-            <main className="bg-paper">
-              <MainNavbar />
-              <div className="mx-auto grid w-full max-w-[1440px] grid-cols-[1fr] pl-0 pt-nav md:grid-cols-smallDevice md:pl-9 md:pr-[39px] lg:grid-cols-mediumDevice">
-                <HomeSidebar />
-                <Outlet />
-              </div>
-            </main>
-          </ProtectedRoute>
+          <main className="bg-paper">
+            <MainNavbar />
+            <div className="mx-auto grid w-full max-w-[1440px] grid-cols-[1fr] pl-0 pt-nav md:grid-cols-smallDevice md:pl-9 md:pr-[39px] lg:grid-cols-mediumDevice">
+              <HomeSidebar />
+              <Outlet />
+            </div>
+          </main>
         }
       >
         <Route index element={<HomePage />} />
@@ -77,6 +79,15 @@ const router = createBrowserRouter(
   )
 )
 
+const unauthRoutes = createBrowserRouter(
+  createRoutesFromElements(
+    <>
+      <Route path="/login" element={<Login />} />
+      <Route path="*" element={<Navigate to="/login" />} />
+    </>
+  )
+)
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <Provider store={store}>
     <QueryClientProvider client={queryClient}>
@@ -88,22 +99,26 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   </Provider>
 )
 
+// react easy crop
 function GetUserFromCookies({ children }) {
   const user_id = Cookies.get('user_id')
-  const [, rerender] = useReducer((p) => ++p, 0)
-
-  const me = queryClient.getQueryData('me')
-  if (user_id && me == null) {
-    queryClient
-      .fetchQuery('me', () => api.auth.me(user_id))
-      .then(() => rerender())
-      .catch(() => {
-        Cookies.remove('user_id')
+  const me = useQuery(
+    'me',
+    () => {
+      if (!user_id) return undefined
+      return api.auth.me(user_id)
+    },
+    {
+      onError: () => {
         Cookies.remove('token')
-        rerender()
-      })
-    return null
+        Cookies.remove('user_id')
+      },
+    }
+  )
+
+  if (user_id && me.isLoading) {
+    return 'Loading'
   }
 
-  return children
+  return <RouterProvider router={me.data ? router : unauthRoutes} />
 }

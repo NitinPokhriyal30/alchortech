@@ -13,8 +13,7 @@ import { RiLoader2Line } from 'react-icons/ri'
 import { queryClient } from '@/queryClient'
 
 const Login = () => {
-  const { isLoading, loggedIn } = useSelector((store) => store.user)
-  const dispatch = useDispatch()
+  const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
 
   const handleLogin = async (event) => {
@@ -22,43 +21,38 @@ const Login = () => {
     const email = event.target.email.value
     const password = event.target.password.value
     try {
-      // const response = await axios.post('http://backend.letshigh5.com/login/', {
-      //   email,
-      //   password
-      // });
-
-      dispatch({ type: 'user/login' })
+      setIsLoading(true)
       const { token, id } = await api.auth.login({ email, password })
       Cookies.set('token', token)
       Cookies.set('user_id', id)
       await queryClient.fetchQuery('me', () => api.auth.me(id))
-      dispatch({ type: 'user/login_done', token })
       navigate('/', { replace: true })
     } catch (error) {
-      dispatch({ type: 'user/login_fail', error })
       console.log(error)
       toast.error('Invalid Email Id or Password!')
       event.target.email.value = ''
       event.target.password.value = ''
+    } finally {
+      setIsLoading(false)
     }
   }
 
   return (
-    <div className="flex overflow-hidden justify-center md:justify-start items-center h-screen w-full bg-gray-100">
-      <div className="hidden pt-18 mt-10 w-full md:block relative">
-        <img className="object-fill  ml-[-8px]" src={LoginBackground} alt="login-background" />
-        <img className="absolute top-6 left-6" src={AlcorLogo} alt="alcor-logo" />
+    <div className="flex h-screen w-full items-center justify-center overflow-hidden bg-gray-100 md:justify-start">
+      <div className="pt-18 relative mt-10 hidden w-full md:block">
+        <img className="ml-[-8px]  object-fill" src={LoginBackground} alt="login-background" />
+        <img className="absolute left-6 top-6" src={AlcorLogo} alt="alcor-logo" />
       </div>
 
       <div
-        className="opacity-1 bg-repeat-y bg-[url('assets/images/login-signup/LoginSvg.svg')]"
+        className="opacity-1 bg-[url('assets/images/login-signup/LoginSvg.svg')] bg-repeat-y"
         style={{ height: '100%' }}
       >
         <div className="mx-24 mt-40">
           <div>
-            <img className="ml-16 mr-6 my-6" src={High5Logo} alt="high5-log" />
+            <img className="my-6 ml-16 mr-6" src={High5Logo} alt="high5-log" />
           </div>
-          <div className="bg-white rounded-lg drop-shadow-lg p-6 w-80 h-auto ">
+          <div className="h-auto w-80 rounded-lg bg-white p-6 drop-shadow-lg ">
             <form className="space-y-4" autoComplete="off" onSubmit={handleLogin}>
               <input
                 type="email"
@@ -66,7 +60,7 @@ const Login = () => {
                 name="email"
                 placeholder="Email Id"
                 required
-                className="text-[16px] font-Lato text-[#ACACAC] border-b-2 border-gray-300 p-2 w-full focus:outline-none placeholder-opacity-50"
+                className="w-full border-b-2 border-gray-300 p-2 font-Lato text-[16px] text-[#ACACAC] placeholder-opacity-50 focus:outline-none"
               />
 
               <input
@@ -75,27 +69,27 @@ const Login = () => {
                 name="password"
                 placeholder="Password"
                 required
-                className="text-[16px] font-Lato text-[#ACACAC] border-b-2 border-gray-300 p-2 w-full focus:outline-none placeholder-opacity-50"
+                className="w-full border-b-2 border-gray-300 p-2 font-Lato text-[16px] text-[#ACACAC] placeholder-opacity-50 focus:outline-none"
               />
 
               <div className="flex justify-between">
-                <span className="text-[12px] font-Lato text-[#ACACAC]">
+                <span className="font-Lato text-[12px] text-[#ACACAC]">
                   <input type="checkbox" id="rememberMe" className="mr-1" />
                   <label htmlFor="rememberMe" className="text-sm">
                     Remember me
                   </label>
                 </span>
-                <span className="text-[12px] font-Lato text-[#5486E3]">
+                <span className="font-Lato text-[12px] text-[#5486E3]">
                   <Link to="/forgot/password">Forgot Password?</Link>
                 </span>
               </div>
               <div>
                 <button
                   type="submit"
-                  className="relative w-full mt-8 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-8 rounded-md"
+                  className="relative mt-8 w-full rounded-md bg-blue-500 px-8 py-2 font-medium text-white hover:bg-blue-600"
                 >
                   {isLoading ? (
-                    <span className="bg-inherit absolute inset-0 grid place-items-center rounded-[inherit]">
+                    <span className="absolute inset-0 grid place-items-center rounded-[inherit] bg-inherit">
                       <RiLoader2Line className="animate-[spin_1.5s_infinite_linear]" />
                     </span>
                   ) : null}
