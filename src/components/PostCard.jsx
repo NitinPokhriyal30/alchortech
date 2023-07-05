@@ -26,6 +26,7 @@ import Cookies from 'js-cookie'
 import { useQuery } from 'react-query'
 import { getTodayDate } from '@/utils'
 import { queryClient } from '@/queryClient'
+import ChildNewPost from '@/components/ChildNewPost'
 
 const POINTS = [
   {
@@ -53,6 +54,7 @@ const POINTS = [
 const PostCard = ({ post, childrenTransactions, ...props }) => {
   const [showCommentsFor, setShowCommentsFor] = React.useState('')
   const [modal, setModal] = React.useState('')
+  const [point, setPoint] = React.useState(30)
   const [form, setForm] = React.useState({ image: '', gif: '', message: '' })
   const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
   const addedPoints = post.sender.find((x) => x.id === me.id)?.points
@@ -146,7 +148,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
 
         <div>
           <div className="mt-2.5 flex items-center gap-2">
-            {isMyPost || amIReceiver ? null : hasAddedPoints != 0 ? (
+            {isMyPost ? null : hasAddedPoints != 0 ? (
               <div>
                 <p className="p-2 font-Lato text-[16px] text-primary">
                   You Added {hasAddedPoints} Points!
@@ -159,28 +161,34 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                   Add Points
                 </button>
 
-                <div className="absolute bottom-10 left-0 hidden gap-1 rounded-[19px] bg-white px-4 py-2 drop-shadow-[0px_2px_3px_#00000029] hover:flex peer-hover:flex">
+                <div className="absolute bottom-8 left-0 hidden gap-1 rounded-[19px] bg-white px-4 py-2 drop-shadow-[0px_2px_3px_#00000029] hover:flex peer-hover:flex">
                   {POINTS.map(({ points, color }) => (
                     <button
                       key={points}
                       style={{ color: color }}
                       className={`h-8 w-8 rounded-full font-Lato text-sm font-black hover:bg-translucent`}
-                      onClick={async () => {
-                        const { id, image, ...data } = post
-                        data.sender = [me.data]
-                        data.point = points
-                        data.parent_id = post.id
-
-                        const formData = toFormData(data)
-                        try {
-                          // setLoading(true)
-                          await api.transactions.new(formData)
-                          await queryClient.refetchQueries('transactions')
-                        } catch (error) {
-                          console.log(error)
-                          toast.error('Server Error')
+                      onClick={
+                        () => {
+                          setPoint(points)
+                          setModal('child-new-post')
                         }
-                      }}
+                        //   async () => {
+                        //   const { id, image, ...data } = post
+                        //   data.sender = [me.data]
+                        //   data.point = points
+                        //   data.parent_id = post.id
+
+                        //   const formData = toFormData(data)
+                        //   try {
+                        //     // setLoading(true)
+                        //     await api.transactions.new(formData)
+                        //     await queryClient.refetchQueries('transactions')
+                        //   } catch (error) {
+                        //     console.log(error)
+                        //     toast.error('Server Error')
+                        //   }
+                        // }
+                      }
                     >
                       +{points}
                     </button>
@@ -401,6 +409,39 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
             addReaction={addCommentReaction}
           />
         ))}
+
+        <div>
+          {childrenTransactions.map((post) => (
+            <div className="grid grid-cols-[auto_1fr] gap-4 p-4">
+              <img
+                className="h-8.5 w-8.5 rounded-full object-cover"
+                src={SERVER_URL + post.sender[0].avtar}
+              />
+              <div className="relative ">
+                <span className="absolute -translate-x-1/2 border-[1rem] border-transparent border-t-paper" />
+
+                <div className="rounded-md rounded-tl-none bg-paper p-2">
+                  <p>{post.sender[0].first_name}</p>
+                  <p className="">
+                    <span className="rounded-full bg-primary inline-block py-1 px-2 text-white">+{post.point} </span>
+                    <span className="ml-2">{post.message}</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {modal === 'child-new-post' && (
+          <>
+            <ChildNewPost
+              key={point}
+              post={post}
+              defaultPoint={point}
+              onClose={() => setModal('')}
+            />
+          </>
+        )}
       </div>
     </div>
   )
