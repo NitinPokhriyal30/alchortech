@@ -11,6 +11,7 @@ import { api } from '../../api'
 import { useSelector, useDispatch } from 'react-redux'
 import { RiLoader2Line } from 'react-icons/ri'
 import { queryClient } from '@/queryClient'
+import Spinner from '@/components/Spinner'
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false)
@@ -88,11 +89,7 @@ const Login = () => {
                   type="submit"
                   className="relative mt-8 w-full rounded-md bg-blue-500 px-8 py-2 font-medium text-white hover:bg-blue-600"
                 >
-                  {isLoading ? (
-                    <span className="absolute inset-0 grid place-items-center rounded-[inherit] bg-inherit">
-                      <RiLoader2Line className="animate-[spin_1.5s_infinite_linear]" />
-                    </span>
-                  ) : null}
+                  <Spinner isLoading={isLoading} />
                   Login
                 </button>
               </div>

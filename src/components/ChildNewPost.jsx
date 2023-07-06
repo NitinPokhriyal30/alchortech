@@ -1,23 +1,37 @@
 import { api } from '@/api'
 import Cropper from '@/components/Cropper'
-import {
-  AddLinkBox,
-  HashTagsDropdown,
-  PointsRangeDialog,
-  toFormData
-} from '@/components/NewPost'
+import { AddLinkBox, HashTagsDropdown, PointsRangeDialog, toFormData } from '@/components/NewPost'
 import ToolTip from '@/components/ToolTip'
 import { MAX_IMAGE_SIZE_MB } from '@/constant'
 import { queryClient } from '@/queryClient'
 import { CreatePost } from '@/utils'
 import { Close, EmojiEmotions, GifBox, Image, Link } from '@mui/icons-material'
-import * as Popover from '@radix-ui/react-popover'
-import EmojiPicker from 'emoji-picker-react'
 import Cookies from 'js-cookie'
 import * as React from 'react'
 import { useQuery } from 'react-query'
 import { toast } from 'react-toastify'
 import { GifPickerBox } from './GifPickerPopover'
+import EmojiPickerBox from '@/components/EmojiPickerBox'
+import ImagePickerBox from '@/components/ImagePickerBox'
+import Spinner from '@/components/Spinner'
+
+function validateNewPostForm(form) {
+  let isValid = true
+  if (form.recipients.length === 0) {
+    toast.error('Add atleast one recipient')
+    isValid = false
+  }
+  if (form.hashtags.length === 0) {
+    toast.error('Add atleast one hashtag')
+
+    isValid = false
+  }
+  if (form.message.length === 0) {
+    toast.error('Add a message')
+    isValid = false
+  }
+  return isValid
+}
 
 export default function ChildNewPost({ onClose, post, defaultPoint }) {
   const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
@@ -132,43 +146,17 @@ export default function ChildNewPost({ onClose, post, defaultPoint }) {
 
           {/* footer */}
           <div id="new-post-footer" className="flex items-baseline gap-4 px-6 pt-3">
-            <Popover.Root>
-              <Popover.Trigger className="group relative inline-block cursor-pointer text-iconColor">
-                <EmojiEmotions />
-                <ToolTip title="Add an emoji" />
-              </Popover.Trigger>
+            <EmojiPickerBox
+              onClick={(emoji) =>
+                setForm((prev) => ({ ...prev, message: prev.message + emoji.emoji }))
+              }
+            >
+              <EmojiEmotions />
+            </EmojiPickerBox>
 
-              <Popover.Portal>
-                <Popover.Content className="z-20">
-                  <EmojiPicker
-                    onEmojiClick={(emoji) => {
-                      setForm((prev) => ({ ...prev, message: prev.message + emoji.emoji }))
-                    }}
-                  />
-                </Popover.Content>
-              </Popover.Portal>
-            </Popover.Root>
-            
-            <label className="group relative inline-block cursor-pointer text-iconColor">
+            <ImagePickerBox onChange={(image) => setRawImage(image)}>
               <Image />
-              <ToolTip title="Add an image" />
-
-              <input
-                hidden
-                type="file"
-                accept="image/*"
-                onChange={(ev) => {
-                  if (!ev.target.files[0]) return
-
-                  if (ev.target.files[0].size / 1024 / 1024 > MAX_IMAGE_SIZE_MB) {
-                    toast.error('Image file large than 1.5MB')
-                    return
-                  }
-
-                  setRawImage(ev.target.files[0])
-                }}
-              />
-            </label>
+            </ImagePickerBox>
 
             <GifPickerBox onChange={(url) => setForm((prev) => ({ ...prev, gif: url }))}>
               <GifBox />
@@ -181,26 +169,14 @@ export default function ChildNewPost({ onClose, post, defaultPoint }) {
             <button
               disabled={loading}
               type="submit"
-              className=" ml-auto w-full max-w-[6rem] rounded-sm bg-primary px-4 py-1 font-Lato text-white disabled:bg-opacity-80"
+              className="relative ml-auto w-full max-w-[6rem] rounded-sm bg-primary px-4 py-1 font-Lato text-white disabled:bg-opacity-80"
               onClick={async () => {
-                if (form.recipients.length === 0) {
-                  toast.error('Add atleast one recipient')
-                  return
-                }
-                if (form.hashtags.length === 0) {
-                  toast.error('Add atleast one hashtag')
-                  return
-                }
-                if (form.message.length === 0) {
-                  toast.error('Add a message')
-                  return
-                }
-
-                const recipients = form.recipients.filter((user) => user.id !== me.data.id)
-                const data = CreatePost(me.data, post.id, { ...form, recipients })
-                const formData = toFormData(data)
                 try {
                   setLoading(true)
+                  if (!validateNewPostForm(form)) return
+                  const recipients = form.recipients.filter((user) => user.id !== me.data.id)
+                  const data = CreatePost(me.data, post.id, { ...form, recipients })
+                  const formData = toFormData(data)
                   await api.transactions.new(formData)
                   await queryClient.refetchQueries('transactions')
                   await queryClient.refetchQueries('me')
@@ -213,7 +189,8 @@ export default function ChildNewPost({ onClose, post, defaultPoint }) {
                 }
               }}
             >
-              {loading === true ? <>&middot; &middot; &middot;</> : 'Give'}
+              <Spinner isLoading={loading} />
+              Give
             </button>
           </div>
         </div>
