@@ -1,7 +1,7 @@
 import { api } from '@/api'
 import ToolTip from '@/components/ToolTip'
 import { queryClient } from '@/queryClient'
-import { getTodayDate } from '@/utils'
+import { CreatePost, getTodayDate } from '@/utils'
 import { Close, EmojiEmotions, GifBox, Image, Link } from '@mui/icons-material'
 import * as HoverCard from '@radix-ui/react-hover-card'
 import * as Popover from '@radix-ui/react-popover'
@@ -11,12 +11,12 @@ import * as React from 'react'
 import { RxCross2 } from 'react-icons/rx'
 import { useQuery } from 'react-query'
 import { toast } from 'react-toastify'
-import GifPicker from './GifPickerPopover'
+import GifPicker, { GifPickerBox } from './GifPickerPopover'
 import { Dialog } from '@radix-ui/react-dialog'
 import Cropper from '@/components/Cropper'
 import UserImg from '@/assets/images/user-profile/pp.png'
+import { MAX_IMAGE_SIZE_MB } from '@/constant'
 
-const MAX_IMAGE_SIZE_MB = 3.1
 export default function NewPost({ ...props }) {
   const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
   const [loading, setLoading] = React.useState(false)
@@ -91,11 +91,11 @@ export default function NewPost({ ...props }) {
         <div className="_px-6 rounded-b-lg bg-white py-6 text-gray-400 drop-shadow-normal">
           <div className="px-6">
             +{form.point}{' '}
-            {form.recipients.map((user) => (
-              <span key={user.id}>
-                @{user.first_name} {user.last_name}
-              </span>
-            ))}{' '}
+            {form.recipients
+              .map((user) => `@${user.first_name} ${user.last_name}`)
+              .map((fullName) => (
+                <span key={fullName}>{fullName}</span>
+              ))}{' '}
             {form.hashtags.map((tag) => (
               <span key={tag}>{tag}</span>
             ))}
@@ -192,47 +192,17 @@ export default function NewPost({ ...props }) {
                   }
 
                   setProcessedImage(ev.target.files[0])
-                  // setForm((prev) => ({
-                  //   ...prev,
-                  //   image: ev.target.files[0],
-                  // }))
                 }}
               />
             </label>
 
-            <Popover.Root>
-              <Popover.Trigger className="group relative inline-block text-iconColor">
-                <GifBox />
+            <GifPickerBox onChange={(gif) => setForm((prev) => ({ ...prev, gif }))}>
+              <GifBox />
+            </GifPickerBox>
 
-                <ToolTip title="Add a gif" />
-              </Popover.Trigger>
-
-              <GifPicker
-                onClick={(url) => {
-                  setForm((prev) => ({ ...prev, gif: url }))
-                }}
-              />
-            </Popover.Root>
-
-            <Popover.Root>
-              <Popover.Trigger className="group relative inline-block cursor-pointer text-iconColor">
-                <Link />
-                <ToolTip title="Add a link" />
-              </Popover.Trigger>
-
-              <Popover.Portal>
-                <Popover.Content className=" z-50">
-                  <AddLinkPopup
-                    onChange={(link) =>
-                      setForm((prev) => {
-                        console.log(link)
-                        return { ...prev, link }
-                      })
-                    }
-                  />
-                </Popover.Content>
-              </Popover.Portal>
-            </Popover.Root>
+            <AddLinkBox onChange={(link) => setForm((prev) => ({ ...prev, link }))}>
+              <Link />
+            </AddLinkBox>
 
             <button
               disabled={loading}
@@ -252,21 +222,9 @@ export default function NewPost({ ...props }) {
                   return
                 }
 
-                const today = getTodayDate()
-
-                const data = {
-                  sender: [me.data],
-                  active: true,
-                  flag_transaction: false,
-                  react_by: {},
-                  created_by: me.data.id,
-                  updated_by: me.data.id,
-                  created: today,
-                  updated: today,
-                  ...form,
-                }
-
+                const data = CreatePost(me.data, '', form)
                 const formData = toFormData(data)
+
                 try {
                   setLoading(true)
                   await api.transactions.new(formData)
@@ -295,6 +253,23 @@ export default function NewPost({ ...props }) {
         </div>
       </div>
     </>
+  )
+}
+
+export function AddLinkBox({ children, onChange }) {
+  return (
+    <Popover.Root>
+      <Popover.Trigger className="group relative inline-block cursor-pointer text-iconColor">
+        {children}
+        <ToolTip title="Add a link" />
+      </Popover.Trigger>
+
+      <Popover.Portal>
+        <Popover.Content className=" z-50">
+          <AddLinkPopup onChange={onChange} />
+        </Popover.Content>
+      </Popover.Portal>
+    </Popover.Root>
   )
 }
 

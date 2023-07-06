@@ -1,9 +1,9 @@
-import React, { useState, useCallback, useRef } from 'react'
-import ReactEasyCropper from 'react-easy-crop'
 import * as Dialog from '@radix-ui/react-dialog'
 import imageCompression from 'browser-image-compression'
+import React, { useCallback, useRef, useState } from 'react'
+import ReactEasyCropper from 'react-easy-crop'
 
-export default function Cropper({ imageFile, onChange, onClose }) {
+export default function Cropper({ imageFile, onClose }) {
   const [loading, setLoading] = React.useState('')
   const [open, setOpen] = React.useState(true)
   const [crop, setCrop] = useState({ x: 0, y: 0 })
@@ -58,7 +58,7 @@ export default function Cropper({ imageFile, onChange, onClose }) {
   return (
     <Dialog.Root open={open}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-50 bg-black bg-opacity-20" />
+        <Dialog.Overlay className="fixed inset-0 z-50 bg-black bg-opacity-20" onClick={() => setOpen(false)} />
 
         <Dialog.Content className="fixed left-1/2 top-2/5 z-[99] w-full max-w-3xl -translate-x-1/2 -translate-y-1/2 rounded-[10px] border-400 bg-white p-[13px] shadow-md">
           <div className="relative aspect-video w-full">

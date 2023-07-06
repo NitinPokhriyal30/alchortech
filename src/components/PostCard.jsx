@@ -435,7 +435,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                     {post.image || post.gif ? (
                       <div className="mt-6 space-y-6">
                         {post.image && <img className='w-32' src={post.image} />}
-                        {post.gif && <img src={post.gif} />}
+                        {post.gif && <img className='w-32' src={post.gif} />}
                       </div>
                     ) : null}
 
