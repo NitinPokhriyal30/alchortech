@@ -39,8 +39,8 @@ const Login = () => {
 
   return (
     <div className="flex h-screen w-full items-center justify-center overflow-hidden bg-gray-100 md:justify-start">
-      <div className="pt-18 relative mt-10 hidden w-full md:block">
-        <img className="ml-[-8px]  object-fill" src={LoginBackground} alt="login-background" />
+      <div className="hidden md:block relative">
+        <img className="object-cover h-screen w-screen ml-[-10px]" src={LoginBackground} alt="login-background" />
         <img className="absolute left-6 top-6" src={AlcorLogo} alt="alcor-logo" />
       </div>
 

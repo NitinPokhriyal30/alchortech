@@ -6,11 +6,27 @@ import Uparrow from '../assets/svg/Uparrow.svg'
 import Downarrow from '../assets/svg/Downarrow.svg'
 import MyHashtags from './HomeRightSidebar/MyHashtags'
 import { AiFillCaretDown } from "react-icons/ai";
-import useMediaQuery from '@mui/material/useMediaQuery'
-import { breakpoints, myTheme } from '../myTheme'
+import PostCard from '../components/PostCard'
+import { useQuery } from 'react-query'
+import { api } from '@/api'
+import { AchievementBanner } from '../components/AchievementBanner'
 import AvatarEditor from 'react-avatar-edit'
 import ShowModal from './AdminPanel/ShowModal'
-import SortBy from './SortBy'
+
+const getChildTransactionsFor = (parentId, allTransactions) => {
+  return allTransactions.filter((post) => post.parent_id == parentId)
+}
+
+const withIsChild = (allTransactions) => {
+  return allTransactions.map((post) => {
+    const hasParent = allTransactions.some((parentPost) => post.parent_id == parentPost.id)
+    // if a transaction has a parent transaction then its a child transaction
+    post.isChild = hasParent
+
+    return post
+  })
+}
+
 export default function MyProfile() {
 
   const [showOverview, setShowOverview] = useState(true);
@@ -55,6 +71,14 @@ export default function MyProfile() {
     setShowAchievements(false);
     setShowOverview(false);
   }
+
+  const postList = useQuery('transactions', () => api.transactions.all())
+
+  let allPosts = postList.isLoading ? [] : postList.data
+  allPosts = withIsChild(allPosts)
+  const parentPosts = allPosts.filter(
+    (post) => !post.isChild || getChildTransactionsFor(post.id, allPosts).length > 0
+  )
 
   return (
 
@@ -190,6 +214,30 @@ export default function MyProfile() {
                     </table>
                   </div>
                 </div> 
+              }
+              {showRecentActivities &&
+                <div className="relative mt-1" id="post-list">
+          {postList.isLoading ? (
+            <div className="h-64 rounded-md  bg-gray-300" />
+          ) : (
+            parentPosts.slice(0, 2).map((post, i) => (
+              <div>
+                <PostCard
+                  i={i}
+                  key={post.id}
+                  post={post}
+                  childrenTransactions={getChildTransactionsFor(post.id, allPosts)}
+                />
+              </div>
+            ))
+          )}
+        </div> 
+              }
+              {
+                showAchievements &&
+              <div className="mt-1">
+                <AchievementBanner />
+              </div>
               }
             </div>  
           </div> 
