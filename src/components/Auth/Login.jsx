@@ -75,7 +75,7 @@ const Login = () => {
               <div className="flex justify-between">
                 <span className="font-Lato text-[12px] text-[#ACACAC]">
                   <input type="checkbox" id="rememberMe" className="mr-1" />
-                  <label htmlFor="rememberMe" className="text-sm">
+                  <label htmlFor="rememberMe" id='rememberMe' className="text-sm">
                     Remember me
                   </label>
                 </span>

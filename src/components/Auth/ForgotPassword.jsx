@@ -8,6 +8,7 @@ import { ToastContainer, toast } from 'react-toastify';
 
 const ForgotPassword = () => {
 
+    const [email, setEmail] = useState("");
     const [showSuccess, setShowSuccess] = useState(false)
 
     const handleForgotPassword = async (email) => {
@@ -56,6 +57,7 @@ const ForgotPassword = () => {
                     <form className="space-y-4" autoComplete="off" onSubmit={(e) => {
                      e.preventDefault();
                      const email = e.target.email.value;
+                     setEmail(email)
                      handleForgotPassword(email);
                     }}>
                   <input 
@@ -81,7 +83,7 @@ const ForgotPassword = () => {
                   <div className='text-center pb-14'>
                     <p className="text-[24px] mb-4 font-Lato font-black text-[#000000] leading-25">Reset Link Sent</p>
                     <span className="text-[18px] font-Lato font-md text-[#5D5D5D]">We have sent password reset link to your email</span>
-                    <p className='mt-4 text-[14px] font-Lato font-md text-[#5486E3]'>robinmalik1208@gmail.com</p>
+                    <p className='mt-4 text-[14px] font-Lato font-md text-[#5486E3]'>{email}</p>
                   </div>
                 </div> 
               }
