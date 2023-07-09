@@ -80,7 +80,7 @@ const Login = () => {
                   </label>
                 </span>
                 <span className="font-Lato text-[12px] text-[#5486E3]">
-                  <Link to="/forgot/password">Forgot Password?</Link>
+                  <Link to="http://localhost:5173/forgot/password">Forgot Password?</Link>
                 </span>
               </div>
               <div>
