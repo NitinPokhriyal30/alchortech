@@ -26,7 +26,7 @@ const Login = () => {
       const { token, id } = await api.auth.login({ email, password })
       Cookies.set('token', token)
       Cookies.set('user_id', id)
-      await queryClient.fetchQuery('me', () => api.auth.me(id))
+      await queryClient.refetchQueries("me")
       navigate('/', { replace: true })
     } catch (error) {
       console.log(error)
