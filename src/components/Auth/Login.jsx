@@ -40,8 +40,8 @@ const Login = () => {
 
   return (
     <div className="flex h-screen w-full items-center justify-center overflow-hidden bg-gray-100 md:justify-start">
-      <div className="pt-18 relative mt-10 hidden w-full md:block">
-        <img className="ml-[-8px]  object-fill" src={LoginBackground} alt="login-background" />
+      <div className="hidden md:block relative">
+        <img className="object-cover h-screen w-screen ml-[-10px]" src={LoginBackground} alt="login-background" />
         <img className="absolute left-6 top-6" src={AlcorLogo} alt="alcor-logo" />
       </div>
 
@@ -76,12 +76,12 @@ const Login = () => {
               <div className="flex justify-between">
                 <span className="font-Lato text-[12px] text-[#ACACAC]">
                   <input type="checkbox" id="rememberMe" className="mr-1" />
-                  <label htmlFor="rememberMe" className="text-sm">
+                  <label htmlFor="rememberMe" id='rememberMe' className="text-sm">
                     Remember me
                   </label>
                 </span>
                 <span className="font-Lato text-[12px] text-[#5486E3]">
-                  <Link to="/forgot/password">Forgot Password?</Link>
+                  <Link to="http://localhost:5173/forgot/password">Forgot Password?</Link>
                 </span>
               </div>
               <div>

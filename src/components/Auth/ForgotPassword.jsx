@@ -6,28 +6,29 @@ import AlcorLogo from '../../assets/images/login-signup/AlcorLogo.png'
 import SuccessLogo from '../../assets/images/login-signup/SuccessLogo.png'
 import { ToastContainer, toast } from 'react-toastify';
 
+const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjg4NzU3ODYzLCJpYXQiOjE2ODg3NTYwNjMsImp0aSI6IjRiZjVlMjYyYWI1MzQ5Y2ViYzM4YzI3MzBlODFjMjVlIiwidXNlcl9pZCI6IjhjNjViNjIzLTU1NmEtNDZiNi05NjZlLTVhMGRkM2JhZWU0MCJ9.RJY8SXmMz8WdulZkNolYc9x3EsE2j72uoyxfUBNBOjI"
 const ForgotPassword = () => {
 
+    const [email, setEmail] = useState("");
     const [showSuccess, setShowSuccess] = useState(false)
 
-    const handleForgotPassword = async (email) => {
-        try {
-          const response = await axios.post('http://backend.letshigh5.com/request/password/', {
-            email
-          });
-    
-          if (response.status === 200) {
-            console.log(response.data.message);
-            setShowSuccess(true);
-            toast.success('Email Sent Succesfully!')
-          } else {
-            console.log(response.data.error);
-          }
-        } catch (error) {
-          console.log(error);
-          toast.error('User not found!')
-        }
-      }
+    const handleForgotPassword = async (email) => {fetch('http://backend.letshigh5.com/request/password/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ email }) 
+    })
+    .then(response => response.json())
+    .then(data => {  
+      setShowSuccess(true);
+      toast.success('Email Sent Succesfully!')
+    })
+    .catch(error => {
+      console.error(error);
+      toast.error('User not found!')
+    })}
+
 
         return (
           <div className="flex justify-center md:justify-start items-center h-screen w-screen bg-gray-100">
@@ -56,6 +57,7 @@ const ForgotPassword = () => {
                     <form className="space-y-4" autoComplete="off" onSubmit={(e) => {
                      e.preventDefault();
                      const email = e.target.email.value;
+                     setEmail(email)
                      handleForgotPassword(email);
                     }}>
                   <input 
@@ -81,7 +83,7 @@ const ForgotPassword = () => {
                   <div className='text-center pb-14'>
                     <p className="text-[24px] mb-4 font-Lato font-black text-[#000000] leading-25">Reset Link Sent</p>
                     <span className="text-[18px] font-Lato font-md text-[#5D5D5D]">We have sent password reset link to your email</span>
-                    <p className='mt-4 text-[14px] font-Lato font-md text-[#5486E3]'>robinmalik1208@gmail.com</p>
+                    <p className='mt-4 text-[14px] font-Lato font-md text-[#5486E3]'>{email}</p>
                   </div>
                 </div> 
               }
@@ -92,3 +94,8 @@ const ForgotPassword = () => {
 }
 
 export default ForgotPassword
+
+
+
+
+

@@ -39,7 +39,8 @@ import { api } from '@/api'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <>
+    <React.Fragment>
+      <Route path="/forgot/password" element={<ForgotPassword />} />
       <Route path="/test" element={<SingleComponentTestPage />} />
       <Route path="/login" element={<Login />} />
       <Route
@@ -61,30 +62,32 @@ const router = createBrowserRouter(
         <Route path="company/users" element={<ManageUsers />} />
         <Route path="company/account" element={<Earnings />} />
       </Route>
-      <Route path="/forgot/password" element={<ForgotPassword />} />
       <Route path="/reset/password/passwordreset/:uidb64/:token" element={<ResetPassword />} />
       <Route
         path="/survey"
         element={
-          <>
+          <React.Fragment>
             <AdminNavbar to="/survey" title="Survey Dashboard" />
             <Outlet />
-          </>
+          </React.Fragment>
         }
       >
         <Route index element={<SurveyListPage />}></Route>
         <Route path="/survey/create" element={<SurveryCreatePage />} />
       </Route>
-    </>
+    </React.Fragment>
   )
 )
 
 const unauthRoutes = createBrowserRouter(
   createRoutesFromElements(
-    <>
+    <React.Fragment>
       <Route path="/login" element={<Login />} />
+      <Route path="/forgot/password" element={<ForgotPassword />} />
+      <Route path="/reset/password/passwordreset/:uidb64/:token" element={<ResetPassword />} />
       <Route path="*" element={<Navigate to="/login" />} />
-    </>
+      
+    </React.Fragment>
   )
 )
 

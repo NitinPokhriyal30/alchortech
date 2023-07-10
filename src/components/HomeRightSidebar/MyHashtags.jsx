@@ -36,17 +36,17 @@ const MyHashtags = () => {
   return (
     <div>
       <div className="right-sidebar-container">
-        <div className="border-b border-[#EDEDED] py-2 px-3">
-          <p className="text-[16px] font-Lato font-semibold text-[#464646] text-center ">
+        <div className=" border-[#CECECE] border-b-2 py-2 px-3">
+          <p className="text-[20px] font-Lato font-bold text-[#292929] text-center ">
             My Hashtags
           </p>
         </div>
              {myHashtags.map((hashtag, index) => (
                 <div key={index}>
-                   <div className=" px-4 py-3 ">
+                   <div className="px-4 py-3 ">
                          <div className="flex justify-between">
-                           <div className='opacity-75'>{`${hashtag.name}`}</div>
-                           <div className='opacity-50'>{`${hashtag.count}`}</div>
+                           <div className='text-[#00BC9F] text-[16px] font-Lato font-normal'>{`${hashtag.name}`}</div>
+                           <div className='font-semibold text-[14px] text-[#000000]'>{`${hashtag.count}`}</div>
                          </div>
                     </div>
                 </div>
