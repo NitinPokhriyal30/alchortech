@@ -4,83 +4,39 @@ import { SlArrowLeft, SlArrowRight } from 'react-icons/sl'
 
 import PersonCard from '../components/Directory/PersonCard'
 import UserImage from '../assets/images/user-profile/pp.png'
+import { useQuery, useQueryClient } from 'react-query'
+import { api } from '@/api'
 
-const colors = {
-  shadow: '#0000001d',
+const department = ['Product Development']
+const location = ['Noida', 'Pune']
+
+let inputDelayRef = { current: 0 }
+const handleChange = (setQuery) => (ev) => {
+  clearTimeout(inputDelayRef.current)
+
+  const value = ev.target.value;
+  inputDelayRef.current = setTimeout(() => {
+    setQuery(value)
+  }, 500)
 }
-
-const names = [
-  'Max Ortega',
-  'Rodney Saunders',
-  'Moises Jackson',
-  'Xander Blake',
-  'Peyton Olson',
-  'Dana Stevens',
-  'Julien Navarro',
-  'Andres Mclean',
-  'Avery Lam',
-  'Abel Berger',
-  'Jon Hamilton',
-  'Elliot Hawkins',
-  'Dayanara Wilkinson',
-  'Zackary Arellano',
-  'Frances Weaver',
-  'Lawson Hart',
-  'Bo Howe',
-  'America Hanson',
-  'Shyla Mcclain',
-  'Salma Flores',
-  'Jaylen Rhodes',
-  'Samantha Hines',
-  'Gunnar Warren',
-  'Robert Howe',
-  'Aaliyah Rivera',
-  'Jaylee Hoover',
-  'Isabela Ferguson',
-  'Jaylynn Phillips',
-  'Finnegan Johns',
-  'Jocelyn Ayers',
-]
-
-const job = [
-  'Casual worker',
-  'Councilier',
-  'Assistant',
-  'Secretary',
-  'Developer',
-  'Developer',
-  'Developer',
-  'Developer',
-  'Developer',
-  'Developer',
-]
-
-const department = ['Senior', 'HR', 'Junior']
-const location = ['IN', 'US', 'GB']
-
-function getRandom(list = []) {
-  const i = Math.floor(Math.random() * list.length)
-  return list[i]
-}
-
-const users = names.map((name) => ({
-  name,
-  jobTitle: getRandom(job),
-  department: getRandom(department),
-  location: getRandom(location),
-}))
 
 export default function DirectoryPage({ ...props }) {
   const [query, setQuery] = React.useState('')
   const [departmentFilter, setDepartmentFilter] = React.useState('')
   const [locationFilter, setLocationFilter] = React.useState('')
-  const [page, setPage] = React.useState(0)
-  const pageSize = 18
+  const [page, setPage] = React.useState(1)
+  const users = useQuery({
+    queryKey: ['users', page, locationFilter, departmentFilter, query],
+    queryFn: () =>
+      api.users.search({
+        name: query,
+        location: locationFilter,
+        department: departmentFilter,
+        page,
+      }),
+  })
 
-  const filteredUsers = users
-    .filter((user) => user.name.toLowerCase().includes(query.toLowerCase()))
-    .filter((user) => user.department.includes(departmentFilter))
-    .filter((user) => user.location.includes(locationFilter))
+  const filteredUsers = users.data?.results
 
   return (
     <div className="col-span-2 pl-3 pr-3 xs:pt-0 sm:pt-3 lg:pl-0">
@@ -90,9 +46,9 @@ export default function DirectoryPage({ ...props }) {
             <BsSearch />
             <input
               className="ml-1.5 flex-1 border-none bg-transparent pb-2 pt-1.5 font-semibold leading-none outline-none placeholder:text-inherit"
-              value={query}
+              defaultValue={query}
               placeholder="Search"
-              onChange={(ev) => setQuery(ev.target.value)}
+              onChange={handleChange(setQuery)}
             />
           </div>
 
@@ -126,36 +82,39 @@ export default function DirectoryPage({ ...props }) {
           </div>
         </div>
 
-        <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3">
-          {filteredUsers.slice(page * pageSize, page * pageSize + pageSize).map((props) => (
-            <PersonCard key={props.name} img={UserImage} {...props} />
-          ))}
-        </div>
+        {users.isLoading
+          ? null
+          : filteredUsers.map((props) => (
+              <>
+                <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3">
+                  <PersonCard key={props.name} img={UserImage} {...props} />
+                </div>
 
-        <div className="mx-auto mt-10 flex max-w-[14rem] items-center justify-between ">
-          <div className="flex">
-            <button
-              disabled={page <= 0}
-              onClick={() => setPage((p) => Math.max(0, --p))}
-              className="grid h-9 w-9 place-items-center rounded-[3px] border border-[#d5d5d5] disabled:text-gray-300"
-            >
-              <SlArrowLeft className="text-xl" />
-            </button>
+                <div className="mx-auto mt-10 flex max-w-[14rem] items-center justify-between ">
+                  <div className="flex">
+                    <button
+                      disabled={page <= 1}
+                      onClick={() => setPage((p) => Math.max(1, --p))}
+                      className="grid h-9 w-9 place-items-center rounded-[3px] border border-[#d5d5d5] disabled:text-gray-300"
+                    >
+                      <SlArrowLeft className="text-xl" />
+                    </button>
 
-            <button
-              disabled={(page + 1) * pageSize >= users.length}
-              className="ml-3 grid h-9 w-9 place-items-center rounded-[3px] border border-[#d5d5d5] disabled:text-gray-300"
-              onClick={() => setPage((p) => Math.min(Math.floor(users.length / pageSize), ++p))}
-            >
-              <SlArrowRight className="text-xl" />
-            </button>
-          </div>
+                    <button
+                      disabled={users.data.next == null}
+                      className="ml-3 grid h-9 w-9 place-items-center rounded-[3px] border border-[#d5d5d5] disabled:text-gray-300"
+                      onClick={() => setPage((p) => ++p)}
+                    >
+                      <SlArrowRight className="text-xl" />
+                    </button>
+                  </div>
 
-          <span>
-            Rows {Math.max(1, page * pageSize)} -{' '}
-            {Math.min(page * pageSize + pageSize, users.length)} of {users.length}
-          </span>
-        </div>
+                  <span>
+                    Page {page} of {users.data.count}
+                  </span>
+                </div>
+              </>
+            ))}
       </div>
     </div>
   )

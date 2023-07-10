@@ -44,6 +44,7 @@ const api = {
   users: {
     all: () => axios.get('getUsers/').then((r) => r.data),
     profiles: () => axios.get('users/profile/').then((r) => r.data),
+    search: (params) => axios.get('user/search/', { params }).then((r) => r.data),
   },
 
   transactions: {

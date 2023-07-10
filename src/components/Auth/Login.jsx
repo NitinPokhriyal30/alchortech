@@ -26,7 +26,8 @@ const Login = () => {
       const { token, id } = await api.auth.login({ email, password })
       Cookies.set('token', token)
       Cookies.set('user_id', id)
-      await queryClient.refetchQueries("me")
+      const user = await api.auth.me(id)
+      await queryClient.setQueryData('me', user)
       navigate('/', { replace: true })
     } catch (error) {
       console.log(error)
@@ -40,8 +41,12 @@ const Login = () => {
 
   return (
     <div className="flex h-screen w-full items-center justify-center overflow-hidden bg-gray-100 md:justify-start">
-      <div className="hidden md:block relative">
-        <img className="object-cover h-screen w-screen ml-[-10px]" src={LoginBackground} alt="login-background" />
+      <div className="relative hidden md:block">
+        <img
+          className="ml-[-10px] h-screen w-screen object-cover"
+          src={LoginBackground}
+          alt="login-background"
+        />
         <img className="absolute left-6 top-6" src={AlcorLogo} alt="alcor-logo" />
       </div>
 
@@ -76,7 +81,7 @@ const Login = () => {
               <div className="flex justify-between">
                 <span className="font-Lato text-[12px] text-[#ACACAC]">
                   <input type="checkbox" id="rememberMe" className="mr-1" />
-                  <label htmlFor="rememberMe" id='rememberMe' className="text-sm">
+                  <label htmlFor="rememberMe" id="rememberMe" className="text-sm">
                     Remember me
                   </label>
                 </span>
