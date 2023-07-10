@@ -16,4 +16,4 @@ export const myTheme = {
 
 export const breakpoints = {
   md: '768',
-}
+} 
