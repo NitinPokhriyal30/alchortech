@@ -64,36 +64,38 @@ export default function CelebrationWidget() {
                 <p className="animate-pulse w-full bg-gray-300 rounded">&nbsp;</p>
               </div>
             ) : (
-              <>
-                <div className="flex pb-2 gap-3">
-                  <p className="text-primary">
-                    <MdOutlineCake />
-                  </p>
-                  <p className="text-primary text-sm font-Lato font-light">
-                    <strong>{birthDays[0].first_name}</strong>
-                    <span>
-                      {birthDays.length > 1
-                        ? ' & ' + pluralize(birthDays.length - 1, 'other', 's') + ' '
-                        : ' '}
-                    </span>
-                    <span>has birth day today</span>
-                  </p>
-                </div>
+                <>
+                  {birthDays[0] ? <div className="flex pb-2 gap-3">
+                    <p className="text-primary">
+                      <MdOutlineCake />
+                    </p>
+                    <p className="text-primary text-sm font-Lato font-light">
+                      <strong>{birthDays[0]?.first_name}</strong>
+                      <span>
+                        {birthDays.length > 1
+                          ? ' & ' + pluralize(birthDays.length - 1, 'other', 's') + ' '
+                          : ' '}
+                      </span>
+                      <span>has birth day today</span>
+                    </p>
+                  </div> : ''}
+                
+                  {workAniversaries ? <div className="flex pb-2 gap-3">
+                    <p className="text-primary">
+                      <MdOutlineCelebration />
+                    </p>
+                    <p className="text-primary text-sm font-Lato font-light">
+                      <strong>{workAniversaries[0]?.first_name}</strong>
+                      <span>
+                        {workAniversaries.length > 1
+                          ? ` & ${pluralize(workAniversaries.length - 1, 'other', 's')} `
+                          : ' '}
+                      </span>
+                      <span>has work anniversary today</span>
+                    </p>
+                  </div> : ''}
 
-                <div className="flex pb-2 gap-3">
-                  <p className="text-primary">
-                    <MdOutlineCelebration />
-                  </p>
-                  <p className="text-primary text-sm font-Lato font-light">
-                    <strong>{workAniversaries[0].first_name}</strong>
-                    <span>
-                      {workAniversaries.length > 1
-                        ? ` & ${pluralize(workAniversaries.length - 1, 'other', 's')} `
-                        : ' '}
-                    </span>
-                    <span>has work anniversary today</span>
-                  </p>
-                </div>
+                
               </>
             )}
           </div>
