@@ -67,7 +67,7 @@ export default function CelebrationWidget() {
                 <>
                   {birthDays[0] ? <div className="flex pb-2 gap-3">
                     <p className="text-primary">
-                      <MdOutlineCake fontSize={18} />
+                      <MdOutlineCake fontSize={22} />
                     </p>
                     <p className="text-primary text-sm font-Lato font-light">
                       <strong>{birthDays[0]?.first_name}</strong>
@@ -82,7 +82,7 @@ export default function CelebrationWidget() {
                 
                   {workAniversaries ? <div className="flex pb-2 gap-3">
                     <p className="text-primary">
-                      <MdOutlineCelebration fontSize={18} />
+                      <MdOutlineCelebration fontSize={22} />
                     </p>
                     <p className="text-primary text-sm font-Lato font-light">
                       <strong>{workAniversaries[0]?.first_name}</strong>

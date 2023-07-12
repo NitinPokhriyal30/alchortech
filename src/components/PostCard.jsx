@@ -418,28 +418,25 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
         {showCommentsFor === '' && (
           <div>
             {childrenTransactions.map((post) => (
-              <div className="grid grid-cols-[auto_1fr] gap-4 p-4">
+              <div className="grid grid-cols-[auto_1fr] gap-4 pl-0 p-4">
                 <img
                   className="h-8.5 w-8.5 rounded-full object-cover"
                   src={SERVER_URL + post.sender[0].avtar}
                 />
 
                 <div className="relative ">
-                  <span className="absolute -translate-x-1/2 border-[1rem] border-transparent border-t-paper" />
-
-                  <div className="rounded-md rounded-tl-none bg-paper p-2">
-                    <p>{post.sender[0].first_name}</p>
-                    <p className="">
-                      <span className="inline-block rounded-full bg-primary px-2 py-1 text-white">
-                        +{post.point}{' '}
-                      </span>
+                  <div className="rounded-[15px] rounded-tl-none bg-paper pt-[7px] pb-[20px] px-[30px] text-[#464646]">
+                    <p className="text-18px">
+                      <span className="font-bold">{post.sender[0].first_name}</span><br />
+                        
+                      +{post.point}
                       <span className="ml-2">{post.message}</span>
                     </p>
 
                     {post.image || post.gif ? (
-                      <div className="mt-6 space-y-6">
-                        {post.image && <img className='w-32' src={post.image} />}
-                        {post.gif && <img className='w-32' src={post.gif} />}
+                      <div className="mt-[21px] space-y-[20px]">
+                        {post.image && <img className='w-full rounded-md' src={post.image} />}
+                        {post.gif && <img className='w-full rounded-md' src={post.gif} />}
                       </div>
                     ) : null}
 

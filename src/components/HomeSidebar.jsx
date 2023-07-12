@@ -24,6 +24,15 @@ import { useQuery } from 'react-query'
 import { api } from '@/api'
 import { SERVER_URL } from '@/constant'
 import HomeIcon from '@/assets/svg/home-sidebar/HomeIcon'
+import PhoneIcon from '@/assets/svg/home-sidebar/phonebook.svg'
+import Icon1 from "@/assets/svg/home-sidebar/Group 672"
+import Icon2 from '@/assets/svg/home-sidebar/Group 950.svg'
+import Icon3 from "@/assets/svg/home-sidebar/Group 947"
+import Icon4 from '@/assets/svg/home-sidebar/Path 266.svg'
+import Icon5 from "@/assets/svg/home-sidebar/Group3"
+
+import AnalyticsIcon from '@/assets/svg/home-sidebar/noun-analytics-5506185.svg'
+import PowerOffIcon from '@/assets/svg/home-sidebar/power-off (1).svg'
 
 export default function HomeSidebar({}) {
   const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
@@ -47,7 +56,7 @@ export default function HomeSidebar({}) {
       {/* sidebar */}
       <div
         style={{ left: showSidebar ? '0px' : '' }}
-        className="fixed -left-full top-0 z-[999] flex h-screen w-full flex-col transition-all xs:p-0 sm:p-0 md:w-[min(70vw,100%)] md:py-0 md:pr-0 lg:sticky lg:left-0 lg:top-[87px] lg:z-0 lg:h-avoid-nav-lg lg:w-auto lg:py-3 lg:pr-[13px]"
+        className="fixed -left-full top-0 z-[999] bg-[#ededed] flex h-screen w-full flex-col transition-all xs:p-0 sm:p-0 md:w-[min(70vw,100%)] md:py-0 md:pr-0 lg:sticky lg:left-0 lg:top-[87px] lg:z-0 lg:h-avoid-nav-lg lg:w-auto lg:py-3 lg:pr-[13px]"
       >
         <div className="z-30 flex flex-grow flex-col overflow-hidden overflow-y-auto bg-primary md:rounded-[9px]">
           <div className="border-b-2 border-[#7096DB] px-5 pt-3 lg:hidden">
@@ -103,42 +112,42 @@ export default function HomeSidebar({}) {
               to="/my-rewards"
               className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
             >
-              <AiFillGift fontSize={22} />
+              <Icon3 fontSize={22} />
               <span>My Rewards</span>
             </MenuLink>
             <MenuLink
               to="/directory"
               className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
             >
-              <RiContactsBookFill fontSize={22} />
+              <img src={PhoneIcon} /> 
               <span>Directory</span>
             </MenuLink>
             <MenuLink
               to="/analytics"
               className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
             >
-              <SiGoogleanalytics fontSize={22} />
+              <img src={AnalyticsIcon} /> 
               <span>Analytics</span>
             </MenuLink>
             <MenuLink
               to="/campaign"
               className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
             >
-              <CampaignIcon xfontSize={22} />
+              <CampaignIcon />
               <span>Campaigns</span>
             </MenuLink>
             <MenuLink
               to="/survey"
               className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
             >
-              <RiSurveyFill fontSize={22} />
+              <img src={Icon4} />
               <span>Survey</span>
             </MenuLink>
             <MenuLink
               to="/voice-out"
               className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
             >
-              <RiUserVoiceFill fontSize={22} />
+              <Icon5 src={Icon4} />
               <span>Voice Out</span>
             </MenuLink>
           </div>
@@ -154,7 +163,7 @@ export default function HomeSidebar({}) {
                 queryClient.setQueryData('me', undefined)
               }}
             >
-              <RiLogoutCircleFill fontSize={22} />
+              <img src={PowerOffIcon} fontSize={22} />
               <span>Logout</span>
             </button>
           </div>

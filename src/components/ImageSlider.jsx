@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 
 const ImageSlider = () => {
-  const bgs = ['bg-hero-slider1', 'bg-hero-slider1', 'bg-hero-slider1']
+  const bgs = ['bg-hero-slider3', 'bg-hero-slider3', 'bg-hero-slider3']
   const [counter, setCounter] = React.useState(1)
 
   useEffect(() => {
@@ -20,7 +20,7 @@ const ImageSlider = () => {
       <div
         key={'-' + counter}
         style={{ flexBasis: '100%' }}
-        className={`px-2 flex-shrink-0 flex-grow w-full animate-slide-left`}
+        className={`px-0 flex-shrink-0 flex-grow w-full animate-slide-left`}
       >
         <div className={`bg-center bg-no-repeat bg-cover ${prevBg} rounded-lg px-8 pt-8 pb-10`}>
           <p className="font-Lato font-black text-[25px] text-white leading-8	">
@@ -37,7 +37,7 @@ const ImageSlider = () => {
       <div
         key={counter}
         style={{ flexBasis: '100%' }}
-        className={`px-2 flex-shrink-0 flex-grow w-full animate-slide-left`}
+        className={`px-0 flex-shrink-0 flex-grow w-full animate-slide-left`}
       >
         <div className={`bg-center bg-no-repeat bg-cover ${bg} rounded-lg px-8 pt-8 pb-10`}>
           <span className="font-Lato font-black text-[25px] text-white leading-8">
