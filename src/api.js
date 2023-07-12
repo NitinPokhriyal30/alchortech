@@ -57,6 +57,14 @@ const api = {
         .get('homepage/transaction/')
         .then((r) => r.data)
         .then((data) => data.reverse()),
+    meAsRecipient: (id) => 
+      axios
+        .get(`api/posts/?recipients=${id}`)
+        .then((r) => r.data),
+    meAsSender: (id) => 
+      axios
+        .get(`api/posts/?sender=${id}`)
+        .then((r) => r.data),
   },
 
   todayEvents: () =>

@@ -79,7 +79,10 @@ export default function MyProfile() {
       <div className="flex flex-col md:flex-row h-auto gap-2 mt-3 mx-3">
         <div className="flex flex-col items-center md:flex-row md:w-[70%] bg-white rounded-lg border-t-8 border-l-0 md:border-t-0 md:border-l-8 border-[#27C4A0]">
           <div className="h-32 w-32 md:h-36 md:w-36 rounded-full overflow-hidden relative ml-4 mr-8 my-8">
-            <img src={SERVER_URL + (me?.avtar || '')} alt="user avatar" className="w-full h-full object-cover"/>
+            <img src={SERVER_URL + (me?.avtar || '')}
+              alt="user avatar"
+              className="w-full h-full object-cover"
+            />
             <div className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center opacity-0 transition-opacity duration-300 hover:opacity-100">
               <p className="text-white font-normal font-lato text-sm text-center">
                 Change<br />Picture
