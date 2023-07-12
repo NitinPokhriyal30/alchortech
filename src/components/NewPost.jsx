@@ -15,6 +15,7 @@ import GifPicker, { GifPickerBox } from './GifPickerPopover'
 import { Dialog } from '@radix-ui/react-dialog'
 import Cropper from '@/components/Cropper'
 import UserImg from '@/assets/images/user-profile/pp.png'
+import HelpIcon from '@/assets/svg/home-sidebar/HelpIcon'
 import { MAX_IMAGE_SIZE_MB } from '@/constant'
 import EmojiPickerBox from '@/components/EmojiPickerBox'
 import ImagePickerBox from '@/components/ImagePickerBox'
@@ -90,14 +91,14 @@ export default function NewPost({ ...props }) {
             <li style={{ borderWidth: 0 }} className="basis-full md:flex-shrink md:basis-auto">
               <HoverCard.Root>
                 <p className="flex cursor-pointer items-center font-Lato leading-4">
-                  You Have {me.data.allowance_boost} points to give
-                  <HoverCard.Trigger className="ml-2 inline-flex h-4 w-4 items-center justify-center rounded-full bg-white text-black">
-                    <span>?</span>
+                  You Have <span className="font-bold">&nbsp;{me.data.allowance_boost} Points&nbsp;</span>to give
+                  <HoverCard.Trigger className="ml-2 inline-flex h-4 w-4 items-center justify-center">
+                    <HelpIcon/>
                   </HoverCard.Trigger>
                 </p>
 
                 <HoverCard.Portal>
-                  <HoverCard.Content className="z-20 w-screen max-w-xs rounded bg-white p-2 shadow">
+                  <HoverCard.Content className="z-20 w-screen max-w-[180px] rounded bg-white p-2 shadow text-[#747474] text-[12px] leading-[14px]">
                     <HoverCard.Arrow className="fill-white" />
                     You monthly allowance will refresh on 1st March. You have 6 days to spend 160
                     points.
@@ -124,10 +125,10 @@ export default function NewPost({ ...props }) {
             ))}
           </div>
 
-          <div className="border-b px-6 focus-within:border-b focus-within:border-primary">
+          <div className="border-b px-6 focus-within:border-b focus-within:border-primary min-h-[120px]">
             <textarea
               spellCheck={false}
-              className="block h-20 w-full resize-none outline-none  transition-all"
+              className="block h-10 w-full resize-none outline-none  transition-all"
               placeholder="Type Here..."
               onChange={(ev) =>
                 setForm((prev) => ({ ...prev, message: ev.target.value.substring(0, 270) }))
@@ -137,11 +138,20 @@ export default function NewPost({ ...props }) {
 
             {form.image && (
               <div>
+                <div className="group flex items-center pb-2">
                 <img
                   src={URL.createObjectURL(form.image)}
                   key={form.image}
-                  className="mt-4 w-40 border"
+                  className="mt-0.5 w-40 border rounded-md"
                 />
+
+                  <button
+                    className="ml-4 hidden group-hover:inline-block"
+                    onClick={() => setForm((prev) => ({ ...prev, image: '' }))}
+                  >
+                    <Close fontSize="10" />
+                  </button>
+              </div>
               </div>
             )}
 

@@ -94,13 +94,12 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                     />
                   ))
                 )}
-                <p className="font-Lato text-18px font-bold text-primary">
+                <p className="ml-1 font-Lato text-18px font-bold text-primary">
                   +
                   {post.point + childrenTransactions.reduce((total, post) => total + post.point, 0)}
                 </p>
-              </div>
-              <div>
-                <p className="font-Lato font-normal text-[#919191]">{post.created}</p>
+
+                <p className="ml-5 font-Lato font-normal text-[#919191]">{post.created}</p>
               </div>
             </div>
           </div>
@@ -132,11 +131,11 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
 
           {(post.gif || post.image) && (
             <div className="mt-2 ">
-              {post.gif && <img className="block max-h-48 object-contain" src={post.gif} />}
+              {post.gif && <img className="rounded-md block max-h-48 object-contain" src={post.gif} />}
 
               {post.image && (
                 <img
-                  className="block max-h-48 object-contain"
+                  className="rounded-md block max-h-48 object-contain"
                   src={
                     typeof post.image === 'string' ? post.image : URL.createObjectURL(post.image)
                   }
@@ -231,6 +230,11 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                 Comment
               </button>
             </div>
+          </div>
+
+          <div className="flex items-center gap-2 pb-1">
+            <div className="cursor-pointer rounded-full flex items-center text-[18px] text-[#747474] pr-2  border-[0.5px] border-[#d1d1d1]">☺️ 0</div>
+            <p className="text-[#d1d1d1] text-16px">{childrenTransactions.length} Comment</p>
           </div>
         </div>
 
