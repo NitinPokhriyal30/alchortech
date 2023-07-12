@@ -23,16 +23,16 @@ export function getTodayDate() {
   return today
 }
 
-export function CreatePost(sender, parent_id, form) {
+export function CreatePost(senderId, parent_id, form) {
   const today = getTodayDate()
 
   const post = {
-    sender: [sender],
+    sender: senderId,
     active: 'True',
     flag_transaction: 'False',
     react_by: {},
-    created_by: sender.id,
-    updated_by: sender.id,
+    created_by: senderId,
+    updated_by: senderId,
     created: today,
     updated: today,
 

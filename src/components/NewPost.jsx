@@ -40,6 +40,7 @@ function validateNewPostForm(form) {
 
 export default function NewPost({ ...props }) {
   const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
+  const users = useQuery('users', () => api.users.profiles(), { initialData: [] })
   const [loading, setLoading] = React.useState(false)
   const [processedImage, setProcessedImage] = React.useState('')
 
@@ -113,6 +114,7 @@ export default function NewPost({ ...props }) {
           <div className="px-6">
             +{form.point}{' '}
             {form.recipients
+              .map(userId => (users.data || []).find(user => user.id === userId))
               .map((user) => `@${user.first_name} ${user.last_name}`)
               .map((fullName) => (
                 <span key={fullName}>{fullName}</span>
@@ -203,12 +205,13 @@ export default function NewPost({ ...props }) {
               disabled={loading}
               type="submit"
               className="relative ml-auto w-full max-w-[6rem] rounded-sm bg-primary px-4 py-1 font-Lato text-white disabled:bg-opacity-80"
-              onClick={async () => {
+              onClick={async function newPost() {
                 try {
                   setLoading(true)
                   if (!validateNewPostForm(form)) return
-                  const data = CreatePost(me.data, '', form)
+                  const data = CreatePost(me.data.id, '', form)
                   const formData = toFormData(data)
+                  // recipients.forEach((userId) => formData.append('recipients', userId))
 
                   await api.transactions.new(formData)
                   await queryClient.refetchQueries('transactions')
@@ -338,6 +341,7 @@ export function RecipientsDropdown({ form, setForm }) {
   )
 
   const USER_BTN_HEIGHT = 28
+  const isSelected = user => form.recipients.includes(user.id)
 
   return (
     <>
@@ -347,7 +351,7 @@ export function RecipientsDropdown({ form, setForm }) {
       </p>
 
       {/* container */}
-      <div className="absolute z-10 hidden divide-y overflow-hidden rounded bg-white text-black shadow group-hover:block">
+      <div className="absolute z-10 hidden divide-y overflow-hidden rounded bg-white text-black shadow shadow-gray-400 group-hover:block">
         {/* fixed height list */}
         <div style={{ height: 5 * USER_BTN_HEIGHT }} className="overflow-y-auto">
           {users.isLoading ? (
@@ -357,22 +361,20 @@ export function RecipientsDropdown({ form, setForm }) {
           ) : (
             <>
               {searchedUser.map((user) => {
-                const checked = form.recipients.findIndex((x) => x.id === user.id) !== -1
                 return (
                   <button
+                    key={user.id}
                     style={{ height: USER_BTN_HEIGHT }}
                     className={`block w-full  px-4 py-1 text-left ${
-                      checked ? 'bg-translucent' : ''
+                      isSelected(user) ? 'bg-primary/30 border-b border-primary/80' : ''
                     }`}
-                    key={user.id}
                     type="button"
                     onClick={() => {
                       setForm((prev) => {
-                        const checked = form.recipients.findIndex((x) => x.id === user.id) !== -1
-                        if (checked) {
-                          prev.recipients = prev.recipients.filter((x) => x.id !== user.id)
+                        if (isSelected(user)) {
+                          prev.recipients = prev.recipients.filter((id) => id !== user.id)
                         } else {
-                          prev.recipients.push(user)
+                          prev.recipients.push(user.id)
                         }
 
                         return { ...prev }
@@ -446,11 +448,17 @@ export function toFormData(data) {
   const formData = new FormData()
   Object.entries(data).forEach(([key, value]) => {
     let _value = value
+    if (key === 'recipients') {
+      value.forEach((userId) => formData.append(key, userId))
+    }
     // stringify only if value is array, object but not image File
-    if (typeof value == 'object' && !(value instanceof File || value instanceof Blob))
+    else if (typeof value == 'object' && !(value instanceof File || value instanceof Blob)) {
       _value = JSON.stringify(value)
+      formData.set(key, _value)
+    }else {
+      formData.set(key, value)
+    }
 
-    formData.set(key, _value)
   })
   return formData
 }

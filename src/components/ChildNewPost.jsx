@@ -35,12 +35,13 @@ function validateNewPostForm(form) {
 
 export default function ChildNewPost({ onClose, post, defaultPoint }) {
   const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
+  const users = useQuery('users', () => api.users.profiles(), { initialData: [] })
   const [loading, setLoading] = React.useState(false)
   const [rawImage, setRawImage] = React.useState('')
 
   const [form, setForm] = React.useState({
     point: defaultPoint,
-    recipients: post.recipients,
+    recipients: post.recipients.map((user) => user.id),
     hashtags: post.hashtags,
     image: '',
     gif: '',
@@ -79,11 +80,15 @@ export default function ChildNewPost({ onClose, post, defaultPoint }) {
         <div className="_px-6 rounded-b-lg bg-white py-6 text-gray-400 drop-shadow-normal">
           <div className="px-6">
             +{form.point}{' '}
-            {form.recipients.map((user) => (
-              <span key={user.id}>
-                @{user.first_name} {user.last_name}
-              </span>
-            ))}{' '}
+            {form.recipients
+              .filter((userId) => userId === me.data.id)
+              .map((userId) => (users.data || []).find((user) => user.id === userId))
+
+              .map((user) => (
+                <span key={user.id}>
+                  @{user.first_name} {user.last_name}
+                </span>
+              ))}{' '}
             {form.hashtags.map((tag) => (
               <span key={tag}>{tag}</span>
             ))}
@@ -174,9 +179,10 @@ export default function ChildNewPost({ onClose, post, defaultPoint }) {
                 try {
                   setLoading(true)
                   if (!validateNewPostForm(form)) return
-                  const recipients = form.recipients.filter((user) => user.id !== me.data.id)
-                  const data = CreatePost(me.data, post.id, { ...form, recipients })
+                  const recipients = form.recipients.filter((userId) => userId !== me.data.id)
+                  const data = CreatePost(me.data.id, post.id, { ...form, recipients })
                   const formData = toFormData(data)
+                  window.f = formData
                   await api.transactions.new(formData)
                   await queryClient.refetchQueries('transactions')
                   await queryClient.refetchQueries('me')
