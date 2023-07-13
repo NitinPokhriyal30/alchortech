@@ -41,8 +41,8 @@ export default function Top5UserWidget({ ...props }) {
 
   return (
     <div>
-      <div className="right-sidebar-container">
-        <div className="border-b border-[#EDEDED] py-1 px-3">
+      <div className="right-sidebar-container !pb-4">
+        <div className="border-b border-[#EDEDED] py-1 px-3 mb-4">
           <p className="text-[16px] font-Lato font-semibold text-[#464646] text-center ">
             Top High5 Stars
           </p>
@@ -50,8 +50,8 @@ export default function Top5UserWidget({ ...props }) {
 
         {topUsers.map((user, index) => (
           <div key={user.id}>
-            <div className=" px-4 pt-2 ">
-              <div className="flex pb-2 gap-3 ml-1 justify-between items-center">
+            <div className=" px-4">
+              <div className="flex pb-1.5 gap-3 ml-1 justify-between items-center">
                 <div className="flex relative items-center gap-3">
                   <img src={user.image} className="w-14 h-14" alt="user1" />
                   {index <= 2 && (

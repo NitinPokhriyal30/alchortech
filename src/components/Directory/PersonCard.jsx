@@ -2,30 +2,40 @@ import * as React from 'react'
 import UserImage from '../../assets/images/post-img/post-user.png'
 import { Link } from 'react-router-dom'
 
-export default function PersonCard({ name, img, jobTitle, department, location, ...props }) {
+export default function PersonCard({
+  first_name,
+  last_name,
+  avtar: img,
+  title: jobTitle,
+  department,
+  location,
+  ...props
+}) {
+  const name = first_name + ' ' + last_name
   return (
-    <div className="border border-400 rounded-[4px] shadow-[0px_2px_7px] shadow-[#0000001d] flex gap-3 pt-[11px] pb-2 px-4">
+    <div className="flex gap-3 rounded-[4px] border border-400 px-4 pb-2 pt-[11px] shadow-[0px_2px_7px] shadow-[#0000001d]">
       <div>
         <img
           src={img}
-          className="border-2 border-[#00BC9F] block rounded-full w-[calc((74/16)*1rem)] h-[calc((74/16)*1rem)] bg-paper mx-auto"
+          className="mx-auto block aspect-square w-[calc((74/16)*1rem)] rounded-full border-2 border-[#00BC9F] bg-paper"
         />
-        <div className="grid place-items-center h-10 w-10 mx-auto">
+        <div className="mx-auto grid h-10 w-10 place-items-center">
           <img
-            className="w-7 aspect-video mx-auto"
-            src={`https://flagcdn.com/w40/${location.toLowerCase()}.png`}
+            className="mx-auto aspect-video w-7"
+            alt={location}
+            src={`https://flagcdn.com/w40/${"IN".toLowerCase()}.png`}
           />
         </div>
       </div>
 
       <div className="leading-[19px]">
-        <p className="text-primary font-semibold">{name}</p>
-        <p className="text-[#727272] mt-[3px]">{jobTitle}</p>
-        <p className="text-[#727272] mt-[3px]">{department}</p>
+        <p className="font-semibold text-primary">{name}</p>
+        <p className="mt-[3px] text-[#727272]">{jobTitle}</p>
+        <p className="mt-[3px] text-[#727272]">{department}</p>
 
         <Link
           to="/myProfile"
-          className="mt-[15px] inline-block text-xs py-[calc((6.5/16)*1rem)] px-3 leading-none rounded-md bg-primary text-white "
+          className="mt-[15px] inline-block rounded-md bg-primary px-3 py-[calc((6.5/16)*1rem)] text-xs leading-none text-white "
         >
           Give High5
         </Link>

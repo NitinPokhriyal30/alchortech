@@ -22,3 +22,30 @@ export function getTodayDate() {
     todayDate.getDate().toString().padStart(2, '0')
   return today
 }
+
+export function CreatePost(senderId, parent_id, form) {
+  const today = getTodayDate()
+
+  const post = {
+    sender: senderId,
+    active: 'True',
+    flag_transaction: 'False',
+    react_by: {},
+    created_by: senderId,
+    updated_by: senderId,
+    created: today,
+    updated: today,
+
+    point: form.point,
+    recipients: form.recipients,
+    hashtags: form.hashtags,
+    image: form.image,
+    gif: form.gif,
+    link: form.link,
+    message: form.message,
+  }
+
+  if (parent_id) post.parent_id = parent_id
+
+  return post
+}

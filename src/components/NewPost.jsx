@@ -1,7 +1,7 @@
 import { api } from '@/api'
 import ToolTip from '@/components/ToolTip'
 import { queryClient } from '@/queryClient'
-import { getTodayDate } from '@/utils'
+import { CreatePost, getTodayDate } from '@/utils'
 import { Close, EmojiEmotions, GifBox, Image, Link } from '@mui/icons-material'
 import * as HoverCard from '@radix-ui/react-hover-card'
 import * as Popover from '@radix-ui/react-popover'
@@ -11,14 +11,37 @@ import * as React from 'react'
 import { RxCross2 } from 'react-icons/rx'
 import { useQuery } from 'react-query'
 import { toast } from 'react-toastify'
-import GifPicker from './GifPickerPopover'
+import GifPicker, { GifPickerBox } from './GifPickerPopover'
 import { Dialog } from '@radix-ui/react-dialog'
 import Cropper from '@/components/Cropper'
 import UserImg from '@/assets/images/user-profile/pp.png'
+import HelpIcon from '@/assets/svg/home-sidebar/HelpIcon'
+import { MAX_IMAGE_SIZE_MB } from '@/constant'
+import EmojiPickerBox from '@/components/EmojiPickerBox'
+import ImagePickerBox from '@/components/ImagePickerBox'
+import Spinner from '@/components/Spinner'
 
-const MAX_IMAGE_SIZE_MB = 3.1
+function validateNewPostForm(form) {
+  let isValid = true
+  if (form.recipients.length === 0) {
+    toast.error('Add atleast one recipient')
+    isValid = false
+  }
+  if (form.hashtags.length === 0) {
+    toast.error('Add atleast one hashtag')
+
+    isValid = false
+  }
+  if (form.message.length === 0) {
+    toast.error('Add a message')
+    isValid = false
+  }
+  return isValid
+}
+
 export default function NewPost({ ...props }) {
   const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
+  const users = useQuery('users', () => api.users.profiles(), { initialData: [] })
   const [loading, setLoading] = React.useState(false)
   const [processedImage, setProcessedImage] = React.useState('')
 
@@ -68,14 +91,14 @@ export default function NewPost({ ...props }) {
             <li style={{ borderWidth: 0 }} className="basis-full md:flex-shrink md:basis-auto">
               <HoverCard.Root>
                 <p className="flex cursor-pointer items-center font-Lato leading-4">
-                  You Have {me.data.allowance_boost} points to give
-                  <HoverCard.Trigger className="ml-2 inline-flex h-4 w-4 items-center justify-center rounded-full bg-white text-black">
-                    <span>?</span>
+                  You Have <span className="font-bold">&nbsp;{me.data.allowance_boost} Points&nbsp;</span>to give
+                  <HoverCard.Trigger className="ml-2 inline-flex h-4 w-4 items-center justify-center">
+                    <HelpIcon/>
                   </HoverCard.Trigger>
                 </p>
 
                 <HoverCard.Portal>
-                  <HoverCard.Content className="z-20 w-screen max-w-xs rounded bg-white p-2 shadow">
+                  <HoverCard.Content className="z-20 w-screen max-w-[180px] rounded bg-white p-2 shadow text-[#747474] text-[12px] leading-[14px]">
                     <HoverCard.Arrow className="fill-white" />
                     You monthly allowance will refresh on 1st March. You have 6 days to spend 160
                     points.
@@ -91,20 +114,21 @@ export default function NewPost({ ...props }) {
         <div className="_px-6 rounded-b-lg bg-white py-6 text-gray-400 drop-shadow-normal">
           <div className="px-6">
             +{form.point}{' '}
-            {form.recipients.map((user) => (
-              <span key={user.id}>
-                @{user.first_name} {user.last_name}
-              </span>
-            ))}{' '}
+            {form.recipients
+              .map(userId => (users.data || []).find(user => user.id === userId))
+              .map((user) => `@${user.first_name} ${user.last_name}`)
+              .map((fullName) => (
+                <span key={fullName}>{fullName}</span>
+              ))}{' '}
             {form.hashtags.map((tag) => (
               <span key={tag}>{tag}</span>
             ))}
           </div>
 
-          <div className="border-b px-6 focus-within:border-b focus-within:border-primary">
+          <div className="border-b px-6 focus-within:border-b focus-within:border-primary min-h-[120px]">
             <textarea
               spellCheck={false}
-              className="block h-20 w-full resize-none outline-none  transition-all"
+              className="block h-10 w-full resize-none outline-none  transition-all"
               placeholder="Type Here..."
               onChange={(ev) =>
                 setForm((prev) => ({ ...prev, message: ev.target.value.substring(0, 270) }))
@@ -114,11 +138,20 @@ export default function NewPost({ ...props }) {
 
             {form.image && (
               <div>
+                <div className="group flex items-center pb-2">
                 <img
                   src={URL.createObjectURL(form.image)}
                   key={form.image}
-                  className="mt-4 w-40 border"
+                  className="mt-0.5 w-40 border rounded-md"
                 />
+
+                  <button
+                    className="ml-4 hidden group-hover:inline-block"
+                    onClick={() => setForm((prev) => ({ ...prev, image: '' }))}
+                  >
+                    <Close fontSize="10" />
+                  </button>
+              </div>
               </div>
             )}
 
@@ -158,117 +191,38 @@ export default function NewPost({ ...props }) {
 
           {/* footer */}
           <div id="new-post-footer" className="flex items-baseline gap-4 px-6 pt-3">
-            <Popover.Root>
-              <Popover.Trigger className="group relative inline-block cursor-pointer text-iconColor">
-                <EmojiEmotions />
-                <ToolTip title="Add an emoji" />
-              </Popover.Trigger>
+            <EmojiPickerBox
+              onClick={(emoji) => {
+                setForm((prev) => ({ ...prev, message: prev.message + emoji.emoji }))
+              }}
+            >
+              <EmojiEmotions />
+            </EmojiPickerBox>
 
-              <Popover.Portal>
-                <Popover.Content className="z-20">
-                  <EmojiPicker
-                    onEmojiClick={(emoji) => {
-                      setForm((prev) => ({ ...prev, message: prev.message + emoji.emoji }))
-                    }}
-                  />
-                </Popover.Content>
-              </Popover.Portal>
-            </Popover.Root>
-
-            <label className="group relative inline-block cursor-pointer text-iconColor">
+            <ImagePickerBox onChange={(image) => setProcessedImage(image)}>
               <Image />
-              <ToolTip title="Add an image" />
+            </ImagePickerBox>
 
-              <input
-                hidden
-                type="file"
-                accept="image/*"
-                onChange={(ev) => {
-                  if (!ev.target.files[0]) return
+            <GifPickerBox onChange={(gif) => setForm((prev) => ({ ...prev, gif }))}>
+              <GifBox />
+            </GifPickerBox>
 
-                  if (ev.target.files[0].size / 1024 / 1024 > MAX_IMAGE_SIZE_MB) {
-                    toast.error('Image file large than 1.5MB')
-                    return
-                  }
-
-                  setProcessedImage(ev.target.files[0])
-                  // setForm((prev) => ({
-                  //   ...prev,
-                  //   image: ev.target.files[0],
-                  // }))
-                }}
-              />
-            </label>
-
-            <Popover.Root>
-              <Popover.Trigger className="group relative inline-block text-iconColor">
-                <GifBox />
-
-                <ToolTip title="Add a gif" />
-              </Popover.Trigger>
-
-              <GifPicker
-                onClick={(url) => {
-                  setForm((prev) => ({ ...prev, gif: url }))
-                }}
-              />
-            </Popover.Root>
-
-            <Popover.Root>
-              <Popover.Trigger className="group relative inline-block cursor-pointer text-iconColor">
-                <Link />
-                <ToolTip title="Add a link" />
-              </Popover.Trigger>
-
-              <Popover.Portal>
-                <Popover.Content className=" z-50">
-                  <AddLinkPopup
-                    onChange={(link) =>
-                      setForm((prev) => {
-                        console.log(link)
-                        return { ...prev, link }
-                      })
-                    }
-                  />
-                </Popover.Content>
-              </Popover.Portal>
-            </Popover.Root>
+            <AddLinkBox onChange={(link) => setForm((prev) => ({ ...prev, link }))}>
+              <Link />
+            </AddLinkBox>
 
             <button
               disabled={loading}
               type="submit"
-              className=" ml-auto w-full max-w-[6rem] rounded-sm bg-primary px-4 py-1 font-Lato text-white disabled:bg-opacity-80"
-              onClick={async () => {
-                if (form.recipients.length === 0) {
-                  toast.error('Add atleast one recipient')
-                  return
-                }
-                if (form.hashtags.length === 0) {
-                  toast.error('Add atleast one hashtag')
-                  return
-                }
-                if (form.message.length === 0) {
-                  toast.error('Add a message')
-                  return
-                }
-
-                const today = getTodayDate()
-
-                const data = {
-                  sender: [me.data],
-                  active: true,
-                  flag_transaction: false,
-                  react_by: {},
-                  created_by: me.data.id,
-                  updated_by: me.data.id,
-                  created: today,
-                  updated: today,
-                  ...form,
-                }
-
-                const formData = toFormData(data)
+              className="relative ml-auto w-full max-w-[6rem] rounded-sm bg-primary px-4 py-1 font-Lato text-white disabled:bg-opacity-80"
+              onClick={async function newPost() {
                 try {
                   setLoading(true)
+                  if (!validateNewPostForm(form)) return
+                  const data = CreatePost(me.data.id, '', form)
+                  const formData = toFormData(data)
+                  // recipients.forEach((userId) => formData.append('recipients', userId))
+
                   await api.transactions.new(formData)
                   await queryClient.refetchQueries('transactions')
                   await queryClient.refetchQueries('me')
@@ -289,12 +243,30 @@ export default function NewPost({ ...props }) {
                 }
               }}
             >
-              {loading === true ? <>&middot; &middot; &middot;</> : 'Give'}
+              <Spinner isLoading={loading} />
+              Give
             </button>
           </div>
         </div>
       </div>
     </>
+  )
+}
+
+export function AddLinkBox({ children, onChange }) {
+  return (
+    <Popover.Root>
+      <Popover.Trigger className="group relative inline-block cursor-pointer text-iconColor">
+        {children}
+        <ToolTip title="Add a link" />
+      </Popover.Trigger>
+
+      <Popover.Portal>
+        <Popover.Content className=" z-50">
+          <AddLinkPopup onChange={onChange} />
+        </Popover.Content>
+      </Popover.Portal>
+    </Popover.Root>
   )
 }
 
@@ -379,6 +351,7 @@ export function RecipientsDropdown({ form, setForm }) {
   )
 
   const USER_BTN_HEIGHT = 28
+  const isSelected = user => form.recipients.includes(user.id)
 
   return (
     <>
@@ -388,7 +361,7 @@ export function RecipientsDropdown({ form, setForm }) {
       </p>
 
       {/* container */}
-      <div className="absolute z-10 hidden divide-y overflow-hidden rounded bg-white text-black shadow group-hover:block">
+      <div className="absolute z-10 hidden divide-y overflow-hidden rounded bg-white text-black shadow shadow-gray-400 group-hover:block">
         {/* fixed height list */}
         <div style={{ height: 5 * USER_BTN_HEIGHT }} className="overflow-y-auto">
           {users.isLoading ? (
@@ -398,22 +371,20 @@ export function RecipientsDropdown({ form, setForm }) {
           ) : (
             <>
               {searchedUser.map((user) => {
-                const checked = form.recipients.findIndex((x) => x.id === user.id) !== -1
                 return (
                   <button
+                    key={user.id}
                     style={{ height: USER_BTN_HEIGHT }}
                     className={`block w-full  px-4 py-1 text-left ${
-                      checked ? 'bg-translucent' : ''
+                      isSelected(user) ? 'bg-primary/30 border-b border-primary/80' : ''
                     }`}
-                    key={user.id}
                     type="button"
                     onClick={() => {
                       setForm((prev) => {
-                        const checked = form.recipients.findIndex((x) => x.id === user.id) !== -1
-                        if (checked) {
-                          prev.recipients = prev.recipients.filter((x) => x.id !== user.id)
+                        if (isSelected(user)) {
+                          prev.recipients = prev.recipients.filter((id) => id !== user.id)
                         } else {
-                          prev.recipients.push(user)
+                          prev.recipients.push(user.id)
                         }
 
                         return { ...prev }
@@ -487,11 +458,17 @@ export function toFormData(data) {
   const formData = new FormData()
   Object.entries(data).forEach(([key, value]) => {
     let _value = value
+    if (key === 'recipients') {
+      value.forEach((userId) => formData.append(key, userId))
+    }
     // stringify only if value is array, object but not image File
-    if (typeof value == 'object' && !(value instanceof File || value instanceof Blob))
+    else if (typeof value == 'object' && !(value instanceof File || value instanceof Blob)) {
       _value = JSON.stringify(value)
+      formData.set(key, _value)
+    }else {
+      formData.set(key, value)
+    }
 
-    formData.set(key, _value)
   })
   return formData
 }

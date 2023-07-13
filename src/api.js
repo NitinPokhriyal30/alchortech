@@ -6,14 +6,13 @@ const wait = (ms) => (resolveWith) =>
     setTimeout(() => res(resolveWith), ms)
   })
 
-const AUTH_TOKEN = localStorage.getItem('AUTH_TOKEN')
 axios.defaults.baseURL = 'http://backend.letshigh5.com/'
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN
 axios.defaults.headers.post['Content-Type'] = 'application/json'
 
 axios.interceptors.request.use(
   (request) => {
-    request.headers.Authorization = 'Bearer ' + Cookies.get('token')
+    const token = Cookies.get('token')
+    if (token) request.headers.Authorization = 'Bearer ' + token
     // console.log(request)
     return request
   },
@@ -45,6 +44,7 @@ const api = {
   users: {
     all: () => axios.get('getUsers/').then((r) => r.data),
     profiles: () => axios.get('users/profile/').then((r) => r.data),
+    search: (params) => axios.get('employees/', { params }).then((r) => r.data),
   },
 
   transactions: {
