@@ -100,7 +100,7 @@ export default function HomeSidebar({}) {
           </div>
           {/*-------------- Nav Items  -------------------*/}
 
-          <div className="xpt-5 flex flex-col border-b-[1px] border-[#7096DB] px-[10px]  pb-5">
+          <div className="xpt-5 flex flex-col border-[#7096DB] px-[10px]  pb-5">
             <MenuLink
               to="/"
               className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
@@ -151,6 +151,10 @@ export default function HomeSidebar({}) {
               <span>Voice Out</span>
             </MenuLink>
           </div>
+
+            <div className="px-[33px] w-full ">
+              <div className="h-[1px] bg-[#E5EDFB] bg-opacity-[36%]" />
+            </div>
 
           <div className="px-[10px] pt-3">
             <button

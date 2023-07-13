@@ -18,7 +18,7 @@ export default function MainNavbar() {
   return (
     <div>
       <nav className="block fixed top-0 z-50 w-full xxl:py-[12px] xl:py-[12px] lg:py-[12px] md:py-[12px] sm:py-[11px] xs:py-[11px] bg-white shadow">
-        <div className="mx-auto xxl:max-w-7xl lg:max-w-8xl justify-evenly  md:items-center md:flex sm:flex xs:flex items-center h-full">
+        <div className="mx-auto pl-0 md:pl-9 pr-0 md:pr-39px max-w-[1536px] justify-evenly  md:items-center md:flex sm:flex xs:flex items-center h-full">
           <div className="flex items-center xl:gap-4 lg:gap-4 md:gap-4 sm:gap-4 xs:gap-0 lg:pl-0 md:pl-3 pl-0">
             <div>
               <button
