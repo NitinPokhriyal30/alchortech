@@ -97,7 +97,7 @@ export default function NewPost({ ...props }) {
               <HoverCard.Root>
                 <p className="flex cursor-pointer items-center font-Lato leading-4">
                   You Have{" "}
-                  <span className="font-bold">
+                  <span className="font-[900]">
                     &nbsp;{me.data.allowance_boost} Points&nbsp;
                   </span>
                   to give
