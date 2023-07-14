@@ -148,7 +148,7 @@ export default function NewPost({ ...props }) {
             )}
           </div>
 
-          <div className="min-h-[120px] border-b px-6 focus-within:border-b focus-within:border-primary">
+          <div className="min-h-[93px] border-b px-6 focus-within:border-b focus-within:border-primary">
             <textarea
               spellCheck={false}
               className="block h-10 w-full resize-none text-[#464646]  outline-none transition-all placeholder:text-[#b1b1b1]"
