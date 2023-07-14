@@ -11,8 +11,6 @@ import { api } from '@/api';
 import { useQuery } from 'react-query';
 import { SERVER_URL } from '@/constant';
 import Cookies from 'js-cookie';
-import ImagePickerBox from '@/components/ImagePickerBox';
-import Cropper from '@/components/Cropper';
 import { toast } from 'react-toastify';
 
 
@@ -33,6 +31,8 @@ const withIsChild = (allTransactions) => {
 export default function MyProfile() {
   const [activeTab, setActiveTab] = useState('overview');
   const [appreciationType, setAppreciationType] = useState('received');
+  const [receivedCount, setReceivedCount] = useState(0);
+  const [givenCount, setGivenCount] = useState(0);
 
   const meQuery = useQuery('me', () => api.auth.me(Cookies.get('user_id')));
   const transactionsQuery = useQuery(
@@ -43,12 +43,27 @@ export default function MyProfile() {
       } else {
         return api.transactions.meAsSender(Cookies.get('user_id'));
       }
-    }
+    },
+    
   );
+
+  
 
   useEffect(() => {
     // Refetch the transactions query when appreciationType changes
     transactionsQuery.refetch();
+    const fetchCounts = async () => {
+      const receivedPromise = api.transactions.meAsRecipient(Cookies.get('user_id'));
+      const givenPromise = api.transactions.meAsSender(Cookies.get('user_id'));
+      
+      const receivedCount = await receivedPromise;
+      const givenCount = await givenPromise;
+      
+      setReceivedCount(receivedCount.length);
+      setGivenCount(givenCount.length);
+    };
+
+    fetchCounts()
   }, [appreciationType]);
 
   const me = meQuery.data;
@@ -168,10 +183,6 @@ export default function MyProfile() {
                 <p className="text-sm font-Lato">Last quarter</p>
                 <p className="text-sm font-Lato">Last month</p>
                 <p className="text-sm font-Lato">This month</p>
-                  
-                  
-                  
-                  
                 </div>
               </div>
             </div>
@@ -186,12 +197,12 @@ export default function MyProfile() {
             <div onClick={() => handleAppreciationTypeClick('received')} className={appreciationType === 'received' || activeTab === 'overview' ? 'flex flex-col items-center justify-center bg-[#27C4A0] py-2 rounded-l-lg' : 'flex flex-col items-center justify-center bg-[#D1D1D1] py-2 rounded-l-lg'}>
               <div><img src={Downarrow} alt="down arrow" /></div>
               <div>Appreciation Received</div>
-              <div className="text-[26px]">17</div>
+              <div className="text-[26px]">{receivedCount}</div>
             </div>
             <div onClick={() => handleAppreciationTypeClick('given')} className={appreciationType === 'given' || activeTab === 'overview' ? 'flex flex-col items-center justify-center bg-[#5486E3] py-2 rounded-r-lg' : 'flex flex-col items-center justify-center bg-[#D1D1D1] py-2 rounded-r-lg'}>
               <div><img src={Uparrow} alt="up arrow" /></div>
               <div>Appreciation Given</div>
-              <div className="text-[26px]">14</div>
+              <div className="text-[26px]">{givenCount}</div>
             </div>
           </div>
 
