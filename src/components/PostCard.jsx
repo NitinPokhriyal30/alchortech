@@ -13,7 +13,6 @@ import { BiHeartCircle, BiXCircle } from 'react-icons/bi'
 import { HiEmojiHappy } from 'react-icons/hi'
 import { AiOutlineCaretDown, AiOutlineFileGif } from 'react-icons/ai'
 import { AchievementBanner } from './AchievementBanner'
-import PostComment from './PostComment'
 import ThumbNailX from '../assets/slider/slider-bg2.png'
 import GifPicker from './GifPickerPopover'
 import EmojiPicker from 'emoji-picker-react'
@@ -30,6 +29,7 @@ import ChildNewPost from '@/components/ChildNewPost'
 import { toast } from 'react-toastify'
 import PostCommentList from '@/components/PostCommentList'
 import moment from 'moment'
+import PostComment from '@/components/PostComment'
 
 const POINTS = [
   {
@@ -54,12 +54,37 @@ const POINTS = [
   },
 ]
 
+const getPostComment = (postId, comments) =>
+  comments.filter((comment) => comment.post_id === postId)
+
+const sortCommentsAndTransactions = (comments, childrenTransactions) => {
+  const _childrenTransactions = childrenTransactions.map((transaction) => ({
+    type: 'transaction',
+    commentOrTransaction: transaction,
+  }))
+
+  const _comments = comments.map((comment) => ({
+    type: 'comment',
+    commentOrTransaction: comment,
+  }))
+
+  return _childrenTransactions
+    .concat(_comments)
+    .flatMap((item) => item)
+    .sort((a, b) => {
+      const timestamp1 = a.commentOrTransaction.created
+      const timestamp2 = b.commentOrTransaction.created
+      return new Date(timestamp1) - new Date(timestamp2)
+    })
+}
+
 const PostCard = ({ post, childrenTransactions, ...props }) => {
   const [showCommentsFor, setShowCommentsFor] = React.useState('')
   const [modal, setModal] = React.useState('')
   const [point, setPoint] = React.useState(30)
   const [form, setForm] = React.useState({ image: '', gif: '', message: '' })
   const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
+  const comments = useQuery('comments', () => api.comment.all())
   const addedPoints = post.sender.find((x) => x.id === me.id)?.points
 
   post.reactions = []
@@ -71,9 +96,13 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
     childrenTransactions.find((post) => post.sender.find((user) => user.id === me.data.id))
       ?.point || 0
 
+  const commentsAndTransactions = comments.data
+    ? sortCommentsAndTransactions(getPostComment(post.id, comments.data), childrenTransactions)
+    : []
+
   return (
     <div className="mb-3">
-      <div className="rounded-lg bg-white pb-2 pt-6 shadow-md xs:px-4 sm:px-6 md:px-6 lg:px-6 xl:px-6  xxl:px-6">
+      <div className="rounded-lg bg-white pb-8 pt-6 shadow-md xs:px-4 sm:px-6 md:px-6 lg:px-6 xl:px-6  xxl:px-6">
         <div className="flex items-center justify-between gap-3">
           <div className="flex-1">
             <div className="flex items-center justify-between gap-8">
@@ -103,7 +132,6 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                 </p>
 
                 <p className="ml-5 font-Lato font-normal text-[#00BC9F]">
-                  {console.log(post.created)}
                   {moment(post.created).fromNow()}
                 </p>
               </div>
@@ -136,7 +164,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
           )}
 
           {(post.gif || post.image) && (
-            <div className="mt-2 ">
+            <div className="mt-2 flex flex-col gap-4 md:gap-6">
               {post.gif && (
                 <img className="block w-full max-w-full rounded-md object-contain" src={post.gif} />
               )}
@@ -172,7 +200,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                         () => {
                           setPoint(points)
                           setModal('child-new-post')
-                          setShowCommentsFor("")
+                          setShowCommentsFor('')
                         }
                         //   async () => {
                         //   const { id, image, ...data } = post
@@ -424,57 +452,65 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                 </div>
               </div>
             </div>
-          ) : modal === "child-new-post" ? (
-            <div className="mt-4 flex gap-4 pr-4">
-              <img src={SERVER_URL + me.data.avtar} className='w-[34px] h-[34px] object-contain rounded-full' />
-              <ChildNewPost
-                key={point}
-                post={post}
-                defaultPoint={point}
-                onClose={() => setModal('')}
+          ) : modal === 'child-new-post' ? (
+            <div className="mt-4 flex gap-4 pb-4 pr-4">
+              <img
+                src={SERVER_URL + me.data.avtar}
+                className="h-[34px] w-[34px] rounded-full object-contain"
               />
+              <div className="flex-1">
+                <ChildNewPost
+                  key={point}
+                  post={post}
+                  defaultPoint={point}
+                  onClose={() => setModal('')}
+                />
+              </div>
             </div>
           ) : null}
-          <PostCommentList postId={post.id} />
 
-          {/* Child Transactions */}
-          {childrenTransactions.length > 0 && (
-            <div id="0">
-              {childrenTransactions.map((post) => (
-                <div className="grid grid-cols-[auto_1fr] gap-4 p-4 pl-0">
-                  <img
-                    className="h-8.5 w-8.5 rounded-full object-cover"
-                    src={SERVER_URL + post.sender[0].avtar}
-                  />
+          {/* <PostCommentList postId={post.id} /> */}
+          {commentsAndTransactions.map(({ type, commentOrTransaction }) =>
+            type === 'comment' ? (
+              <PostComment key={commentOrTransaction.id} comment={commentOrTransaction} />
+            ) : (
+              <div key={commentOrTransaction.id} className="grid grid-cols-[auto_1fr] gap-4 p-4 pl-0">
+                <img
+                  className="h-8.5 w-8.5 rounded-full object-cover"
+                  src={SERVER_URL + commentOrTransaction.sender[0].avtar}
+                />
 
-                  <div className="relative ">
-                    <div className="rounded-[15px] rounded-tl-none bg-paper px-[30px] pb-[20px] pt-[7px] text-[#464646]">
-                      <p className="text-18px">
-                        <span className="font-bold">{post.sender[0].first_name}</span>
-                        <br />+{post.point}
-                        <span className="ml-2">{post.message}</span>
-                      </p>
+                <div className="relative ">
+                  <div className="rounded-[15px] rounded-tl-none bg-paper px-[30px] pb-[20px] pt-[7px] text-[#464646]">
+                    <p className="text-18px">
+                      <span className="font-bold">{commentOrTransaction.sender[0].first_name}</span>
+                      <br />+{commentOrTransaction.point}
+                      <span className="ml-2">{commentOrTransaction.message}</span>
+                    </p>
 
-                      {post.image || post.gif ? (
-                        <div className="mt-[21px] space-y-[20px]">
-                          {post.image && <img className="w-full rounded-md" src={post.image} />}
-                          {post.gif && <img className="w-full rounded-md" src={post.gif} />}
-                        </div>
-                      ) : null}
+                    {commentOrTransaction.image || commentOrTransaction.gif ? (
+                      <div className="mt-[21px] space-y-[20px]">
+                        {commentOrTransaction.image && (
+                          <img className="w-full rounded-md" src={commentOrTransaction.image} />
+                        )}
+                        {commentOrTransaction.gif && (
+                          <img className="w-full rounded-md" src={commentOrTransaction.gif} />
+                        )}
+                      </div>
+                    ) : null}
 
-                      {post.link ? (
-                        <div className="mt-6 space-y-6">
-                          Attached Link:{' '}
-                          <a className="text-blue-500 underline" href={post.link}>
-                            {post.link}
-                          </a>
-                        </div>
-                      ) : null}
-                    </div>
+                    {commentOrTransaction.link ? (
+                      <div className="mt-6 space-y-6">
+                        Attached Link:{' '}
+                        <a className="text-blue-500 underline" href={commentOrTransaction.link}>
+                          {commentOrTransaction.link}
+                        </a>
+                      </div>
+                    ) : null}
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            )
           )}
         </div>
       </div>

@@ -20,9 +20,9 @@ export default function RecommendationWidget() {
 
   return (
     <div>
-      <div className="right-sidebar-container">
-        <div className="border-b border-[#EDEDED] py-1 px-3">
-          <p className="text-base font-Lato font-semibold text-[#464646] text-center ">
+      <div className="right-sidebar-container !pt-0">
+        <div className="py-[8.5px] border-b border-[#EDEDED] px-3">
+          <p className="leading-[24px] font-Lato font-bold text-[#464646] text-center ">
             Recommended for you
           </p>
         </div>

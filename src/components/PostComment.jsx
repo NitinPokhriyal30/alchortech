@@ -1,6 +1,7 @@
 import * as React from "react";
 import GrayBG from "@/assets/images/gray-bg.jpg";
 import { useQuery } from "react-query";
+import { api } from '@/api';
 
 const getUserById = (userId, users) => users.find((user) => user.id === userId);
 

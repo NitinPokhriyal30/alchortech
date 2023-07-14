@@ -17,10 +17,14 @@ export function getTodayDate() {
   const today =
     todayDate.getFullYear() +
     '-' +
-    (todayDate.getMonth()+1).toString().padStart(2, '0') +
+    (todayDate.getMonth() + 1).toString().padStart(2, '0') +
     '-' +
     todayDate.getDate().toString().padStart(2, '0')
   return today
+}
+
+export function getCurrentMonthName() {
+  return new Date().toLocaleString('en-US', { month: 'long' })
 }
 
 export function CreatePost(senderId, parent_id, form) {

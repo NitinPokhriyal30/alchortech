@@ -58,16 +58,16 @@ export default function HomePage() {
           {postList.isLoading ? (
             <div className="h-64 rounded-md  bg-gray-300" />
           ) : (
-            parentPosts.slice(0, 2).map((post, i) => (
-              <>
+            parentPosts
+              .slice(0, 2)
+              .map((post, i) => (
                 <PostCard
                   i={i}
                   key={post.id}
                   post={post}
                   childrenTransactions={getChildTransactionsFor(post.id, allPosts)}
                 />
-              </>
-            ))
+              ))
           )}
         </div>
         <div className="mt-1">
@@ -91,7 +91,7 @@ export default function HomePage() {
       </div>
 
       {/* right sidebar */}
-      <div className="flex w-full flex-col gap-3 overflow-y-auto pb-5 pl-3 pr-3 pt-3 md:w-[260px] md:pl-1 lg:w-[235px] lg:pr-0 xl:w-[319px] md:sticky bottom-0 self-end">
+      <div className="bottom-0 flex w-full flex-col gap-3 self-end overflow-y-auto pb-5 pl-3 pr-3 pt-3 md:sticky md:w-[260px] md:pl-1 lg:w-[235px] lg:pr-0 xl:w-[319px]">
         <RedeemPointsWidget />
         <RecommendationWidget />
         <CelebrationWidget />
