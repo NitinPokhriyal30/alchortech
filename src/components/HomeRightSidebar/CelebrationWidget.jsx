@@ -76,7 +76,7 @@ export default function CelebrationWidget() {
                           ? ' & ' + pluralize(birthDays.length - 1, 'other', 's') + ' '
                           : ' '}
                       </span>
-                      <span>has birth day today</span>
+                      <span>has birthday today</span>
                     </p>
                   </div> : ''}
                 

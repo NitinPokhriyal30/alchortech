@@ -3,7 +3,7 @@ import * as React from 'react'
 import FadeStar from '../../assets/svg/fade.svg'
 import GreenStar from '../../assets/svg/green.svg'
 import RedStar from '../../assets/svg/red.svg'
-import User1 from '../../assets/images/user-profile/user.png'
+import User1 from '../../assets/images/user-profile/pp.png'
 
 export default function Top5UserWidget({ ...props }) {
   const [topUsers, setTopUsers] = React.useState(() => [
@@ -53,7 +53,7 @@ export default function Top5UserWidget({ ...props }) {
             <div className=" px-4">
               <div className="flex pb-1.5 gap-3 ml-1 justify-between items-center">
                 <div className="flex relative items-center gap-3">
-                  <img src={user.image} className="w-14 h-14" alt="user1" />
+                  <img src={user.image} className="rounded-full w-14 h-14" alt="user1" />
                   {index <= 2 && (
                     <img
                       src={
@@ -66,7 +66,7 @@ export default function Top5UserWidget({ ...props }) {
                               : null
                       }
                       alt="Green Star"
-                      className="absolute top-0 left-[-5px]"
+                      className="absolute top-0 left-[-8px]"
                     />
                   )}
                   <div>
@@ -77,7 +77,7 @@ export default function Top5UserWidget({ ...props }) {
                 </div>
 
                 <div>
-                  <span className="text-[#B7B7B7] text-[12px]">{user.stars}</span>
+                  <span className="text-[#464646] text-[12px]">{user.stars}</span>
                 </div>
               </div>
             </div>
