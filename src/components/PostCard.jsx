@@ -29,9 +29,11 @@ import { SERVER_URL } from "@/constant";
 import { api } from "@/api";
 import Cookies from "js-cookie";
 import { useQuery } from "react-query";
-import { getTodayDate } from "@/utils";
+import { getTodayDate, CreatePostComment } from "@/utils";
 import { queryClient } from "@/queryClient";
 import ChildNewPost from "@/components/ChildNewPost";
+import { toast } from "react-toastify";
+import PostCommentList from "@/components/PostCommentList";
 
 const POINTS = [
   {
@@ -76,7 +78,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
 
   return (
     <div className="mb-3">
-      <div className="rounded-lg bg-white pt-6 pb-2 shadow-md xs:px-4 sm:px-6 md:px-6 lg:px-6 xl:px-6  xxl:px-6">
+      <div className="rounded-lg bg-white pb-2 pt-6 shadow-md xs:px-4 sm:px-6 md:px-6 lg:px-6 xl:px-6  xxl:px-6">
         <div className="flex items-center justify-between gap-3">
           <div className="flex-1">
             <div className="flex items-center justify-between gap-8">
@@ -154,7 +156,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
             <div className="mt-2 ">
               {post.gif && (
                 <img
-                  className="block max-w-full w-full rounded-md object-contain"
+                  className="block w-full max-w-full rounded-md object-contain"
                   src={post.gif}
                 />
               )}
@@ -175,7 +177,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
 
         <div>
           <div className="mt-2.5 flex items-center gap-2">
-            {(
+            {
               <div className="relative">
                 <button className="btn-ghost peer flex items-center gap-2">
                   <BsPlusCircleFill className="h-5 w-5" />
@@ -216,7 +218,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                   ))}
                 </div>
               </div>
-            )}
+            }
 
             {/* post reaction button */}
             <div className="relative ">
@@ -259,7 +261,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 pb-1 mt-1">
+          <div className="mt-1 flex items-center gap-2 pb-1">
             <div className="flex cursor-pointer items-center rounded-full border-[0.5px] border-[#d1d1d1] pr-2  text-[18px] text-[#747474]">
               ☺️ 0
             </div>
@@ -290,30 +292,40 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
           </div>
         </div>
 
-        {showCommentsFor === post.comment.id && (
-          <>
-            <div className="border-b-[1px] border-[#EDEDED]" />
+        <div className="border-t border-[#EDEDED] empty:hidden">
+          {showCommentsFor === post.comment.id && (
             <div>
-              <div className="mt-3 flex">
+              <div className="mt-4 flex gap-4 pr-4">
                 <div>
-                  <img className="w-[80%]" src={PostUser} alt="comment" />
+                  <img
+                    className="w-[34px] h-[34px] object-cover rounded-full"
+                    src={SERVER_URL + me.data.avtar}
+                    alt="comment"
+                  />
                 </div>
                 <div className="w-full flex-1">
-                  <div className="flex items-center rounded-b-xl rounded-tr-xl bg-[#EDEDED]">
+                  <div className="flex items-center rounded-b-xl rounded-tr-xl bg-paper">
                     <form
-                      onSubmit={(ev) => {
-                        ev.preventDefault();
-                        const data = Object.fromEntries(
-                          new FormData(ev.target)
-                        );
+                      onSubmit={async (ev) => {
+                        try {
+                          ev.preventDefault();
 
-                        addComment(post.comment.id, {
-                          message: data.message,
-                          image: form.image,
-                          gif: form.gif,
-                        });
+                          console.log(form);
+                          await api.comment.new(
+                            CreatePostComment(me.data.id, {
+                              post_id: post.id,
+                              comment: form.message,
+                              image: form.image,
+                              gif: form.gif,
+                            })
+                          );
 
-                        setForm({ message: "", image: "", gif: "" });
+                          await queryClient.invalidateQueries("comments");
+                          setForm({ message: "", image: "", gif: "" });
+                        } catch (e) {
+                          console.log("e", e);
+                          toast.error("Failed to post comment");
+                        }
                       }}
                       className="w-full"
                     >
@@ -327,7 +339,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                             message: e.target.value,
                           }))
                         }
-                        className=" w-full border-none bg-transparent px-6 py-3 outline-none placeholder:font-Lato placeholder:text-[16px] placeholder:text-[#ABACAC]"
+                        className=" w-full border-none bg-transparent px-6 py-3 outline-none placeholder:font-Lato placeholder:text-[16px] placeholder:text-[#ABACAC] text-[#464646]"
                       />
                     </form>
 
@@ -447,25 +459,12 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                 </div>
               </div>
             </div>
-          </>
-        )}
+          )}
+          <PostCommentList postId={post.id} />
 
-        {post.comment.replies?.map((comment) => (
-          <PostComment
-            {...{ modal, setModal }}
-            {...{ showCommentsFor, setShowCommentsFor }}
-            key={comment.message}
-            comment={comment}
-            addComment={addComment}
-            addReaction={addCommentReaction}
-          />
-        ))}
-
-        {/* Child Transactions */}
-            {showCommentsFor === "" && childrenTransactions.length > 0 && (
-          <>
-            <div className="border-b-[1px] border-[#EDEDED]" />
-            <div>
+          {/* Child Transactions */}
+          {childrenTransactions.length > 0 && (
+            <div id="0">
               {childrenTransactions.map((post) => (
                 <div className="grid grid-cols-[auto_1fr] gap-4 p-4 pl-0">
                   <img
@@ -479,8 +478,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                         <span className="font-bold">
                           {post.sender[0].first_name}
                         </span>
-                        <br />
-                        +{post.point}
+                        <br />+{post.point}
                         <span className="ml-2">{post.message}</span>
                       </p>
 
@@ -514,8 +512,8 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                 </div>
               ))}
             </div>
-          </>
-        )}
+          )}
+        </div>
 
         {modal === "child-new-post" && (
           <>

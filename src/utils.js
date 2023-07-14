@@ -49,3 +49,24 @@ export function CreatePost(senderId, parent_id, form) {
 
   return post
 }
+
+export function CreatePostComment(senderId, form) {
+  const today = getTodayDate()
+
+  const comment = {
+    created_by: senderId,
+    updated_by: senderId,
+    active: 'true',
+    flagged_comment: 'false',
+    react_by: {},
+    created: today,
+    updated: today,
+
+    post_id: form.post_id,
+    image: form.image,
+    gif: form.gif,
+    comment: form.comment,
+  }
+
+  return comment
+}
