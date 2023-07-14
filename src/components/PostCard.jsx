@@ -154,14 +154,14 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
             <div className="mt-2 ">
               {post.gif && (
                 <img
-                  className="block max-h-48 rounded-md object-contain"
+                  className="block max-w-full w-full rounded-md object-contain"
                   src={post.gif}
                 />
               )}
 
               {post.image && (
                 <img
-                  className="block max-h-48 rounded-md object-contain"
+                  className="block max-w-full rounded-md object-contain"
                   src={
                     typeof post.image === "string"
                       ? post.image
@@ -175,13 +175,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
 
         <div>
           <div className="mt-2.5 flex items-center gap-2">
-            {isMyPost ? null : hasAddedPoints != 0 ? (
-              <div>
-                <p className="p-2 font-Lato text-[16px] text-primary">
-                  You Added {hasAddedPoints} Points!
-                </p>
-              </div>
-            ) : (
+            {(
               <div className="relative">
                 <button className="btn-ghost peer flex items-center gap-2">
                   <BsPlusCircleFill className="h-5 w-5" />
@@ -485,7 +479,8 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                         <span className="font-bold">
                           {post.sender[0].first_name}
                         </span>
-                        <br />+{post.point}
+                        <br />
+                        +{post.point}
                         <span className="ml-2">{post.message}</span>
                       </p>
 
