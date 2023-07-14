@@ -48,7 +48,7 @@ export default function NewPost({ ...props }) {
   const [processedImage, setProcessedImage] = React.useState("");
 
   const [form, setForm] = React.useState({
-    point: 30,
+    point: 0,
     recipients: [],
     hashtags: [],
     image: "",
@@ -59,7 +59,7 @@ export default function NewPost({ ...props }) {
 
   return (
     <>
-      <div className="z-[999]">
+      {/* <div className="z-[999]">
         {processedImage && (
           <Cropper
             imageFile={processedImage}
@@ -69,7 +69,7 @@ export default function NewPost({ ...props }) {
             }}
           />
         )}
-      </div>
+      </div> */}
 
       <div>
         <div className="rounded-t-lg  bg-primary px-6 py-2 text-sm text-white">
@@ -122,7 +122,11 @@ export default function NewPost({ ...props }) {
 
         <div className="_px-6 rounded-b-lg bg-white py-6 text-[#b1b1b1] drop-shadow-normal">
           <div className="px-6">
-            <span className="text-[#464646]">+{form.point} </span>
+            {form.point == 0 ? (
+              <span>+30 </span>
+            ) : (
+                <span className="text-[#464646]">+{form.point} </span>
+            )}
             {form.recipients.length == 0 ? (
               <span>@Name.recipient</span>
             ) : (
@@ -136,7 +140,7 @@ export default function NewPost({ ...props }) {
                     {fullName}
                   </span>
                 ))
-            )}{" "}
+            )}
             {form.hashtags.length == 0 ? (
               <span>#HashTag</span>
             ) : (
@@ -235,7 +239,7 @@ export default function NewPost({ ...props }) {
               <EmojiEmotions />
             </EmojiPickerBox>
 
-            <ImagePickerBox onChange={(image) => setProcessedImage(image)}>
+            <ImagePickerBox onChange={(image) => setForm((prev) => ({ ...prev, image }))}>
               <Image />
             </ImagePickerBox>
 
