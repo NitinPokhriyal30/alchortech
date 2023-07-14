@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import axios from 'axios';
 import { api } from '../../api'
 import { useParams, useNavigate } from 'react-router-dom';
@@ -7,9 +7,11 @@ import 'react-toastify/dist/ReactToastify.css';
 import ChangePwBackground from '../../assets/images/login-signup/ChangePwBackground.png'
 import High5Logo from '../../assets/images/login-signup/High5Logo.png'
 import AlcorLogo from '../../assets/images/login-signup/AlcorLogo.png'
+import { RiEyeLine, RiEyeOffLine } from 'react-icons/ri'
 
 const ResetPassword = () => {
-    const navigate = useNavigate();
+
+    const [showPassword, setShowPassword] = useState(false);
 
     const {uidb64, token} = useParams();
 
@@ -57,21 +59,38 @@ const ResetPassword = () => {
                     toast.error('Password does not match')
                   }
                 }}>
-                  <input 
-                    type="password" 
-                    name="password" 
-                    placeholder="New Password" 
-                    required 
-                    className="text-[16px] font-Lato text-[#ACACAC] border-b-2 border-gray-300 py-2 w-full focus:outline-none placeholder-opacity-50"
-                    />
+                  
+                  <div className='relative'>
+                      <input 
+                      type={showPassword ? 'text' : 'password'} 
+                      name="password" 
+                      placeholder="New Password" 
+                      required 
+                      className="text-[16px] font-Lato text-[#ACACAC] border-b-2 border-gray-300 py-2 w-full focus:outline-none placeholder-opacity-50"
+                      />
+                      <span
+                        className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-400 cursor-pointer"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                      {showPassword ? <RiEyeLine /> : <RiEyeOffLine />}
+                      </span>
+                  </div>
 
-                  <input 
-                    type="password" 
-                    name="confirmPassword" 
-                    placeholder="Confirm Password" 
-                    required
-                    className="text-[16px] font-Lato text-[#ACACAC] border-b-2 border-gray-300 py-2 w-full focus:outline-none placeholder-opacity-50" 
-                    />
+                  <div className='relative'>
+                      <input 
+                      type={showPassword ? 'text' : 'password'}
+                      name="confirmPassword" 
+                      placeholder="Confirm Password" 
+                      required
+                      className="text-[16px] font-Lato text-[#ACACAC] border-b-2 border-gray-300 py-2 w-full focus:outline-none placeholder-opacity-50" 
+                      />
+                      <span
+                        className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-400 cursor-pointer"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                      {showPassword ? <RiEyeLine /> : <RiEyeOffLine />}
+                      </span>
+                  </div>
 
                   <div>
                     <button type="submit" className="mt-10 w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-8 rounded-md">

@@ -6,6 +6,7 @@ import AlcorLogo from '../../assets/images/login-signup/AlcorLogo.png'
 import SuccessLogo from '../../assets/images/login-signup/SuccessLogo.png'
 import { ToastContainer, toast } from 'react-toastify';
 
+
 const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjg4NzU3ODYzLCJpYXQiOjE2ODg3NTYwNjMsImp0aSI6IjRiZjVlMjYyYWI1MzQ5Y2ViYzM4YzI3MzBlODFjMjVlIiwidXNlcl9pZCI6IjhjNjViNjIzLTU1NmEtNDZiNi05NjZlLTVhMGRkM2JhZWU0MCJ9.RJY8SXmMz8WdulZkNolYc9x3EsE2j72uoyxfUBNBOjI"
 const ForgotPassword = () => {
 
