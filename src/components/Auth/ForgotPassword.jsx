@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import axios from 'axios';
+import { api } from '../../api'
 import ForgotBackground from '../../assets/images/login-signup/ForgotBackground.png'
 import High5Logo from '../../assets/images/login-signup/High5Logo.png'
 import AlcorLogo from '../../assets/images/login-signup/AlcorLogo.png'
@@ -12,22 +12,16 @@ const ForgotPassword = () => {
     const [email, setEmail] = useState("");
     const [showSuccess, setShowSuccess] = useState(false)
 
-    const handleForgotPassword = async (email) => {fetch('http://backend.letshigh5.com/request/password/', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ email }) 
-    })
-    .then(response => response.json())
-    .then(data => {  
-      setShowSuccess(true);
-      toast.success('Email Sent Succesfully!')
-    })
-    .catch(error => {
-      console.error(error);
-      toast.error('User not found!')
-    })}
+    const handleForgotPassword = async (email) => {
+      try {
+        await api.auth.forgotPassword({email}); 
+        setShowSuccess(true);
+        toast.success('Email Sent Successfully!');
+      } catch (error) {
+        console.error(error);
+        toast.error('User not found!');
+      }
+    };
 
 
         return (

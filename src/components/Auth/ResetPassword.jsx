@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import { api } from '../../api'
 import { useParams, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -12,25 +13,18 @@ const ResetPassword = () => {
 
     const {uidb64, token} = useParams();
 
-    const handleSubmit = async (password, token, uidb) => {
-        try {
-          const response = await axios.patch('http://backend.letshigh5.com/passwordreset/complete', {
-            password, token, uidb64
-          });
-    
-          if (response.status === 200) {
-            console.log(response.data.message);
-            toast.success("Password changed successfully!");
-            setTimeout(() => {
-                navigate('/')
-            }, 2000)
-          } else {
-            console.log(response.data.error);
-          }
-        } catch (error) {
-          console.log(error);
-        }
+    const handleSubmit = async (password, token, uidb64) => {
+      try {
+        await api.auth.resetPassword(password, token, uidb64); 
+  
+        toast.success('Password changed successfully!');
+        setTimeout(() => {
+          window.location.replace('/');
+        }, 2000);
+      } catch (error) {
+        console.log(error);
       }
+    };
 
   return (
     <div className="flex overflow-hidden justify-center items-center h-screen w-screen bg-gray-100">

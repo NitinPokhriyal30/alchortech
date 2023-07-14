@@ -13,6 +13,7 @@ import { SERVER_URL } from '@/constant';
 import Cookies from 'js-cookie';
 import ImagePickerBox from '@/components/ImagePickerBox';
 import Cropper from '@/components/Cropper';
+import { toast } from 'react-toastify';
 
 
 const getChildTransactionsFor = (parentId, allTransactions) => {
@@ -32,8 +33,6 @@ const withIsChild = (allTransactions) => {
 export default function MyProfile() {
   const [activeTab, setActiveTab] = useState('overview');
   const [appreciationType, setAppreciationType] = useState('received');
-  const [processedImage, setProcessedImage] = useState('');
-  const [profilePicture, setProfilePicture] = useState([]);
 
   const meQuery = useQuery('me', () => api.auth.me(Cookies.get('user_id')));
   const transactionsQuery = useQuery(
@@ -50,8 +49,7 @@ export default function MyProfile() {
   useEffect(() => {
     // Refetch the transactions query when appreciationType changes
     transactionsQuery.refetch();
-    console.log(profilePicture)
-  }, [appreciationType, profilePicture]);
+  }, [appreciationType]);
 
   const me = meQuery.data;
 
@@ -78,49 +76,56 @@ export default function MyProfile() {
     (post) => !post.isChild || getChildTransactionsFor(post.id, allPosts).length > 0
   );
 
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const confirmation = window.confirm('Do you want to change your profile picture?');
+      if (confirmation) {
+        const formData = new FormData();
+        formData.append('avtar', file);
+        try {
+          const response = await api.auth.changeAvatar(Cookies.get('user_id'), formData);
+          toast.success("Profile Picture changed !")
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000)
+        } catch (error) {
+          toast.error("Size too large !")
+        }
+      }
+    }
+  }
+
   return (
     <div className="drop-shadow-lg">
-    <div className="z-[999]">
-    {processedImage && (
-      <Cropper
-        imageFile={processedImage}
-        onClose={(image) => {
-          setProcessedImage('')
-          setProfilePicture((prev) => ({ ...prev, image }))
-        }}
-      />
-    )}
-  </div>
       <div className="flex flex-col md:flex-row h-auto gap-2 mt-3 mx-3">
         <div className="flex flex-col items-center md:flex-row md:w-[70%] bg-white rounded-lg border-t-8 border-l-0 md:border-t-0 md:border-l-8 border-[#27C4A0]">
-          <ImagePickerBox onChange={(image) => setProcessedImage(image)}>
+          
               <div className="h-32 w-32 md:h-36 md:w-36 rounded-full overflow-hidden relative ml-4 mr-8 my-8">
-              <img src={SERVER_URL + (me?.avtar || '')}
-                alt="user avatar"
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center opacity-0 transition-opacity duration-300 hover:opacity-100">
+              <img className="w-full h-full object-cover" src={SERVER_URL + (me?.avtar || '')} alt="user avatar" />
+              <label htmlFor='imageInput' className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center opacity-0 transition-opacity duration-300 hover:opacity-100">
                 <p className="text-white font-normal font-lato text-sm text-center">
                   Change<br />Picture
                 </p>
+              </label>
+              <input id='imageInput' type='file' accept='image/*' className='hidden' onChange={handleImageChange} />
               </div>
-              </div>
-          </ImagePickerBox>
+         
           <div className="flex-col text-center md:text-left pr-2">
-            <div>
+            <div className='ml-[78px] md:ml-[-8px]'>
               <div>
-                <img className="ml-[-8px]" src={Flag} alt="flag"/>
+                <img className="" src={Flag} alt="flag"/>
               </div>
             </div>
             <p className="font-bold font-Lato text-[#292929] text-[25px]">
               {me?.first_name} {me?.last_name}
             </p>
-            <div className="md:flex mt-2">
-              <div className="pr-4">
+            <div className="md:flex mt-2 mb-4">
+              <div className="pr-0 md:pr-4">
                 <p className="font-bold font-lato text-[#000000] text-[18px]">{me?.role}</p>
                 <p className="font-normal font-lato text-[#000000] text-[18px]">{me?.department}</p>
               </div>
-              <div className="md:border-l-[1px] sm:border-l-0 pl-4  border-[#27C4A0]">
+              <div className="md:border-l-[1px] sm:border-l-0 pl-0 md:pl-4  border-[#27C4A0]">
                 <p className="font-normal font-lato text-[#000000] text-[18px]">{me?.email}</p>
                 <p className="font-normal font-lato text-[#000000] text-[18px]">+91 {me?.phone_number}</p>
               </div>
@@ -157,12 +162,16 @@ export default function MyProfile() {
                 <button className="peer font-Lato flex items-center gap-1 text-sm font-semibold pl-1">
                   All <span><AiFillCaretDown /></span>
                 </button>
-                <div className="hidden drop-shadow-[0px_2px_6px_#44444F1A] px-4 py-2 rounded-lg bg-white absolute z-10 top-[21px] right-[1px] peer-hover:flex hover:flex  flex-col text-end">
-                  <p className="text-sm font-Lato">This month</p>
-                  <p className="text-sm font-Lato">Last month</p>
-                  <p className="text-sm font-Lato">Last quarter</p>
-                  <p className="text-sm font-Lato">Last 6 months</p>
-                  <p className="text-sm font-Lato">Last 1 year</p>
+                <div className="hidden drop-shadow-[0px_2px_6px_#44444F1A] w-36 px-4 py-2 rounded-lg bg-white absolute z-10 top-[21px] right-[1px] peer-hover:flex hover:flex  flex-col text-end">
+                <p className="text-sm font-Lato">Last 1 year</p>  
+                <p className="text-sm font-Lato">Last 6 months</p>
+                <p className="text-sm font-Lato">Last quarter</p>
+                <p className="text-sm font-Lato">Last month</p>
+                <p className="text-sm font-Lato">This month</p>
+                  
+                  
+                  
+                  
                 </div>
               </div>
             </div>

@@ -36,9 +36,11 @@ axios.interceptors.response.use(
 const api = {
   auth: {
     login: (data) => axios.post('login/', data).then((r) => r.data),
-
     // useQuery(me) always has user bcoz its called during Login
     // and other routes are Protected Routes
+    forgotPassword: (email) => axios.post('/request/password/', email).then((r) => r.data),
+    resetPassword: (password, token, uidb64) => axios.patch('passwordreset/complete', {password, token, uidb64}).then((r) => r.data),
+    changeAvatar: (id, formData) => axios.put(`updateUserAvtar/${id}/`, formData).then((r) => r.data) ,
     me: (id) => axios.get(`getUserDetails/${id}/`).then((r) => r.data),
   },
   users: {

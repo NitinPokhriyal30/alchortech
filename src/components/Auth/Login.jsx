@@ -28,7 +28,7 @@ const Login = () => {
       Cookies.set('user_id', id)
       const user = await api.auth.me(id)
       await queryClient.setQueryData('me', user)
-      navigate('/', { replace: true })
+      window.location.replace('/')
     } catch (error) {
       console.log(error)
       toast.error('Invalid Email Id or Password!')
@@ -86,7 +86,7 @@ const Login = () => {
                   </label>
                 </span>
                 <span className="font-Lato text-[12px] text-[#5486E3]">
-                  <Link to="http://localhost:5173/forgot/password">Forgot Password?</Link>
+                  <Link to="/forgot/password">Forgot Password?</Link>
                 </span>
               </div>
               <div>
