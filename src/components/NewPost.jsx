@@ -76,7 +76,7 @@ export default function NewPost({ ...props }) {
           <ul className="flex flex-wrap items-center gap-y-3 divide-x divide-primary-400 first:pl-0 child:pl-4">
             {/* points button */}
 
-            <li className="group pr-4">
+            <li className="group pr-4 !pl-0">
               <PointsRangeDialog {...{ form, setForm }} />
             </li>
 
