@@ -29,7 +29,6 @@ import { SERVER_URL } from "@/constant";
 import { api } from "@/api";
 import Cookies from "js-cookie";
 import { useQuery } from "react-query";
-import { getTodayDate } from "@/utils";
 import { queryClient } from "@/queryClient";
 import ChildNewPost from "@/components/ChildNewPost";
 import moment from "moment";
@@ -111,6 +110,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                 </p>
 
                 <p className="ml-5 font-Lato font-normal text-[#00BC9F]">
+                  {console.log(post.created)}
                   {moment(post.created).fromNow()}
                 </p>
               </div>
@@ -462,6 +462,18 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
           />
         ))}
 
+        {modal === "child-new-post" && (
+          <>
+            <div className="border-b-[1px] mb-3 border-[#EDEDED]" />
+            <ChildNewPost
+              key={point}
+              post={post}
+              defaultPoint={point}
+              onClose={() => setModal("")}
+            />
+          </>
+        )}
+
         {/* Child Transactions */}
             {showCommentsFor === "" && childrenTransactions.length > 0 && (
           <>
@@ -517,17 +529,8 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
             </div>
           </>
         )}
+        
 
-        {modal === "child-new-post" && (
-          <>
-            <ChildNewPost
-              key={point}
-              post={post}
-              defaultPoint={point}
-              onClose={() => setModal("")}
-            />
-          </>
-        )}
       </div>
     </div>
   );

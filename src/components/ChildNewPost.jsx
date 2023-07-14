@@ -51,7 +51,7 @@ export default function ChildNewPost({ onClose, post, defaultPoint }) {
 
   return (
     <>
-      {rawImage && (
+      {/* {rawImage && (
         <Cropper
           imageFile={rawImage}
           onClose={(image) => {
@@ -59,7 +59,7 @@ export default function ChildNewPost({ onClose, post, defaultPoint }) {
             setForm((prev) => ({ ...prev, image }))
           }}
         />
-      )}
+      )} */}
       <div>
         <div className="rounded-t-lg  bg-primary px-6 py-2 text-sm text-white">
           <ul className="flex flex-wrap items-center gap-y-3 divide-x divide-primary-400 first:pl-0 child:pl-4">
@@ -159,7 +159,7 @@ export default function ChildNewPost({ onClose, post, defaultPoint }) {
               <EmojiEmotions />
             </EmojiPickerBox>
 
-            <ImagePickerBox onChange={(image) => setRawImage(image)}>
+            <ImagePickerBox onChange={(image) => setForm((prev) => ({ ...prev, image }))}>
               <Image />
             </ImagePickerBox>
 

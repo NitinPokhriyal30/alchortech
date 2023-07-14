@@ -51,9 +51,9 @@ export default function Top5UserWidget({ ...props }) {
         {topUsers.map((user, index) => (
           <div key={user.id}>
             <div className=" px-4">
-              <div className="flex pb-1.5 gap-3 ml-1 justify-between items-center">
+              <div className="flex pb-2 gap-3 ml-1 justify-between items-center">
                 <div className="flex relative items-center gap-3">
-                  <img src={user.image} className="rounded-full w-14 h-14" alt="user1" />
+                  <img src={user.image} className="rounded-full w-12 h-12" alt="user1" />
                   {index <= 2 && (
                     <img
                       src={
