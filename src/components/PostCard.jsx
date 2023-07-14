@@ -32,6 +32,7 @@ import { useQuery } from "react-query";
 import { getTodayDate } from "@/utils";
 import { queryClient } from "@/queryClient";
 import ChildNewPost from "@/components/ChildNewPost";
+import moment from "moment";
 
 const POINTS = [
   {
@@ -109,8 +110,8 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                     )}
                 </p>
 
-                <p className="ml-5 font-Lato font-normal text-[#919191]">
-                  {post.created}
+                <p className="ml-5 font-Lato font-normal text-[#00BC9F]">
+                  {moment(post.created).fromNow()}
                 </p>
               </div>
             </div>
