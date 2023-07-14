@@ -105,49 +105,49 @@ export default function HomeSidebar({}) {
               to="/"
               className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
             >
-              <HomeIcon />
+                <div className="w-[23px]"><HomeIcon /></div>
               <span>Home</span>
             </MenuLink>
             <MenuLink
               to="/my-rewards"
               className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
             >
-              <Icon3 fontSize={22} />
+                <div className="w-[23px]"><Icon3 fontSize={22} /></div>
               <span>My Rewards</span>
             </MenuLink>
             <MenuLink
               to="/directory"
               className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
             >
-              <img src={PhoneIcon} /> 
+                <div className="w-[23px]"><img src={PhoneIcon} /> </div>
               <span>Directory</span>
             </MenuLink>
             <MenuLink
               to="/analytics"
               className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
             >
-              <img src={AnalyticsIcon} /> 
+                <div className="w-[23px]"><img src={AnalyticsIcon} /> </div>
               <span>Analytics</span>
             </MenuLink>
             <MenuLink
               to="/campaign"
               className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
             >
-              <CampaignIcon />
+                <div className="w-[23px]"><CampaignIcon /></div>
               <span>Campaigns</span>
             </MenuLink>
             <MenuLink
               to="/survey"
               className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
             >
-              <img src={Icon4} />
+                <div className="w-[23px]"><img src={Icon4} /></div>
               <span>Survey</span>
             </MenuLink>
             <MenuLink
               to="/voice-out"
               className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
             >
-              <Icon5 src={Icon4} />
+                <div className="w-[23px]"><Icon5 src={Icon4} /></div>
               <span>Voice Out</span>
             </MenuLink>
           </div>
