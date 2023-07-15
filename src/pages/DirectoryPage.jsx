@@ -97,8 +97,8 @@ export default function DirectoryPage({ ...props }) {
         {users.isLoading ? null : (
           <>
             <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3">
-              {filteredUsers.map((props) => (
-                <PersonCard key={props.name} img={UserImage} {...props} />
+              {filteredUsers.map((props,index) => (
+                <PersonCard key={index} img={UserImage} {...props} />
               ))}
             </div>
 
