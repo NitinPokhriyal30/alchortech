@@ -25,7 +25,7 @@ export default function PostComment({ modal, setModal, comment, ...props }) {
           <p className="text-18px">
             <span className="font-bold">{user.first_name}</span>
             <br />
-            <span className="ml-2">{comment.comment}</span>
+            <span>{comment.comment}</span>
           </p>
 
           {comment.image || comment.gif ? (

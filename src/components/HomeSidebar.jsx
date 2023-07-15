@@ -81,7 +81,7 @@ export default function HomeSidebar({}) {
           <div className="px-[10px]">
             <MenuLink
               to="/myProfile"
-              className="mb-[28px] mt-[11px] flex items-center gap-3 rounded-[5px] px-3 hover:bg-white/[8%] xs:py-[11px] [&.active]:bg-white/[8%]"
+              className="mb-[11px] mt-[11px] md:mb-[18px] flex items-center gap-3 rounded-[5px] px-3 hover:bg-white/[8%] xs:py-[11px] [&.active]:bg-white/[8%]"
             >
               <div>
                 <img
@@ -100,7 +100,7 @@ export default function HomeSidebar({}) {
           </div>
           {/*-------------- Nav Items  -------------------*/}
 
-          <div className="xpt-5 flex flex-col border-[#7096DB] px-[10px]  pb-5">
+          <div className="xpt-5 flex flex-col border-[#7096DB] px-[10px]  pb-[12px]">
             <MenuLink
               to="/"
               className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
@@ -174,7 +174,7 @@ export default function HomeSidebar({}) {
 
           {/*--------------- FAQ Section  ----------------*/}
 
-          <div className="mt-auto px-5 pb-5 pt-16">
+          <div className="mt-auto pl-[33px] pr-[30px] pb-[22px]">
             <div className="flex items-center justify-between gap-3">
               <p className="flex items-center gap-1 font-Lato text-[16px] font-light leading-[19px] text-white">
                 <BsQuestionCircle /> FAQs
@@ -186,7 +186,7 @@ export default function HomeSidebar({}) {
           </div>
         </div>
 
-        <p className="mb-[38px] mt-[25px] text-center text-10px">
+        <p className="my-[10px] lg:my-[20px] text-center text-10px">
           A product of Alcor | All rights reserved 2023
           <br />
           <Link to="#" className={COLORS.footer.terms}>
