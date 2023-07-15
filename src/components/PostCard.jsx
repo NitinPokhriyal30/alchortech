@@ -453,7 +453,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
               </div>
             </div>
           ) : modal === 'child-new-post' ? (
-            <div className="mt-4 flex gap-4 pb-4 pr-4">
+            <div className="mt-6 flex gap-4 pr-4">
               <img
                 src={SERVER_URL + me.data.avtar}
                 className="h-[34px] w-[34px] rounded-full object-contain"
@@ -474,7 +474,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
             type === 'comment' ? (
               <PostComment key={commentOrTransaction.id} comment={commentOrTransaction} />
             ) : (
-              <div key={commentOrTransaction.id} className="grid grid-cols-[auto_1fr] gap-4 p-4 pl-0">
+              <div key={commentOrTransaction.id} className="grid grid-cols-[auto_1fr] gap-4 pt-4 pl-0">
                 <img
                   className="h-8.5 w-8.5 rounded-full object-cover"
                   src={SERVER_URL + commentOrTransaction.sender[0].avtar}

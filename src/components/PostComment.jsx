@@ -14,7 +14,7 @@ export default function PostComment({ modal, setModal, comment, ...props }) {
     : { avtar: GrayBG, first_name: "&nbsp;", last_name: "&nbsp;" };
 
   return (
-    <div className="grid grid-cols-[auto_1fr] gap-4 p-4 pl-0">
+    <div className="grid grid-cols-[auto_1fr] gap-4 pt-4 pl-0">
       <img
         className="h-8.5 w-8.5 rounded-full object-cover"
         src={user.avtar}
