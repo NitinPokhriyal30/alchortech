@@ -91,7 +91,7 @@ export default function HomePage() {
       </div>
 
       {/* right sidebar */}
-      <div className="bottom-0 flex w-full flex-col gap-3 self-end overflow-y-auto pb-5 pl-3 pr-3 pt-3 md:sticky md:w-[260px] md:pl-1 lg:w-[235px] lg:pr-0 xl:w-[319px]">
+      <div className="bottom-0 flex w-full flex-col gap-3 self-end overflow-y-auto pb-5 pl-3 pr-3 pt-3 md:sticky md:w-[260px] md:pl-[0px] lg:w-[235px] lg:pr-0 xl:w-[319px]">
         <RedeemPointsWidget />
         <RecommendationWidget />
         <CelebrationWidget />

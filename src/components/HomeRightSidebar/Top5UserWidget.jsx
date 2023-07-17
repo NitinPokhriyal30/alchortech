@@ -6,14 +6,15 @@ import RedStar from '../../assets/svg/red.svg'
 import User1 from '../../assets/images/user-profile/pp.png'
 import { useQuery } from 'react-query'
 import { api } from '@/api'
+import { SERVER_URL } from '@/constant'
+
 
 export default function Top5UserWidget({ ...props }) {
 
-  // const events = useQuery("events", () => api.topStars.all(), {
-  //   initialData: [],
-  // });
+  const top5 = useQuery("top5", () => api.topStars.all(), {
+    initialData: [],
+  });
 
-  // console.log(events.data);
 
   const [topUsers, setTopUsers] = React.useState(() => [
     {
@@ -48,6 +49,10 @@ export default function Top5UserWidget({ ...props }) {
     },
   ])
 
+  if (top5.isLoading) {
+    return null
+  }
+
   return (
     <div>
       <div className="right-sidebar-container !pt-0 !pb-4">
@@ -57,12 +62,12 @@ export default function Top5UserWidget({ ...props }) {
           </p>
         </div>
 
-        {topUsers.map((user, index) => (
+        {top5.data?.map((user, index) => (
           <div key={user.id}>
             <div className=" px-4">
               <div className="flex pb-2 gap-3 ml-1 justify-between items-center">
                 <div className="flex relative items-center gap-3">
-                  <img src={user.image} className="rounded-full w-12 h-12" alt="user1" />
+                  <img src={ SERVER_URL + user.avtar} className="rounded-full w-12 h-12" alt="user1" />
                   {index <= 2 && (
                     <img
                       src={
@@ -80,13 +85,13 @@ export default function Top5UserWidget({ ...props }) {
                   )}
                   <div>
                     <p className="text-[14px] font-Lato font-normal text-[#050505]">
-                      {user.fullName}
+                      {user.recipient}
                     </p>
                   </div>
                 </div>
 
                 <div>
-                  <span className="text-[#464646] text-[12px]">{user.stars}</span>
+                  <span className="text-[#464646] text-[12px]">{user.count}</span>
                 </div>
               </div>
             </div>
