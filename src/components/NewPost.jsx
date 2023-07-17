@@ -187,11 +187,11 @@ export default function NewPost({ ...props }) {
 
             {form.gif && (
               <div>
-                <div className="group flex items-center pb-2">
+                <div className="group flex items-center pb-6">
                   <img
                     src={form.gif}
                     key={form.image}
-                    className="mt-4 w-40 border"
+                    className="mt-4 w-40 border rounded-md"
                   />
 
                   <button
@@ -272,7 +272,7 @@ export default function NewPost({ ...props }) {
                   await queryClient.refetchQueries("me");
 
                   setForm({
-                    point: 30,
+                    point: 0,
                     recipients: [],
                     hashtags: [],
                     image: "",
