@@ -296,7 +296,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
         <div className="border-t border-[#EDEDED] empty:hidden">
           {showCommentsFor === post.comment.id ? (
             <div>
-              <div className="mt-4 flex gap-4 pr-4">
+              <div className="mt-4 flex gap-4">
                 <div>
                   <img
                     className="h-[34px] w-[34px] rounded-full object-cover"
@@ -456,7 +456,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
               </div>
             </div>
           ) : modal === 'child-new-post' ? (
-            <div className="mt-6 flex gap-4 pr-4">
+            <div className="mt-6 flex gap-4">
               <img
                 src={SERVER_URL + me.data.avtar}
                 className="h-[34px] w-[34px] rounded-full object-contain"

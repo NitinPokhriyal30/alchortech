@@ -186,7 +186,7 @@ export default function HomeSidebar({}) {
           </div>
         </div>
 
-        <p className="my-[10px] lg:my-[20px] text-center text-10px">
+        <p className="lg:my-[10px] my-[10px] text-center text-10px">
           A product of Alcor | All rights reserved 2023
           <br />
           <Link to="#" className={COLORS.footer.terms}>
