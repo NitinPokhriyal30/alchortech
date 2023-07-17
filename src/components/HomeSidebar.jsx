@@ -33,6 +33,7 @@ import Icon5 from "@/assets/svg/home-sidebar/Group3"
 
 import AnalyticsIcon from '@/assets/svg/home-sidebar/noun-analytics-5506185.svg'
 import PowerOffIcon from '@/assets/svg/home-sidebar/power-off (1).svg'
+import HelpIcon from '@/assets/svg/home-sidebar/HelpIcon'
 
 export default function HomeSidebar({}) {
   const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
@@ -177,10 +178,10 @@ export default function HomeSidebar({}) {
           <div className="mt-auto pl-[33px] pr-[30px] pb-[22px]">
             <div className="flex items-center justify-between gap-3">
               <p className="flex items-center gap-1 font-Lato text-[16px] font-light leading-[19px] text-white">
-                <BsQuestionCircle /> FAQs
+                <HelpIcon /> FAQs
               </p>
               <p className="flex items-center gap-1 font-Lato text-[16px] font-light leading-[19px] text-white">
-                <BsQuestionCircle /> Feedback
+                <img src={Icon2} alt="" /> Feedback
               </p>
             </div>
           </div>
