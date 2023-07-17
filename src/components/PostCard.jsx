@@ -164,7 +164,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
           )}
 
           {(post.gif || post.image) && (
-            <div className="mt-2 flex flex-col gap-4 md:gap-6">
+            <div className="mt-2 flex flex-col gap-[1rem] md:gap-[1rem]">
               {post.gif && (
                 <img className="block w-full max-w-full rounded-md object-contain" src={post.gif} />
               )}

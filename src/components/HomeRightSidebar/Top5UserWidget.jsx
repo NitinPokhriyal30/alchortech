@@ -4,8 +4,17 @@ import FadeStar from '../../assets/svg/fade.svg'
 import GreenStar from '../../assets/svg/green.svg'
 import RedStar from '../../assets/svg/red.svg'
 import User1 from '../../assets/images/user-profile/pp.png'
+import { useQuery } from 'react-query'
+import { api } from '@/api'
 
 export default function Top5UserWidget({ ...props }) {
+
+  // const events = useQuery("events", () => api.topStars.all(), {
+  //   initialData: [],
+  // });
+
+  // console.log(events.data);
+
   const [topUsers, setTopUsers] = React.useState(() => [
     {
       id: Math.random().toString(),

@@ -47,6 +47,10 @@ const api = {
     search: (params) => axios.get("employees/", { params }).then((r) => r.data),
   },
 
+  // topStars: {
+  //   all: () => axios.get("top-employees/").then((r) => r.data),
+  // },
+
   transactions: {
     new: (data) =>
       axios
