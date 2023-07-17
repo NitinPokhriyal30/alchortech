@@ -1,3 +1,26 @@
+function getNextMonthDate() {
+  
+  // Get the current date
+  var currentDate = new Date();
+
+  // Get the month index (0-11)
+  var currentMonthIndex = currentDate.getMonth();
+
+  // Increment the month index to get the next month
+  var nextMonthIndex = currentMonthIndex + 1;
+
+  // Adjust for December (month index 11)
+  if (nextMonthIndex === 12) {
+    nextMonthIndex = 0;
+  }
+
+  // Create a new Date object with the next month
+  var nextMonthDate = new Date();
+  nextMonthDate.setMonth(nextMonthIndex);
+
+  return nextMonthDate;
+}
+
 export async function wait(milliseconds) {
   return new Promise((res) => setTimeout(res, milliseconds))
 }
@@ -23,8 +46,35 @@ export function getTodayDate() {
   return today
 }
 
-export function getCurrentMonthName() {
-  return new Date().toLocaleString('en-US', { month: 'long' })
+export function getNextMonthName() {
+
+  const nextMonthDate = getNextMonthDate();
+
+  // Get the name of the next month
+  var nextMonthName = nextMonthDate.toLocaleString('en-US', { month: 'long' });
+
+  return nextMonthName;
+
+}
+
+export function getDaysLeftForNextMonth() {
+
+  const nextMonthDate = getNextMonthDate();
+
+  // Get the current date
+  var currentDate = new Date();
+
+  // Set the date to the 1st day of the next month
+  nextMonthDate.setDate(1);
+
+  // Calculate the difference in milliseconds between the current date and the next month's date
+  var timeDiff = nextMonthDate.getTime() - currentDate.getTime();
+
+  // Calculate the number of days left until the next month
+  var daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+  return daysLeft;
+
 }
 
 export function CreatePost(senderId, parent_id, form) {

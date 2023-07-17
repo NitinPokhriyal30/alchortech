@@ -1,7 +1,7 @@
 import { api } from "@/api";
 import ToolTip from "@/components/ToolTip";
 import { queryClient } from "@/queryClient";
-import { CreatePost, getCurrentMonthName, getTodayDate } from "@/utils";
+import { CreatePost, getDaysLeftForNextMonth, getNextMonthName, getTodayDate } from "@/utils";
 import { Close, EmojiEmotions, GifBox, Image, Link } from "@mui/icons-material";
 import * as HoverCard from "@radix-ui/react-hover-card";
 import * as Popover from "@radix-ui/react-popover";
@@ -109,7 +109,7 @@ export default function NewPost({ ...props }) {
                 <HoverCard.Portal>
                   <HoverCard.Content className="z-20 w-screen max-w-[180px] rounded bg-white p-2 text-[12px] leading-[14px] text-[#747474] shadow">
                     <HoverCard.Arrow className="fill-white" />
-                    You monthly allowance will refresh on 1st {getCurrentMonthName()}. You have 6
+                    You monthly allowance will refresh on 1st {getNextMonthName()}. You have {getDaysLeftForNextMonth() + ' '}
                     days to spend {me.data.allowance_boost} points.
                   </HoverCard.Content>
                 </HoverCard.Portal>
