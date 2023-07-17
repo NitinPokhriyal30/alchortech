@@ -31,7 +31,7 @@ const MyHashtags = () => {
   
   return (
     <div>
-      <div className="right-sidebar-container">
+      <div>
         <div className="border-[#CECECE] border-b-2 py-2 px-3">
           <p className="text-[20px] font-Lato font-bold text-[#292929] text-center ">My Hashtags</p>
         </div>

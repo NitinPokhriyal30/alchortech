@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import axios from 'axios'
 import Cookies from 'js-cookie'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import LoginBackground from '../../assets/images/login-signup/LoginBackground.png'
@@ -43,11 +42,11 @@ const Login = () => {
     <div className="flex h-screen w-full items-center justify-center overflow-hidden bg-gray-100 md:justify-start">
       <div className="relative hidden md:block">
         <img
-          className="ml-[-10px] h-screen w-screen object-cover"
+          className="ml-[-10px] h-screen w-screen object-fit"
           src={LoginBackground}
           alt="login-background"
         />
-        <img className="absolute left-6 top-6" src={AlcorLogo} alt="alcor-logo" />
+        <img className="h-14 absolute left-6 top-6" src={AlcorLogo} alt="alcor-logo" />
       </div>
 
       <div

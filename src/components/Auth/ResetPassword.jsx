@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import axios from 'axios';
 import { api } from '../../api'
 import { useParams, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
@@ -8,12 +7,33 @@ import ChangePwBackground from '../../assets/images/login-signup/ChangePwBackgro
 import High5Logo from '../../assets/images/login-signup/High5Logo.png'
 import AlcorLogo from '../../assets/images/login-signup/AlcorLogo.png'
 import { RiEyeLine, RiEyeOffLine } from 'react-icons/ri'
+import { RiCheckLine, RiCloseLine } from 'react-icons/ri'
 
 const ResetPassword = () => {
 
     const [showPassword, setShowPassword] = useState(false);
+    const [isMinLengthValid, setIsMinLengthValid] = useState(false);
+    const [isUpperCaseValid, setIsUpperCaseValid] = useState(false);
+    const [isLowerCaseValid, setIsLowerCaseValid] = useState(false);
+    const [isNumberValid, setIsNumberValid] = useState(false);
 
     const {uidb64, token} = useParams();
+
+    const validateMinLength = (password) => {
+      return password.length >= 6;
+    };
+    
+    const validateUpperCase = (password) => {
+      return /[A-Z]/.test(password);
+    };
+    
+    const validateLowerCase = (password) => {
+      return /[a-z]/.test(password);
+    };
+    
+    const validateNumber = (password) => {
+      return /[0-9]/.test(password);
+    };
 
     const handleSubmit = async (password, token, uidb64) => {
       try {
@@ -33,7 +53,7 @@ const ResetPassword = () => {
             <div className="hidden md:w-max md:block">
                 <img src={ChangePwBackground} alt="login-background"/>
                 <img
-                  className="absolute top-0 left-0 h-14 w-30 m-8"
+                  className="absolute top-6 left-6 h-14"
                   src={AlcorLogo}
                   alt="alcor-logo"
                 /> 
@@ -60,42 +80,78 @@ const ResetPassword = () => {
                   }
                 }}>
                   
-                  <div className='relative'>
-                      <input 
-                      type={showPassword ? 'text' : 'password'} 
-                      name="password" 
-                      placeholder="New Password" 
-                      required 
-                      className="text-[16px] font-Lato text-[#ACACAC] border-b-2 border-gray-300 py-2 w-full focus:outline-none placeholder-opacity-50"
-                      />
-                      <span
-                        className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-400 cursor-pointer"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                      {showPassword ? <RiEyeLine /> : <RiEyeOffLine />}
-                      </span>
-                  </div>
-
-                  <div className='relative'>
-                      <input 
-                      type={showPassword ? 'text' : 'password'}
-                      name="confirmPassword" 
-                      placeholder="Confirm Password" 
-                      required
-                      className="text-[16px] font-Lato text-[#ACACAC] border-b-2 border-gray-300 py-2 w-full focus:outline-none placeholder-opacity-50" 
-                      />
-                      <span
-                        className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-400 cursor-pointer"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                      {showPassword ? <RiEyeLine /> : <RiEyeOffLine />}
-                      </span>
-                  </div>
+                <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  placeholder="New Password"
+                  required
+                  className="text-[16px] font-Lato text-[#ACACAC] border-b-2 border-gray-300 py-2 w-full focus:outline-none placeholder-opacity-50"
+                  onChange={(e) => {
+                    const password = e.target.value;
+                    setIsMinLengthValid(validateMinLength(password));
+                    setIsUpperCaseValid(validateUpperCase(password));
+                    setIsLowerCaseValid(validateLowerCase(password));
+                    setIsNumberValid(validateNumber(password));
+                  }}
+                />
+                <span
+                  className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-400 cursor-pointer"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <RiEyeLine /> : <RiEyeOffLine />}
+                </span>
+                {isMinLengthValid ? (
+                  <RiCheckLine className="absolute top-1/2 right-10 -translate-y-1/2 text-green-500" />
+                ) : (
+                  <RiCloseLine className="absolute top-1/2 right-10 -translate-y-1/2 text-red-500" />
+                )}
+              </div>
+              
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="confirmPassword"
+                  placeholder="Confirm Password"
+                  required
+                  className="text-[16px] font-Lato text-[#ACACAC] border-b-2 border-gray-300 py-2 w-full focus:outline-none placeholder-opacity-50"
+                  onChange={(e) => {
+                    const password = e.target.value;
+                    setIsMinLengthValid(validateMinLength(password));
+                    setIsUpperCaseValid(validateUpperCase(password));
+                    setIsLowerCaseValid(validateLowerCase(password));
+                    setIsNumberValid(validateNumber(password));
+                  }}
+                />
+                <span
+                  className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-400 cursor-pointer"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <RiEyeLine /> : <RiEyeOffLine />}
+                </span>
+                {isMinLengthValid ? (
+                  <RiCheckLine className="absolute top-1/2 right-10 -translate-y-1/2 text-green-500" />
+                ) : (
+                  <RiCloseLine className="absolute top-1/2 right-10 -translate-y-1/2 text-red-500" />
+                )}
+              </div>
+              
 
                   <div>
-                    <button type="submit" className="mt-10 w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-8 rounded-md">
-                      Reset Password
-                    </button>
+                  <button
+                  type="submit"
+                  className="mt-10 w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-8 rounded-md"
+                  disabled={
+                    !(
+                      isMinLengthValid &&
+                      isUpperCaseValid &&
+                      isLowerCaseValid &&
+                      isNumberValid
+                    )
+                  }
+                >
+                  Reset Password
+                </button>
                   </div>
                 </form>  
               </div>

@@ -28,9 +28,9 @@ const ForgotPassword = () => {
         return (
           <div className="flex justify-center md:justify-start items-center h-screen w-screen bg-gray-100">
             <div className="hidden md:block relative">
-                <img className="object-cover h-screen w-screen" src={ForgotBackground} alt="login-background"/>
+                <img className="object-fit h-screen w-screen" src={ForgotBackground} alt="login-background"/>
                 <img
-                  className="absolute top-0 left-0 h-14 w-30 m-8"
+                  className="absolute top-6 left-6 h-14"
                   src={AlcorLogo}
                   alt="alcor-logo"
                 /> 
