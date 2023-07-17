@@ -79,9 +79,9 @@ export default function HomePage() {
           ) : (
             parentPosts
               .slice(2)
-              .map((post) => (
+              .map((post, index) => (
                 <PostCard
-                  key={post.id}
+                  key={index}
                   post={post}
                   childrenTransactions={getChildTransactionsFor(post.id, allPosts)}
                 />

@@ -267,7 +267,10 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
             <div className="flex cursor-pointer items-center rounded-full border-[0.5px] border-[#d1d1d1] pr-2  text-[18px] text-[#747474]">
               ☺️ 0
             </div>
-            <p className="text-16px text-[#d1d1d1]">{childrenTransactions.length} Comment</p>
+            <p className="text-16px text-[#d1d1d1]">
+              {commentsAndTransactions.length + ' '}
+              Comment
+            </p>
           </div>
         </div>
 
