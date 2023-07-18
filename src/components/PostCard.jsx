@@ -418,10 +418,13 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                       </button>
                     )}
                   </div>
+                </div>
+                </div>
+                <div>
                   {form.image && (
-                    <div className="group relative inline-flex items-start p-4">
+                    <div className="group relative flex items-start pt-4">
                       <img
-                        className="block flex-1 rounded pr-4"
+                        className="block w-full flex-1 rounded-md"
                         src={
                           typeof form.image === 'string'
                             ? form.image
@@ -431,7 +434,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
 
                       <button
                         type="button"
-                        className="text-primary-400 opacity-0 transition-opacity group-hover:opacity-100"
+                        className="z-10 right-0 absolute text-primary-400 drop-shadow-lg opacity-0 transition-opacity group-hover:opacity-100"
                         onClick={() =>
                           setForm((prev) => {
                             delete prev.image
@@ -445,12 +448,12 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                   )}
 
                   {form.gif && (
-                    <div className="group relative inline-flex items-start p-4">
-                      <img className="block flex-1 rounded pr-4" src={form.gif} />
+                    <div className="group relative flex items-start pt-4">
+                      <img className="block flex-1 rounded-md" src={form.gif} />
 
                       <button
                         type="button"
-                        className="text-primary-400 opacity-0 transition-opacity group-hover:opacity-100"
+                        className="z-10 right-0 absolute text-primary-400 drop-shadow-lg opacity-0 transition-opacity group-hover:opacity-100"
                         onClick={() =>
                           setForm((prev) => {
                             delete prev.gif
@@ -463,7 +466,6 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                     </div>
                   )}
                 </div>
-              </div>
             </div>
           ) : modal === 'child-new-post' ? (
             <div className="mt-4 flex gap-4">

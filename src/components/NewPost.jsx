@@ -1,83 +1,78 @@
-import { api } from "@/api";
-import ToolTip from "@/components/ToolTip";
-import { queryClient } from "@/queryClient";
-import { CreatePost, getDaysLeftForNextMonth, getNextMonthName, getTodayDate } from "@/utils";
-import { Close, EmojiEmotions, GifBox, Image, Link } from "@mui/icons-material";
-import * as HoverCard from "@radix-ui/react-hover-card";
-import * as Popover from "@radix-ui/react-popover";
-import EmojiPicker from "emoji-picker-react";
-import Cookies from "js-cookie";
-import * as React from "react";
-import { RxCross2 } from "react-icons/rx";
-import { useQuery } from "react-query";
-import { toast } from "react-toastify";
-import GifPicker, { GifPickerBox } from "./GifPickerPopover";
-import { Dialog } from "@radix-ui/react-dialog";
-import Cropper from "@/components/Cropper";
-import UserImg from "@/assets/images/user-profile/pp.png";
-import HelpIcon from "@/assets/svg/home-sidebar/HelpIcon";
-import { MAX_IMAGE_SIZE_MB } from "@/constant";
-import EmojiPickerBox from "@/components/EmojiPickerBox";
-import ImagePickerBox from "@/components/ImagePickerBox";
-import Spinner from "@/components/Spinner";
+import { api } from '@/api'
+import ToolTip from '@/components/ToolTip'
+import { queryClient } from '@/queryClient'
+import { CreatePost, getDaysLeftForNextMonth, getNextMonthName, getTodayDate } from '@/utils'
+import { Close, EmojiEmotions, GifBox, Image, Link } from '@mui/icons-material'
+import * as HoverCard from '@radix-ui/react-hover-card'
+import * as Popover from '@radix-ui/react-popover'
+import EmojiPicker from 'emoji-picker-react'
+import Cookies from 'js-cookie'
+import * as React from 'react'
+import { RxCross2 } from 'react-icons/rx'
+import { useQuery } from 'react-query'
+import { toast } from 'react-toastify'
+import GifPicker, { GifPickerBox } from './GifPickerPopover'
+import { Dialog } from '@radix-ui/react-dialog'
+import Cropper from '@/components/Cropper'
+import UserImg from '@/assets/images/user-profile/pp.png'
+import HelpIcon from '@/assets/svg/home-sidebar/HelpIcon'
+import { MAX_IMAGE_SIZE_MB } from '@/constant'
+import EmojiPickerBox from '@/components/EmojiPickerBox'
+import ImagePickerBox from '@/components/ImagePickerBox'
+import Spinner from '@/components/Spinner'
 
 function validateNewPostForm(form) {
-  let isValid = true;
+  let isValid = true
+  if (form.point === 0) {
+    toast.error('Select amount of points')
+    isValid = false
+  }
   if (form.recipients.length === 0) {
-    toast.error("Add atleast one recipient");
-    isValid = false;
+    toast.error('Add atleast one recipient')
+    isValid = false
   }
   if (form.hashtags.length === 0) {
-    toast.error("Add atleast one hashtag");
+    toast.error('Add atleast one hashtag')
 
-    isValid = false;
+    isValid = false
   }
   if (form.message.length === 0) {
-    toast.error("Add a message");
-    isValid = false;
+    toast.error('Add a message')
+    isValid = false
   }
-  return isValid;
+  return isValid
 }
 
 export default function NewPost({ ...props }) {
-  const me = useQuery("me", () => api.auth.me(Cookies.get("user_id")));
-  const users = useQuery("users", () => api.users.profiles(), {
+  const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
+  const users = useQuery('users', () => api.users.profiles(), {
     initialData: [],
-  });
-  const [loading, setLoading] = React.useState(false);
-  const [processedImage, setProcessedImage] = React.useState("");
+  })
+  const [loading, setLoading] = React.useState(false)
+  const [processedImage, setProcessedImage] = React.useState('')
   const inputRef = React.useRef()
 
   const [form, setForm] = React.useState({
     point: 0,
     recipients: [],
     hashtags: [],
-    image: "",
-    gif: "",
-    link: "",
-    message: "",
-  });
+    image: '',
+    gif: '',
+    link: '',
+    message: '',
+  })
+
+  const showPlaceholder =
+    form.point === 0 && form.recipients.length === 0 && form.hashtags.length === 0
 
   return (
     <>
-      {/* <div className="z-[999]">
-        {processedImage && (
-          <Cropper
-            imageFile={processedImage}
-            onClose={(image) => {
-              setProcessedImage("");
-              setForm((prev) => ({ ...prev, image }));
-            }}
-          />
-        )}
-      </div> */}
-
       <div>
         <div className="rounded-t-lg  bg-primary px-6 py-2 text-sm text-white">
           <ul className="flex flex-wrap items-center gap-y-3 divide-x divide-primary-400 first:pl-0 child:pl-4">
             {/* points button */}
 
-            <li className="group pr-4 !pl-0">
+            <li className="group !pl-0 pr-4">
               <PointsRangeDialog {...{ form, setForm }} />
             </li>
 
@@ -91,16 +86,11 @@ export default function NewPost({ ...props }) {
 
             <li className="flex-grow" />
 
-            <li
-              style={{ borderWidth: 0 }}
-              className="basis-full md:flex-shrink md:basis-auto"
-            >
+            <li style={{ borderWidth: 0 }} className="basis-full md:flex-shrink md:basis-auto">
               <HoverCard.Root>
                 <p className="flex cursor-pointer items-center font-Lato leading-4">
-                  You Have{" "}
-                  <span className="font-[900]">
-                    &nbsp;{me.data.allowance_boost} Points&nbsp;
-                  </span>
+                  You Have{' '}
+                  <span className="font-[900]">&nbsp;{me.data.allowance_boost} Points&nbsp;</span>
                   to give
                   <HoverCard.Trigger className="ml-2 inline-flex h-4 w-4 items-center justify-center">
                     <HelpIcon />
@@ -110,7 +100,8 @@ export default function NewPost({ ...props }) {
                 <HoverCard.Portal>
                   <HoverCard.Content className="z-20 w-screen max-w-[180px] rounded bg-white p-2 text-[12px] leading-[14px] text-[#747474] shadow">
                     <HoverCard.Arrow className="fill-white" />
-                    You monthly allowance will refresh on 1st {getNextMonthName()}. You have {getDaysLeftForNextMonth() + ' '}
+                    You monthly allowance will refresh on 1st {getNextMonthName()}. You have{' '}
+                    {getDaysLeftForNextMonth() + ' '}
                     days to spend {me.data.allowance_boost} points.
                   </HoverCard.Content>
                 </HoverCard.Portal>
@@ -123,33 +114,31 @@ export default function NewPost({ ...props }) {
 
         <div className="_px-6 rounded-b-lg bg-white py-6 text-[#b1b1b1] drop-shadow-normal">
           <div className="px-6">
-            {form.point == 0 ? (
-              <span>+30 </span>
+            {showPlaceholder ? (
+              <>
+                <span>+30 </span>
+                <span>@Name.recipient </span>
+                <span>#HashTag </span>
+              </>
             ) : (
-                <span className="text-[#464646]">+{form.point} </span>
-            )}
-            {form.recipients.length == 0 ? (
-              <span>@Name.recipient</span>
-            ) : (
-              form.recipients
-                .map((userId) =>
-                  (users.data || []).find((user) => user.id === userId)
-                )
-                .map((user) => `@${user.first_name} ${user.last_name}`)
-                .map((fullName) => (
-                  <span className="text-[#464646]" key={fullName}>
-                    {fullName}
+              <>
+                <span className="text-[#464646]">{form.point ? '+' + form.point : ''} </span>{' '}
+
+                {form.recipients
+                  .map((userId) => (users.data || []).find((user) => user.id === userId))
+                  .map((user) => `@${user.first_name} ${user.last_name}`)
+                  .map((fullName) => (
+                    <span className="text-[#464646]" key={fullName}>
+                      {fullName}{" "}
+                    </span>
+                  ))}
+
+                {form.hashtags.map((tag) => (
+                  <span className="text-[#464646]" key={tag}>
+                    {tag}{" "}
                   </span>
-                ))
-            )}
-            {form.hashtags.length == 0 ? (
-              <span>#HashTag</span>
-            ) : (
-              form.hashtags.map((tag) => (
-                <span className="text-[#464646]" key={tag}>
-                  {tag}
-                </span>
-              ))
+                ))}
+              </>
             )}
           </div>
 
@@ -157,7 +146,10 @@ export default function NewPost({ ...props }) {
             <textarea
               spellCheck={false}
               className="block h-10 w-full resize-none text-[#464646]  outline-none transition-all placeholder:text-[#b1b1b1]"
-              placeholder="For helping me launch a marketing campaign so that we can generate new business"
+              placeholder={
+                showPlaceholder &&
+                'For helping me launch a marketing campaign so that we can generate new business'
+              }
               onChange={(ev) =>
                 setForm((prev) => ({
                   ...prev,
@@ -179,9 +171,8 @@ export default function NewPost({ ...props }) {
                   <button
                     className="ml-4 hidden group-hover:inline-block"
                     onClick={() => {
-                      setForm((prev) => ({ ...prev, image: "" }));
-                      if (inputRef.current)
-                        inputRef.current.value = ""
+                      setForm((prev) => ({ ...prev, image: '' }))
+                      if (inputRef.current) inputRef.current.value = ''
                     }}
                   >
                     <Close fontSize="10" />
@@ -193,15 +184,11 @@ export default function NewPost({ ...props }) {
             {form.gif && (
               <div>
                 <div className="group flex items-center pb-6">
-                  <img
-                    src={form.gif}
-                    key={form.image}
-                    className="mt-4 w-40 border rounded-md"
-                  />
+                  <img src={form.gif} key={form.image} className="mt-4 w-40 rounded-md border" />
 
                   <button
                     className="ml-4 hidden group-hover:inline-block"
-                    onClick={() => setForm((prev) => ({ ...prev, gif: "" }))}
+                    onClick={() => setForm((prev) => ({ ...prev, gif: '' }))}
                   >
                     <Close fontSize="10" />
                   </button>
@@ -219,7 +206,7 @@ export default function NewPost({ ...props }) {
                   </a>
                   <button
                     className="ml-4 hidden group-hover:inline-block"
-                    onClick={() => setForm((prev) => ({ ...prev, link: "" }))}
+                    onClick={() => setForm((prev) => ({ ...prev, link: '' }))}
                   >
                     <Close fontSize="10" />
                   </button>
@@ -229,34 +216,30 @@ export default function NewPost({ ...props }) {
           </div>
 
           {/* footer */}
-          <div
-            id="new-post-footer"
-            className="flex items-baseline gap-4 px-6 pt-3"
-          >
+          <div id="new-post-footer" className="flex items-baseline gap-4 px-6 pt-3">
             <EmojiPickerBox
               onClick={(emoji) => {
                 setForm((prev) => ({
                   ...prev,
                   message: prev.message + emoji.emoji,
-                }));
+                }))
               }}
             >
               <EmojiEmotions />
             </EmojiPickerBox>
 
-            <ImagePickerBox inputRef={inputRef} onChange={(image) => setForm((prev) => ({ ...prev, image }))}>
+            <ImagePickerBox
+              inputRef={inputRef}
+              onChange={(image) => setForm((prev) => ({ ...prev, image }))}
+            >
               <Image />
             </ImagePickerBox>
 
-            <GifPickerBox
-              onChange={(gif) => setForm((prev) => ({ ...prev, gif }))}
-            >
+            <GifPickerBox onChange={(gif) => setForm((prev) => ({ ...prev, gif }))}>
               <GifBox />
             </GifPickerBox>
 
-            <AddLinkBox
-              onChange={(link) => setForm((prev) => ({ ...prev, link }))}
-            >
+            <AddLinkBox onChange={(link) => setForm((prev) => ({ ...prev, link }))}>
               <Link />
             </AddLinkBox>
 
@@ -266,29 +249,29 @@ export default function NewPost({ ...props }) {
               className="relative ml-auto w-full max-w-[6rem] rounded-sm bg-primary px-4 py-1 font-Lato text-white disabled:bg-opacity-80"
               onClick={async function newPost() {
                 try {
-                  setLoading(true);
-                  if (!validateNewPostForm(form)) return;
-                  const data = CreatePost(me.data.id, "", form);
-                  const formData = toFormData(data);
+                  setLoading(true)
+                  if (!validateNewPostForm(form)) return
+                  const data = CreatePost(me.data.id, '', form)
+                  const formData = toFormData(data)
                   // recipients.forEach((userId) => formData.append('recipients', userId))
 
-                  await api.transactions.new(formData);
-                  await queryClient.refetchQueries("transactions");
-                  await queryClient.refetchQueries("me");
+                  await api.transactions.new(formData)
+                  await queryClient.refetchQueries('transactions')
+                  await queryClient.refetchQueries('me')
 
                   setForm({
                     point: 0,
                     recipients: [],
                     hashtags: [],
-                    image: "",
-                    gif: "",
-                    link: "",
-                    message: "",
-                  });
+                    image: '',
+                    gif: '',
+                    link: '',
+                    message: '',
+                  })
                 } catch {
-                  toast.error("Transaction failed. Server error");
+                  toast.error('Transaction failed. Server error')
                 } finally {
-                  setLoading(false);
+                  setLoading(false)
                 }
               }}
             >
@@ -299,7 +282,7 @@ export default function NewPost({ ...props }) {
         </div>
       </div>
     </>
-  );
+  )
 }
 
 export function AddLinkBox({ children, onChange }) {
@@ -316,7 +299,7 @@ export function AddLinkBox({ children, onChange }) {
         </Popover.Content>
       </Popover.Portal>
     </Popover.Root>
-  );
+  )
 }
 
 export function AddLinkPopup({ onChange }) {
@@ -339,20 +322,20 @@ export function AddLinkPopup({ onChange }) {
         />
       </label>
     </div>
-  );
+  )
 }
 
 export function PointsRangeDialog({ form, setForm }) {
-  const properties = useQuery("properties", () => api.properties());
-  const points_range = properties.data?.points_range;
+  const properties = useQuery('properties', () => api.properties())
+  const points_range = properties.data?.points_range
 
   const points_colors = [
-    "text-[#03BFC7]",
-    "text-[#0374C7]",
-    "text-[#6554E3]",
-    "text-[#B754E3]",
-    "text-[#F46CE9]",
-  ];
+    'text-[#03BFC7]',
+    'text-[#0374C7]',
+    'text-[#6554E3]',
+    'text-[#B754E3]',
+    'text-[#F46CE9]',
+  ]
 
   return (
     <>
@@ -374,10 +357,10 @@ export function PointsRangeDialog({ form, setForm }) {
                 key={point}
                 type="button"
                 className={`flex h-8 w-8 items-center justify-center rounded-full font-bold hover:bg-primary  hover:text-white ${
-                  form.point === point ? "bg-translucent" : ""
+                  form.point === point ? 'bg-translucent' : ''
                 } ${points_colors[i]}`}
                 onClick={() => {
-                  setForm((prev) => ({ ...prev, point }));
+                  setForm((prev) => ({ ...prev, point }))
                 }}
               >
                 +{point}
@@ -385,26 +368,24 @@ export function PointsRangeDialog({ form, setForm }) {
             ))}
       </div>
     </>
-  );
+  )
 }
 
 export function RecipientsDropdown({ form, setForm }) {
-  const users = useQuery("users", () => api.users.profiles(), {
+  const users = useQuery('users', () => api.users.profiles(), {
     initialData: [],
-  });
-  const me = useQuery("me", () => api.auth.me(Cookies.get("user_id")));
+  })
+  const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
 
-  const usersWithoutMe = users.isLoading
-    ? []
-    : users.data.filter((x) => x.id !== me.data.id);
+  const usersWithoutMe = users.isLoading ? [] : users.data.filter((x) => x.id !== me.data.id)
 
-  const [searchUserQuery, setSearchUserQuery] = React.useState("");
+  const [searchUserQuery, setSearchUserQuery] = React.useState('')
   let searchedUser = usersWithoutMe.filter((user) =>
     JSON.stringify(user).toLocaleLowerCase().includes(searchUserQuery)
-  );
+  )
 
-  const USER_BTN_HEIGHT = 28;
-  const isSelected = (user) => form.recipients.includes(user.id);
+  const USER_BTN_HEIGHT = 28
+  const isSelected = (user) => form.recipients.includes(user.id)
 
   return (
     <>
@@ -416,10 +397,7 @@ export function RecipientsDropdown({ form, setForm }) {
       {/* container */}
       <div className="absolute z-10 hidden divide-y overflow-hidden rounded bg-white text-black shadow shadow-gray-400 group-hover:block">
         {/* fixed height list */}
-        <div
-          style={{ height: 5 * USER_BTN_HEIGHT }}
-          className="overflow-y-auto"
-        >
+        <div style={{ height: 5 * USER_BTN_HEIGHT }} className="overflow-y-auto">
           {users.isLoading ? (
             <p className="absolute inset-0 m-auto h-10 w-[15ch] text-center text-gray-500">
               Loading...
@@ -432,28 +410,24 @@ export function RecipientsDropdown({ form, setForm }) {
                     key={user.id}
                     style={{ height: USER_BTN_HEIGHT }}
                     className={`block w-full  px-4 py-1 text-left ${
-                      isSelected(user)
-                        ? "border-b border-primary/80 bg-primary/30"
-                        : ""
+                      isSelected(user) ? 'border-b border-primary/80 bg-primary/30' : ''
                     }`}
                     type="button"
                     onClick={() => {
                       setForm((prev) => {
                         if (isSelected(user)) {
-                          prev.recipients = prev.recipients.filter(
-                            (id) => id !== user.id
-                          );
+                          prev.recipients = prev.recipients.filter((id) => id !== user.id)
                         } else {
-                          prev.recipients.push(user.id);
+                          prev.recipients.push(user.id)
                         }
 
-                        return { ...prev };
-                      });
+                        return { ...prev }
+                      })
                     }}
                   >
                     {user.first_name} {user.last_name}
                   </button>
-                );
+                )
               })}
             </>
           )}
@@ -467,13 +441,13 @@ export function RecipientsDropdown({ form, setForm }) {
         />
       </div>
     </>
-  );
+  )
 }
 
 export function HashTagsDropdown({ form, setForm }) {
-  const properties = useQuery("properties", () => api.properties());
+  const properties = useQuery('properties', () => api.properties())
 
-  const hashtags = properties.data?.hashtage;
+  const hashtags = properties.data?.hashtage
 
   return (
     <>
@@ -485,54 +459,49 @@ export function HashTagsDropdown({ form, setForm }) {
           <p className="h-10 w-[15ch] pt-3 text-center">Loading</p>
         ) : (
           hashtags.map((tag) => {
-            const checked = form.hashtags.includes(tag);
+            const checked = form.hashtags.includes(tag)
             return (
               <button
                 key={tag}
                 type="button"
-                className={`px-4 py-1 text-left ${
-                  checked ? "bg-translucent" : ""
-                }`}
+                className={`px-4 py-1 text-left ${checked ? 'bg-translucent' : ''}`}
                 onClick={() => {
                   setForm((prev) => {
-                    const checked = prev.hashtags.includes(tag);
+                    const checked = prev.hashtags.includes(tag)
                     if (checked) {
-                      prev.hashtags = prev.hashtags.filter((x) => x !== tag);
+                      prev.hashtags = prev.hashtags.filter((x) => x !== tag)
                     } else {
-                      prev.hashtags.push(tag);
+                      prev.hashtags.push(tag)
                     }
 
-                    return { ...prev };
-                  });
+                    return { ...prev }
+                  })
                 }}
               >
                 {tag}
               </button>
-            );
+            )
           })
         )}
       </div>
     </>
-  );
+  )
 }
 
 export function toFormData(data) {
-  const formData = new FormData();
+  const formData = new FormData()
   Object.entries(data).forEach(([key, value]) => {
-    let _value = value;
-    if (key === "recipients") {
-      value.forEach((userId) => formData.append(key, userId));
+    let _value = value
+    if (key === 'recipients') {
+      value.forEach((userId) => formData.append(key, userId))
     }
     // stringify only if value is array, object but not image File
-    else if (
-      typeof value == "object" &&
-      !(value instanceof File || value instanceof Blob)
-    ) {
-      _value = JSON.stringify(value);
-      formData.set(key, _value);
+    else if (typeof value == 'object' && !(value instanceof File || value instanceof Blob)) {
+      _value = JSON.stringify(value)
+      formData.set(key, _value)
     } else {
-      formData.set(key, value);
+      formData.set(key, value)
     }
-  });
-  return formData;
+  })
+  return formData
 }
