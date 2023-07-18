@@ -20,6 +20,10 @@ import { MAX_IMAGE_SIZE_MB } from '@/constant'
 import EmojiPickerBox from '@/components/EmojiPickerBox'
 import ImagePickerBox from '@/components/ImagePickerBox'
 import Spinner from '@/components/Spinner'
+import img from '../assets/images/new-post/img.svg'
+import gif from '../assets/images/new-post/gif.svg'
+import link from '../assets/images/new-post/link.svg'
+import smiley from '../assets/images/new-post/smiley.svg'
 
 function validateNewPostForm(form) {
   let isValid = true
@@ -112,7 +116,7 @@ export default function NewPost({ ...props }) {
 
         {/* text field */}
 
-        <div className="_px-6 rounded-b-lg bg-white py-6 text-[#b1b1b1] drop-shadow-normal">
+        <div className="_px-6 rounded-b-lg bg-white py-6 text-[#b1b1b1] drop-shadow-normal pb-[12px]">
           <div className="px-6">
             {showPlaceholder ? (
               <>
@@ -216,7 +220,7 @@ export default function NewPost({ ...props }) {
           </div>
 
           {/* // footer */}
-          <div id="new-post-footer" className="flex items-baseline gap-4 px-6 pt-3">
+          <div id="new-post-footer" className="flex items-center gap-4 px-6 pt-3">
             <EmojiPickerBox
               onClick={(emoji) => {
                 setForm((prev) => ({
@@ -225,22 +229,26 @@ export default function NewPost({ ...props }) {
                 }))
               }}
             >
-              <EmojiEmotions />
+              {/* <EmojiEmotions /> */}
+              <img src={smiley} alt="smiley" width={"20px"} />
             </EmojiPickerBox>
 
             <ImagePickerBox
               inputRef={inputRef}
               onChange={(image) => setForm((prev) => ({ ...prev, image }))}
             >
-              <Image />
+              {/* <Image /> */}
+              <img src={img} alt="img" width={"26px"} />
             </ImagePickerBox>
 
             <GifPickerBox onChange={(gif) => setForm((prev) => ({ ...prev, gif }))}>
-              <GifBox />
+              {/* <GifBox /> */}
+              <img src={gif} alt="gif" width={"20px"} />
             </GifPickerBox>
 
             <AddLinkBox onChange={(link) => setForm((prev) => ({ ...prev, link }))}>
-              <Link />
+              {/* <Link /> */}
+              <img src={link} alt="link" width={"20px"} />
             </AddLinkBox>
 
             <button

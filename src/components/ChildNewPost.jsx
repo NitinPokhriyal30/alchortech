@@ -14,6 +14,10 @@ import { GifPickerBox } from './GifPickerPopover'
 import EmojiPickerBox from '@/components/EmojiPickerBox'
 import ImagePickerBox from '@/components/ImagePickerBox'
 import Spinner from '@/components/Spinner'
+import smiley from '../assets/images/new-post/smiley.svg'
+import img from '../assets/images/new-post/img.svg'
+import gif from '../assets/images/new-post/gif.svg'
+import link from '../assets/images/new-post/link.svg'
 
 function validateNewPostForm(form) {
   let isValid = true
@@ -77,7 +81,7 @@ export default function ChildNewPost({ onClose, post, defaultPoint }) {
 
         {/* text field */}
 
-        <div className="_px-6 rounded-b-lg bg-white py-6 text-[#b1b1b1] drop-shadow-normal">
+        <div className="_px-6 rounded-b-lg bg-white pt-6 pb-3 text-[#b1b1b1] drop-shadow-normal">
           <div className="px-6">
             {form.point == 0 ? (
               <span>+30 </span>
@@ -166,19 +170,23 @@ export default function ChildNewPost({ onClose, post, defaultPoint }) {
                 setForm((prev) => ({ ...prev, message: prev.message + emoji.emoji }))
               }
             >
-              <EmojiEmotions />
+              {/* <EmojiEmotions /> */}
+              <img src={smiley} alt="smiley" width={"20px"} />
             </EmojiPickerBox>
 
             <ImagePickerBox onChange={(image) => setForm((prev) => ({ ...prev, image }))}>
-              <Image />
+              {/* <Image /> */}
+              <img src={img} alt="img" width={"26px"} />
             </ImagePickerBox>
 
             <GifPickerBox onChange={(url) => setForm((prev) => ({ ...prev, gif: url }))}>
-              <GifBox />
+              {/* <GifBox /> */}
+              <img src={gif} alt="gif" width={"20px"} />
             </GifPickerBox>
 
             <AddLinkBox onChange={(link) => setForm((prev) => ({ ...prev, link }))}>
-              <Link />
+              {/* <Link /> */}
+              <img src={link} alt="link" width={"20px"} />
             </AddLinkBox>
 
             <button
