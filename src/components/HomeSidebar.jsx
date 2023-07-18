@@ -57,7 +57,7 @@ export default function HomeSidebar({}) {
       {/* sidebar */}
       <div
         style={{ left: showSidebar ? '0px' : '' }}
-        className="fixed -left-full top-0 z-[999] bg-[#ededed] flex h-screen w-full flex-col transition-all xs:p-0 sm:p-0 md:w-[min(70vw,100%)] md:py-0 md:pr-0 lg:sticky lg:left-0 lg:top-[87px] lg:z-0 lg:h-avoid-nav-lg lg:w-auto lg:py-3 lg:pr-[12px]"
+        className="fixed -left-full top-0 z-[999] bg-[#ededed] flex h-screen w-full flex-col transition-all xs:p-0 sm:p-0 md:w-[min(70vw,100%)] md:py-0 md:pr-0 md:max-h-[680px] lg:sticky lg:left-0 lg:top-[87px] lg:z-0 lg:h-avoid-nav-lg lg:w-auto lg:py-3 lg:pr-[12px]"
       >
         <div className="z-30 flex flex-grow flex-col overflow-hidden overflow-y-auto bg-primary md:rounded-[9px]">
           <div className="border-b-2 border-[#7096DB] px-5 pt-3 lg:hidden">
