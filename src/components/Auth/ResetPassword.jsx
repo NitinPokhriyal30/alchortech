@@ -101,7 +101,7 @@ const ResetPassword = () => {
                 >
                   {showPassword ? <RiEyeLine /> : <RiEyeOffLine />}
                 </span>
-                {isMinLengthValid ? (
+                {(isMinLengthValid && isUpperCaseValid && isLowerCaseValid && isNumberValid) ? (
                   <RiCheckLine className="absolute top-1/2 right-10 -translate-y-1/2 text-green-500" />
                 ) : (
                   <RiCloseLine className="absolute top-1/2 right-10 -translate-y-1/2 text-red-500" />
@@ -129,7 +129,7 @@ const ResetPassword = () => {
                 >
                   {showPassword ? <RiEyeLine /> : <RiEyeOffLine />}
                 </span>
-                {isMinLengthValid ? (
+                {(isMinLengthValid && isUpperCaseValid && isLowerCaseValid && isNumberValid) ? (
                   <RiCheckLine className="absolute top-1/2 right-10 -translate-y-1/2 text-green-500" />
                 ) : (
                   <RiCloseLine className="absolute top-1/2 right-10 -translate-y-1/2 text-red-500" />
