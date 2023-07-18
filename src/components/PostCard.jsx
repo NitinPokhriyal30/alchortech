@@ -305,8 +305,9 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                   />
                 </div>
                 <div className="w-full flex-1">
-                  <div className="flex items-center rounded-b-xl rounded-tr-xl bg-paper">
+                  <div className="flex items-center rounded-b-xl rounded-tr-xl bg-paper overflow-x-hidden">
                     <form
+                      id={post.id}
                       onSubmit={async (ev) => {
                         try {
                           ev.preventDefault()
@@ -407,6 +408,15 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                         />
                       </Popover.Root>
                     </div>
+                    { (
+                      <button
+                        className={"block self-stretch rounded-r-xl font-semibold bg-primary px-5 text-white transition-all " + (form.message !== '' ? "" : "w-0 !px-0")}
+                        form={post.id}
+                        type="submit"
+                      >
+                        send
+                      </button>
+                    )}
                   </div>
                   {form.image && (
                     <div className="group relative inline-flex items-start p-4">
@@ -477,7 +487,10 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
             type === 'comment' ? (
               <PostComment key={commentOrTransaction.id} comment={commentOrTransaction} />
             ) : (
-              <div key={commentOrTransaction.id} className="grid grid-cols-[auto_1fr] gap-4 pt-4 pl-0">
+              <div
+                key={commentOrTransaction.id}
+                className="grid grid-cols-[auto_1fr] gap-4 pl-0 pt-4"
+              >
                 <img
                   className="h-8.5 w-8.5 rounded-full object-cover"
                   src={SERVER_URL + commentOrTransaction.sender[0].avtar}
