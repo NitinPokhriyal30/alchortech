@@ -46,6 +46,7 @@ export default function NewPost({ ...props }) {
   });
   const [loading, setLoading] = React.useState(false);
   const [processedImage, setProcessedImage] = React.useState("");
+  const inputRef = React.useRef()
 
   const [form, setForm] = React.useState({
     point: 0,
@@ -177,7 +178,11 @@ export default function NewPost({ ...props }) {
 
                   <button
                     className="ml-4 hidden group-hover:inline-block"
-                    onClick={() => setForm((prev) => ({ ...prev, image: "" }))}
+                    onClick={() => {
+                      setForm((prev) => ({ ...prev, image: "" }));
+                      if (inputRef.current)
+                        inputRef.current.value = ""
+                    }}
                   >
                     <Close fontSize="10" />
                   </button>
@@ -239,7 +244,7 @@ export default function NewPost({ ...props }) {
               <EmojiEmotions />
             </EmojiPickerBox>
 
-            <ImagePickerBox onChange={(image) => setForm((prev) => ({ ...prev, image }))}>
+            <ImagePickerBox inputRef={inputRef} onChange={(image) => setForm((prev) => ({ ...prev, image }))}>
               <Image />
             </ImagePickerBox>
 

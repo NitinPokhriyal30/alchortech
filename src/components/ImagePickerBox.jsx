@@ -3,13 +3,14 @@ import { MAX_IMAGE_SIZE_MB } from '@/constant'
 import * as React from 'react'
 import { toast } from 'react-toastify'
 
-export default function ImagePickerBox({ onChange, children }) {
+export default function ImagePickerBox({ onChange, inputRef, children }) {
   return (
     <label className="group relative inline-block cursor-pointer text-iconColor">
       {children}
       <ToolTip title="Add an image" />
 
       <input
+        ref={inputRef}
         hidden
         type="file"
         accept="image/*"
