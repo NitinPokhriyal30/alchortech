@@ -39,6 +39,9 @@ const api = {
 
     // useQuery(me) always has user bcoz its called during Login
     // and other routes are Protected Routes
+    forgotPassword: (email) => axios.post('/request/password/', email).then((r) => r.data),
+    resetPassword: (password, token, uidb64) => axios.patch('passwordreset/complete', {password, token, uidb64}).then((r) => r.data),
+    changeAvatar: (id, formData) => axios.put(`updateUserAvtar/${id}/`, formData).then((r) => r.data) ,
     me: (id) => axios.get(`getUserDetails/${id}/`).then((r) => r.data),
   },
   users: {
@@ -63,6 +66,14 @@ const api = {
         .get("homepage/transaction/")
         .then((r) => r.data)
         .then((data) => data.reverse()),
+    meAsRecipient: (id) => 
+      axios
+        .get(`api/posts/?recipients=${id}`)
+        .then((r) => r.data),
+    meAsSender: (id) => 
+      axios
+        .get(`api/posts/?sender=${id}`)
+        .then((r) => r.data),
   },
   comment: {
     new: (data) =>

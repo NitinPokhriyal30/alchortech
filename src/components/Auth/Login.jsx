@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import axios from 'axios'
 import Cookies from 'js-cookie'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import LoginBackground from '../../assets/images/login-signup/LoginBackground.png'
@@ -8,14 +7,14 @@ import AlcorLogo from '../../assets/images/login-signup/AlcorLogo.png'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { api } from '../../api'
-import { useSelector, useDispatch } from 'react-redux'
-import { RiLoader2Line } from 'react-icons/ri'
 import { queryClient } from '@/queryClient'
 import Spinner from '@/components/Spinner'
+import { RiEyeLine, RiEyeOffLine } from 'react-icons/ri';
+
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false)
-  const navigate = useNavigate()
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -28,7 +27,7 @@ const Login = () => {
       Cookies.set('user_id', id)
       const user = await api.auth.me(id)
       await queryClient.setQueryData('me', user)
-      navigate('/', { replace: true })
+      window.location.replace('/')
     } catch (error) {
       console.log(error)
       toast.error('Invalid Email Id or Password!')
@@ -43,11 +42,11 @@ const Login = () => {
     <div className="flex h-screen w-full items-center justify-center overflow-hidden bg-gray-100 md:justify-start">
       <div className="relative hidden md:block">
         <img
-          className="ml-[-10px] h-screen w-screen object-cover"
+          className="ml-[-10px] h-screen w-screen object-fit"
           src={LoginBackground}
           alt="login-background"
         />
-        <img className="absolute left-6 top-6" src={AlcorLogo} alt="alcor-logo" />
+        <img className="h-14 absolute left-6 top-6" src={AlcorLogo} alt="alcor-logo" />
       </div>
 
       <div
@@ -69,14 +68,22 @@ const Login = () => {
                 className="w-full border-b-2 border-gray-300 p-2 font-Lato text-[16px] text-[#ACACAC] placeholder-opacity-50 focus:outline-none"
               />
 
-              <input
-                type="password"
-                autoComplete="off"
-                name="password"
-                placeholder="Password"
-                required
-                className="w-full border-b-2 border-gray-300 p-2 font-Lato text-[16px] text-[#ACACAC] placeholder-opacity-50 focus:outline-none"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete="off"
+                  name="password"
+                  placeholder="Password"
+                  required
+                  className="w-full border-b-2 border-gray-300 p-2 pr-10 font-Lato text-[16px] text-[#ACACAC] placeholder-opacity-50 focus:outline-none"
+                />
+                <span
+                  className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-400 cursor-pointer"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                {showPassword ? <RiEyeLine /> : <RiEyeOffLine />}
+                </span>
+              </div>
 
               <div className="flex justify-between">
                 <span className="font-Lato text-[12px] text-[#ACACAC]">
@@ -85,8 +92,8 @@ const Login = () => {
                     Remember me
                   </label>
                 </span>
-                <span className="font-Lato text-[12px] text-[#5486E3]">
-                  <Link to="http://localhost:5173/forgot/password">Forgot Password?</Link>
+                <span className="font-Lato text-[14px] text-[#5486E3] hover:text-blue-800">
+                  <Link to="/forgot/password">Forgot Password?</Link>
                 </span>
               </div>
               <div>

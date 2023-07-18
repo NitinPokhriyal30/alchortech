@@ -215,7 +215,7 @@ export default function NewPost({ ...props }) {
             )}
           </div>
 
-          {/* footer */}
+          {/* // footer */}
           <div id="new-post-footer" className="flex items-baseline gap-4 px-6 pt-3">
             <EmojiPickerBox
               onClick={(emoji) => {

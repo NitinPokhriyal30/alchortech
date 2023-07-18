@@ -36,6 +36,7 @@ import { queryClient } from '@/queryClient'
 import { ToastContainer } from 'react-toastify'
 import Cookies from 'js-cookie'
 import { api } from '@/api'
+import { Analytics } from './components/Analytics'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -59,6 +60,7 @@ const router = createBrowserRouter(
         <Route path="my-rewards" element={<MyRewards />} />
         <Route path="directory" element={<DirectoryPage />} />
         <Route path="myProfile" element={<MyProfile />} />
+        <Route path="analytics" element={<Analytics />}/>
         <Route path="company/users" element={<ManageUsers />} />
         <Route path="company/account" element={<Earnings />} />
       </Route>

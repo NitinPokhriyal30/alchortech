@@ -1,10 +1,11 @@
 import React, {useState} from 'react';
-import axios from 'axios';
+import { api } from '../../api'
 import ForgotBackground from '../../assets/images/login-signup/ForgotBackground.png'
 import High5Logo from '../../assets/images/login-signup/High5Logo.png'
 import AlcorLogo from '../../assets/images/login-signup/AlcorLogo.png'
 import SuccessLogo from '../../assets/images/login-signup/SuccessLogo.png'
 import { ToastContainer, toast } from 'react-toastify';
+
 
 const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjg4NzU3ODYzLCJpYXQiOjE2ODg3NTYwNjMsImp0aSI6IjRiZjVlMjYyYWI1MzQ5Y2ViYzM4YzI3MzBlODFjMjVlIiwidXNlcl9pZCI6IjhjNjViNjIzLTU1NmEtNDZiNi05NjZlLTVhMGRkM2JhZWU0MCJ9.RJY8SXmMz8WdulZkNolYc9x3EsE2j72uoyxfUBNBOjI"
 const ForgotPassword = () => {
@@ -12,30 +13,24 @@ const ForgotPassword = () => {
     const [email, setEmail] = useState("");
     const [showSuccess, setShowSuccess] = useState(false)
 
-    const handleForgotPassword = async (email) => {fetch('http://backend.letshigh5.com/request/password/', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ email }) 
-    })
-    .then(response => response.json())
-    .then(data => {  
-      setShowSuccess(true);
-      toast.success('Email Sent Succesfully!')
-    })
-    .catch(error => {
-      console.error(error);
-      toast.error('User not found!')
-    })}
+    const handleForgotPassword = async (email) => {
+      try {
+        await api.auth.forgotPassword({email}); 
+        setShowSuccess(true);
+        toast.success('Email Sent Successfully!');
+      } catch (error) {
+        console.error(error);
+        toast.error('User not found!');
+      }
+    };
 
 
         return (
           <div className="flex justify-center md:justify-start items-center h-screen w-screen bg-gray-100">
             <div className="hidden md:block relative">
-                <img className="object-cover h-screen w-screen" src={ForgotBackground} alt="login-background"/>
+                <img className="object-fit h-screen w-screen" src={ForgotBackground} alt="login-background"/>
                 <img
-                  className="absolute top-0 left-0 h-14 w-30 m-8"
+                  className="absolute top-6 left-6 h-14"
                   src={AlcorLogo}
                   alt="alcor-logo"
                 /> 
