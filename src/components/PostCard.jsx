@@ -30,6 +30,7 @@ import { toast } from 'react-toastify'
 import PostCommentList from '@/components/PostCommentList'
 import moment from 'moment'
 import PostComment from '@/components/PostComment'
+import * as HoverCard from '@radix-ui/react-hover-card'
 
 const POINTS = [
   {
@@ -76,6 +77,7 @@ const sortCommentsAndTransactions = (comments, childrenTransactions) => {
       const timestamp2 = b.commentOrTransaction.created
       return new Date(timestamp1) - new Date(timestamp2)
     })
+    .reverse()
 }
 
 const PostCard = ({ post, childrenTransactions, ...props }) => {
@@ -83,6 +85,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
   const [modal, setModal] = React.useState('')
   const [point, setPoint] = React.useState(30)
   const [form, setForm] = React.useState({ image: '', gif: '', message: '' })
+  const imageInputRef = React.useRef()
   const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
   const comments = useQuery('comments', () => api.comment.all())
   const addedPoints = post.sender.find((x) => x.id === me.id)?.points
@@ -185,7 +188,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
           <div className="mt-2.5 flex items-center gap-2">
             {
               <div className="relative">
-                <button className="btn-ghost peer flex items-center gap-2">
+                <button className="btn-ghost !pl-[5px] peer flex items-center gap-2">
                   <BsPlusCircleFill className="h-5 w-5" />
                   Add Points
                 </button>
@@ -196,29 +199,11 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                       key={points}
                       style={{ color: color }}
                       className={`h-8 w-8 rounded-full font-Lato text-sm font-black hover:bg-translucent`}
-                      onClick={
-                        () => {
-                          setPoint(points)
-                          setModal('child-new-post')
-                          setShowCommentsFor('')
-                        }
-                        //   async () => {
-                        //   const { id, image, ...data } = post
-                        //   data.sender = [me.data]
-                        //   data.point = points
-                        //   data.parent_id = post.id
-
-                        //   const formData = toFormData(data)
-                        //   try {
-                        //     // setLoading(true)
-                        //     await api.transactions.new(formData)
-                        //     await queryClient.refetchQueries('transactions')
-                        //   } catch (error) {
-                        //     console.log(error)
-                        //     toast.error('Server Error')
-                        //   }
-                        // }
-                      }
+                      onClick={() => {
+                        setPoint(points)
+                        setModal('child-new-post')
+                        setShowCommentsFor('')
+                      }}
                     >
                       +{points}
                     </button>
@@ -305,7 +290,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                   />
                 </div>
                 <div className="w-full flex-1">
-                  <div className="flex items-center rounded-b-xl rounded-tr-xl bg-paper overflow-x-hidden">
+                  <div className="flex items-center overflow-x-hidden rounded-b-xl rounded-tr-xl bg-paper">
                     <form
                       id={post.id}
                       onSubmit={async (ev) => {
@@ -381,6 +366,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                         <BsFillImageFill className="text-2xl text-[#D1D1D1]" />
 
                         <input
+                          ref={imageInputRef}
                           hidden
                           type="file"
                           onChange={(e) => {
@@ -408,64 +394,68 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                         />
                       </Popover.Root>
                     </div>
-                    { (
+                    {
                       <button
-                        className={"block self-stretch rounded-r-xl font-semibold bg-primary px-5 text-white transition-all " + (form.message !== '' ? "" : "w-0 !px-0")}
+                        className={
+                          'block self-stretch rounded-r-xl bg-primary px-5 font-semibold text-white transition-all ' +
+                          (form.message !== '' ? '' : 'w-0 !px-0')
+                        }
                         form={post.id}
                         type="submit"
                       >
                         send
                       </button>
-                    )}
+                    }
                   </div>
                 </div>
-                </div>
-                <div>
-                  {form.image && (
-                    <div className="group relative flex items-start pt-4">
-                      <img
-                        className="block w-full flex-1 rounded-md"
-                        src={
-                          typeof form.image === 'string'
-                            ? form.image
-                            : URL.createObjectURL(form.image)
-                        }
-                      />
+              </div>
+              <div>
+                {form.image && (
+                  <div className="group relative flex items-start pt-4">
+                    <img
+                      className="block w-full flex-1 rounded-md"
+                      src={
+                        typeof form.image === 'string'
+                          ? form.image
+                          : URL.createObjectURL(form.image)
+                      }
+                    />
 
-                      <button
-                        type="button"
-                        className="z-10 right-0 absolute text-primary-400 drop-shadow-lg opacity-0 transition-opacity group-hover:opacity-100"
-                        onClick={() =>
-                          setForm((prev) => {
-                            delete prev.image
-                            return { ...prev }
-                          })
-                        }
-                      >
-                        <BiXCircle fontSize={24} color="inherit" />
-                      </button>
-                    </div>
-                  )}
+                    <button
+                      type="button"
+                      className="absolute right-0 z-10 mr-2 mt-2 text-[#464646] opacity-0 drop-shadow-lg transition-opacity group-hover:opacity-100"
+                      onClick={() => {
+                        if (imageInputRef.current) imageInputRef.current.value = ''
+                        setForm((prev) => {
+                          delete prev.image
+                          return { ...prev }
+                        })
+                      }}
+                    >
+                      <BiXCircle fontSize={24} color="inherit" />
+                    </button>
+                  </div>
+                )}
 
-                  {form.gif && (
-                    <div className="group relative flex items-start pt-4">
-                      <img className="block flex-1 rounded-md" src={form.gif} />
+                {form.gif && (
+                  <div className="group relative flex items-start pt-4">
+                    <img className="block flex-1 rounded-md" src={form.gif} />
 
-                      <button
-                        type="button"
-                        className="z-10 right-0 absolute text-primary-400 drop-shadow-lg opacity-0 transition-opacity group-hover:opacity-100"
-                        onClick={() =>
-                          setForm((prev) => {
-                            delete prev.gif
-                            return { ...prev }
-                          })
-                        }
-                      >
-                        <BiXCircle fontSize={24} color="inherit" />
-                      </button>
-                    </div>
-                  )}
-                </div>
+                    <button
+                      type="button"
+                      className="absolute right-0 z-10 mr-2 mt-2 text-[#464646] opacity-0 drop-shadow-lg transition-opacity group-hover:opacity-100"
+                      onClick={() =>
+                        setForm((prev) => {
+                          delete prev.gif
+                          return { ...prev }
+                        })
+                      }
+                    >
+                      <BiXCircle fontSize={24} color="inherit" />
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           ) : modal === 'child-new-post' ? (
             <div className="mt-4 flex gap-4">
@@ -499,10 +489,15 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                 />
 
                 <div className="relative ">
-                  <div className="rounded-[15px] rounded-tl-none bg-paper px-[30px] pb-[20px] pt-[7px] text-[#464646]">
-                    <p className="text-18px">
+                  <div className="rounded-[15px] rounded-tl-none bg-paper px-[20px] pb-[20px] pt-[7px] text-[#464646]">
+                    <p className="flex justify-between text-18px">
                       <span className="font-bold">{commentOrTransaction.sender[0].first_name}</span>
-                      <br />+{commentOrTransaction.point}
+                      <span className="text-[14px] leading-[17px] text-[#919191]">
+                        {moment(commentOrTransaction.created).fromNow()}
+                      </span>
+                    </p>
+                    <p>
+                      +{commentOrTransaction.point}
                       <span className="ml-2">{commentOrTransaction.message}</span>
                     </p>
 
@@ -525,6 +520,24 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                         </a>
                       </div>
                     ) : null}
+                  </div>
+                  <div className="relative z-10 mt-[5px] px-[20px] text-[12px] leading-[15px] text-primary">
+                    <HoverCard.Root>
+                      <HoverCard.Trigger className="cursor-pointer">React</HoverCard.Trigger>
+                      <HoverCard.Content className="border">
+                        <div className="absolute bottom-[20px] left-1/2 z-10 flex -translate-x-1/2 gap-4 rounded-[19px] bg-white px-4 py-2 drop-shadow-[0px_2px_3px_#00000029]">
+                          {['❤', '👍', '👏', '✔ ', '😍'].map((emoji) => (
+                            <button
+                              key={emoji}
+                              className="inline-block h-6 w-6 rounded-full font-Lato text-sm font-black hover:bg-translucent"
+                              onClick={() => addReaction(post.id, emoji)}
+                            >
+                              {emoji}
+                            </button>
+                          ))}
+                        </div>
+                      </HoverCard.Content>
+                    </HoverCard.Root>
                   </div>
                 </div>
               </div>

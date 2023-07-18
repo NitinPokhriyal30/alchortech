@@ -18,7 +18,7 @@
 
 @layer components {
   .btn-ghost {
-    @apply hover:bg-translucent rounded-[4px] py-[9px] pl-[5px] pr-[8px] font-Lato text-16px text-primary;
+    @apply hover:bg-translucent rounded-[4px] py-[10px] pl-[20px] pr-[20px] font-Lato text-16px text-primary;
   }
 }
 
