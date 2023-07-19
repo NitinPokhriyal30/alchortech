@@ -22,7 +22,7 @@ import { SERVER_URL } from '@/constant'
 import { api } from '@/api'
 import Cookies from 'js-cookie'
 import { useQuery } from 'react-query'
-import { getTodayDate, CreatePostComment, CreatePost } from '@/utils'
+import { getTodayDate, CreatePostComment, CreatePost, CreateReact } from '@/utils'
 import { queryClient } from '@/queryClient'
 import ChildNewPost from '@/components/ChildNewPost'
 import { toast } from 'react-toastify'
@@ -181,7 +181,9 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                 <img
                   className="block max-w-full rounded-md object-contain"
                   src={
-                    typeof post.image === 'string' ? SERVER_URL + post.image : URL.createObjectURL(post.image)
+                    typeof post.image === 'string'
+                      ? SERVER_URL + post.image
+                      : URL.createObjectURL(post.image)
                   }
                 />
               )}
@@ -235,30 +237,17 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                     className="inline-block h-6 w-6 rounded-full font-Lato text-sm font-black hover:bg-translucent"
                     onClick={async () => {
                       try {
-                        const newReact = {
-                          avtar: me.data.avtar,
-                          email: me.data.email,
-                          name: me.data.first_name,
-                          react: emoji,
-                          userId: me.data.id,
-                        }
-                        const _transaction = {
-                          id: post.id,
-                          react_by: [
-                            ...(Array.isArray(post.react_by) ? post.react_by : []),
-                            newReact,
-                          ],
-                        }
-
-                        await api.transactions.react(toFormData(_transaction))
+                        const reacts = CreateReact(
+                          me.data,
+                          { id: post.id, react_by: post.react_by },
+                          emoji
+                        )
+                        await api.transactions.react(toFormData(reacts))
                         await queryClient.setQueryData(['transaction', props.sortBy], (prev) => {
                           if (!prev) return
                           const targetPost = prev.find((_post) => _post.id === post.id)
                           if (targetPost) {
-                            targetPost.react_by = [
-                              ...(Array.isArray(targetPost.react_by) ? targetPost.react_by : []),
-                              newReact,
-                            ]
+                            targetPost.react_by = reacts.react_by
                           }
 
                           return [...prev]
