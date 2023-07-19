@@ -1,6 +1,6 @@
 import React from 'react'
 import BatchImg from '../assets/images/post-img/green.svg'
-import AchievementSvg from '../assets/images/post-img/achievement.png'
+import AchievementSvg from '../assets/images/post-img/achievement.svg'
 import achievementUser from '../assets/images/post-img/sunita.png'
 import * as HoverCard from '@radix-ui/react-hover-card'
 import HelpIcon from '@/assets/svg/home-sidebar/HelpIcon'
@@ -15,7 +15,7 @@ export const AchievementBanner = () => {
           </HoverCard.Trigger>
 
           <HoverCard.Portal>
-            <HoverCard.Content className="z-20 w-screen max-w-[210px] rounded bg-white p-2 text-[12px] leading-[14px] text-[#747474] shadow">
+            <HoverCard.Content className="z-20 w-screen max-w-[220px] rounded bg-white p-2 text-[12px] leading-[14px] text-[#747474] shadow">
               <HoverCard.Arrow className="fill-white" />
               Sunita Gulia is the top appreciation receiver for #quality for all of Alcor solutions,
               Inc in the 30 days prior to 2023.02.02
@@ -44,7 +44,7 @@ export const AchievementBanner = () => {
           </p>
         </div>
         <div className="mr-auto w-2/3 xs:hidden sm:hidden md:hidden lg:hidden xl:block xxl:block">
-          <img className="w-full" src={AchievementSvg} alt="Achievement-svg" />
+          <img className="" src={AchievementSvg} alt="Achievement-svg" />
         </div>
       </div>
       <div></div>
