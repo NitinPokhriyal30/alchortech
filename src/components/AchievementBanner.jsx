@@ -10,12 +10,12 @@ export const AchievementBanner = () => {
     <div className="relative my-3 rounded-lg bg-[#FFD398] px-8 py-8 drop-shadow-normal">
       <div className="flex w-full items-start justify-between">
         <HoverCard.Root>
-          <HoverCard.Trigger className="absolute right-4 top-4 z-10 ml-2 inline-flex h-4 w-4 cursor-pointer items-center justify-center">
+          <HoverCard.Trigger className="absolute right-4 top-4 z-10 ml-2 inline-flex h-4 w-4 cursor-pointer items-center justify-center text-white">
             <HelpIcon />
           </HoverCard.Trigger>
 
           <HoverCard.Portal>
-            <HoverCard.Content className="z-20 w-screen max-w-[200px] rounded bg-white p-2 text-[12px] leading-[14px] text-[#747474] shadow">
+            <HoverCard.Content className="z-20 w-screen max-w-[210px] rounded bg-white p-2 text-[12px] leading-[14px] text-[#747474] shadow">
               <HoverCard.Arrow className="fill-white" />
               Sunita Gulia is the top appreciation receiver for #quality for all of Alcor solutions,
               Inc in the 30 days prior to 2023.02.02

@@ -9,13 +9,13 @@ export default function HelpIcon() {
           cy="7.262"
           r="7.262"
           transform="translate(71.5 670.529)"
-          fill="#e5edfb"
+          fill="rgba(255,255,255,30%)"
         />
         <text
           id="_"
           data-name="?"
           transform="translate(76.404 682.5)"
-          fill="#5486e3"
+          fill="currentColor"
           fontSize="12"
           fontFamily="Lato-Semibold, Lato"
           fontWeight="600"

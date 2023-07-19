@@ -188,7 +188,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
           <div className="mt-2.5 flex items-center gap-2">
             {
               <div className="relative">
-                <button className="btn-ghost !pl-[5px] peer flex items-center gap-2">
+                <button className="btn-ghost peer flex items-center gap-2 !pl-[5px]">
                   <BsPlusCircleFill className="h-5 w-5" />
                   Add Points
                 </button>
@@ -290,7 +290,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                   />
                 </div>
                 <div className="w-full flex-1">
-                  <div className="flex items-center overflow-x-hidden rounded-b-xl rounded-tr-xl bg-paper">
+                  <div className="grid grid-cols-[1fr_auto_auto] items-center overflow-x-hidden rounded-b-xl rounded-tr-xl bg-paper">
                     <form
                       id={post.id}
                       onSubmit={async (ev) => {
@@ -308,6 +308,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                           )
 
                           await queryClient.invalidateQueries('comments')
+                          if (imageInputRef.current) imageInputRef.current.value = ''
                           setForm({ message: '', image: '', gif: '' })
                         } catch (e) {
                           console.log('e', e)
@@ -398,7 +399,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                       <button
                         className={
                           'block self-stretch rounded-r-xl bg-primary px-5 font-semibold text-white transition-all ' +
-                          (form.message !== '' ? '' : 'w-0 !px-0')
+                          (form.message || form.image || form.gif ? '' : 'w-0 !px-0')
                         }
                         form={post.id}
                         type="submit"
@@ -406,55 +407,56 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                         send
                       </button>
                     }
+
+                    <div className="px-6 pb-6 empty:hidden">
+                      {form.image && (
+                        <div className="group relative flex w-fit items-center pt-3">
+                          <img
+                            className="block w-40 rounded-md"
+                            src={
+                              typeof form.image === 'string'
+                                ? form.image
+                                : URL.createObjectURL(form.image)
+                            }
+                          />
+
+                          <button
+                            type="button"
+                            className="p-2 ml-4 text-[#464646] opacity-0 group-hover:opacity-100"
+                            onClick={() => {
+                              if (imageInputRef.current) imageInputRef.current.value = ''
+                              setForm((prev) => {
+                                delete prev.image
+                                return { ...prev }
+                              })
+                            }}
+                          >
+                          &times;
+                          </button>
+                        </div>
+                      )}
+
+                      {form.gif && (
+                        <div className="group relative w-fit flex items-center pt-6">
+                          <img className="block w-40 rounded-md" src={form.gif} />
+
+                          <button
+                            type="button"
+                            className="p-2 ml-4 text-[#464646] opacity-0 group-hover:opacity-100"
+                            onClick={() =>
+                              setForm((prev) => {
+                                delete prev.gif
+                                return { ...prev }
+                              })
+                            }
+                          >
+                            &times;
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div>
-                {form.image && (
-                  <div className="group relative flex items-start pt-4">
-                    <img
-                      className="block w-full flex-1 rounded-md"
-                      src={
-                        typeof form.image === 'string'
-                          ? form.image
-                          : URL.createObjectURL(form.image)
-                      }
-                    />
-
-                    <button
-                      type="button"
-                      className="absolute right-0 z-10 mr-2 mt-2 text-[#464646] opacity-0 drop-shadow-lg transition-opacity group-hover:opacity-100"
-                      onClick={() => {
-                        if (imageInputRef.current) imageInputRef.current.value = ''
-                        setForm((prev) => {
-                          delete prev.image
-                          return { ...prev }
-                        })
-                      }}
-                    >
-                      <BiXCircle fontSize={24} color="inherit" />
-                    </button>
-                  </div>
-                )}
-
-                {form.gif && (
-                  <div className="group relative flex items-start pt-4">
-                    <img className="block flex-1 rounded-md" src={form.gif} />
-
-                    <button
-                      type="button"
-                      className="absolute right-0 z-10 mr-2 mt-2 text-[#464646] opacity-0 drop-shadow-lg transition-opacity group-hover:opacity-100"
-                      onClick={() =>
-                        setForm((prev) => {
-                          delete prev.gif
-                          return { ...prev }
-                        })
-                      }
-                    >
-                      <BiXCircle fontSize={24} color="inherit" />
-                    </button>
-                  </div>
-                )}
               </div>
             </div>
           ) : modal === 'child-new-post' ? (

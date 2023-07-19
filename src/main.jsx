@@ -47,20 +47,22 @@ const router = createBrowserRouter(
       <Route
         path="/"
         element={
-          <main className="bg-[#ededed]">
-            <MainNavbar />
-            <div className="mx-auto grid w-full max-w-[1536px] grid-cols-[1fr] pl-0 pt-nav md:grid-cols-smallDevice md:pl-9 md:pr-[39px] lg:grid-cols-mediumDevice">
-              <HomeSidebar />
-              <Outlet />
-            </div>
-          </main>
+          <ProtectedRoute>
+            <main className="bg-[#ededed]">
+              <MainNavbar />
+              <div className="mx-auto grid w-full max-w-[1536px] grid-cols-[1fr] pl-0 pt-nav md:grid-cols-smallDevice md:pl-9 md:pr-[39px] lg:grid-cols-mediumDevice">
+                <HomeSidebar />
+                <Outlet />
+              </div>
+            </main>
+          </ProtectedRoute>
         }
       >
         <Route index element={<HomePage />} />
         <Route path="my-rewards" element={<MyRewards />} />
         <Route path="directory" element={<DirectoryPage />} />
         <Route path="myProfile" element={<MyProfile />} />
-        <Route path="analytics" element={<Analytics />}/>
+        <Route path="analytics" element={<Analytics />} />
         <Route path="company/users" element={<ManageUsers />} />
         <Route path="company/account" element={<Earnings />} />
       </Route>
@@ -81,14 +83,13 @@ const router = createBrowserRouter(
   )
 )
 
-const unauthRoutes = createBrowserRouter(
+const _unauthRoutes = createBrowserRouter(
   createRoutesFromElements(
     <React.Fragment>
       <Route path="/login" element={<Login />} />
       <Route path="/forgot/password" element={<ForgotPassword />} />
       <Route path="/reset/password/passwordreset/:uidb64/:token" element={<ResetPassword />} />
       <Route path="*" element={<Navigate to="/login" />} />
-      
     </React.Fragment>
   )
 )
@@ -97,33 +98,12 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <Provider store={store}>
     <QueryClientProvider client={queryClient}>
       <ToastContainer />
-      <GetUserFromCookies>
-        <RouterProvider router={router} />
-      </GetUserFromCookies>
+      <RouterProvider router={router} />
     </QueryClientProvider>
   </Provider>
 )
 
 // react easy crop
-function GetUserFromCookies({ children }) {
-  const user_id = Cookies.get('user_id')
-  const me = useQuery(
-    'me',
-    () => {
-      if (!user_id) return undefined
-      return api.auth.me(user_id)
-    },
-    {
-      onError: () => {
-        Cookies.remove('token')
-        Cookies.remove('user_id')
-      },
-    }
-  )
-
-  if (user_id && me.isLoading) {
-    return 'Loading'
-  }
-
-  return <RouterProvider router={me.data ? router : unauthRoutes} />
+function _GetUserFromCookies({ children }) {
+  return <RouterProvider router={router} />
 }

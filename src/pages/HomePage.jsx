@@ -31,14 +31,38 @@ const withIsChild = (allTransactions) => {
   })
 }
 
+const stickBottomAlign = {
+  position: 'sticky',
+  alignSelf: 'flex-end',
+  bottom: 0,
+}
 export default function HomePage() {
   const postList = useQuery('transactions', () => api.transactions.all())
+  const [stickyStyles, setStickyStyles] = React.useState({})
+  const rightSidebarRef = React.useRef()
 
   let allPosts = postList.isLoading ? [] : postList.data
   allPosts = withIsChild(allPosts)
   const parentPosts = allPosts.filter(
     (post) => !post.isChild || getChildTransactionsFor(post.id, allPosts).length > 0
   )
+
+  React.useEffect(() => {
+    function handleResize() {
+      if (!rightSidebarRef.current) {
+        return
+      }
+
+      const rightSidebar = rightSidebarRef.current
+      const height = rightSidebar.getBoundingClientRect().height
+      if (height > window.innerHeight) {
+        setStickyStyles(stickBottomAlign)
+      }
+    }
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   return (
     <>
@@ -91,7 +115,11 @@ export default function HomePage() {
       </div>
 
       {/* right sidebar */}
-      <div className="bottom-0 flex w-full flex-col gap-3 self-end overflow-y-auto pb-5 pl-3 pr-3 pt-3 md:sticky md:w-[260px] md:pl-[0px] lg:w-[235px] lg:pr-0 xl:w-[319px]">
+      <div
+        ref={rightSidebarRef}
+        style={stickyStyles}
+        className="flex w-full flex-col gap-3 overflow-y-auto pb-5 pl-3 pr-3 pt-3 md:w-[260px] md:pl-[0px] lg:w-[235px] lg:pr-0 xl:w-[319px]"
+      >
         <RedeemPointsWidget />
         <RecommendationWidget />
         <CelebrationWidget />
