@@ -34,7 +34,9 @@ import * as HoverCard from '@radix-ui/react-hover-card'
 import smiley from '../assets/images/new-post/smiley.svg'
 import img from '../assets/images/new-post/img.svg'
 import gif from '../assets/images/new-post/gif.svg'
-import link from '../assets/images/new-post/link.svg'
+import chat from '../assets/images/post-img/chat.png'
+import plus from '../assets/images/post-img/plus.png'
+import heart from '../assets/images/post-img/heart.png'
 
 const POINTS = [
   {
@@ -189,11 +191,13 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
         </div>
 
         <div>
-          <div className="mt-2.5 flex items-center gap-2">
+          <div className="mt-2.5 flex items-center gap-1">
             {
               <div className="relative">
-                <button className="btn-ghost peer flex items-center gap-2 !pl-[5px]">
-                  <BsPlusCircleFill className="h-5 w-5" />
+                <button className="btn-ghost peer flex items-center gap-1 !pl-[5px]">
+                  <span className="bg-blue-500 rounded-[20px] p-[3px]">
+                    <img src={plus} alt="chat" />
+                  </span>
                   Add Points
                 </button>
 
@@ -218,9 +222,9 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
 
             {/* post reaction button */}
             <div className="relative ">
-              <button className="btn-ghost peer flex items-center gap-2" onClick={async () => {}}>
-                <span>
-                  <BiHeartCircle className="text-[20px]" />
+              <button className="btn-ghost peer flex items-center gap-1" onClick={async () => {}}>
+                <span className="bg-blue-500 rounded-[20px] p-[4px]">
+                  <img src={heart} alt="heart" />
                 </span>
                 React
               </button>
@@ -239,13 +243,13 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
             </div>
             <div>
               <button
-                className="btn-ghost peer flex items-center gap-2"
+                className="btn-ghost peer flex items-center gap-1"
                 onClick={() =>
                   setShowCommentsFor((p) => (p === post.comment.id ? '' : post.comment.id))
                 }
               >
-                <span>
-                  <BsFillChatRightTextFill className="h-5 w-5" />
+                <span className="bg-blue-500 rounded-[20px] p-[5px]">
+                  <img src={chat} alt="chat" />
                 </span>
                 Comment
               </button>
