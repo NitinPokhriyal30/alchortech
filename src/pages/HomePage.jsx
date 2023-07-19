@@ -38,7 +38,7 @@ const stickBottomAlign = {
 }
 export default function HomePage() {
   const [sortBy, setSortBy] = React.useState("all")
-  const postList = useQuery(['transactions_filtered', sortBy], () => api.transactions.all(new URLSearchParams({key_param: sortBy})))
+  const postList = useQuery(['transaction', sortBy], () => api.transactions.all(new URLSearchParams({key_param: sortBy})))
   const [stickyStyles, setStickyStyles] = React.useState({})
   const rightSidebarRef = React.useRef()
 
@@ -91,6 +91,7 @@ export default function HomePage() {
                   key={post.id}
                   post={post}
                   childrenTransactions={getChildTransactionsFor(post.id, allPosts)}
+                  sortBy={sortBy}
                 />
               ))
           )}
@@ -109,6 +110,7 @@ export default function HomePage() {
                   key={index}
                   post={post}
                   childrenTransactions={getChildTransactionsFor(post.id, allPosts)}
+                  sortBy={sortBy}
                 />
               ))
           )}

@@ -84,7 +84,7 @@ export function CreatePost(senderId, parent_id, form) {
     sender: senderId,
     active: 'True',
     flag_transaction: 'False',
-    react_by: {},
+    react_by: form.react_by || [],
     created_by: senderId,
     updated_by: senderId,
     created: today,

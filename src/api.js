@@ -74,6 +74,10 @@ const api = {
       axios
         .get(`api/posts/?sender=${id}`)
         .then((r) => r.data),
+    react: (data) =>
+      axios
+        .patch("transaction/", data)
+        .then((r) => r.data),
   },
   comment: {
     new: (data) =>
@@ -86,6 +90,7 @@ const api = {
       axios
         .get("comments/")
         .then((r) => r.data),
+
   },
   todayEvents: () =>
     axios

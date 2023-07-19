@@ -23,7 +23,7 @@ import { SERVER_URL } from '@/constant'
 import { api } from '@/api'
 import Cookies from 'js-cookie'
 import { useQuery } from 'react-query'
-import { getTodayDate, CreatePostComment } from '@/utils'
+import { getTodayDate, CreatePostComment, CreatePost } from '@/utils'
 import { queryClient } from '@/queryClient'
 import ChildNewPost from '@/components/ChildNewPost'
 import { toast } from 'react-toastify'
@@ -195,7 +195,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
             {
               <div className="relative">
                 <button className="btn-ghost peer flex items-center gap-1 !pl-[5px]">
-                  <span className="bg-blue-500 rounded-[20px] p-[3px]">
+                  <span className="rounded-[20px] bg-blue-500 p-[3px]">
                     <img src={plus} alt="chat" />
                   </span>
                   Add Points
@@ -223,7 +223,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
             {/* post reaction button */}
             <div className="relative ">
               <button className="btn-ghost peer flex items-center gap-1" onClick={async () => {}}>
-                <span className="bg-blue-500 rounded-[20px] p-[4px]">
+                <span className="rounded-[20px] bg-blue-500 p-[4px]">
                   <img src={heart} alt="heart" />
                 </span>
                 React
@@ -234,7 +234,40 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                   <button
                     key={emoji}
                     className="inline-block h-6 w-6 rounded-full font-Lato text-sm font-black hover:bg-translucent"
-                    onClick={() => addReaction(post.id, emoji)}
+                    onClick={async () => {
+                      try {
+                        const newReact = {
+                          avtar: me.data.avtar,
+                          email: me.data.email,
+                          name: me.data.first_name,
+                          react: emoji,
+                          userId: me.data.id,
+                        }
+                        const _transaction = {
+                          id: post.id,
+                          react_by: [
+                            ...(Array.isArray(post.react_by) ? post.react_by : []),
+                            newReact,
+                          ],
+                        }
+
+                        await api.transactions.react(toFormData(_transaction))
+                        await queryClient.setQueryData(['transaction', props.sortBy], (prev) => {
+                          if (!prev) return
+                          const targetPost = prev.find((_post) => _post.id === post.id)
+                          if (targetPost) {
+                            targetPost.react_by = [
+                              ...(Array.isArray(targetPost.react_by) ? targetPost.react_by : []),
+                              newReact,
+                            ]
+                          }
+
+                          return [...prev]
+                        })
+                      } catch (e) {
+                        console.log('postcard > react button', e)
+                      }
+                    }}
                   >
                     {emoji}
                   </button>
@@ -248,7 +281,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                   setShowCommentsFor((p) => (p === post.comment.id ? '' : post.comment.id))
                 }
               >
-                <span className="bg-blue-500 rounded-[20px] p-[5px]">
+                <span className="rounded-[20px] bg-blue-500 p-[5px]">
                   <img src={chat} alt="chat" />
                 </span>
                 Comment
@@ -258,7 +291,10 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
 
           <div className="mt-1 flex items-center gap-2 pb-1">
             <div className="flex cursor-pointer items-center rounded-full border-[0.5px] border-[#d1d1d1] pr-2  text-[18px] text-[#747474]">
-              ☺️ 0
+              {Array.isArray(post.react_by) && post.react_by.length > 0
+                ? post.react_by[post.react_by.length - 1].react
+                : '☺'}{' '}
+              {post.react_by?.length || 0}
             </div>
             <p className="text-16px text-[#d1d1d1]">
               {commentsAndTransactions.length + ' '}
@@ -286,7 +322,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
           </div>
         </div>
 
-        <div className="border-t border-[#EDEDED] empty:hidden pt-2">
+        <div className="border-t border-[#EDEDED] pt-2 empty:hidden">
           {showCommentsFor === post.comment.id ? (
             <div>
               <div className="my-[8px] flex gap-4">
@@ -345,7 +381,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                         onClick={() => setModal((prev) => (prev === 'emoji' ? '' : 'emoji'))}
                       >
                         {/* <HiEmojiHappy className="text-2xl text-[#D1D1D1]" /> */}
-                        <img src={smiley} alt="smiley" width={"18px"} />
+                        <img src={smiley} alt="smiley" width={'18px'} />
 
                         {modal === 'emoji' && (
                           <HoveringWidget
@@ -368,14 +404,13 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                                 setModal('')
                               }}
                             />
-                          </HoveringWidget> 
-                          
+                          </HoveringWidget>
                         )}
                       </button>
 
                       <label className="cursor-pointer">
                         {/* <BsFillImageFill className="text-2xl text-[#D1D1D1]" /> */}
-                        <img src={img} alt="img" width={"25px"} />
+                        <img src={img} alt="img" width={'25px'} />
                         <input
                           ref={imageInputRef}
                           hidden
@@ -392,7 +427,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
 
                       <Popover.Root>
                         <Popover.Trigger>
-                          <img src={gif} alt="gif" width={"18px"} />
+                          <img src={gif} alt="gif" width={'18px'} />
                           {/* <AiOutlineFileGif className="text-2xl text-[#D1D1D1]" /> */}
                         </Popover.Trigger>
 
@@ -433,7 +468,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
 
                           <button
                             type="button"
-                            className="p-2 ml-4 text-[#464646] opacity-0 group-hover:opacity-100"
+                            className="ml-4 p-2 text-[#464646] opacity-0 group-hover:opacity-100"
                             onClick={() => {
                               if (imageInputRef.current) imageInputRef.current.value = ''
                               setForm((prev) => {
@@ -442,18 +477,18 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                               })
                             }}
                           >
-                          &times;
+                            &times;
                           </button>
                         </div>
                       )}
 
                       {form.gif && (
-                        <div className="group relative w-fit flex items-center pt-[16px]">
+                        <div className="group relative flex w-fit items-center pt-[16px]">
                           <img className="block w-40 rounded-md" src={form.gif} />
 
                           <button
                             type="button"
-                            className="p-2 ml-4 text-[#464646] opacity-0 group-hover:opacity-100"
+                            className="ml-4 p-2 text-[#464646] opacity-0 group-hover:opacity-100"
                             onClick={() =>
                               setForm((prev) => {
                                 delete prev.gif
@@ -471,7 +506,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
               </div>
             </div>
           ) : modal === 'child-new-post' ? (
-            <div className="mt-2 mb-2 flex gap-4">
+            <div className="mb-2 mt-2 flex gap-4">
               <img
                 src={SERVER_URL + me.data.avtar}
                 className="h-[34px] w-[34px] rounded-full object-contain"
