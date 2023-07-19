@@ -31,6 +31,10 @@ import PostCommentList from '@/components/PostCommentList'
 import moment from 'moment'
 import PostComment from '@/components/PostComment'
 import * as HoverCard from '@radix-ui/react-hover-card'
+import smiley from '../assets/images/new-post/smiley.svg'
+import img from '../assets/images/new-post/img.svg'
+import gif from '../assets/images/new-post/gif.svg'
+import link from '../assets/images/new-post/link.svg'
 
 const POINTS = [
   {
@@ -235,7 +239,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
             </div>
             <div>
               <button
-                className="btn-ghost peer flex items-center gap-1"
+                className="btn-ghost peer flex items-center gap-2"
                 onClick={() =>
                   setShowCommentsFor((p) => (p === post.comment.id ? '' : post.comment.id))
                 }
@@ -278,10 +282,10 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
           </div>
         </div>
 
-        <div className="border-t border-[#EDEDED] empty:hidden">
+        <div className="border-t border-[#EDEDED] empty:hidden pt-2">
           {showCommentsFor === post.comment.id ? (
             <div>
-              <div className="mt-4 flex gap-4">
+              <div className="mt-4 mb-4 flex gap-4">
                 <div>
                   <img
                     className="h-[34px] w-[34px] rounded-full object-cover"
@@ -336,7 +340,8 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                         type="button"
                         onClick={() => setModal((prev) => (prev === 'emoji' ? '' : 'emoji'))}
                       >
-                        <HiEmojiHappy className="text-2xl text-[#D1D1D1]" />
+                        {/* <HiEmojiHappy className="text-2xl text-[#D1D1D1]" /> */}
+                        <img src={smiley} alt="smiley" width={"23px"} />
 
                         {modal === 'emoji' && (
                           <HoveringWidget
@@ -359,13 +364,14 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                                 setModal('')
                               }}
                             />
-                          </HoveringWidget>
+                          </HoveringWidget> 
+                          
                         )}
                       </button>
 
                       <label className="cursor-pointer">
-                        <BsFillImageFill className="text-2xl text-[#D1D1D1]" />
-
+                        {/* <BsFillImageFill className="text-2xl text-[#D1D1D1]" /> */}
+                        <img src={img} alt="img" width={"30px"} />
                         <input
                           ref={imageInputRef}
                           hidden
@@ -382,7 +388,8 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
 
                       <Popover.Root>
                         <Popover.Trigger>
-                          <AiOutlineFileGif className="text-2xl text-[#D1D1D1]" />
+                          <img src={gif} alt="gif" width={"23px"} />
+                          {/* <AiOutlineFileGif className="text-2xl text-[#D1D1D1]" /> */}
                         </Popover.Trigger>
 
                         <GifPicker
@@ -460,7 +467,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
               </div>
             </div>
           ) : modal === 'child-new-post' ? (
-            <div className="mt-4 flex gap-4">
+            <div className="mt-2 mb-2 flex gap-4">
               <img
                 src={SERVER_URL + me.data.avtar}
                 className="h-[34px] w-[34px] rounded-full object-contain"
@@ -483,7 +490,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
             ) : (
               <div
                 key={commentOrTransaction.id}
-                className="grid grid-cols-[auto_1fr] gap-4 pl-0 pt-4"
+                className="grid grid-cols-[auto_1fr] gap-4 pl-0 pt-[7px]"
               >
                 <img
                   className="h-8.5 w-8.5 rounded-full object-cover"
@@ -523,7 +530,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                       </div>
                     ) : null}
                   </div>
-                  <div className="relative z-10 mt-[5px] px-[20px] text-[12px] leading-[15px] text-primary">
+                  <div className="relative z-10 mt-[1px] px-[20px] text-[12px] leading-[15px] text-primary">
                     <HoverCard.Root>
                       <HoverCard.Trigger className="cursor-pointer">React</HoverCard.Trigger>
                       <HoverCard.Content className="border">

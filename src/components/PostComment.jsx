@@ -16,7 +16,7 @@ export default function PostComment({ modal, setModal, comment, ...props }) {
     : { avtar: GrayBG, first_name: '&nbsp;', last_name: '&nbsp;' }
 
   return (
-    <div className="grid grid-cols-[auto_1fr] gap-4 pl-0 pt-4">
+    <div className="grid grid-cols-[auto_1fr] gap-4 pl-0 pt-[7px]">
       <img className="h-8.5 w-8.5 rounded-full object-cover" src={user.avtar} />
 
       <div className="relative ">
@@ -31,14 +31,14 @@ export default function PostComment({ modal, setModal, comment, ...props }) {
             <span>{comment.comment}</span>
           </p>
           {comment.image || comment.gif ? (
-            <div className="mt-[21px] space-y-[20px]">
+            <div className="mt-[21px] space-y-[12px]">
               {comment.image && <img className="w-full rounded-md" src={comment.image} />}
               {comment.gif && <img className="w-full rounded-md" src={comment.gif} />}
             </div>
           ) : null}
         </div>
 
-        <div className="relative z-10 mt-[5px] px-[20px] text-[12px] leading-[15px] text-primary">
+        <div className="relative z-10 mt-[1px] px-[20px] text-[12px] leading-[15px] text-primary">
           <HoverCard.Root>
             <HoverCard.Trigger className="cursor-pointer">React</HoverCard.Trigger>
             <HoverCard.Content className='border'>
