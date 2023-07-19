@@ -25,11 +25,11 @@ import { api } from '@/api'
 import { SERVER_URL } from '@/constant'
 import HomeIcon from '@/assets/svg/home-sidebar/HomeIcon'
 import PhoneIcon from '@/assets/svg/home-sidebar/phonebook.svg'
-import Icon1 from "@/assets/svg/home-sidebar/Group 672"
+import Icon1 from '@/assets/svg/home-sidebar/Group 672'
 import Icon2 from '@/assets/svg/home-sidebar/Group 950.svg'
-import Icon3 from "@/assets/svg/home-sidebar/Group 947"
+import Icon3 from '@/assets/svg/home-sidebar/Group 947'
 import Icon4 from '@/assets/svg/home-sidebar/Path 266.svg'
-import Icon5 from "@/assets/svg/home-sidebar/Group3"
+import Icon5 from '@/assets/svg/home-sidebar/Group3'
 
 import AnalyticsIcon from '@/assets/svg/home-sidebar/noun-analytics-5506185.svg'
 import PowerOffIcon from '@/assets/svg/home-sidebar/power-off (1).svg'
@@ -57,7 +57,7 @@ export default function HomeSidebar({}) {
       {/* sidebar */}
       <div
         style={{ left: showSidebar ? '0px' : '' }}
-        className="fixed -left-full top-0 z-[999] bg-[#ededed] flex h-screen w-full flex-col transition-all xs:p-0 sm:p-0 md:w-[min(70vw,100%)] md:py-0 md:pr-0 md:max-h-[680px] lg:sticky lg:left-0 lg:top-[87px] lg:z-0 lg:h-avoid-nav-lg lg:w-auto lg:py-3 lg:pr-[12px]"
+        className="fixed -left-full top-0 z-[999] flex h-screen w-full flex-col bg-[#ededed] transition-all xs:p-0 sm:p-0 md:max-h-[680px] md:w-[min(70vw,100%)] md:py-0 md:pr-0 lg:sticky lg:left-0 lg:top-[87px] lg:z-0 lg:h-avoid-nav-lg lg:w-auto lg:py-3 lg:pr-[12px]"
       >
         <div className="z-30 flex flex-grow flex-col overflow-hidden overflow-y-auto bg-primary md:rounded-[9px]">
           <div className="border-b-2 border-[#7096DB] px-5 pt-3 lg:hidden">
@@ -82,7 +82,7 @@ export default function HomeSidebar({}) {
           <div className="px-[10px]">
             <MenuLink
               to="/myProfile"
-              className="mb-[11px] mt-[11px] md:mb-[18px] flex items-center gap-3 rounded-[5px] px-3 hover:bg-white/[8%] xs:py-[11px] [&.active]:bg-white/[8%]"
+              className="mb-[11px] mt-[11px] flex items-center gap-3 rounded-[5px] px-3 hover:bg-white/[8%] xs:py-[11px] md:mb-[18px] [&.active]:bg-white/[8%]"
             >
               <div>
                 <img
@@ -106,56 +106,70 @@ export default function HomeSidebar({}) {
               to="/"
               className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
             >
-                <div className="w-[23px]"><HomeIcon /></div>
+              <div className="w-[23px]">
+                <HomeIcon />
+              </div>
               <span>Home</span>
             </MenuLink>
             <MenuLink
               to="/my-rewards"
               className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
             >
-                <div className="w-[23px]"><Icon3 fontSize={22} /></div>
+              <div className="w-[23px]">
+                <Icon3 fontSize={22} />
+              </div>
               <span>My Rewards</span>
             </MenuLink>
             <MenuLink
               to="/directory"
               className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
             >
-                <div className="w-[23px]"><img src={PhoneIcon} /> </div>
+              <div className="w-[23px]">
+                <img src={PhoneIcon} />{' '}
+              </div>
               <span>Directory</span>
             </MenuLink>
             <MenuLink
               to="/analytics"
               className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
             >
-                <div className="w-[23px]"><img src={AnalyticsIcon} /> </div>
+              <div className="w-[23px]">
+                <img src={AnalyticsIcon} />{' '}
+              </div>
               <span>Analytics</span>
             </MenuLink>
             <MenuLink
               to="/campaign"
               className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
             >
-                <div className="w-[23px]"><CampaignIcon /></div>
+              <div className="w-[23px]">
+                <CampaignIcon />
+              </div>
               <span>Campaigns</span>
             </MenuLink>
             <MenuLink
               to="/survey"
               className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
             >
-                <div className="w-[23px]"><img src={Icon4} /></div>
+              <div className="w-[23px]">
+                <img src={Icon4} />
+              </div>
               <span>Survey</span>
             </MenuLink>
             <MenuLink
               to="/voice-out"
               className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
             >
-                <div className="w-[23px]"><Icon5 src={Icon4} /></div>
+              <div className="w-[23px]">
+                <Icon5 src={Icon4} />
+              </div>
               <span>Voice Out</span>
             </MenuLink>
           </div>
 
-            <div className="px-[33px] w-full ">
-              <div className="h-[1px] bg-[#E5EDFB] bg-opacity-[36%]" />
-            </div>
+          <div className="w-full px-[33px] ">
+            <div className="h-[1px] bg-[#E5EDFB] bg-opacity-[36%]" />
+          </div>
 
           <div className="px-[10px] pt-3">
             <button
@@ -175,10 +189,10 @@ export default function HomeSidebar({}) {
 
           {/*--------------- FAQ Section  ----------------*/}
 
-          <div className="mt-auto pl-[33px] pr-[30px] pb-[22px]">
+          <div className="mt-auto pb-[22px] pl-[33px] pr-[30px]">
             <div className="flex items-center justify-between gap-3">
               <p className="flex items-center gap-1 font-Lato text-[16px] font-light leading-[19px] text-white">
-                <HelpIcon /> FAQs
+                <span className='text-primary'><HelpIcon fill="white" /></span> FAQs
               </p>
               <p className="flex items-center gap-1 font-Lato text-[16px] font-light leading-[19px] text-white">
                 <img src={Icon2} alt="" /> Feedback
@@ -187,7 +201,7 @@ export default function HomeSidebar({}) {
           </div>
         </div>
 
-        <p className="lg:my-[10px] my-[10px] text-center text-10px">
+        <p className="my-[10px] text-center text-10px lg:my-[10px]">
           A product of Alcor | All rights reserved 2023
           <br />
           <Link to="#" className={COLORS.footer.terms}>

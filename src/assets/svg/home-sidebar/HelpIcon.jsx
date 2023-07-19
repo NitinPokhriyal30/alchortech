@@ -1,4 +1,4 @@
-export default function HelpIcon() {
+export default function HelpIcon({ fill = 'rgba(255,255,255,30%)' }) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="14.523" height="15" viewBox="0 0 14.523 15">
       <g id="Group_949" data-name="Group 949" transform="translate(-71.5 -670.5)">
@@ -9,7 +9,7 @@ export default function HelpIcon() {
           cy="7.262"
           r="7.262"
           transform="translate(71.5 670.529)"
-          fill="rgba(255,255,255,30%)"
+          fill={fill}
         />
         <text
           id="_"

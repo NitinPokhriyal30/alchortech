@@ -26,7 +26,7 @@ export const AchievementBanner = () => {
         <div className="relative w-1/4">
           <img className="absolute xs:w-[35%] sm:w-[35%]" src={BatchImg} alt="batch" />
           <img
-            className=" xs:w-[80%] sm:w-[80%] md:w-2/3 lg:w-2/3 xl:w-2/3 xxl:w-2/3 "
+            className=" xs:w-[80%] sm:w-[80%] md:w-2/3 lg:w-2/3 xl:w-2/3 xxl:w-2/3 border-4 rounded-full border-[#A08B43] "
             src={achievementUser}
             alt="Achievement-User"
           />

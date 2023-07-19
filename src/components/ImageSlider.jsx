@@ -7,7 +7,7 @@ const ImageSlider = () => {
   useEffect(() => {
     const id = setInterval(() => {
       setCounter((p) => (p + 1) % bgs.length)
-    }, 2000)
+    }, 5000)
 
     return () => clearInterval(id)
   }, [])
