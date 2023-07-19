@@ -8,6 +8,7 @@ import Notification from './Notification'
 import { api } from '@/api'
 import { useQuery } from 'react-query'
 import { Link } from 'react-router-dom'
+import { Hidden } from '@mui/material'
 
 export default function MainNavbar() {
   const showSidebar = useSelector((store) => store.sidebar)
@@ -17,10 +18,10 @@ export default function MainNavbar() {
 
   return (
     <div>
-      <nav className="block fixed top-0 z-50 w-full xxl:py-[12px] xl:py-[12px] lg:py-[12px] md:py-[12px] sm:py-[11px] xs:py-[11px] bg-white shadow">
-        <div className="mx-auto pl-0 md:pl-9 pr-0 md:pr-39px max-w-[1536px] justify-evenly  md:items-center md:flex sm:flex xs:flex items-center h-full">
+      <nav className="block fixed top-0 z-50 w-full px-[12px] xxl:py-[12px] xl:py-[12px] lg:py-[12px] md:py-[12px] md:px-[40px] sm:py-[11px] xs:py-[11px] bg-white shadow">
+        <div className="mx-auto pl-0 pr-0 md:pr-39px max-w-[1536px] justify-evenly  md:items-center md:flex sm:flex justify-between xs:flex items-center h-full">
           <div className="flex items-center xl:gap-4 lg:gap-4 md:gap-4 sm:gap-4 xs:gap-0 lg:pl-0 md:pl-3 pl-0">
-            <div>
+            <div className="md:hidden">
               <button
                 type="button"
                 className="block lg:hidden rounded-full p-2 hover:bg-translucent"
@@ -33,7 +34,7 @@ export default function MainNavbar() {
               <Link to="/">
                 <h2 className="text-2xl font-bold">
                   <img
-                    className="h-12 w-[126px] object-cover"
+                    className="h-12 w-[126px] object-cover xxl:ml-10"
                     src={properties.data?.company.logo}
                     alt={properties.data?.company.name}
                   />
@@ -63,7 +64,7 @@ export default function MainNavbar() {
 
             <div className="xxl:block xl:block lg:block md:block sm:block xs:block">
               <img
-                className="h-12 xxl:h-12 xl:h-12 lg:h-12 xs:h-8 xxl:mr-6 xl:mr-6 lg:mr-6 md:mr-8 sm:mr-0 xs:mr-0 "
+                className="h-12 xxl:h-12 xl:h-12 lg:h-12 xs:h-8 xxl:mr-10 sm:mr-0 xs:mr-0 "
                 src={HighLogo}
                 alt=" High Logo"
               />
