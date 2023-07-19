@@ -341,7 +341,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                         onClick={() => setModal((prev) => (prev === 'emoji' ? '' : 'emoji'))}
                       >
                         {/* <HiEmojiHappy className="text-2xl text-[#D1D1D1]" /> */}
-                        <img src={smiley} alt="smiley" width={"23px"} />
+                        <img src={smiley} alt="smiley" width={"18px"} />
 
                         {modal === 'emoji' && (
                           <HoveringWidget
@@ -371,7 +371,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
 
                       <label className="cursor-pointer">
                         {/* <BsFillImageFill className="text-2xl text-[#D1D1D1]" /> */}
-                        <img src={img} alt="img" width={"30px"} />
+                        <img src={img} alt="img" width={"25px"} />
                         <input
                           ref={imageInputRef}
                           hidden
@@ -388,7 +388,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
 
                       <Popover.Root>
                         <Popover.Trigger>
-                          <img src={gif} alt="gif" width={"23px"} />
+                          <img src={gif} alt="gif" width={"18px"} />
                           {/* <AiOutlineFileGif className="text-2xl text-[#D1D1D1]" /> */}
                         </Popover.Trigger>
 
@@ -444,7 +444,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                       )}
 
                       {form.gif && (
-                        <div className="group relative w-fit flex items-center pt-6">
+                        <div className="group relative w-fit flex items-center pt-[16px]">
                           <img className="block w-40 rounded-md" src={form.gif} />
 
                           <button
@@ -498,7 +498,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                 />
 
                 <div className="relative ">
-                  <div className="rounded-[15px] rounded-tl-none bg-paper px-[20px] pb-[20px] pt-[7px] text-[#464646]">
+                  <div className="rounded-[15px] rounded-tl-none bg-paper p-[20px] text-[#464646]">
                     <p className="flex justify-between text-18px">
                       <span className="font-bold">{commentOrTransaction.sender[0].first_name}</span>
                       <span className="text-[14px] leading-[17px] text-[#919191]">

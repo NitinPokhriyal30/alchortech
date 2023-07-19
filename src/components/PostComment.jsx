@@ -20,7 +20,7 @@ export default function PostComment({ modal, setModal, comment, ...props }) {
       <img className="h-8.5 w-8.5 rounded-full object-cover" src={user.avtar} />
 
       <div className="relative ">
-        <div className="rounded-[15px] rounded-tl-none bg-paper px-[20px] pb-[20px] pt-[7px] text-[#464646]">
+        <div className="rounded-[15px] rounded-tl-none bg-paper p-[20px] text-[#464646]">
           <p className="flex justify-between text-18px">
             <span className="font-bold">{user.first_name}</span>
             <span className="text-[14px] leading-[17px] text-[#919191]">
@@ -31,7 +31,7 @@ export default function PostComment({ modal, setModal, comment, ...props }) {
             <span>{comment.comment}</span>
           </p>
           {comment.image || comment.gif ? (
-            <div className="mt-[21px] space-y-[12px]">
+            <div className="mt-[10px] space-y-[12px]">
               {comment.image && <img className="w-full rounded-md" src={comment.image} />}
               {comment.gif && <img className="w-full rounded-md" src={comment.gif} />}
             </div>
