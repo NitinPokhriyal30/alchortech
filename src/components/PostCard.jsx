@@ -285,7 +285,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
         <div className="border-t border-[#EDEDED] empty:hidden pt-2">
           {showCommentsFor === post.comment.id ? (
             <div>
-              <div className="mt-4 mb-4 flex gap-4">
+              <div className="my-[8px] flex gap-4">
                 <div>
                   <img
                     className="h-[34px] w-[34px] rounded-full object-cover"
