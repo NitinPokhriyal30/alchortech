@@ -37,7 +37,8 @@ const stickBottomAlign = {
   bottom: 0,
 }
 export default function HomePage() {
-  const postList = useQuery('transactions', () => api.transactions.all())
+  const [sortBy, setSortBy] = React.useState("all")
+  const postList = useQuery(['transactions_filtered', sortBy], () => api.transactions.all(new URLSearchParams({key_param: sortBy})))
   const [stickyStyles, setStickyStyles] = React.useState({})
   const rightSidebarRef = React.useRef()
 
@@ -75,7 +76,7 @@ export default function HomePage() {
           <NewPost />
         </div>
         <div className="mt-1">
-          <SortBy />
+          <SortBy value={sortBy} onChange={setSortBy} />
         </div>
 
         <div className="relative mt-1" id="post-list">

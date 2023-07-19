@@ -61,9 +61,9 @@ const api = {
           headers: { "Content-Type": "multipart/form-data" },
         })
         .then((r) => r.data),
-    all: () =>
+    all: (filters) =>
       axios
-        .get("homepage/transaction/")
+        .get(`homepage/transaction/?${filters.toString()}`)
         .then((r) => r.data)
         .then((data) => data.reverse()),
     meAsRecipient: (id) => 
