@@ -289,11 +289,12 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
           </div>
 
           <div className="mt-1 flex items-center gap-2 pb-1">
-            <div className="flex cursor-pointer items-center rounded-full border-[0.5px] border-[#d1d1d1] pr-2  text-[18px] text-[#747474]">
+            <div className="flex cursor-pointer items-center rounded-full border-[0.5px] border-[#d1d1d1] px-2  text-[18px] text-[#747474]">
               {Array.isArray(post.react_by) && post.react_by.length > 0
                 ? post.react_by[post.react_by.length - 1].react
                 : '☺'}{' '}
-              {post.react_by?.length || 0}
+              <p className='text-16px pl-[3px]'>{post.react_by?.length || 0}</p>
+              
             </div>
             <p className="text-16px text-[#d1d1d1]">
               {commentsAndTransactions.length + ' '}
