@@ -12,7 +12,6 @@ import MyProfileImg from '../assets/images/user-profile/male_avatar.jpg'
 import { BiHeartCircle, BiXCircle } from 'react-icons/bi'
 import { HiEmojiHappy } from 'react-icons/hi'
 import { AiOutlineCaretDown, AiOutlineFileGif } from 'react-icons/ai'
-import { AchievementBanner } from './AchievementBanner'
 import ThumbNailX from '../assets/slider/slider-bg2.png'
 import GifPicker from './GifPickerPopover'
 import EmojiPicker from 'emoji-picker-react'
@@ -182,7 +181,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                 <img
                   className="block max-w-full rounded-md object-contain"
                   src={
-                    typeof post.image === 'string' ? post.image : URL.createObjectURL(post.image)
+                    typeof post.image === 'string' ? SERVER_URL + post.image : URL.createObjectURL(post.image)
                   }
                 />
               )}
