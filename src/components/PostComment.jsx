@@ -46,7 +46,7 @@ export default function PostComment({ modal, setModal, comment, ...props }) {
           <p className="inline-block rounded-full  border-[0.5px] border-iconColor bg-white p-1 empty:hidden">
             {comment.react_by.length > 0 ? (
               <span className="text-[18px] leading-[18px]">
-                {comment.react_by[comment.react_by.length - 1].react}
+                {comment.react_by[comment.react_by.length - 1].react} {comment.react_by.length}
               </span>
             ) : (
               null
