@@ -16,6 +16,8 @@ import { AchievementBanner } from '../components/AchievementBanner'
 import GifPicker from '@/components/GifPickerPopover'
 import { useQuery } from 'react-query'
 import { api } from '@/api'
+import { useIntersectionObserver } from 'usehooks-ts'
+import { queryClient } from '@/queryClient'
 
 const getChildTransactionsFor = (parentId, allTransactions) => {
   return allTransactions.filter((post) => post.parent_id == parentId)
@@ -37,12 +39,20 @@ const stickBottomAlign = {
   bottom: 0,
 }
 export default function HomePage() {
-  const [sortBy, setSortBy] = React.useState("all")
-  const postList = useQuery(['transaction', sortBy], () => api.transactions.all(new URLSearchParams({key_param: sortBy})))
+  const infiniteLoaderDivRef = React.useRef()
+  const [infiniteLoading, setInfiniteLoading] = React.useState(false)
+  const entry = useIntersectionObserver(infiniteLoaderDivRef, {})
+
+  const [page, setPage] = React.useState(1)
+  const [sortBy, setSortBy] = React.useState('all')
+
+  const postList = useQuery(['transaction', sortBy], () =>
+    api.transactions.all(new URLSearchParams({ key_param: sortBy, pagination: page }))
+  )
   const [stickyStyles, setStickyStyles] = React.useState({})
   const rightSidebarRef = React.useRef()
 
-  let allPosts = postList.isLoading ? [] : postList.data
+  let allPosts = postList.data?.results || []
   allPosts = withIsChild(allPosts)
   const parentPosts = allPosts.filter(
     (post) => !post.isChild || getChildTransactionsFor(post.id, allPosts).length > 0
@@ -65,6 +75,26 @@ export default function HomePage() {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
+  React.useEffect(() => {
+    if (entry?.isIntersecting === true && infiniteLoading === false) {
+      setInfiniteLoading(true)
+      api.transactions
+        .all(new URLSearchParams({ key_param: sortBy, pagination: page + 1 }))
+        .then((data) => {
+          queryClient.setQueryData(['transaction', sortBy], (prev) => ({
+            ...prev,
+            ...data,
+            results: [...prev.results, ...data.results]
+          }))
+          setPage(page + 1)
+        })
+        .catch((e) => console.log(e))
+        .finally(() => {
+          setInfiniteLoading(false)
+        })
+    }
+  }, [entry?.isIntersecting])
+
   return (
     <>
       {/* main posts */}
@@ -80,7 +110,7 @@ export default function HomePage() {
         </div>
 
         <div className="relative mt-1" id="post-list">
-          {postList.isLoading ? (
+          {parentPosts.length == 0 ? (
             <div className="h-64 rounded-md  bg-gray-300" />
           ) : (
             parentPosts
@@ -100,7 +130,7 @@ export default function HomePage() {
           <AchievementBanner />
         </div>
         <div className="relative mt-1">
-          {postList.isLoading ? (
+          {parentPosts.length == 0 ? (
             <div className="h-64 rounded-md  bg-gray-300" />
           ) : (
             parentPosts
@@ -114,6 +144,12 @@ export default function HomePage() {
                 />
               ))
           )}
+
+          <div
+            hidden={postList.isRefetching}
+            className="h-64 animate-pulse rounded-md bg-gray-300"
+            ref={infiniteLoaderDivRef}
+          />
         </div>
       </div>
 
