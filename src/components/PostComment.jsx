@@ -4,10 +4,14 @@ import { useQuery } from 'react-query'
 import { api } from '@/api'
 import moment from 'moment'
 import * as HoverCard from '@radix-ui/react-hover-card'
+import { CreateReact } from '@/utils'
+import { toFormData } from '@/components/NewPost'
+import { queryClient } from '@/queryClient'
 
 const getUserById = (userId, users) => users.find((user) => user.id === userId)
 
 export default function PostComment({ modal, setModal, comment, ...props }) {
+  const me = useQuery('me')
   const users = useQuery('users', () => api.users.profiles(), {
     initialData: [],
   })
@@ -38,16 +42,45 @@ export default function PostComment({ modal, setModal, comment, ...props }) {
           ) : null}
         </div>
 
-        <div className="relative z-10 mt-[1px] px-[20px] text-[12px] leading-[15px] text-primary">
+        <div className="relative z-10 flex items-center text-[12px] leading-[15px] text-primary h-[32px] -translate-y-1.5">
+          <p className="inline-block rounded-full  border-[0.5px] border-iconColor bg-white p-1 empty:hidden">
+            {comment.react_by.length > 0 ? (
+              <span className="text-[18px] leading-[18px]">
+                {comment.react_by[comment.react_by.length - 1].react}
+              </span>
+            ) : (
+              null
+            )}
+          </p>
           <HoverCard.Root>
-            <HoverCard.Trigger className="cursor-pointer">React</HoverCard.Trigger>
-            <HoverCard.Content className='border'>
-              <div className="z-10 absolute flex bottom-[20px] left-1/2 -translate-x-1/2 gap-4 rounded-[19px] bg-white px-4 py-2 drop-shadow-[0px_2px_3px_#00000029]">
+            <HoverCard.Trigger className="cursor-pointer ml-3">React</HoverCard.Trigger>
+            <HoverCard.Content className="border">
+              <div className="absolute bottom-[20px] left-1/2 z-10 flex -translate-x-1/2 gap-4 rounded-[19px] bg-white px-4 py-2 drop-shadow-[0px_2px_3px_#00000029]">
                 {['❤', '👍', '👏', '✔ ', '😍'].map((emoji) => (
                   <button
                     key={emoji}
                     className="inline-block h-6 w-6 rounded-full font-Lato text-sm font-black hover:bg-translucent"
-                    onClick={() => addReaction(post.id, emoji)}
+                    onClick={async () => {
+                      try {
+                        const reacts = CreateReact(
+                          me.data,
+                          { id: comment.id, react_by: comment.react_by },
+                          emoji
+                        )
+                        await api.comment.react(toFormData(reacts))
+                        await queryClient.setQueryData(['comments'], (prev) => {
+                          if (!prev) return
+                          const targetComment = prev.find((_comment) => _comment.id === comment.id)
+                          if (targetComment) {
+                            targetComment.react_by = reacts.react_by
+                          }
+
+                          return [...prev]
+                        })
+                      } catch (e) {
+                        console.log(e)
+                      }
+                    }}
                   >
                     {emoji}
                   </button>

@@ -92,7 +92,7 @@ const api = {
         .then((r) => r.data),
     react: (data) =>
       axios
-        .patch("transaction/comments", data)
+        .patch("transaction/comments/", data)
         .then((r) => r.data),
 
   },
