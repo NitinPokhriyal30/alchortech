@@ -47,7 +47,7 @@ export default function HomePage() {
   const [sortBy, setSortBy] = React.useState('all')
 
   const postList = useQuery(['transaction', sortBy], () =>
-    api.transactions.all(new URLSearchParams({ key_param: sortBy, pagination: page }))
+    api.transactions.all(new URLSearchParams({ key_param: sortBy, page: page }))
   )
   const [stickyStyles, setStickyStyles] = React.useState({})
   const rightSidebarRef = React.useRef()
@@ -79,7 +79,7 @@ export default function HomePage() {
     if (entry?.isIntersecting === true && infiniteLoading === false) {
       setInfiniteLoading(true)
       api.transactions
-        .all(new URLSearchParams({ key_param: sortBy, pagination: page + 1 }))
+        .all(new URLSearchParams({ key_param: sortBy, page: page + 1 }))
         .then((data) => {
           queryClient.setQueryData(['transaction', sortBy], (prev) => ({
             ...prev,
