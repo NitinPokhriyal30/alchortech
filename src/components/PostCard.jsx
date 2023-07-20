@@ -231,10 +231,10 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
               </button>
 
               <div className="absolute -top-[80%] left-0 hidden gap-4 rounded-[19px] bg-white px-4 py-2 drop-shadow-[0px_2px_3px_#00000029] hover:flex peer-hover:flex">
-                {['❤', '👍', '👏', '✔ ', '😍'].map((emoji) => (
+                {['😊', '😁', '😍', '👍', '👏'].map((emoji) => (
                   <button
                     key={emoji}
-                    className="inline-block h-6 w-6 rounded-full font-Lato text-sm font-black hover:bg-translucent"
+                    className="inline-block h-6 w-6 rounded-full font-Lato text-[20px] font-black hover:bg-translucent"
                     onClick={async () => {
                       try {
                         const reacts = CreateReact(
@@ -296,7 +296,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
           <div className="flex items-center gap-3 pb-1">
             {post.reactions.length > 0 && (
               <div className="text-2xl flex items-center gap-1 rounded-[17px] border-[0.6px] border-[#D1D1D1] pb-[2px] pr-2">
-                {post.reactions[0].emoji}
+                {post.reactions[0].emoji} 
                 <span className="font-Lato text-xs text-[#747474]">{post.reactions.length}</span>
               </div>
             )}
