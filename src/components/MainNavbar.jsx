@@ -9,6 +9,7 @@ import { api } from '@/api'
 import { useQuery } from 'react-query'
 import { Link } from 'react-router-dom'
 import { Hidden } from '@mui/material'
+import SearchBox from '@/components/Navbar/SearchBox'
 
 export default function MainNavbar() {
   const showSidebar = useSelector((store) => store.sidebar)
@@ -43,17 +44,7 @@ export default function MainNavbar() {
             </div>
 
             <div className="w-full xxl:ml-28 xl:ml-28 lg:ml-28 md:ml-8 sm:ml-8 xs:ml-2  flex items-center justify-center border-[0.5px] border-[#808080] bg-[#F7F7F7] focus-within:bg-white rounded-[20px] group">
-              <form>
-                <div className="flex items-center pt-2 pb-[9px] text-[#acacac] rounded-[20px]">
-                  <CiSearch className="ml-[14px]" />
-                  <input
-                    type="search"
-                    name=""
-                    className="xxl:w-96 xl:w-96 lg:w-96 md:w-[22rem] sm:w-96 xs:w-70 py-100 text-16px font-Lato bg-transparent rounded-[20px] pl-[10px] placeholder:font-Lato placeholder:text-[#ACACAC] placeholder:text-[16px] focus:outline-none"
-                    placeholder="Search Users, Mentioned, Hashtags…"
-                  />
-                </div>
-              </form>
+            <SearchBox />
             </div>
           </div>
 
