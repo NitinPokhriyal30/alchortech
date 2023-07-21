@@ -47,7 +47,10 @@ export default function HomePage() {
   const [sortBy, setSortBy] = React.useState('all')
 
   const postList = useQuery(['transaction', sortBy], () =>
-    api.transactions.all(new URLSearchParams({ key_param: sortBy, page: page }))
+    api.transactions.all(new URLSearchParams({ key_param: sortBy, page: page, pagination: 1 })),
+    {
+      refetchOnWindowFocus: false
+    }
   )
   const [stickyStyles, setStickyStyles] = React.useState({})
   const rightSidebarRef = React.useRef()
@@ -76,15 +79,15 @@ export default function HomePage() {
   }, [])
 
   React.useEffect(() => {
-    if (entry?.isIntersecting === true && infiniteLoading === false) {
+    if (entry?.isIntersecting === true && infiniteLoading === false && !!postList.data?.next) {
       setInfiniteLoading(true)
       api.transactions
-        .all(new URLSearchParams({ key_param: sortBy, page: page + 1 }))
+        .all(new URLSearchParams({ key_param: sortBy, page: page + 1, pagination: 1 }))
         .then((data) => {
           queryClient.setQueryData(['transaction', sortBy], (prev) => ({
             ...prev,
             ...data,
-            results: [...prev.results, ...data.results]
+            results: [...prev.results, ...data.results],
           }))
           setPage(page + 1)
         })
@@ -145,11 +148,11 @@ export default function HomePage() {
               ))
           )}
 
-          <div
-            hidden={postList.isRefetching}
-            className="h-64 animate-pulse rounded-md bg-gray-300"
-            ref={infiniteLoaderDivRef}
-          />
+          {postList.data?.next === null ? (
+            <p className="flex h-32 items-center justify-center">You have reached the end🥳</p>
+          ) : (
+            <div className="h-64 animate-pulse rounded-md bg-gray-300" ref={infiniteLoaderDivRef} />
+          )}
         </div>
       </div>
 

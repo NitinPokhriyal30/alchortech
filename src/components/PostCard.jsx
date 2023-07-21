@@ -245,12 +245,12 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                         await api.transactions.react(toFormData(reacts))
                         await queryClient.setQueryData(['transaction', props.sortBy], (prev) => {
                           if (!prev) return
-                          const targetPost = prev.find((_post) => _post.id === post.id)
+                          const targetPost = prev.results.find((_post) => _post.id === post.id)
                           if (targetPost) {
                             targetPost.react_by = reacts.react_by
                           }
 
-                          return [...prev]
+                          return {...prev}
                         })
                       } catch (e) {
                         console.log('postcard > react button', e)
