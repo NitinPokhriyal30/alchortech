@@ -64,7 +64,7 @@ const api = {
         })
         .then((r) => r.data),
     all: (filters) =>
-      axios.get(`transaction/?${filters.toString()}&page_size=2`).then((r) => r.data),
+      axios.get(`transaction/?${filters.toString()}&page_size=5`).then((r) => r.data),
     meAsRecipient: (id) => axios.get(`api/posts/?recipients=${id}`).then((r) => r.data),
     meAsSender: (id) => axios.get(`api/posts/?sender=${id}`).then((r) => r.data),
     react: (data) => axios.patch('transaction/', data).then((r) => r.data),
