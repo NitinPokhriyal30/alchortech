@@ -92,8 +92,8 @@ export default function HomeSidebar({}) {
                 />
               </div>
               <div>
-                <p className="font-Lato text-[16px] font-black text-white">Hi,</p>
-                <span className="font-Lato text-[16px] font-normal text-white">
+                <p className=" text-[16px] font-black text-white">Hi,</p>
+                <span className=" text-[16px] font-normal text-white">
                   {me.data.first_name} {me.data.last_name}
                 </span>
               </div>
@@ -104,7 +104,7 @@ export default function HomeSidebar({}) {
           <div className="xpt-5 flex flex-col border-[#7096DB] px-[10px]  pb-[12px]">
             <MenuLink
               to="/"
-              className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
+              className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px]  text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
             >
               <div className="w-[23px]">
                 <HomeIcon />
@@ -113,7 +113,7 @@ export default function HomeSidebar({}) {
             </MenuLink>
             <MenuLink
               to="/my-rewards"
-              className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
+              className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px]  text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
             >
               <div className="w-[23px]">
                 <Icon3 fontSize={22} />
@@ -122,7 +122,7 @@ export default function HomeSidebar({}) {
             </MenuLink>
             <MenuLink
               to="/directory"
-              className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
+              className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px]  text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
             >
               <div className="w-[23px]">
                 <img src={PhoneIcon} />{' '}
@@ -131,7 +131,7 @@ export default function HomeSidebar({}) {
             </MenuLink>
             <MenuLink
               to="/analytics"
-              className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
+              className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px]  text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
             >
               <div className="w-[23px]">
                 <img src={AnalyticsIcon} />{' '}
@@ -140,7 +140,7 @@ export default function HomeSidebar({}) {
             </MenuLink>
             <MenuLink
               to="/campaign"
-              className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
+              className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px]  text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
             >
               <div className="w-[23px]">
                 <CampaignIcon />
@@ -149,7 +149,7 @@ export default function HomeSidebar({}) {
             </MenuLink>
             <MenuLink
               to="/survey"
-              className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
+              className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px]  text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
             >
               <div className="w-[23px]">
                 <img src={Icon4} />
@@ -158,7 +158,7 @@ export default function HomeSidebar({}) {
             </MenuLink>
             <MenuLink
               to="/voice-out"
-              className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
+              className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px]  text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
             >
               <div className="w-[23px]">
                 <Icon5 src={Icon4} />
@@ -175,7 +175,7 @@ export default function HomeSidebar({}) {
             <button
               type="button"
               to="/voice-out"
-              className="flex w-full items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px] font-Lato text-16px leading-[22px] text-white text-opacity-[85%] hover:bg-white/[8%] [&.active]:bg-white/[8%]"
+              className="flex w-full items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px]  text-16px leading-[22px] text-white text-opacity-[85%] hover:bg-white/[8%] [&.active]:bg-white/[8%]"
               onClick={() => {
                 Cookies.remove('user_id')
                 Cookies.remove('token')
@@ -191,10 +191,10 @@ export default function HomeSidebar({}) {
 
           <div className="mt-auto pb-[22px] pl-[33px] pr-[30px]">
             <div className="flex items-center justify-between gap-3">
-              <p className="flex items-center gap-1 font-Lato text-[16px] font-light leading-[19px] text-white">
+              <p className="flex items-center gap-1  text-[16px] font-light leading-[19px] text-white">
                 <span className='text-primary'><HelpIcon fill="white" /></span> FAQs
               </p>
-              <p className="flex items-center gap-1 font-Lato text-[16px] font-light leading-[19px] text-white">
+              <p className="flex items-center gap-1  text-[16px] font-light leading-[19px] text-white">
                 <img src={Icon2} alt="" /> Feedback
               </p>
             </div>

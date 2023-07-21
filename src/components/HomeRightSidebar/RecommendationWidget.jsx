@@ -22,7 +22,7 @@ export default function RecommendationWidget() {
     <div>
       <div className="right-sidebar-container !pt-0">
         <div className="py-[8.5px] border-b border-[#EDEDED] px-3">
-          <p className="leading-[24px] font-Lato font-bold text-[#464646] text-center ">
+          <p className="leading-[24px]  font-bold text-[#464646] text-center ">
             Recommended for you
           </p>
         </div>
@@ -38,7 +38,7 @@ export default function RecommendationWidget() {
         <div className="text-center">
           <Link
             to="/recommendation"
-            className="text-base inline-flex justify-center items-center font-Lato text-primary font-bold"
+            className="text-base inline-flex justify-center items-center  text-primary font-bold"
           >
             View All
             <span>

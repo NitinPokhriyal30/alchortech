@@ -39,7 +39,7 @@ export default function SearchBox({ ...props }) {
     } finally {
       setIsLoading(false)
     }
-  }, 2000)
+  }, 500)
 
   return (
     <>
@@ -80,7 +80,7 @@ export default function SearchBox({ ...props }) {
                         src={user.avtar}
                       />
                       <div>
-                        <p className="font-bold text-[#2F2F2F]">
+                        <p className="font-semibold text-[#2F2F2F]">
                           {user.first_name} {user.last_name}
                         </p>
                         <p className="mt-1 text-[#7B7B7B]">{user.department}</p>

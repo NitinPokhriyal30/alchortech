@@ -78,7 +78,7 @@ export default function Cropper({ imageFile, onClose }) {
             <button
               disabled={loading}
               type="submit"
-              className=" ml-auto w-full max-w-[6rem] rounded-sm bg-primary px-4 py-1 font-Lato text-white disabled:bg-opacity-80"
+              className=" ml-auto w-full max-w-[6rem] rounded-sm bg-primary px-4 py-1  text-white disabled:bg-opacity-80"
               onClick={async () => {
                 try {
                   setLoading(true)

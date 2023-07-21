@@ -6,11 +6,11 @@
 @tailwind utilities;
 
 .nav-item-container {
-  @apply flex rounded py-2.5 gap-2 items-center text-white text-16px text-opacity-[85%] font-Lato leading-[22px];
+  @apply flex rounded py-2.5 gap-2 items-center text-white text-16px text-opacity-[85%]  leading-[22px];
 }
 
 .nav-item-container.active {
-  @apply flex rounded py-2.5 gap-2 items-center text-white text-16px font-Lato font-black leading-[22px];
+  @apply flex rounded py-2.5 gap-2 items-center text-white text-16px  font-black leading-[22px];
 }
 .right-sidebar-container {
   @apply pt-1 pb-3 rounded-[9px] bg-white drop-shadow-[0px_2px_3px_#00000029];
@@ -18,7 +18,7 @@
 
 @layer components {
   .btn-ghost {
-    @apply hover:bg-translucent rounded-[4px] py-[10px] pl-[15px] pr-[15px] font-Lato text-16px text-primary;
+    @apply hover:bg-translucent rounded-[4px] py-[10px] pl-[15px] pr-[15px]  text-16px text-primary;
   }
 }
 

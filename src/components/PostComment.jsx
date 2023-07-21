@@ -47,7 +47,7 @@ export default function PostComment({ modal, setModal, comment, ...props }) {
             {comment.react_by.length > 0 ? (
               <div className="text-lg flex items-center gap-1 rounded-[17px] bg-white border-[0.6px] border-[#D1D1D1] px-[5px] pr-2">
                 {comment.react_by[comment.react_by.length - 1].react}
-                <span className="font-Lato text-sm text-[#747474]">{comment.react_by.length}</span>
+                <span className=" text-sm text-[#747474]">{comment.react_by.length}</span>
               </div>
             ) : (
               null
@@ -60,7 +60,7 @@ export default function PostComment({ modal, setModal, comment, ...props }) {
                 {['❤', '👍', '👏', '✔ ', '😍'].map((emoji) => (
                   <button
                     key={emoji}
-                    className="inline-block h-6 w-6 rounded-full font-Lato text-sm font-black hover:bg-translucent"
+                    className="inline-block h-6 w-6 rounded-full  text-sm font-black hover:bg-translucent"
                     onClick={async () => {
                       try {
                         const reacts = CreateReact(
