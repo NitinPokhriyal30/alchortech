@@ -92,7 +92,7 @@ export default function NewPost({ ...props }) {
 
             <li style={{ borderWidth: 0 }} className="basis-full md:flex-shrink md:basis-auto">
               <HoverCard.Root>
-                <p className="flex cursor-pointer items-center font-Lato leading-4">
+                <p className="flex cursor-pointer items-center  leading-4">
                   You Have{' '}
                   <span className="font-[900]">&nbsp;{me.data.allowance_boost} Points&nbsp;</span>
                   to give
@@ -254,7 +254,7 @@ export default function NewPost({ ...props }) {
             <button
               disabled={loading}
               type="submit"
-              className="relative ml-auto w-full max-w-[6rem] rounded-sm bg-primary px-4 py-1 font-Lato text-white disabled:bg-opacity-80"
+              className="relative ml-auto w-full max-w-[6rem] rounded-sm bg-primary px-4 py-1  text-white disabled:bg-opacity-80"
               onClick={async function newPost() {
                 try {
                   setLoading(true)
@@ -348,7 +348,7 @@ export function PointsRangeDialog({ form, setForm }) {
   return (
     <>
       <p className="flex cursor-pointer gap-[2px] hover:font-bold">
-        + <span className="font-Lato"> Points</span>
+        + <span className=""> Points</span>
       </p>
       <div className="absolute z-10 hidden gap-2 rounded-full bg-white p-2 text-black shadow group-hover:flex">
         {properties.isLoading
@@ -399,7 +399,7 @@ export function RecipientsDropdown({ form, setForm }) {
     <>
       {/* dropdown trigger */}
       <p className="flex cursor-pointer gap-[2px] hover:font-bold">
-        @ <span className="font-Lato">Recipients</span>
+        @ <span className="">Recipients</span>
       </p>
 
       {/* container */}
@@ -460,7 +460,7 @@ export function HashTagsDropdown({ form, setForm }) {
   return (
     <>
       <p className="flex cursor-pointer gap-[2px] hover:font-bold">
-        # <span className="font-Lato"> Hashtag</span>
+        # <span className=""> Hashtag</span>
       </p>
       <div className="absolute z-10 hidden flex-col divide-y overflow-hidden rounded bg-white text-black shadow group-hover:flex">
         {properties.isLoading ? (

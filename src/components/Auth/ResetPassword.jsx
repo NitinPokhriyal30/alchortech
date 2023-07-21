@@ -64,7 +64,7 @@ const ResetPassword = () => {
               </div>
 
               <div className='text-center px-16 pb-4'>
-                <p className="text-[22px] mb-4 font-Lato font-black text-[#000000] leading-25">Change Password</p>
+                <p className="text-[22px] mb-4  font-black text-[#000000] leading-25">Change Password</p>
               </div>
 
               <div className="bg-white rounded-xl drop-shadow-lg p-8 mx-auto w-80 h-auto">
@@ -86,7 +86,7 @@ const ResetPassword = () => {
                   name="password"
                   placeholder="New Password"
                   required
-                  className="text-[16px] font-Lato text-[#ACACAC] border-b-2 border-gray-300 py-2 w-full focus:outline-none placeholder-opacity-50"
+                  className="text-[16px]  text-[#ACACAC] border-b-2 border-gray-300 py-2 w-full focus:outline-none placeholder-opacity-50"
                   onChange={(e) => {
                     const password = e.target.value;
                     setIsMinLengthValid(validateMinLength(password));
@@ -114,7 +114,7 @@ const ResetPassword = () => {
                   name="confirmPassword"
                   placeholder="Confirm Password"
                   required
-                  className="text-[16px] font-Lato text-[#ACACAC] border-b-2 border-gray-300 py-2 w-full focus:outline-none placeholder-opacity-50"
+                  className="text-[16px]  text-[#ACACAC] border-b-2 border-gray-300 py-2 w-full focus:outline-none placeholder-opacity-50"
                   onChange={(e) => {
                     const password = e.target.value;
                     setIsMinLengthValid(validateMinLength(password));
@@ -156,8 +156,8 @@ const ResetPassword = () => {
                 </form>  
               </div>
               <div className='mt-12'>
-                <p className="text-[16px] mb-2 font-Lato font-bold text-[#AFAFAF]">Password should contain at least</p>
-                <div className="text-[16px] my-2 font-Lato font-normal text-[#AFAFAF]">
+                <p className="text-[16px] mb-2  font-bold text-[#AFAFAF]">Password should contain at least</p>
+                <div className="text-[16px] my-2  font-normal text-[#AFAFAF]">
                   <ul>{`6 characters`}</ul>
                   <ul>{`1 Upper case letter (A-Z)`}</ul>
                   <ul>{`1 Lower case letter (a-z)`}</ul>

@@ -39,7 +39,7 @@ export default function SearchBox({ ...props }) {
       toast.error('Network Error. Try again after some time.')
       console.log(e)
     }
-  }, 2000)
+  }, 500)
 
   return (
     <form onFocus={() => setShow(true)} onBlur={() => setShow(false)}>
@@ -48,15 +48,15 @@ export default function SearchBox({ ...props }) {
         <input
           type="search"
           name=""
-          className="xs:w-70 py-100 rounded-[20px] bg-transparent pl-[10px] font-Lato text-16px placeholder:font-Lato placeholder:text-[16px] placeholder:text-[#ACACAC] focus:outline-none sm:w-96 md:w-[22rem] lg:w-96 xl:w-96 xxl:w-96"
+          className="xs:w-70 py-100 pr-[10px] rounded-[20px] bg-transparent pl-[10px]  text-16px placeholder: placeholder:text-[16px] placeholder:text-[#ACACAC] focus:outline-none sm:w-96 md:w-[22rem] lg:w-96 xl:w-96 xxl:w-96"
           placeholder="Search Users, Mentioned, Hashtags…"
           onChange={handleSearch}
         />
         {Array.isArray(searchData.users) && searchData.users?.length > 0 && show === true ? (
-          <div className=" absolute top-full z-10 mt-1.5 max-h-[26rem] w-full overflow-y-auto bg-white px-6 py-4 shadow-[0px_3px_6px_#00000029]">
+          <div className=" absolute rounded-lg top-full z-10 mt-1.5 max-h-[26rem] w-full overflow-y-auto bg-white p-6 shadow-[0px_3px_6px_#00000029]">
             {Array.isArray(searchData.users) ? (
               <>
-                <p className="text-18px font-bold text-[#00bc9f]">Users</p>
+                <p className="text-18px font-semibold text-[#00bc9f]">Users</p>
                 <div className="space-y-2.5 pt-2.5">
                   {searchData.users.map((user) => (
                     <div className="flex items-start gap-2.5 text-16px">
@@ -65,7 +65,7 @@ export default function SearchBox({ ...props }) {
                         src={user.avtar}
                       />
                       <div>
-                        <p className="font-bold text-[#2F2F2F]">
+                        <p className="font-semibold text-[#2F2F2F]">
                           {user.first_name} {user.last_name}
                         </p>
                         <p className="mt-1 text-[#7B7B7B]">{user.department}</p>
@@ -74,13 +74,13 @@ export default function SearchBox({ ...props }) {
                   ))}
                 </div>
 
-                <p className="pt-7 text-18px font-bold text-[#00bc9f]">Appriciations</p>
+                <p className="pt-7 text-18px font-semibold text-[#00bc9f]">Appriciations</p>
                 <div className="space-y-2.5 pt-4">
                   {searchData.transactions.map((transaction) => (
                     <div className="flex items-start gap-2.5 text-16px">
                       <div>
                         <p className="text-black">
-                          <span className="font-bold">
+                          <span className="font-semibold">
                             {transaction.sender[0].first_name} {transaction.sender[0].last_name}
                           </span>{' '}
                           <span className="italic">Appriciated</span>{' '}
@@ -90,7 +90,7 @@ export default function SearchBox({ ...props }) {
                           </span>
                         </p>
                         <p className="line-clamp-1 text-ellipsis pt-1">{transaction.message}</p>
-                        <p>{transaction.hashtags.join(' ')}</p>
+                        <p className="line-clamp-1 text-ellipsis pt-1">{transaction.hashtags.join(' ')}</p>
                       </div>
                     </div>
                   ))}

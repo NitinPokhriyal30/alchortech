@@ -134,12 +134,12 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                     />
                   ))
                 )}
-                <p className="ml-1 font-Lato text-18px font-bold text-primary">
+                <p className="ml-1  text-18px font-bold text-primary">
                   +
                   {post.point + childrenTransactions.reduce((total, post) => total + post.point, 0)}
                 </p>
 
-                <p className="ml-5 font-Lato font-normal text-[#00BC9F]">
+                <p className="ml-5  font-normal text-[#00BC9F]">
                   {moment(post.created).fromNow()}
                 </p>
               </div>
@@ -151,7 +151,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
         </div>
 
         <div className="mt-4">
-          <p className="font-Lato text-18px font-bold">
+          <p className=" text-18px font-bold">
             <span className={`${PROFILE_USERNAME.text}`}>
               {post.sender[0].first_name} {post.sender[0].last_name}:
             </span>{' '}
@@ -161,7 +161,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
             <span className={`${HASHTAG.text}`}>{post.hashtags.map((hash) => hash).join(' ')}</span>
           </p>
 
-          <p className="mt-1.5 font-Lato text-18px font-normal text-[#464646]">{post.message}</p>
+          <p className="mt-1.5  text-18px font-normal text-[#464646]">{post.message}</p>
 
           {post.link && (
             <div className="mt-2">
@@ -207,7 +207,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                     <button
                       key={points}
                       style={{ color: color }}
-                      className={`h-8 w-8 rounded-full font-Lato text-sm font-black hover:bg-translucent`}
+                      className={`h-8 w-8 rounded-full  text-sm font-black hover:bg-translucent`}
                       onClick={() => {
                         setPoint(points)
                         setModal('child-new-post')
@@ -234,7 +234,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                 {['😊', '😁', '😍', '👍', '👏'].map((emoji) => (
                   <button
                     key={emoji}
-                    className="inline-block h-6 w-6 rounded-full font-Lato text-[20px] font-black hover:bg-translucent"
+                    className="inline-block h-6 w-6 rounded-full  text-[20px] font-black hover:bg-translucent"
                     onClick={async () => {
                       try {
                         const reacts = CreateReact(
@@ -297,13 +297,13 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
             {post.reactions.length > 0 && (
               <div className="text-2xl flex items-center gap-1 rounded-[17px] border-[0.6px] border-[#D1D1D1] pb-[2px] pr-2">
                 {post.reactions[0].emoji} 
-                <span className="font-Lato text-xs text-[#747474]">{post.reactions.length}</span>
+                <span className=" text-xs text-[#747474]">{post.reactions.length}</span>
               </div>
             )}
 
             {post.comment.replies.length > 0 && (
               <div>
-                <p className="font-Lato text-[16px] text-[#D1D1D1]">
+                <p className=" text-[16px] text-[#D1D1D1]">
                   {post.comment.replies.length} Comments
                 </p>
               </div>
@@ -360,7 +360,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                             message: e.target.value,
                           }))
                         }
-                        className=" w-full border-none bg-transparent px-6 py-3 text-[#464646] outline-none placeholder:font-Lato placeholder:text-[16px] placeholder:text-[#ABACAC]"
+                        className=" w-full border-none bg-transparent px-6 py-3 text-[#464646] outline-none placeholder: placeholder:text-[16px] placeholder:text-[#ABACAC]"
                       />
                     </form>
 
@@ -566,7 +566,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                           {['❤', '👍', '👏', '✔ ', '😍'].map((emoji) => (
                             <button
                               key={emoji}
-                              className="inline-block h-6 w-6 rounded-full font-Lato text-sm font-black hover:bg-translucent"
+                              className="inline-block h-6 w-6 rounded-full  text-sm font-black hover:bg-translucent"
                               onClick={() => addReaction(post.id, emoji)}
                             >
                               {emoji}

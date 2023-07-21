@@ -192,7 +192,7 @@ export default function ChildNewPost({ onClose, post, defaultPoint }) {
             <button
               disabled={loading}
               type="submit"
-              className="relative ml-auto w-full max-w-[6rem] rounded-sm bg-primary px-4 py-1 font-Lato text-white disabled:bg-opacity-80"
+              className="relative ml-auto w-full max-w-[6rem] rounded-sm bg-primary px-4 py-1  text-white disabled:bg-opacity-80"
               onClick={async () => {
                 try {
                   setLoading(true)

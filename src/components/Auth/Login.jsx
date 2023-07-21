@@ -65,7 +65,7 @@ const Login = () => {
                 name="email"
                 placeholder="Email Id"
                 required
-                className="w-full border-b-2 border-gray-300 p-2 font-Lato text-[16px] text-[#ACACAC] placeholder-opacity-50 focus:outline-none"
+                className="w-full border-b-2 border-gray-300 p-2  text-[16px] text-[#ACACAC] placeholder-opacity-50 focus:outline-none"
               />
 
               <div className="relative">
@@ -75,7 +75,7 @@ const Login = () => {
                   name="password"
                   placeholder="Password"
                   required
-                  className="w-full border-b-2 border-gray-300 p-2 pr-10 font-Lato text-[16px] text-[#ACACAC] placeholder-opacity-50 focus:outline-none"
+                  className="w-full border-b-2 border-gray-300 p-2 pr-10  text-[16px] text-[#ACACAC] placeholder-opacity-50 focus:outline-none"
                 />
                 <span
                   className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-400 cursor-pointer"
@@ -86,13 +86,13 @@ const Login = () => {
               </div>
 
               <div className="flex justify-between">
-                <span className="font-Lato text-[12px] text-[#ACACAC]">
+                <span className=" text-[12px] text-[#ACACAC]">
                   <input type="checkbox" id="rememberMe" className="mr-1" />
                   <label htmlFor="rememberMe" id="rememberMe" className="text-sm">
                     Remember me
                   </label>
                 </span>
-                <span className="font-Lato text-[14px] text-[#5486E3] hover:text-blue-800">
+                <span className=" text-[14px] text-[#5486E3] hover:text-blue-800">
                   <Link to="/forgot/password">Forgot Password?</Link>
                 </span>
               </div>

@@ -51,7 +51,7 @@ export default function CelebrationWidget() {
     <div>
       <div className="right-sidebar-container !pt-0">
         <div className="border-b border-[#EDEDED] py-[8.5px] px-3">
-          <p className="leading-[24px] font-Lato font-bold text-[#464646] text-center ">
+          <p className="leading-[24px]  font-bold text-[#464646] text-center ">
             Celebration
           </p>
         </div>
@@ -69,7 +69,7 @@ export default function CelebrationWidget() {
                     <p className="text-primary">
                       <MdOutlineCake fontSize={22} />
                     </p>
-                    <p className="text-primary text-sm font-Lato font-light">
+                    <p className="text-primary text-sm  font-light">
                       <strong>{birthDays[0]?.first_name}</strong>
                       <span>
                         {birthDays.length > 1
@@ -84,7 +84,7 @@ export default function CelebrationWidget() {
                     <p className="text-primary">
                       <MdOutlineCelebration fontSize={22} />
                     </p>
-                    <p className="text-primary text-sm font-Lato font-light">
+                    <p className="text-primary text-sm  font-light">
                       <strong>{workAniversaries[0]?.first_name}</strong>
                       <span>
                         {workAniversaries.length > 1

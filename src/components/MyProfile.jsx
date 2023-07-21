@@ -114,7 +114,7 @@ export default function MyProfile() {
                 <div className="h-32 md:h-36 w-32 md:w-36 rounded-full overflow-hidden relative ml-4 mr-8 my-8">
                     <img className="w-full h-full object-cover" src={SERVER_URL + (me.avtar || '')} alt="user avatar"/>
                     <label htmlFor='imageInput' className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center opacity-0 transition-opacity duration-300 hover:opacity-100">
-                        <p className="text-white font-normal font-lato text-sm text-center">
+                        <p className="text-white font-normal  text-sm text-center">
                         Change<br />Picture
                         </p>
                     </label>
@@ -126,31 +126,31 @@ export default function MyProfile() {
                             <img className="" src={Flag} alt="flag"/>
                         </div>
                     </div>
-                    <p className="font-bold font-Lato text-[#292929] text-[25px]">{me.first_name} {me.last_name}</p>
+                    <p className="font-bold  text-[#292929] text-[25px]">{me.first_name} {me.last_name}</p>
                     <div className="md:flex mt-2 mb-4">
                         <div className="pr-0 md:pr-4">
-                            <p className="font-bold font-lato text-[#000000] text-[18px]">{me.role}</p>
-                            <p className="font-normal font-lato text-[#000000] text-[18px]">{me.department}</p>
+                            <p className="font-bold  text-[#000000] text-[18px]">{me.role}</p>
+                            <p className="font-normal  text-[#000000] text-[18px]">{me.department}</p>
                         </div>
                         <div className="md:border-l-[1px] sm:border-l-0 pl-0 md:pl-4  border-[#27C4A0]">
-                            <p className="font-normal font-lato text-[#000000] text-[18px]">{me.email}</p>
-                            <p className="font-normal font-lato text-[#000000] text-[18px]">+91 {me.phone_number}</p>
+                            <p className="font-normal  text-[#000000] text-[18px]">{me.email}</p>
+                            <p className="font-normal  text-[#000000] text-[18px]">+91 {me.phone_number}</p>
                         </div>
                     </div>
                 </div>
               </div>
 
               <div className="md:w-[28%] drop-shadow-md h-auto flex flex-col items-center bg-[#5486E3] bg-[center_top_7.5rem] rounded-lg" style={{ backgroundImage: `url(${AnniversaryBg})`, backgroundRepeat: 'no-repeat' }}>
-                <div className="font-bold font-Lato text-[#fdfbfb] text-[20px] pb-6 pt-4">Anniversaries</div>
-                <div className="font-normal font-lato text-[#fbfbfb] text-[16px]">Birthday</div>
-                <div className="font-semibold font-lato text-[#8DFFFF] text-[30px]">{formattedBirthDate}</div>
-                <div className="font-normal font-lato  text-[#fbfbfb] text-[16px] pt-2">Work Anniversary</div>
-                <div className="font-semibold font-lato text-[#bdfcfc] text-[28px] pb-4">{formattedHireDate}</div>
+                <div className="font-bold  text-[#fdfbfb] text-[20px] pb-6 pt-4">Anniversaries</div>
+                <div className="font-normal  text-[#fbfbfb] text-[16px]">Birthday</div>
+                <div className="font-semibold  text-[#8DFFFF] text-[30px]">{formattedBirthDate}</div>
+                <div className="font-normal   text-[#fbfbfb] text-[16px] pt-2">Work Anniversary</div>
+                <div className="font-semibold  text-[#bdfcfc] text-[28px] pb-4">{formattedHireDate}</div>
               </div>
 
             </div>
 
-            <div className="text-[#8D8D8D] font-semibold text-[14px] font-lato text-left mr-3 mt-4 mb-4">
+            <div className="text-[#8D8D8D] font-semibold text-[14px]  text-left mr-3 mt-4 mb-4">
                 <div className="flex flex-col md:flex-row sm:justify-center md:justify-between">
                     <div className="flex justify-center">
                         <button className={activeTab === 'overview' ? 'text-[#000000] border-b-2 border-[#000000]' : ''} onClick={() => handleTabClick('overview')}>
@@ -165,17 +165,17 @@ export default function MyProfile() {
                     </div>
                     <div>
                         <div className="flex justify-end">
-                            <div className="font-Lato text-[#7B7B7B] text-sm relative flex items-center ml-20">
+                            <div className=" text-[#7B7B7B] text-sm relative flex items-center ml-20">
                                 Sort By:
-                                <button className="peer font-Lato flex items-center gap-1 text-sm font-semibold pl-1">
+                                <button className="peer  flex items-center gap-1 text-sm font-semibold pl-1">
                                 All <span><AiFillCaretDown /></span>
                                 </button>
                                 <div className="hidden drop-shadow-[0px_2px_6px_#44444F1A] w-36 px-4 py-2 rounded-lg bg-white absolute z-10 top-[21px] right-[1px] peer-hover:flex hover:flex  flex-col text-end">
-                                <p className="text-sm font-Lato">Last 1 year</p>  
-                                <p className="text-sm font-Lato">Last 6 months</p>
-                                <p className="text-sm font-Lato">Last quarter</p>
-                                <p className="text-sm font-Lato">Last month</p>
-                                <p className="text-sm font-Lato">This month</p>
+                                <p className="text-sm ">Last 1 year</p>  
+                                <p className="text-sm ">Last 6 months</p>
+                                <p className="text-sm ">Last quarter</p>
+                                <p className="text-sm ">Last month</p>
+                                <p className="text-sm ">This month</p>
                                 </div>
                             </div>
                         </div>
@@ -203,13 +203,13 @@ export default function MyProfile() {
                             {activeTab === 'overview' && (
                                 <div className="flex flex-col md:flex-row items-center md:items-start md:justify-center">
                                 <div className="hidden md:block w-2/5 text-center py-4 border-r-2">
-                                    <p className="text-[16px] text-[#000000] font-Lato font-bold">Robin's Interaction</p>
+                                    <p className="text-[16px] text-[#000000]  font-bold">Robin's Interaction</p>
                                 </div>
                                 <div className="w-3/5 py-4 flex justify-center">
                                     <table className="border-collapse">
                                     <thead>
                                         <tr>
-                                        <th className="pb-4 text-start pl-4 text-[16px] text-[#000000] font-Lato font-bold">Name</th>
+                                        <th className="pb-4 text-start pl-4 text-[16px] text-[#000000]  font-bold">Name</th>
                                         <th className="pb-4 px-6 text-[#27C4A0]">Received</th>
                                         <th className="pb-4 px-6 text-[#2BBFE2]">Given</th>
                                         </tr>
@@ -217,28 +217,28 @@ export default function MyProfile() {
                                     <tbody>
                                         <tr className="hover:bg-[#ececec] rounded-xl">
                                         <td className="p-4 text-[#5486E3] font-semibold text-[16px]">Pulkit Aggarwal</td>
-                                        <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal">05</td>
-                                        <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal md:pl-6">06</td>
+                                        <td className="p-4 text-center text-[16px] text-[#000000]  font-normal">05</td>
+                                        <td className="p-4 text-center text-[16px] text-[#000000]  font-normal md:pl-6">06</td>
                                         </tr>
                                         <tr className="hover:bg-[#ececec] rounded-xl">
                                         <td className="p-4 text-[#5486E3] font-semibold text-[16px]">Swarup Vuddagiri</td>
-                                        <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal">07</td>
-                                        <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal md:pl-6">04</td>
+                                        <td className="p-4 text-center text-[16px] text-[#000000]  font-normal">07</td>
+                                        <td className="p-4 text-center text-[16px] text-[#000000]  font-normal md:pl-6">04</td>
                                         </tr>
                                         <tr className="hover:bg-[#ececec] rounded-xl">
                                         <td className="p-4 text-[#5486E3] font-semibold text-[16px]">Neha Bhati</td>
-                                        <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal">10</td>
-                                        <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal md:pl-6">06</td>
+                                        <td className="p-4 text-center text-[16px] text-[#000000]  font-normal">10</td>
+                                        <td className="p-4 text-center text-[16px] text-[#000000]  font-normal md:pl-6">06</td>
                                         </tr>
                                         <tr className="hover:bg-[#ececec] rounded-xl">
                                         <td className="p-4 text-[#5486E3] font-semibold text-[16px]">Rafael Merces</td>
-                                        <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal">09</td>
-                                        <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal md:pl-6">03</td>
+                                        <td className="p-4 text-center text-[16px] text-[#000000]  font-normal">09</td>
+                                        <td className="p-4 text-center text-[16px] text-[#000000]  font-normal md:pl-6">03</td>
                                         </tr>
                                         <tr className="hover:bg-[#ececec] rounded-xl">
                                         <td className="p-4 text-[#5486E3] font-semibold text-[16px]">Deepak Kanavikar</td>
-                                        <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal">01</td>
-                                        <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal md:pl-6">03</td>
+                                        <td className="p-4 text-center text-[16px] text-[#000000]  font-normal">01</td>
+                                        <td className="p-4 text-center text-[16px] text-[#000000]  font-normal md:pl-6">03</td>
                                         </tr>
                                     </tbody>
                                     </table>

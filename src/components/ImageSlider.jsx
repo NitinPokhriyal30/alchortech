@@ -23,11 +23,11 @@ const ImageSlider = () => {
         className={`w-full flex-shrink-0 flex-grow animate-slide-left px-0`}
       >
         <div className={`bg-cover bg-center bg-no-repeat ${prevBg} rounded-lg px-8 pb-10 pt-8`}>
-          <p className="font-Lato text-[25px] font-black leading-8 text-white	">
+          <p className=" text-[25px] font-black leading-8 text-white	">
             Take our Survey <br /> & Earn High5 Points
           </p>
           <div className="mt-5">
-            <button className="bg-[#292929] px-3 py-1 font-Lato text-sm text-white">
+            <button className="bg-[#292929] px-3 py-1  text-sm text-white">
               Take Now
             </button>
           </div>
@@ -40,11 +40,11 @@ const ImageSlider = () => {
         className={`w-full flex-shrink-0 flex-grow animate-slide-left px-0`}
       >
         <div className={`bg-cover bg-center bg-no-repeat ${bg} rounded-lg px-8 pb-10 pt-8`}>
-          <span className="font-Lato text-[25px] font-black leading-8 text-white">
+          <span className=" text-[25px] font-black leading-8 text-white">
             Take our Survey <br /> &amp; Earn High5 Points
           </span>
           <div className="mt-5">
-            <button className="bg-[#292929] px-3 py-1 font-Lato text-sm text-white">
+            <button className="bg-[#292929] px-3 py-1  text-sm text-white">
               Take Now
             </button>
           </div>

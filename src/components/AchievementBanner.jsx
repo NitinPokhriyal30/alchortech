@@ -32,14 +32,14 @@ export const AchievementBanner = () => {
           />
         </div>
         <div className="w-full">
-          <p className="font-Lato text-[29px] font-black text-[#456493] ">Sunita Gulia</p>
-          <p className="mb-2 font-Lato text-[20px] font-bold leading-7 text-[#456493] xs:hidden sm:hidden md:block lg:block xl:block xxl:block">
+          <p className=" text-[29px] font-black text-[#456493] ">Sunita Gulia</p>
+          <p className="mb-2  text-[20px] font-bold leading-7 text-[#456493] xs:hidden sm:hidden md:block lg:block xl:block xxl:block">
             is now the Hotshot of <span>#quality</span> <br /> for all of Alcor Solutions, Inc!
           </p>
-          <p className="mb-2 font-Lato text-[20px] font-bold leading-7 text-[#456493] xs:block sm:block md:hidden lg:hidden xl:hidden xxl:hidden">
+          <p className="mb-2  text-[20px] font-bold leading-7 text-[#456493] xs:block sm:block md:hidden lg:hidden xl:hidden xxl:hidden">
             is now the Hotshot of <span>#quality</span> for all of Alcor Solutions, Inc!
           </p>
-          <p className="font-Lato text-sm text-[#464646]">
+          <p className=" text-sm text-[#464646]">
             Previously held by <span className="font-black">Shraddha Rawat</span>{' '}
           </p>
         </div>
