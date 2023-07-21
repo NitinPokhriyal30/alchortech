@@ -43,11 +43,12 @@ export default function PostComment({ modal, setModal, comment, ...props }) {
         </div>
 
         <div className="relative z-10 flex items-center text-[12px] leading-[15px] text-primary h-[32px] -translate-y-1.5">
-          <p className="inline-block rounded-full  border-[0.5px] border-iconColor bg-white p-1 empty:hidden">
+          <p className="lex items-center gap-3 pb-1">
             {comment.react_by.length > 0 ? (
-              <span className="text-[18px] leading-[18px]">
-                {comment.react_by[comment.react_by.length - 1].react} {comment.react_by.length}
-              </span>
+              <div className="text-lg flex items-center gap-1 rounded-[17px] bg-white border-[0.6px] border-[#D1D1D1] px-[5px] pr-2">
+                {comment.react_by[comment.react_by.length - 1].react}
+                <span className="font-Lato text-sm text-[#747474]">{comment.react_by.length}</span>
+              </div>
             ) : (
               null
             )}
