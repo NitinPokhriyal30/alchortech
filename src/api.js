@@ -36,12 +36,16 @@ axios.interceptors.response.use(
 const api = {
   auth: {
     login: (data) => axios.post('login/', data).then((r) => r.data),
+
     // useQuery(me) always has user bcoz its called during Login
     // and other routes are Protected Routes
     forgotPassword: (email) => axios.post('/request/password/', email).then((r) => r.data),
-    resetPassword: (password, token, uidb64) => axios.patch('passwordreset/complete', {password, token, uidb64}).then((r) => r.data),
-    changeAvatar: (id, formData) => axios.put(`updateUserAvtar/${id}/`, formData).then((r) => r.data) ,
+    resetPassword: (password, token, uidb64) =>
+      axios.patch('passwordreset/complete', { password, token, uidb64 }).then((r) => r.data),
+    changeAvatar: (id, formData) =>
+      axios.put(`updateUserAvtar/${id}/`, formData).then((r) => r.data),
     me: (id) => axios.get(`getUserDetails/${id}/`).then((r) => r.data),
+    user: (userId) => axios.get(`getUserDetails/${userId}/`).then((r) => r.data),
   },
   users: {
     all: () => axios.get('getUsers/').then((r) => r.data),
@@ -49,26 +53,39 @@ const api = {
     search: (params) => axios.get('employees/', { params }).then((r) => r.data),
   },
 
+  topStars: {
+    all: () => axios.get('top-employees/').then((r) => r.data),
+  },
+
   transactions: {
     new: (data) =>
       axios
-        .post('homepage/transaction/', data, { headers: { 'Content-Type': 'multipart/form-data' } })
+        .post('homepage/transaction/', data, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        })
         .then((r) => r.data),
-    all: () =>
+    all: (filters) =>
+      axios.get(`transaction/?${filters.toString()}`).then((r) => r.data),
+    meAsRecipient: (id, sortBy) => 
       axios
-        .get('homepage/transaction/')
-        .then((r) => r.data)
-        .then((data) => data.reverse()),
-    meAsRecipient: (id) => 
-      axios
-        .get(`api/posts/?recipients=${id}`)
+        .get(`transaction/?recipients=${id}&date_range=${sortBy}`)
         .then((r) => r.data),
-    meAsSender: (id) => 
+    meAsSender: (id, sortBy) => 
       axios
-        .get(`api/posts/?sender=${id}`)
+        .get(`transaction/?sender=${id}&date_range=${sortBy}`)
         .then((r) => r.data),
+    react: (data) => axios.patch('transaction/', data).then((r) => r.data),
   },
-
+  comment: {
+    new: (data) =>
+      axios
+        .post('comments/', data, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        })
+        .then((r) => r.data),
+    all: () => axios.get('comments/').then((r) => r.data),
+    react: (data) => axios.patch('transaction/comments/', data).then((r) => r.data),
+  },
   todayEvents: () =>
     axios.get('http://backend.letshigh5.com/api/today-events/').then((r) => r.data),
 

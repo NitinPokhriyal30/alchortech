@@ -12,8 +12,6 @@ import MyProfileImg from '../assets/images/user-profile/male_avatar.jpg'
 import { BiHeartCircle, BiXCircle } from 'react-icons/bi'
 import { HiEmojiHappy } from 'react-icons/hi'
 import { AiOutlineCaretDown, AiOutlineFileGif } from 'react-icons/ai'
-import { AchievementBanner } from './AchievementBanner'
-import PostComment from './PostComment'
 import ThumbNailX from '../assets/slider/slider-bg2.png'
 import GifPicker from './GifPickerPopover'
 import EmojiPicker from 'emoji-picker-react'
@@ -24,9 +22,21 @@ import { SERVER_URL } from '@/constant'
 import { api } from '@/api'
 import Cookies from 'js-cookie'
 import { useQuery } from 'react-query'
-import { getTodayDate } from '@/utils'
+import { getTodayDate, CreatePostComment, CreatePost, CreateReact } from '@/utils'
 import { queryClient } from '@/queryClient'
 import ChildNewPost from '@/components/ChildNewPost'
+import { toast } from 'react-toastify'
+import PostCommentList from '@/components/PostCommentList'
+import moment from 'moment'
+import PostComment from '@/components/PostComment'
+import * as HoverCard from '@radix-ui/react-hover-card'
+import smiley from '../assets/images/new-post/smiley.svg'
+import img from '../assets/images/new-post/img.svg'
+import gif from '../assets/images/new-post/gif.svg'
+import chat from '../assets/images/post-img/chat.png'
+import plus from '../assets/images/post-img/plus.png'
+import heart from '../assets/images/post-img/heart.png'
+import { RiSendPlane2Fill } from 'react-icons/ri'
 
 const POINTS = [
   {
@@ -51,12 +61,39 @@ const POINTS = [
   },
 ]
 
+const getPostComment = (postId, comments) =>
+  comments.filter((comment) => comment.post_id === postId)
+
+const sortCommentsAndTransactions = (comments, childrenTransactions) => {
+  const _childrenTransactions = childrenTransactions.map((transaction) => ({
+    type: 'transaction',
+    commentOrTransaction: transaction,
+  }))
+
+  const _comments = comments.map((comment) => ({
+    type: 'comment',
+    commentOrTransaction: comment,
+  }))
+
+  return _childrenTransactions
+    .concat(_comments)
+    .flatMap((item) => item)
+    .sort((a, b) => {
+      const timestamp1 = a.commentOrTransaction.created
+      const timestamp2 = b.commentOrTransaction.created
+      return new Date(timestamp1) - new Date(timestamp2)
+    })
+    .reverse()
+}
+
 const PostCard = ({ post, childrenTransactions, ...props }) => {
   const [showCommentsFor, setShowCommentsFor] = React.useState('')
   const [modal, setModal] = React.useState('')
   const [point, setPoint] = React.useState(30)
   const [form, setForm] = React.useState({ image: '', gif: '', message: '' })
+  const imageInputRef = React.useRef()
   const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
+  const comments = useQuery('comments', () => api.comment.all())
   const addedPoints = post.sender.find((x) => x.id === me.id)?.points
 
   post.reactions = []
@@ -68,9 +105,13 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
     childrenTransactions.find((post) => post.sender.find((user) => user.id === me.data.id))
       ?.point || 0
 
+  const commentsAndTransactions = comments.data
+    ? sortCommentsAndTransactions(getPostComment(post.id, comments.data), childrenTransactions)
+    : []
+
   return (
     <div className="mb-3">
-      <div className="rounded-lg bg-white py-6 shadow-md xs:px-4 sm:px-6 md:px-6 lg:px-6 xl:px-6  xxl:px-6">
+      <div className="rounded-lg bg-white pb-6 pt-6 shadow-md xs:px-4 sm:px-6 md:px-6 lg:px-6 xl:px-6  xxl:px-6">
         <div className="flex items-center justify-between gap-3">
           <div className="flex-1">
             <div className="flex items-center justify-between gap-8">
@@ -94,12 +135,12 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                     />
                   ))
                 )}
-                <p className="ml-1 font-Lato text-18px font-bold text-primary">
+                <p className="ml-1  text-18px font-bold text-primary">
                   +
                   {post.point + childrenTransactions.reduce((total, post) => total + post.point, 0)}
                 </p>
 
-                <p className="ml-5 font-Lato font-normal text-[#919191]">{post.created}</p>
+                <p className="ml-5  font-normal text-[#00BC9F]">{moment(post.created).fromNow()}</p>
               </div>
             </div>
           </div>
@@ -109,7 +150,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
         </div>
 
         <div className="mt-4">
-          <p className="font-Lato text-18px font-bold">
+          <p className=" text-18px font-bold">
             <span className={`${PROFILE_USERNAME.text}`}>
               {post.sender[0].first_name} {post.sender[0].last_name}:
             </span>{' '}
@@ -119,7 +160,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
             <span className={`${HASHTAG.text}`}>{post.hashtags.map((hash) => hash).join(' ')}</span>
           </p>
 
-          <p className="mt-1.5 font-Lato text-18px font-normal text-[#464646]">{post.message}</p>
+          <p className="mt-1.5  text-18px font-normal text-[#464646]">{post.message}</p>
 
           {post.link && (
             <div className="mt-2">
@@ -130,14 +171,18 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
           )}
 
           {(post.gif || post.image) && (
-            <div className="mt-2 ">
-              {post.gif && <img className="rounded-md block max-h-48 object-contain" src={post.gif} />}
+            <div className="mt-2 flex flex-col gap-[1rem] md:gap-[1rem]">
+              {post.gif && (
+                <img className="block w-full max-w-full rounded-md object-contain" src={post.gif} />
+              )}
 
               {post.image && (
                 <img
-                  className="rounded-md block max-h-48 object-contain"
+                  className="block max-w-full rounded-md object-contain"
                   src={
-                    typeof post.image === 'string' ? post.image : URL.createObjectURL(post.image)
+                    typeof post.image === 'string'
+                      ? SERVER_URL + post.image
+                      : URL.createObjectURL(post.image)
                   }
                 />
               )}
@@ -146,17 +191,13 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
         </div>
 
         <div>
-          <div className="mt-2.5 flex items-center gap-2">
-            {isMyPost ? null : hasAddedPoints != 0 ? (
-              <div>
-                <p className="p-2 font-Lato text-[16px] text-primary">
-                  You Added {hasAddedPoints} Points!
-                </p>
-              </div>
-            ) : (
+          <div className="mt-2.5 flex items-center gap-1">
+            {
               <div className="relative">
-                <button className="btn-ghost peer flex items-center gap-2">
-                  <BsPlusCircleFill className="h-5 w-5" />
+                <button className="btn-ghost peer flex items-center gap-1 !pl-[5px]">
+                  <span className="rounded-[20px] bg-blue-500 p-[3px]">
+                    <img src={plus} alt="chat" />
+                  </span>
                   Add Points
                 </button>
 
@@ -165,52 +206,55 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                     <button
                       key={points}
                       style={{ color: color }}
-                      className={`h-8 w-8 rounded-full font-Lato text-sm font-black hover:bg-translucent`}
-                      onClick={
-                        () => {
-                          setPoint(points)
-                          setModal('child-new-post')
-                        }
-                        //   async () => {
-                        //   const { id, image, ...data } = post
-                        //   data.sender = [me.data]
-                        //   data.point = points
-                        //   data.parent_id = post.id
-
-                        //   const formData = toFormData(data)
-                        //   try {
-                        //     // setLoading(true)
-                        //     await api.transactions.new(formData)
-                        //     await queryClient.refetchQueries('transactions')
-                        //   } catch (error) {
-                        //     console.log(error)
-                        //     toast.error('Server Error')
-                        //   }
-                        // }
-                      }
+                      className={`h-8 w-8 rounded-full  text-sm font-black hover:bg-translucent`}
+                      onClick={() => {
+                        setPoint(points)
+                        setModal('child-new-post')
+                        setShowCommentsFor('')
+                      }}
                     >
                       +{points}
                     </button>
                   ))}
                 </div>
               </div>
-            )}
+            }
 
             {/* post reaction button */}
             <div className="relative ">
-              <button className="btn-ghost peer flex items-center gap-2" onClick={async () => {}}>
-                <span>
-                  <BiHeartCircle className="text-[20px]" />
+              <button className="btn-ghost peer flex items-center gap-1" onClick={async () => {}}>
+                <span className="rounded-[20px] bg-blue-500 p-[4px]">
+                  <img src={heart} alt="heart" />
                 </span>
                 React
               </button>
 
               <div className="absolute -top-[80%] left-0 hidden gap-4 rounded-[19px] bg-white px-4 py-2 drop-shadow-[0px_2px_3px_#00000029] hover:flex peer-hover:flex">
-                {['❤', '👍', '👏', '✔ ', '😍'].map((emoji) => (
+                {['😊', '😁', '😍', '👍', '👏'].map((emoji) => (
                   <button
                     key={emoji}
-                    className="inline-block h-6 w-6 rounded-full font-Lato text-sm font-black hover:bg-translucent"
-                    onClick={() => addReaction(post.id, emoji)}
+                    className="inline-block h-6 w-6 rounded-full  text-[20px] font-black hover:bg-translucent"
+                    onClick={async () => {
+                      try {
+                        const reacts = CreateReact(
+                          me.data,
+                          { id: post.id, react_by: post.react_by },
+                          emoji
+                        )
+                        await api.transactions.react(toFormData(reacts))
+                        await queryClient.setQueryData(['transaction', props.sortBy], (prev) => {
+                          if (!prev) return
+                          const targetPost = prev.results.find((_post) => _post.id === post.id)
+                          if (targetPost) {
+                            targetPost.react_by = reacts.react_by
+                          }
+
+                          return { ...prev }
+                        })
+                      } catch (e) {
+                        console.log('postcard > react button', e)
+                      }
+                    }}
                   >
                     {emoji}
                   </button>
@@ -224,32 +268,40 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                   setShowCommentsFor((p) => (p === post.comment.id ? '' : post.comment.id))
                 }
               >
-                <span>
-                  <BsFillChatRightTextFill className="h-5 w-5" />
+                <span className="rounded-[20px] bg-blue-500 p-[5px]">
+                  <img src={chat} alt="chat" />
                 </span>
                 Comment
               </button>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 pb-1">
-            <div className="cursor-pointer rounded-full flex items-center text-[18px] text-[#747474] pr-2  border-[0.5px] border-[#d1d1d1]">☺️ 0</div>
-            <p className="text-[#d1d1d1] text-16px">{childrenTransactions.length} Comment</p>
+          <div className="mt-1 flex items-center gap-2 pb-1">
+            <div className="flex cursor-pointer items-center rounded-full border-[0.5px] border-[#d1d1d1] px-2  text-[18px] text-[#747474]">
+              {Array.isArray(post.react_by) && post.react_by.length > 0
+                ? post.react_by[post.react_by.length - 1].react
+                : '😊'}{' '}
+              <p className="pl-[3px] text-16px">{post.react_by?.length || 0}</p>
+            </div>
+            <p className="text-16px text-[#d1d1d1]">
+              {commentsAndTransactions.length + ' '}
+              Comment
+            </p>
           </div>
         </div>
 
         <div>
-          <div className="flex items-center gap-3 border-b-[1px] border-[#EDEDED] pb-1">
+          <div className="flex items-center gap-3 pb-1">
             {post.reactions.length > 0 && (
               <div className="text-2xl flex items-center gap-1 rounded-[17px] border-[0.6px] border-[#D1D1D1] pb-[2px] pr-2">
                 {post.reactions[0].emoji}
-                <span className="font-Lato text-xs text-[#747474]">{post.reactions.length}</span>
+                <span className=" text-xs text-[#747474]">{post.reactions.length}</span>
               </div>
             )}
 
             {post.comment.replies.length > 0 && (
               <div>
-                <p className="font-Lato text-[16px] text-[#D1D1D1]">
+                <p className=" text-[16px] text-[#D1D1D1]">
                   {post.comment.replies.length} Comments
                 </p>
               </div>
@@ -257,45 +309,115 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
           </div>
         </div>
 
-        {showCommentsFor === post.comment.id && (
-          <>
+        <div className="border-t border-[#EDEDED] pt-2 empty:hidden">
+          {showCommentsFor === post.comment.id ? (
             <div>
-              <div className="mt-3 flex">
+              <div className="my-[8px] flex gap-4">
                 <div>
-                  <img className="w-[80%]" src={PostUser} alt="comment" />
+                  <img
+                    className="h-[34px] w-[34px] rounded-full object-cover"
+                    src={SERVER_URL + me.data.avtar}
+                    alt="comment"
+                  />
                 </div>
                 <div className="w-full flex-1">
-                  <div className="flex items-center rounded-b-xl rounded-tr-xl bg-[#EDEDED]">
-                    <form
-                      onSubmit={(ev) => {
-                        ev.preventDefault()
-                        const data = Object.fromEntries(new FormData(ev.target))
+                  <div className="grid grid-cols-[1fr_auto_auto] items-end overflow-x-hidden rounded-b-xl rounded-tr-xl bg-paper">
+                    <div className='self-center'>
+                      <form
+                        id={post.id}
+                        onSubmit={async (ev) => {
+                          try {
+                            ev.preventDefault()
 
-                        addComment(post.comment.id, {
-                          message: data.message,
-                          image: form.image,
-                          gif: form.gif,
-                        })
+                            console.log(form)
+                            await api.comment.new(
+                              CreatePostComment(me.data.id, {
+                                post_id: post.id,
+                                comment: form.message,
+                                image: form.image,
+                                gif: form.gif,
+                              })
+                            )
 
-                        setForm({ message: '', image: '', gif: '' })
-                      }}
-                      className="w-full"
-                    >
-                      <input
-                        placeholder="Type your comment here"
-                        name="message"
-                        value={form.message}
-                        onChange={(e) => setForm((prev) => ({ ...prev, message: e.target.value }))}
-                        className=" w-full border-none bg-transparent px-6 py-3 outline-none placeholder:font-Lato placeholder:text-[16px] placeholder:text-[#ABACAC]"
-                      />
-                    </form>
+                            await queryClient.invalidateQueries('comments')
+                            if (imageInputRef.current) imageInputRef.current.value = ''
+                            setForm({ message: '', image: '', gif: '' })
+                          } catch (e) {
+                            console.log('e', e)
+                            toast.error('Failed to post comment')
+                          }
+                        }}
+                        className="w-full"
+                      >
+                        <input
+                          placeholder="Type your comment here"
+                          name="message"
+                          value={form.message}
+                          onChange={(e) =>
+                            setForm((prev) => ({
+                              ...prev,
+                              message: e.target.value,
+                            }))
+                          }
+                          className=" placeholder: w-full border-none bg-transparent px-6 py-3 text-[#464646] outline-none placeholder:text-[16px] placeholder:text-[#ABACAC]"
+                        />
+                      </form>
+                      <div className="px-6 pb-6 empty:hidden">
+                        {form.image && (
+                          <div className="group relative flex w-fit items-center pt-3">
+                            <img
+                              className="block w-40 rounded-md"
+                              src={
+                                typeof form.image === 'string'
+                                  ? form.image
+                                  : URL.createObjectURL(form.image)
+                              }
+                            />
 
-                    <div className="ml-auto mr-3 flex items-baseline gap-2">
+                            <button
+                              type="button"
+                              className="ml-4 p-2 text-[#464646] opacity-0 group-hover:opacity-100"
+                              onClick={() => {
+                                if (imageInputRef.current) imageInputRef.current.value = ''
+                                setForm((prev) => {
+                                  delete prev.image
+                                  return { ...prev }
+                                })
+                              }}
+                            >
+                              &times;
+                            </button>
+                          </div>
+                        )}
+
+                        {form.gif && (
+                          <div className="group relative flex w-fit items-center pt-[16px]">
+                            <img className="block w-40 rounded-md" src={form.gif} />
+
+                            <button
+                              type="button"
+                              className="ml-4 p-2 text-[#464646] opacity-0 group-hover:opacity-100"
+                              onClick={() =>
+                                setForm((prev) => {
+                                  delete prev.gif
+                                  return { ...prev }
+                                })
+                              }
+                            >
+                              &times;
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="ml-auto mr-2 flex items-center gap-2 h-[56px]">
                       <button
                         type="button"
                         onClick={() => setModal((prev) => (prev === 'emoji' ? '' : 'emoji'))}
                       >
-                        <HiEmojiHappy className="text-2xl text-[#D1D1D1]" />
+                        {/* <HiEmojiHappy className="text-2xl text-[#D1D1D1]" /> */}
+                        <img src={smiley} alt="smiley" width={'18px'} />
 
                         {modal === 'emoji' && (
                           <HoveringWidget
@@ -323,9 +445,10 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                       </button>
 
                       <label className="cursor-pointer">
-                        <BsFillImageFill className="text-2xl text-[#D1D1D1]" />
-
+                        {/* <BsFillImageFill className="text-2xl text-[#D1D1D1]" /> */}
+                        <img src={img} alt="img" width={'25px'} />
                         <input
+                          ref={imageInputRef}
                           hidden
                           type="file"
                           onChange={(e) => {
@@ -340,7 +463,8 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
 
                       <Popover.Root>
                         <Popover.Trigger>
-                          <AiOutlineFileGif className="text-2xl text-[#D1D1D1]" />
+                          <img src={gif} alt="gif" width={'18px'} />
+                          {/* <AiOutlineFileGif className="text-2xl text-[#D1D1D1]" /> */}
                         </Popover.Trigger>
 
                         <GifPicker
@@ -353,117 +477,107 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                         />
                       </Popover.Root>
                     </div>
+                    <button
+                      disabled={(!form.message && !form.image && !form.gif)}
+                      className={
+                        'block rounded-r-xl pl-0.5 pr-5 py-5 font-semibold text-primary transition-all disabled:cursor-auto disabled:text-gray-300'
+                      }
+                      form={post.id}
+                      type="submit"
+                    >
+                      <RiSendPlane2Fill />
+                    </button>
                   </div>
-                  {form.image && (
-                    <div className="group relative inline-flex items-start p-4">
-                      <img
-                        className="block flex-1 rounded pr-4"
-                        src={
-                          typeof form.image === 'string'
-                            ? form.image
-                            : URL.createObjectURL(form.image)
-                        }
-                      />
-
-                      <button
-                        type="button"
-                        className="text-primary-400 opacity-0 transition-opacity group-hover:opacity-100"
-                        onClick={() =>
-                          setForm((prev) => {
-                            delete prev.image
-                            return { ...prev }
-                          })
-                        }
-                      >
-                        <BiXCircle fontSize={24} color="inherit" />
-                      </button>
-                    </div>
-                  )}
-
-                  {form.gif && (
-                    <div className="group relative inline-flex items-start p-4">
-                      <img className="block flex-1 rounded pr-4" src={form.gif} />
-
-                      <button
-                        type="button"
-                        className="text-primary-400 opacity-0 transition-opacity group-hover:opacity-100"
-                        onClick={() =>
-                          setForm((prev) => {
-                            delete prev.gif
-                            return { ...prev }
-                          })
-                        }
-                      >
-                        <BiXCircle fontSize={24} color="inherit" />
-                      </button>
-                    </div>
-                  )}
                 </div>
               </div>
             </div>
-          </>
-        )}
-        {post.comment.replies?.map((comment) => (
-          <PostComment
-            {...{ modal, setModal }}
-            {...{ showCommentsFor, setShowCommentsFor }}
-            key={comment.message}
-            comment={comment}
-            addComment={addComment}
-            addReaction={addCommentReaction}
-          />
-        ))}
+          ) : modal === 'child-new-post' ? (
+            <div className="mb-2 mt-2 flex gap-4">
+              <img
+                src={SERVER_URL + me.data.avtar}
+                className="h-[34px] w-[34px] rounded-full object-contain"
+              />
+              <div className="flex-1">
+                <ChildNewPost
+                  key={point}
+                  post={post}
+                  defaultPoint={point}
+                  onClose={() => setModal('')}
+                />
+              </div>
+            </div>
+          ) : null}
 
-        {/* Child Transactions */}
-        {showCommentsFor === '' && (
-          <div>
-            {childrenTransactions.map((post) => (
-              <div className="grid grid-cols-[auto_1fr] gap-4 pl-0 p-4">
+          {/* <PostCommentList postId={post.id} /> */}
+          {commentsAndTransactions.map(({ type, commentOrTransaction }) =>
+            type === 'comment' ? (
+              <PostComment key={commentOrTransaction.id} comment={commentOrTransaction} />
+            ) : (
+              <div
+                key={commentOrTransaction.id}
+                className="grid grid-cols-[auto_1fr] gap-4 pl-0 pt-[7px]"
+              >
                 <img
                   className="h-8.5 w-8.5 rounded-full object-cover"
-                  src={SERVER_URL + post.sender[0].avtar}
+                  src={SERVER_URL + commentOrTransaction.sender[0].avtar}
                 />
 
                 <div className="relative ">
-                  <div className="rounded-[15px] rounded-tl-none bg-paper pt-[7px] pb-[20px] px-[30px] text-[#464646]">
-                    <p className="text-18px">
-                      <span className="font-bold">{post.sender[0].first_name}</span><br />
-                        
-                      +{post.point}
-                      <span className="ml-2">{post.message}</span>
+                  <div className="rounded-[15px] rounded-tl-none bg-paper p-[20px] text-[#464646]">
+                    <p className="flex justify-between text-18px">
+                      <span className="font-bold">{commentOrTransaction.sender[0].first_name}</span>
+                      <span className="text-[14px] leading-[17px] text-[#919191]">
+                        {moment(commentOrTransaction.created).fromNow()}
+                      </span>
+                    </p>
+                    <p>
+                      +{commentOrTransaction.point}
+                      <span className="ml-2">{commentOrTransaction.message}</span>
                     </p>
 
-                    {post.image || post.gif ? (
+                    {commentOrTransaction.image || commentOrTransaction.gif ? (
                       <div className="mt-[21px] space-y-[20px]">
-                        {post.image && <img className='w-full rounded-md' src={post.image} />}
-                        {post.gif && <img className='w-full rounded-md' src={post.gif} />}
+                        {commentOrTransaction.image && (
+                          <img className="w-full rounded-md" src={commentOrTransaction.image} />
+                        )}
+                        {commentOrTransaction.gif && (
+                          <img className="w-full rounded-md" src={commentOrTransaction.gif} />
+                        )}
                       </div>
                     ) : null}
 
-                    {post.link ? (
+                    {commentOrTransaction.link ? (
                       <div className="mt-6 space-y-6">
-                        Attached Link: <a className="underline text-blue-500" href={post.link}>
-                          {post.link}
+                        Attached Link:{' '}
+                        <a className="text-blue-500 underline" href={commentOrTransaction.link}>
+                          {commentOrTransaction.link}
                         </a>
                       </div>
                     ) : null}
                   </div>
+                  <div className="relative z-10 mt-[1px] px-[20px] text-[12px] leading-[15px] text-primary">
+                    <HoverCard.Root>
+                      <HoverCard.Trigger className="cursor-pointer">React</HoverCard.Trigger>
+                      <HoverCard.Content className="border">
+                        <div className="absolute bottom-[20px] left-1/2 z-10 flex -translate-x-1/2 gap-4 rounded-[19px] bg-white px-4 py-2 drop-shadow-[0px_2px_3px_#00000029]">
+                          {['❤', '👍', '👏', '✔ ', '😍'].map((emoji) => (
+                            <button
+                              key={emoji}
+                              className="inline-block h-6 w-6 rounded-full  text-sm font-black hover:bg-translucent"
+                              onClick={() => addReaction(post.id, emoji)}
+                            >
+                              {emoji}
+                            </button>
+                          ))}
+                        </div>
+                      </HoverCard.Content>
+                    </HoverCard.Root>
+                  </div>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
-
-        {modal === 'child-new-post' && (
-          <>
-            <ChildNewPost
-              key={point}
-              post={post}
-              defaultPoint={point}
-              onClose={() => setModal('')}
-            />
-          </>
-        )}
+            )
+          )}
+        </div>
       </div>
     </div>
   )

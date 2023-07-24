@@ -16,29 +16,75 @@ import { AchievementBanner } from '../components/AchievementBanner'
 import GifPicker from '@/components/GifPickerPopover'
 import { useQuery } from 'react-query'
 import { api } from '@/api'
+import { useIntersectionObserver } from 'usehooks-ts'
+import { queryClient } from '@/queryClient'
+import { getChildTransactionsFor, withIsChild } from '@/utils'
 
-const getChildTransactionsFor = (parentId, allTransactions) => {
-  return allTransactions.filter((post) => post.parent_id == parentId)
+
+const stickBottomAlign = {
+  position: 'sticky',
+  alignSelf: 'flex-end',
+  bottom: 0,
 }
-
-const withIsChild = (allTransactions) => {
-  return allTransactions.map((post) => {
-    const hasParent = allTransactions.some((parentPost) => post.parent_id == parentPost.id)
-    // if a transaction has a parent transaction then its a child transaction
-    post.isChild = hasParent
-
-    return post
-  })
-}
-
 export default function HomePage() {
-  const postList = useQuery('transactions', () => api.transactions.all())
+  const infiniteLoaderDivRef = React.useRef()
+  const [infiniteLoading, setInfiniteLoading] = React.useState(false)
+  const entry = useIntersectionObserver(infiniteLoaderDivRef, {})
 
-  let allPosts = postList.isLoading ? [] : postList.data
+  const [page, setPage] = React.useState(1)
+  const [sortBy, setSortBy] = React.useState('all')
+
+  const postList = useQuery(['transaction', sortBy], () =>
+    api.transactions.all(new URLSearchParams({ key_param: sortBy, page: page, pagination: 1, page_size: 5 })),
+    {
+      refetchOnWindowFocus: false
+    }
+  )
+  const [stickyStyles, setStickyStyles] = React.useState({})
+  const rightSidebarRef = React.useRef()
+
+  let allPosts = postList.data?.results || []
   allPosts = withIsChild(allPosts)
   const parentPosts = allPosts.filter(
     (post) => !post.isChild || getChildTransactionsFor(post.id, allPosts).length > 0
   )
+
+  React.useEffect(() => {
+    function handleResize() {
+      if (!rightSidebarRef.current) {
+        return
+      }
+
+      const rightSidebar = rightSidebarRef.current
+      const height = rightSidebar.getBoundingClientRect().height
+      if (height > window.innerHeight) {
+        setStickyStyles(stickBottomAlign)
+      }
+    }
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  React.useEffect(() => {
+    if (entry?.isIntersecting === true && infiniteLoading === false && !!postList.data?.next) {
+      setInfiniteLoading(true)
+      api.transactions
+        .all(new URLSearchParams({ key_param: sortBy, page: page + 1, pagination: 1, page_size: 5 }))
+        .then((data) => {
+          queryClient.setQueryData(['transaction', sortBy], (prev) => ({
+            ...prev,
+            ...data,
+            results: [...prev.results, ...data.results],
+          }))
+          setPage(page + 1)
+        })
+        .catch((e) => console.log(e))
+        .finally(() => {
+          setInfiniteLoading(false)
+        })
+    }
+  }, [entry?.isIntersecting])
 
   return (
     <>
@@ -51,47 +97,59 @@ export default function HomePage() {
           <NewPost />
         </div>
         <div className="mt-1">
-          <SortBy />
+          <SortBy value={sortBy} onChange={setSortBy} />
         </div>
 
         <div className="relative mt-1" id="post-list">
-          {postList.isLoading ? (
+          {parentPosts.length == 0 ? (
             <div className="h-64 rounded-md  bg-gray-300" />
           ) : (
-            parentPosts.slice(0, 2).map((post, i) => (
-              <>
+            parentPosts
+              .slice(0, 2)
+              .map((post, i) => (
                 <PostCard
                   i={i}
                   key={post.id}
                   post={post}
                   childrenTransactions={getChildTransactionsFor(post.id, allPosts)}
+                  sortBy={sortBy}
                 />
-              </>
-            ))
+              ))
           )}
         </div>
         <div className="mt-1">
           <AchievementBanner />
         </div>
         <div className="relative mt-1">
-          {postList.isLoading ? (
+          {parentPosts.length == 0 ? (
             <div className="h-64 rounded-md  bg-gray-300" />
           ) : (
             parentPosts
               .slice(2)
-              .map((post) => (
+              .map((post, index) => (
                 <PostCard
-                  key={post.id}
+                  key={index}
                   post={post}
                   childrenTransactions={getChildTransactionsFor(post.id, allPosts)}
+                  sortBy={sortBy}
                 />
               ))
+          )}
+
+          {postList.data?.next === null ? (
+            <p className="flex h-32 items-center justify-center">You have reached the end🥳</p>
+          ) : (
+            <div className="h-64 animate-pulse rounded-md bg-gray-300" ref={infiniteLoaderDivRef} />
           )}
         </div>
       </div>
 
       {/* right sidebar */}
-      <div className="flex w-full flex-col gap-3 overflow-y-auto pb-5 pl-3 pr-3 pt-3 md:w-[260px] md:pl-1 lg:w-[235px] lg:pr-0 xl:w-[319px]">
+      <div
+        ref={rightSidebarRef}
+        style={stickyStyles}
+        className="flex w-full flex-col gap-3 overflow-y-auto pb-5 pl-3 pr-3 pt-3 md:w-[260px] md:pl-[0px] lg:w-[235px] lg:pr-0 xl:w-[319px]"
+      >
         <RedeemPointsWidget />
         <RecommendationWidget />
         <CelebrationWidget />

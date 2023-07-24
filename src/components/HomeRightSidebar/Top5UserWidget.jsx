@@ -3,9 +3,19 @@ import * as React from 'react'
 import FadeStar from '../../assets/svg/fade.svg'
 import GreenStar from '../../assets/svg/green.svg'
 import RedStar from '../../assets/svg/red.svg'
-import User1 from '../../assets/images/user-profile/user.png'
+import User1 from '../../assets/images/user-profile/pp.png'
+import { useQuery } from 'react-query'
+import { api } from '@/api'
+import { SERVER_URL } from '@/constant'
+
 
 export default function Top5UserWidget({ ...props }) {
+
+  const top5 = useQuery("top5", () => api.topStars.all(), {
+    initialData: [],
+  });
+
+
   const [topUsers, setTopUsers] = React.useState(() => [
     {
       id: Math.random().toString(),
@@ -39,21 +49,25 @@ export default function Top5UserWidget({ ...props }) {
     },
   ])
 
+  if (top5.isLoading) {
+    return null
+  }
+
   return (
     <div>
-      <div className="right-sidebar-container !pb-4">
-        <div className="border-b border-[#EDEDED] py-1 px-3 mb-4">
-          <p className="text-[16px] font-Lato font-semibold text-[#464646] text-center ">
+      <div className="right-sidebar-container !pt-0 !pb-4">
+        <div className="border-b border-[#EDEDED] py-[8.5px] px-3 mb-4">
+          <p className="leading-[24px]  font-bold text-[#464646] text-center">
             Top High5 Stars
           </p>
         </div>
 
-        {topUsers.map((user, index) => (
+        {top5.data?.map((user, index) => (
           <div key={user.id}>
             <div className=" px-4">
-              <div className="flex pb-1.5 gap-3 ml-1 justify-between items-center">
+              <div className="flex pb-2 gap-3 ml-1 justify-between items-center">
                 <div className="flex relative items-center gap-3">
-                  <img src={user.image} className="w-14 h-14" alt="user1" />
+                  <img src={ SERVER_URL + user.avtar} className="rounded-full w-12 h-12" alt="user1" />
                   {index <= 2 && (
                     <img
                       src={
@@ -66,18 +80,18 @@ export default function Top5UserWidget({ ...props }) {
                               : null
                       }
                       alt="Green Star"
-                      className="absolute top-0 left-[-5px]"
+                      className="absolute top-0 left-[-8px]"
                     />
                   )}
                   <div>
-                    <p className="text-[14px] font-Lato font-normal text-[#050505]">
-                      {user.fullName}
+                    <p className="text-[14px]  font-normal text-[#050505]">
+                      {user.recipient}
                     </p>
                   </div>
                 </div>
 
                 <div>
-                  <span className="text-[#B7B7B7] text-[12px]">{user.stars}</span>
+                  <span className="text-[#464646] text-[12px]">{user.count}</span>
                 </div>
               </div>
             </div>

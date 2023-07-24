@@ -14,6 +14,10 @@ import { GifPickerBox } from './GifPickerPopover'
 import EmojiPickerBox from '@/components/EmojiPickerBox'
 import ImagePickerBox from '@/components/ImagePickerBox'
 import Spinner from '@/components/Spinner'
+import smiley from '../assets/images/new-post/smiley.svg'
+import img from '../assets/images/new-post/img.svg'
+import gif from '../assets/images/new-post/gif.svg'
+import link from '../assets/images/new-post/link.svg'
 
 function validateNewPostForm(form) {
   let isValid = true
@@ -51,7 +55,7 @@ export default function ChildNewPost({ onClose, post, defaultPoint }) {
 
   return (
     <>
-      {rawImage && (
+      {/* {rawImage && (
         <Cropper
           imageFile={rawImage}
           onClose={(image) => {
@@ -59,13 +63,13 @@ export default function ChildNewPost({ onClose, post, defaultPoint }) {
             setForm((prev) => ({ ...prev, image }))
           }}
         />
-      )}
+      )} */}
       <div>
         <div className="rounded-t-lg  bg-primary px-6 py-2 text-sm text-white">
           <ul className="flex flex-wrap items-center gap-y-3 divide-x divide-primary-400 first:pl-0 child:pl-4">
             {/* points button */}
 
-            <li className="group pr-4">
+            <li className="group pr-4 !pl-0">
               <PointsRangeDialog {...{ form, setForm }} />
             </li>
 
@@ -77,28 +81,38 @@ export default function ChildNewPost({ onClose, post, defaultPoint }) {
 
         {/* text field */}
 
-        <div className="_px-6 rounded-b-lg bg-white py-6 text-gray-400 drop-shadow-normal">
+        <div className="_px-6 rounded-b-lg bg-white pt-6 pb-3 text-[#b1b1b1] drop-shadow-normal">
           <div className="px-6">
-            +{form.point}{' '}
+            {form.point == 0 ? (
+              <span>+30 </span>
+            ) : (
+              <span className="text-[#464646]">+{form.point} </span>
+            )}
             {form.recipients
-              .filter((userId) => userId === me.data.id)
+              .filter((userId) => userId !== me.data.id)
               .map((userId) => (users.data || []).find((user) => user.id === userId))
 
               .map((user) => (
-                <span key={user.id}>
+                <span className="text-[#464646]" key={user.id}>
                   @{user.first_name} {user.last_name}
                 </span>
               ))}{' '}
-            {form.hashtags.map((tag) => (
-              <span key={tag}>{tag}</span>
-            ))}
+            {form.hashtags.length == 0 ? (
+              <span>#HashTag</span>
+            ) : (
+              form.hashtags.map((tag) => (
+                <span className="text-[#464646]" key={tag}>
+                  {tag}
+                </span>
+              ))
+            )}
           </div>
 
           <div className="border-b px-6 focus-within:border-b focus-within:border-primary">
             <textarea
               spellCheck={false}
-              className="block h-20 w-full resize-none outline-none  transition-all"
-              placeholder="Type Here..."
+              className="block h-10 w-full resize-none text-[#464646]  outline-none transition-all placeholder:text-[#b1b1b1]"
+              placeholder="For helping me launch a marketing campaign so that we can generate new business"
               onChange={(ev) =>
                 setForm((prev) => ({ ...prev, message: ev.target.value.substring(0, 270) }))
               }
@@ -156,30 +170,39 @@ export default function ChildNewPost({ onClose, post, defaultPoint }) {
                 setForm((prev) => ({ ...prev, message: prev.message + emoji.emoji }))
               }
             >
-              <EmojiEmotions />
+              {/* <EmojiEmotions /> */}
+              <img src={smiley} alt="smiley" width={"20px"} />
             </EmojiPickerBox>
 
-            <ImagePickerBox onChange={(image) => setRawImage(image)}>
-              <Image />
+            <ImagePickerBox onChange={(image) => setForm((prev) => ({ ...prev, image }))}>
+              {/* <Image /> */}
+              <img src={img} alt="img" width={"26px"} />
             </ImagePickerBox>
 
             <GifPickerBox onChange={(url) => setForm((prev) => ({ ...prev, gif: url }))}>
-              <GifBox />
+              {/* <GifBox /> */}
+              <img src={gif} alt="gif" width={"20px"} />
             </GifPickerBox>
 
             <AddLinkBox onChange={(link) => setForm((prev) => ({ ...prev, link }))}>
-              <Link />
+              {/* <Link /> */}
+              <img src={link} alt="link" width={"20px"} />
             </AddLinkBox>
 
             <button
               disabled={loading}
               type="submit"
-              className="relative ml-auto w-full max-w-[6rem] rounded-sm bg-primary px-4 py-1 font-Lato text-white disabled:bg-opacity-80"
+              className="relative ml-auto w-full max-w-[6rem] rounded-sm bg-primary px-4 py-1  text-white disabled:bg-opacity-80"
               onClick={async () => {
                 try {
                   setLoading(true)
-                  if (!validateNewPostForm(form)) return
                   const recipients = form.recipients.filter((userId) => userId !== me.data.id)
+                  if (recipients.length === 0) {
+                    toast.error("Cant give points to your self")
+                    return;
+                  }
+                  if (!validateNewPostForm(form)) return
+
                   const data = CreatePost(me.data.id, post.id, { ...form, recipients })
                   const formData = toFormData(data)
                   window.f = formData

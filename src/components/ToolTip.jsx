@@ -9,7 +9,7 @@ export default function ToolTip({ title = '' }) {
         x="0px"
         y="0px"
         viewBox="0 0 255 255"
-        xml:space="preserve"
+        xmlSpace="preserve"
       >
         <polygon className="fill-current" points="0,0 127.5,127.5 255,0" />
       </svg>

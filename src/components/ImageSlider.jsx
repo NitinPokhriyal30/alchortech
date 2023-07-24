@@ -7,7 +7,7 @@ const ImageSlider = () => {
   useEffect(() => {
     const id = setInterval(() => {
       setCounter((p) => (p + 1) % bgs.length)
-    }, 2000)
+    }, 5000)
 
     return () => clearInterval(id)
   }, [])
@@ -16,18 +16,18 @@ const ImageSlider = () => {
   const bg = bgs[counter]
 
   return (
-    <div className="flex rounded-lg overflow-x-hidden">
+    <div className="relative flex overflow-x-hidden rounded-lg">
       <div
         key={'-' + counter}
         style={{ flexBasis: '100%' }}
-        className={`px-0 flex-shrink-0 flex-grow w-full animate-slide-left`}
+        className={`w-full flex-shrink-0 flex-grow animate-slide-left px-0`}
       >
-        <div className={`bg-center bg-no-repeat bg-cover ${prevBg} rounded-lg px-8 pt-8 pb-10`}>
-          <p className="font-Lato font-black text-[25px] text-white leading-8	">
+        <div className={`bg-cover bg-center bg-no-repeat ${prevBg} rounded-lg px-8 pb-10 pt-8`}>
+          <p className=" text-[25px] font-black leading-8 text-white	">
             Take our Survey <br /> & Earn High5 Points
           </p>
           <div className="mt-5">
-            <button className="bg-[#292929] text-white font-Lato text-sm py-1 px-3">
+            <button className="bg-[#292929] px-3 py-1  text-sm text-white">
               Take Now
             </button>
           </div>
@@ -37,18 +37,31 @@ const ImageSlider = () => {
       <div
         key={counter}
         style={{ flexBasis: '100%' }}
-        className={`px-0 flex-shrink-0 flex-grow w-full animate-slide-left`}
+        className={`w-full flex-shrink-0 flex-grow animate-slide-left px-0`}
       >
-        <div className={`bg-center bg-no-repeat bg-cover ${bg} rounded-lg px-8 pt-8 pb-10`}>
-          <span className="font-Lato font-black text-[25px] text-white leading-8">
+        <div className={`bg-cover bg-center bg-no-repeat ${bg} rounded-lg px-8 pb-10 pt-8`}>
+          <span className=" text-[25px] font-black leading-8 text-white">
             Take our Survey <br /> &amp; Earn High5 Points
           </span>
           <div className="mt-5">
-            <button className="bg-[#292929] text-white font-Lato text-sm py-1 px-3">
+            <button className="bg-[#292929] px-3 py-1  text-sm text-white">
               Take Now
             </button>
           </div>
         </div>
+      </div>
+
+      <div className="absolute inset-x-0 bottom-5 z-10 flex justify-center gap-1.5">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div
+            key={i}
+            className="h-[7px] w-[7px] rounded-full transition-colors"
+            style={{
+              backgroundColor:
+                i === counter ? 'rgba(255, 255, 255, 100%)' : 'rgba(255, 255, 255, 39%)',
+            }}
+          />
+        ))}
       </div>
     </div>
   )

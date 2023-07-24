@@ -1,7 +1,7 @@
 import { api } from '@/api'
 import ToolTip from '@/components/ToolTip'
 import { queryClient } from '@/queryClient'
-import { CreatePost, getTodayDate } from '@/utils'
+import { CreatePost, getDaysLeftForNextMonth, getNextMonthName, getTodayDate } from '@/utils'
 import { Close, EmojiEmotions, GifBox, Image, Link } from '@mui/icons-material'
 import * as HoverCard from '@radix-ui/react-hover-card'
 import * as Popover from '@radix-ui/react-popover'
@@ -20,9 +20,17 @@ import { MAX_IMAGE_SIZE_MB } from '@/constant'
 import EmojiPickerBox from '@/components/EmojiPickerBox'
 import ImagePickerBox from '@/components/ImagePickerBox'
 import Spinner from '@/components/Spinner'
+import img from '../assets/images/new-post/img.svg'
+import gif from '../assets/images/new-post/gif.svg'
+import link from '../assets/images/new-post/link.svg'
+import smiley from '../assets/images/new-post/smiley.svg'
 
 function validateNewPostForm(form) {
   let isValid = true
+  if (form.point === 0) {
+    toast.error('Select amount of points')
+    isValid = false
+  }
   if (form.recipients.length === 0) {
     toast.error('Add atleast one recipient')
     isValid = false
@@ -41,12 +49,15 @@ function validateNewPostForm(form) {
 
 export default function NewPost({ ...props }) {
   const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
-  const users = useQuery('users', () => api.users.profiles(), { initialData: [] })
+  const users = useQuery('users', () => api.users.profiles(), {
+    initialData: [],
+  })
   const [loading, setLoading] = React.useState(false)
   const [processedImage, setProcessedImage] = React.useState('')
+  const inputRef = React.useRef()
 
   const [form, setForm] = React.useState({
-    point: 30,
+    point: 0,
     recipients: [],
     hashtags: [],
     image: '',
@@ -55,26 +66,17 @@ export default function NewPost({ ...props }) {
     message: '',
   })
 
+  const showPlaceholder =
+    form.point === 0 && form.recipients.length === 0 && form.hashtags.length === 0
+
   return (
     <>
-      <div className="z-[999]">
-        {processedImage && (
-          <Cropper
-            imageFile={processedImage}
-            onClose={(image) => {
-              setProcessedImage('')
-              setForm((prev) => ({ ...prev, image }))
-            }}
-          />
-        )}
-      </div>
-
       <div>
         <div className="rounded-t-lg  bg-primary px-6 py-2 text-sm text-white">
           <ul className="flex flex-wrap items-center gap-y-3 divide-x divide-primary-400 first:pl-0 child:pl-4">
             {/* points button */}
 
-            <li className="group pr-4">
+            <li className="group !pl-0 pr-4">
               <PointsRangeDialog {...{ form, setForm }} />
             </li>
 
@@ -90,18 +92,21 @@ export default function NewPost({ ...props }) {
 
             <li style={{ borderWidth: 0 }} className="basis-full md:flex-shrink md:basis-auto">
               <HoverCard.Root>
-                <p className="flex cursor-pointer items-center font-Lato leading-4">
-                  You Have <span className="font-bold">&nbsp;{me.data.allowance_boost} Points&nbsp;</span>to give
+                <p className="flex cursor-pointer items-center  leading-4">
+                  You Have{' '}
+                  <span className="font-[900]">&nbsp;{me.data.allowance_boost} Points&nbsp;</span>
+                  to give
                   <HoverCard.Trigger className="ml-2 inline-flex h-4 w-4 items-center justify-center">
-                    <HelpIcon/>
+                    <HelpIcon />
                   </HoverCard.Trigger>
                 </p>
 
                 <HoverCard.Portal>
-                  <HoverCard.Content className="z-20 w-screen max-w-[180px] rounded bg-white p-2 shadow text-[#747474] text-[12px] leading-[14px]">
+                  <HoverCard.Content className="z-20 w-screen max-w-[180px] rounded bg-white p-2 text-[12px] leading-[14px] text-[#747474] shadow">
                     <HoverCard.Arrow className="fill-white" />
-                    You monthly allowance will refresh on 1st March. You have 6 days to spend 160
-                    points.
+                    You monthly allowance will refresh on 1st {getNextMonthName()}. You have{' '}
+                    {getDaysLeftForNextMonth() + ' '}
+                    days to spend {me.data.allowance_boost} points.
                   </HoverCard.Content>
                 </HoverCard.Portal>
               </HoverCard.Root>
@@ -111,27 +116,49 @@ export default function NewPost({ ...props }) {
 
         {/* text field */}
 
-        <div className="_px-6 rounded-b-lg bg-white py-6 text-gray-400 drop-shadow-normal">
+        <div className="_px-6 rounded-b-lg bg-white py-6 text-[#b1b1b1] drop-shadow-normal pb-[12px]">
           <div className="px-6">
-            +{form.point}{' '}
-            {form.recipients
-              .map(userId => (users.data || []).find(user => user.id === userId))
-              .map((user) => `@${user.first_name} ${user.last_name}`)
-              .map((fullName) => (
-                <span key={fullName}>{fullName}</span>
-              ))}{' '}
-            {form.hashtags.map((tag) => (
-              <span key={tag}>{tag}</span>
-            ))}
+            {showPlaceholder ? (
+              <>
+                <span>+30 </span>
+                <span>@Name.recipient </span>
+                <span>#HashTag </span>
+              </>
+            ) : (
+              <>
+                <span className="text-[#464646]">{form.point ? '+' + form.point : ''} </span>{' '}
+
+                {form.recipients
+                  .map((userId) => (users.data || []).find((user) => user.id === userId))
+                  .map((user) => `@${user.first_name} ${user.last_name}`)
+                  .map((fullName) => (
+                    <span className="text-[#464646]" key={fullName}>
+                      {fullName}{" "}
+                    </span>
+                  ))}
+
+                {form.hashtags.map((tag) => (
+                  <span className="text-[#464646]" key={tag}>
+                    {tag}{" "}
+                  </span>
+                ))}
+              </>
+            )}
           </div>
 
-          <div className="border-b px-6 focus-within:border-b focus-within:border-primary min-h-[120px]">
+          <div className="min-h-[93px] border-b px-6 focus-within:border-b focus-within:border-primary">
             <textarea
               spellCheck={false}
-              className="block h-10 w-full resize-none outline-none  transition-all"
-              placeholder="Type Here..."
+              className="block h-10 w-full resize-none text-[#464646]  outline-none transition-all placeholder:text-[#b1b1b1]"
+              placeholder={
+                showPlaceholder &&
+                'For helping me launch a marketing campaign so that we can generate new business'
+              }
               onChange={(ev) =>
-                setForm((prev) => ({ ...prev, message: ev.target.value.substring(0, 270) }))
+                setForm((prev) => ({
+                  ...prev,
+                  message: ev.target.value.substring(0, 270),
+                }))
               }
               value={form.message}
             ></textarea>
@@ -139,26 +166,29 @@ export default function NewPost({ ...props }) {
             {form.image && (
               <div>
                 <div className="group flex items-center pb-2">
-                <img
-                  src={URL.createObjectURL(form.image)}
-                  key={form.image}
-                  className="mt-0.5 w-40 border rounded-md"
-                />
+                  <img
+                    src={URL.createObjectURL(form.image)}
+                    key={form.image}
+                    className="mt-0.5 w-40 rounded-md border"
+                  />
 
                   <button
                     className="ml-4 hidden group-hover:inline-block"
-                    onClick={() => setForm((prev) => ({ ...prev, image: '' }))}
+                    onClick={() => {
+                      setForm((prev) => ({ ...prev, image: '' }))
+                      if (inputRef.current) inputRef.current.value = ''
+                    }}
                   >
                     <Close fontSize="10" />
                   </button>
-              </div>
+                </div>
               </div>
             )}
 
             {form.gif && (
               <div>
-                <div className="group flex items-center pb-2">
-                  <img src={form.gif} key={form.image} className="mt-4 w-40 border" />
+                <div className="group flex items-center pb-6">
+                  <img src={form.gif} key={form.image} className="mt-4 w-40 rounded-md border" />
 
                   <button
                     className="ml-4 hidden group-hover:inline-block"
@@ -189,32 +219,42 @@ export default function NewPost({ ...props }) {
             )}
           </div>
 
-          {/* footer */}
-          <div id="new-post-footer" className="flex items-baseline gap-4 px-6 pt-3">
+          {/* // footer */}
+          <div id="new-post-footer" className="flex items-center gap-4 px-6 pt-3">
             <EmojiPickerBox
               onClick={(emoji) => {
-                setForm((prev) => ({ ...prev, message: prev.message + emoji.emoji }))
+                setForm((prev) => ({
+                  ...prev,
+                  message: prev.message + emoji.emoji,
+                }))
               }}
             >
-              <EmojiEmotions />
+              {/* <EmojiEmotions /> */}
+              <img src={smiley} alt="smiley" width={"20px"} />
             </EmojiPickerBox>
 
-            <ImagePickerBox onChange={(image) => setProcessedImage(image)}>
-              <Image />
+            <ImagePickerBox
+              inputRef={inputRef}
+              onChange={(image) => setForm((prev) => ({ ...prev, image }))}
+            >
+              {/* <Image /> */}
+              <img src={img} alt="img" width={"26px"} />
             </ImagePickerBox>
 
             <GifPickerBox onChange={(gif) => setForm((prev) => ({ ...prev, gif }))}>
-              <GifBox />
+              {/* <GifBox /> */}
+              <img src={gif} alt="gif" width={"20px"} />
             </GifPickerBox>
 
             <AddLinkBox onChange={(link) => setForm((prev) => ({ ...prev, link }))}>
-              <Link />
+              {/* <Link /> */}
+              <img src={link} alt="link" width={"20px"} />
             </AddLinkBox>
 
             <button
               disabled={loading}
               type="submit"
-              className="relative ml-auto w-full max-w-[6rem] rounded-sm bg-primary px-4 py-1 font-Lato text-white disabled:bg-opacity-80"
+              className="relative ml-auto w-full max-w-[6rem] rounded-sm bg-primary px-4 py-1  text-white disabled:bg-opacity-80"
               onClick={async function newPost() {
                 try {
                   setLoading(true)
@@ -228,7 +268,7 @@ export default function NewPost({ ...props }) {
                   await queryClient.refetchQueries('me')
 
                   setForm({
-                    point: 30,
+                    point: 0,
                     recipients: [],
                     hashtags: [],
                     image: '',
@@ -308,7 +348,7 @@ export function PointsRangeDialog({ form, setForm }) {
   return (
     <>
       <p className="flex cursor-pointer gap-[2px] hover:font-bold">
-        + <span className="font-Lato"> Points</span>
+        + <span className=""> Points</span>
       </p>
       <div className="absolute z-10 hidden gap-2 rounded-full bg-white p-2 text-black shadow group-hover:flex">
         {properties.isLoading
@@ -340,7 +380,9 @@ export function PointsRangeDialog({ form, setForm }) {
 }
 
 export function RecipientsDropdown({ form, setForm }) {
-  const users = useQuery('users', () => api.users.profiles(), { initialData: [] })
+  const users = useQuery('users', () => api.users.profiles(), {
+    initialData: [],
+  })
   const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
 
   const usersWithoutMe = users.isLoading ? [] : users.data.filter((x) => x.id !== me.data.id)
@@ -351,13 +393,13 @@ export function RecipientsDropdown({ form, setForm }) {
   )
 
   const USER_BTN_HEIGHT = 28
-  const isSelected = user => form.recipients.includes(user.id)
+  const isSelected = (user) => form.recipients.includes(user.id)
 
   return (
     <>
       {/* dropdown trigger */}
       <p className="flex cursor-pointer gap-[2px] hover:font-bold">
-        @ <span className="font-Lato">Recipients</span>
+        @ <span className="">Recipients</span>
       </p>
 
       {/* container */}
@@ -376,7 +418,7 @@ export function RecipientsDropdown({ form, setForm }) {
                     key={user.id}
                     style={{ height: USER_BTN_HEIGHT }}
                     className={`block w-full  px-4 py-1 text-left ${
-                      isSelected(user) ? 'bg-primary/30 border-b border-primary/80' : ''
+                      isSelected(user) ? 'border-b border-primary/80 bg-primary/30' : ''
                     }`}
                     type="button"
                     onClick={() => {
@@ -418,7 +460,7 @@ export function HashTagsDropdown({ form, setForm }) {
   return (
     <>
       <p className="flex cursor-pointer gap-[2px] hover:font-bold">
-        # <span className="font-Lato"> Hashtag</span>
+        # <span className=""> Hashtag</span>
       </p>
       <div className="absolute z-10 hidden flex-col divide-y overflow-hidden rounded bg-white text-black shadow group-hover:flex">
         {properties.isLoading ? (
@@ -465,10 +507,9 @@ export function toFormData(data) {
     else if (typeof value == 'object' && !(value instanceof File || value instanceof Blob)) {
       _value = JSON.stringify(value)
       formData.set(key, _value)
-    }else {
+    } else {
       formData.set(key, value)
     }
-
   })
   return formData
 }

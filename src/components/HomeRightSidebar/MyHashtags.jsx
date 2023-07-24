@@ -3,13 +3,22 @@ import { api } from '@/api';
 import { useQuery } from 'react-query';
 import Cookies from 'js-cookie';
 
-const MyHashtags = () => {
+const MyHashtags = ({sortBy, userId}) => {
 
   const [sortedHashtags, setSortedHashtags] = useState([]);
 
-  const receivedTransactions = useQuery('transactions', () => api.transactions.meAsRecipient(Cookies.get('user_id')))
+  const receivedTransactions = useQuery(
+    'transactions',
+    () => api.transactions.meAsRecipient(userId, sortBy),
+    { enabled: false } // Disable the query by default and enable it manually
+  );
 
   useEffect(() => {
+    if (sortBy) {
+      // Enable the query when sortBy prop is available
+      receivedTransactions.refetch();
+    }
+
     if (receivedTransactions.data) {
       // Calculate hashtag counts from received transactions and update state
       const hashtagCounts = receivedTransactions.data.reduce((counts, transaction) => {
@@ -25,9 +34,8 @@ const MyHashtags = () => {
         .sort((a, b) => b.count - a.count);
 
       setSortedHashtags(sortedHashtags);
-      
     }
-  }, [receivedTransactions.data]);
+  }, [receivedTransactions.data, sortBy, userId]);
   
   return (
     <div>
@@ -36,7 +44,7 @@ const MyHashtags = () => {
           <p className="text-[20px] font-Lato font-bold text-[#292929] text-center ">My Hashtags</p>
         </div>
         {receivedTransactions.data &&
-          receivedTransactions.data.length > 0 &&
+          receivedTransactions.data.length > 0 ?
           sortedHashtags.map((hashtag, index) => (
             <div key={index}>
               <div className="px-6 py-3">
@@ -45,8 +53,9 @@ const MyHashtags = () => {
                   <div className="font-semibold text-[14px] text-[#000000]">{hashtag.count}</div>
                 </div>
               </div>
-            </div>
-          ))}
+            </div> 
+          )) : <div className='text-center py-4'>No Hashtag's Received</div>
+        }
       </div>
     </div>
   )

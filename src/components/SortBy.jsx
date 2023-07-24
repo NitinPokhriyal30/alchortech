@@ -1,27 +1,37 @@
-import React from "react";
-import { AiFillCaretDown } from "react-icons/ai";
+import React from 'react'
+import { AiFillCaretDown } from 'react-icons/ai'
 
-const SortBy = () => {
-    return (
-        <div>
-            <div className="flex items-center gap-2 justify-between">
-                <div className="bg-[#CECECE] h-[1px] w-full"></div>
-                <div className="xxl:w-[22%] xl:w-[19%] lg:w-[33%] md:w-[33%] sm:w-[40%] xs:w-[50%] ">
-                    <p className="font-Lato text-[#7B7B7B] text-sm relative flex items-center">
-                        Sort By:
-                        <button className="peer font-Lato flex items-center gap-1 text-sm font-semibold pl-1">
-                            Recent <span><AiFillCaretDown /></span>
-                        </button>
-                        <div className="hidden drop-shadow-[0px_2px_6px_#44444F1A] px-4 py-2 rounded-lg bg-white absolute z-10 top-[21px] right-[1px] peer-hover:flex hover:flex  flex-col text-end">
-                            <p className="text-sm font-Lato">Popular</p>
-                            <p className="text-sm font-Lato">relevant</p>
-                            <p className="text-sm font-Lato">Everything</p>
-                        </div>
-                    </p>
-                </div>
-            </div>
+const SortBy = ({ value, onChange }) => {
+  return (
+    <div>
+      <div className="flex items-center justify-between gap-2">
+        <div className="h-[1px] w-full bg-[#CECECE]"></div>
+        <div className="group relative whitespace-nowrap xs:w-[50%] sm:w-[40%] md:w-[33%] lg:w-fit xxl:w-fit">
+          <div className="relative flex items-center  text-sm text-[#7B7B7B]">
+            Sort By:
+            <button className="peer flex items-center gap-1 pl-1  text-sm font-semibold">
+              {value}
+              <span>
+                <AiFillCaretDown />
+              </span>
+            </button>
+          </div>
+
+          <div className='hidden group-hover:block absolute right-0 z-10 p-2  rounded-md bg-white shadow border child:cursor-pointer'>
+            <p className="bg-translucent  text-sm" onClick={() => onChange('all')}>
+              Everything
+            </p>
+            <p className="bg-translucent  text-sm" onClick={() => onChange('popular')}>
+              Popular
+            </p>
+            <p className="bg-translucent  text-sm" onClick={() => onChange('relevant')}>
+              Relevant
+            </p>
+          </div>
         </div>
-    );
-};
+      </div>
+    </div>
+  )
+}
 
-export default SortBy;
+export default SortBy

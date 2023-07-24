@@ -16,9 +16,9 @@ export default function RecentCampaignWidget({ ...props }) {
 
   return (
     <div>
-      <div className="right-sidebar-container">
-        <div className="border-b border-[#EDEDED] py-1 px-3">
-          <p className="text-[16px] font-Lato font-semibold text-[#464646] text-center ">
+      <div className="right-sidebar-container !pt-0">
+        <div className="border-b border-[#EDEDED] py-[8.5px] px-3">
+          <p className="leading-[24px]  font-bold text-[#464646] text-center ">
             Recent Campaigns
           </p>
         </div>
@@ -30,17 +30,17 @@ export default function RecentCampaignWidget({ ...props }) {
                   <img src={BloodDonation} alt="Blood Donation" />
                 </div>
                 <div>
-                  <p className="text-[16px] leading-[18px] pb-1 text-[#050505] font-Lato font-bold ">
+                  <p className="text-[16px] leading-[18px] pb-1 text-[#050505]  font-bold ">
                     {campaign.title}
                   </p>
-                  <p className="text-[12px] leading-[15px] font-Lato font-medium text-[#939393]">
+                  <p className="text-[12px] leading-[15px]  font-medium text-[#939393]">
                     Owner: {campaign.author}
                   </p>
-                  <p className="text-[12px] leading-[15px] font-Lato font-medium text-[#939393]">
+                  <p className="text-[12px] leading-[15px]  font-medium text-[#939393]">
                     {campaign.startDate} - {campaign.endDate}
                   </p>
 
-                  <Link to={`/take-campaign/${campaign.id}`} className="text-[14px] flex items-end leading-[17px] font-Lato font-medium text-[#5486E3]">
+                  <Link to={`/take-campaign/${campaign.id}`} className="text-[14px] flex items-end leading-[17px]  font-medium text-[#5486E3]">
                     Participate
                     <span>
                       <BiChevronRight />
@@ -52,7 +52,7 @@ export default function RecentCampaignWidget({ ...props }) {
           </div>
 
           <div className="text-center pt-2 border-t border-[#EDEDED]">
-            <Link to="/take-campaign" className="text-base flex gap-1 justify-center items-center font-Lato text-primary font-bold">
+            <Link to="/take-campaign" className="text-base flex gap-1 justify-center items-center  text-primary font-bold">
               View All
               <span>
                 <AiOutlineCaretDown />

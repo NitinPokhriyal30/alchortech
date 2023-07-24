@@ -25,12 +25,12 @@ export default function SurveyOngoingWidget({ ...props }) {
   ])
 
   return (
-    <div className="right-sidebar-container">
-      <div className="border-b border-[#EDEDED] py-1 px-3">
-        <p className="text-[16px] font-Lato font-semibold text-[#464646] text-center ">
+    <div className="right-sidebar-container !pt-0">
+      <div className="border-b border-[#EDEDED] py-[8.5px]  px-3">
+        <p className="leading-[24px]  font-bold text-[#464646] text-center ">
           Ongoing Survey
         </p>
-        <span className="text-[12px] font-Lato font-normal text-[#A7A7A7] flex justify-center">
+        <span className="mt-[2.25px] text-[12px] leading-[15px]  font-normal text-[#A7A7A7] flex justify-center">
           Take surveys and get High5 points
         </span>
       </div>
@@ -39,8 +39,8 @@ export default function SurveyOngoingWidget({ ...props }) {
         {survey.map((survey) => (
           <div key={survey.id} className="flex items-top pb-2 justify-between">
             <div>
-              <p className="text-[14px] text-[#5486E3] font-Lato font-normal">{survey.title}</p>
-              <span className="text-[14px] text-[#9F9F9F] font-Lato font-light">
+              <p className="text-[14px] text-[#5486E3]  font-normal">{survey.title}</p>
+              <span className="text-[14px] text-[#9F9F9F]  font-light">
                 {dateDiff(new Date(survey.endDate), new Date())} days left |{' '}
                 <strong>{survey.reward} Points</strong>
               </span>
@@ -49,7 +49,7 @@ export default function SurveyOngoingWidget({ ...props }) {
             <div>
               <Link
                 to={`/take-survey/${survey.id}`}
-                className="text-[14px] text-[#5486E3] font-Lato font-normal border-b border-[#5486E3]"
+                className="text-[14px] text-[#5486E3]  font-normal border-b border-[#5486E3]"
               >
                 Take Now
               </Link>

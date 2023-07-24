@@ -38,7 +38,7 @@ const MyRewards = () => {
       <div className="pl-3 pr-3 lg:pl-0">
         <div className="mt-3">
           <div className="rounded-t-lg bg-primary px-6 py-2 text-sm text-white">
-            <p className="font-Lato ">Recommended For You</p>
+            <p className=" ">Recommended For You</p>
           </div>
           <div className="rounded-b-lg bg-white px-6 py-4 drop-shadow-normal">
             <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(227px,1fr))]">
@@ -51,7 +51,7 @@ const MyRewards = () => {
 
         <div className="mt-2">
           <div className="rounded-t-lg bg-primary px-6 py-2 text-sm text-white">
-            <p className="font-Lato ">Apparel</p>
+            <p className=" ">Apparel</p>
           </div>
           <div className="rounded-b-lg bg-white px-6 py-4 drop-shadow-normal">
             <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(227px,1fr))]">
@@ -64,7 +64,7 @@ const MyRewards = () => {
 
         <div className="mt-2">
           <div className="rounded-t-lg bg-primary px-6 py-2 text-sm text-white">
-            <p className="font-Lato ">Cash & Points Boots</p>
+            <p className=" ">Cash & Points Boots</p>
           </div>
           <div className="rounded-b-lg bg-white px-6 py-4 drop-shadow-normal">
             <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(227px,1fr))]">
@@ -95,11 +95,11 @@ function RewardCard({ coupon }) {
         </div>
 
         <div className="text-center">
-          <p className="font-Lato text-[13px] text-[#7B7B7B]">{title}</p>
-          <p className="font-Lato text-[13px] font-bold text-[#7B7B7B]">{tagLine}</p>
+          <p className=" text-[13px] text-[#7B7B7B]">{title}</p>
+          <p className=" text-[13px] font-bold text-[#7B7B7B]">{tagLine}</p>
           <div className="py-3">
             <Dialog.Trigger>
-              <button className="rounded border border-[#EFEFEF] bg-[#f7f7f7] px-4 font-Lato text-[14px] text-primary hover:border-translucent hover:bg-translucent">
+              <button className="rounded border border-[#EFEFEF] bg-[#f7f7f7] px-4  text-[14px] text-primary hover:border-translucent hover:bg-translucent">
                 Redeem
               </button>
             </Dialog.Trigger>

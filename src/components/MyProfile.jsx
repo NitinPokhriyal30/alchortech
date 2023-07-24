@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Flag from '../assets/images/user-profile/flag.png';
-import AnniversaryBg from '../assets/images/user-profile/anniversarybg.png';
+import AnniversaryBg from '../assets/images/user-profile/anniversarybg1.png';
 import Uparrow from '../assets/svg/Uparrow.svg';
 import Downarrow from '../assets/svg/Downarrow.svg';
 import MyHashtags from './HomeRightSidebar/MyHashtags';
@@ -12,6 +12,7 @@ import { useQuery } from 'react-query';
 import { SERVER_URL } from '@/constant';
 import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
+import { useLocation } from 'react-router-dom';
 
 const getChildTransactionsFor = (parentId, allTransactions) => {
     return allTransactions.filter((post) => post.parent_id === parentId);
@@ -32,12 +33,17 @@ export default function MyProfile() {
     const [appreciationType, setAppreciationType] = useState('received');
     const [receivedCount, setReceivedCount] = useState(0);
     const [givenCount, setGivenCount] = useState(0);
+    const [sortBy, setSortBy] = useState('all');
 
-    const meQuery = useQuery('me', () => api.auth.me(Cookies.get('user_id')));
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const userId = queryParams.get('userId');
+
+    const meQuery = useQuery('me', () => api.auth.user(userId));
     const me = meQuery.data;
 
     const formattedBirthDate = new Date(me?.birth_date).toLocaleDateString('en-US', {
-        month: 'short',
+        month: 'long',
         day: '2-digit',
     });
     
@@ -50,9 +56,9 @@ export default function MyProfile() {
         ['transactions', appreciationType], // Added appreciationType as a dependency to trigger the query when it changes
         () => {
           if (appreciationType === 'received') {
-            return api.transactions.meAsRecipient(Cookies.get('user_id'));
+            return api.transactions.meAsRecipient(userId, sortBy);
           } else {
-            return api.transactions.meAsSender(Cookies.get('user_id'));
+            return api.transactions.meAsSender(userId, sortBy);
           }
         }, 
     );
@@ -66,8 +72,8 @@ export default function MyProfile() {
         // Refetch the transactions query when appreciationType changes
         transactionsQuery.refetch();
         const fetchCounts = async () => {
-          const receivedPromise = api.transactions.meAsRecipient(Cookies.get('user_id'));
-          const givenPromise = api.transactions.meAsSender(Cookies.get('user_id'));
+          const receivedPromise = api.transactions.meAsRecipient(userId, sortBy);
+          const givenPromise = api.transactions.meAsSender(userId, sortBy);
           
           const receivedCount = await receivedPromise;
           const givenCount = await givenPromise;
@@ -75,9 +81,9 @@ export default function MyProfile() {
           setReceivedCount(receivedCount.length);
           setGivenCount(givenCount.length);
         };
-    
+        
         fetchCounts()
-    }, [appreciationType]);
+    }, [appreciationType, sortBy, userId]);
 
     const handleTabClick = (tab) => {
         setActiveTab(tab);
@@ -95,7 +101,7 @@ export default function MyProfile() {
             const formData = new FormData();
             formData.append('avtar', file);
             try {
-              const response = await api.auth.changeAvatar(Cookies.get('user_id'), formData);
+              const response = await api.auth.changeAvatar(userId, formData);
               toast.success("Profile Picture changed !")
               setTimeout(() => {
                 window.location.reload();
@@ -109,8 +115,8 @@ export default function MyProfile() {
 
     return (
         <div className="drop-shadow-md">
-            <div className="flex flex-col md:flex-row h-auto gap-4 mt-3">
-              <div className="flex flex-col md:flex-row items-center md:w-[70%] bg-white rounded-lg border-t-8 md:border-t-0 border-l-0 md:border-l-8 border-[#27C4A0]">
+            <div className="flex flex-col md:flex-row gap-3 mt-3">
+              <div className="flex flex-col md:flex-row items-center md:w-[70%] bg-white rounded-lg border-t-8 md:border-t-0 border-l-0 md:border-l-8 border-[#27C4A0] mx-2 md:mx-0">
                 <div className="h-32 md:h-36 w-32 md:w-36 rounded-full overflow-hidden relative ml-4 mr-8 my-8">
                     <img className="w-full h-full object-cover" src={SERVER_URL + (me.avtar || '')} alt="user avatar"/>
                     <label htmlFor='imageInput' className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center opacity-0 transition-opacity duration-300 hover:opacity-100">
@@ -140,15 +146,14 @@ export default function MyProfile() {
                 </div>
               </div>
 
-              <div className="md:w-[28%] drop-shadow-md h-auto flex flex-col items-center bg-[#5486E3] bg-[center_top_7.5rem] rounded-lg" style={{ backgroundImage: `url(${AnniversaryBg})`, backgroundRepeat: 'no-repeat' }}>
+              <div className="md:w-[28%] drop-shadow-md h-auto flex flex-col items-center bg-[#5486E3] bg-center rounded-lg" style={{ backgroundImage: `url(${AnniversaryBg})`, backgroundRepeat: 'no-repeat' }}>
                 <div className="font-bold font-Lato text-[#fdfbfb] text-[20px] pb-6 pt-4">Anniversaries</div>
                 <div className="font-normal font-lato text-[#fbfbfb] text-[16px]">Birthday</div>
                 <div className="font-semibold font-lato text-[#8DFFFF] text-[30px]">{formattedBirthDate}</div>
                 <div className="font-normal font-lato  text-[#fbfbfb] text-[16px] pt-2">Work Anniversary</div>
                 <div className="font-semibold font-lato text-[#bdfcfc] text-[28px] pb-4">{formattedHireDate}</div>
-              </div>
-
             </div>
+        </div>
 
             <div className="text-[#8D8D8D] font-semibold text-[14px] font-lato text-left mr-3 mt-4 mb-4">
                 <div className="flex flex-col md:flex-row sm:justify-center md:justify-between">
@@ -168,14 +173,17 @@ export default function MyProfile() {
                             <div className="font-Lato text-[#7B7B7B] text-sm relative flex items-center ml-20">
                                 Sort By:
                                 <button className="peer font-Lato flex items-center gap-1 text-sm font-semibold pl-1">
-                                All <span><AiFillCaretDown /></span>
+                                {sortBy}
+                                <span><AiFillCaretDown /></span>
                                 </button>
-                                <div className="hidden drop-shadow-[0px_2px_6px_#44444F1A] w-36 px-4 py-2 rounded-lg bg-white absolute z-10 top-[21px] right-[1px] peer-hover:flex hover:flex  flex-col text-end">
-                                <p className="text-sm font-Lato">Last 1 year</p>  
-                                <p className="text-sm font-Lato">Last 6 months</p>
-                                <p className="text-sm font-Lato">Last quarter</p>
-                                <p className="text-sm font-Lato">Last month</p>
-                                <p className="text-sm font-Lato">This month</p>
+                                <div className="hidden drop-shadow-[0px_2px_6px_#44444F1A] w-36 px-4 py-2 rounded-lg bg-white absolute z-10 top-[21px] right-[1px] peer-hover:flex hover:flex  flex-col child:cursor-pointer text-end">
+                                <p className="text-sm font-Lato" onClick={() => setSortBy("all")}>All</p>
+                                <p className="text-sm font-Lato" onClick={() => setSortBy("last_year")}>Previous year</p> 
+                                <p className="text-sm font-Lato" onClick={() => setSortBy("year_to_date")}>This year</p> 
+                                <p className="text-sm font-Lato" onClick={() => setSortBy("last_quarter")}>Last quarter</p>
+                                <p className="text-sm font-Lato" onClick={() => setSortBy("this_quarter")}>This quarter</p>
+                                <p className="text-sm font-Lato" onClick={() => setSortBy("last_month")}>Last month</p>
+                                <p className="text-sm font-Lato" onClick={() => setSortBy("this_month")}>This month</p>
                                 </div>
                             </div>
                         </div>
@@ -184,7 +192,7 @@ export default function MyProfile() {
                 <div className="bg-[#CECECE] h-[1px] w-full"></div>
             </div>
 
-            <div className="md:flex gap-2">
+            <div className="md:flex mx-2 md:mx-0 gap-2">
                 <div className="flex-col md:w-[70%]">
                     <div className={activeTab !== 'achievements' ? 'grid grid-cols-2 gap-0 bg-white p-2 md:p-3 rounded-lg text-white drop-shadow-md' : 'hidden'}>
                         <div onClick={() => handleAppreciationTypeClick('received')} className={appreciationType === 'received' || activeTab === 'overview' ? 'flex flex-col items-center justify-center bg-[#27C4A0] py-2 rounded-l-lg' : 'flex flex-col items-center justify-center bg-[#D1D1D1] py-2 rounded-l-lg'}>
@@ -246,17 +254,17 @@ export default function MyProfile() {
                                 </div>
                             )}
                             {activeTab === 'recentActivities' && (
-                                <div className="relative mt-1" id="post-list">
+                                <div className='flex flex-col bg-white rounded-lg pb-4'>
                                 {transactionsQuery.isLoading ? (
-                                    <div className="h-64 rounded-md bg-gray-300" />
+                                    <div className="h-64 rounded-md bg-gray-900" />
                                 ) : transactionsQuery.data && transactionsQuery.data.length > 0 ? (
                                     parentPosts.slice(0, 2).map((post, i) => (
-                                    <div key={post.id}>
+                                    <div className='px-4 mt-4' key={post.id}>
                                         <PostCard i={i} post={post} childrenTransactions={getChildTransactionsFor(post.id, allPosts)} />
                                     </div>
                                     ))
                                 ) : (
-                                    <p>No recent activities found.</p>
+                                    <p className='text-md font-semibold text-center my-4'>No recent activities found.</p>
                                 )}
                                 </div>
                             )}
@@ -268,9 +276,9 @@ export default function MyProfile() {
                         </div>
                     </div>
                 </div>
-                <div className="md:w-[28%] h-fit mb-4 ml-2 bg-white rounded-lg drop-shadow-md">
+                <div className="md:w-[28%] h-fit mb-4 md:ml-2 bg-white rounded-lg drop-shadow-md">
                     <div>
-                        <MyHashtags />
+                        <MyHashtags sortBy={sortBy} userId={userId} />
                     </div>
                 </div>
             </div>
