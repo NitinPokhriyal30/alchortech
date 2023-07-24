@@ -80,7 +80,7 @@ export default function Transactions({ ...props }) {
               sortBy={sortBy}
             />
 
-            <div className="mt-20 flex justify-around">
+            {/* <div className="mt-20 flex justify-around">
               <Link
                 to={'/transactions/hashtags?' + hashtags.toString()}
                 className="cursor-pointer rounded-md p-3 text-18px  hover:bg-white"
@@ -100,7 +100,7 @@ export default function Transactions({ ...props }) {
                   {forUser.first_name} {forUser.last_name}
                 </span>
               </Link>
-            </div>
+            </div> */}
           </div>
         )}
       </div>

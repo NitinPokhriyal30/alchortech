@@ -19,6 +19,7 @@ export default function SearchBox({ ...props }) {
   const [isLoading, setIsLoading] = React.useState(false)
   const [show, setShow] = React.useState(false)
   const [selectedUser, setSelectedUser] = React.useState(null)
+  const [searchQuery, setSearchQuery] = React.useState('')
   const [searchData, setSearchData] = React.useState({})
   const users = useQuery('users', () => api.users.profiles(), {
     initialData: [],
@@ -28,6 +29,7 @@ export default function SearchBox({ ...props }) {
     setIsLoading(true)
     setSelectedUser(null)
     const searchQuery = e.target.value.trim()
+    setSearchQuery(searchQuery)
 
     if (searchQuery === '') {
       setSearchData({})
@@ -64,23 +66,23 @@ export default function SearchBox({ ...props }) {
             onChange={handleSearch}
           />
 
-          <div
+          {searchQuery !== "" ? <div
             hidden={!show}
-            className="absolute top-full z-10 mt-1.5 h-screen max-h-[26rem] w-full overflow-y-auto bg-white px-6 py-4 shadow-[0px_3px_6px_#00000029]"
+            className="absolute top-full z-10 mt-1.5 h-screen max-h-[26rem] w-full overflow-y-auto bg-white p-6 shadow-[0px_3px_6px_#00000029] rounded-lg"
           >
             {!!selectedUser ? (
               <SearchUserTransactions user={selectedUser} onBack={() => setSelectedUser(null)} onClick={() => setShow(false)} />
             ) : !Array.isArray(searchData.users) ? (
-              <p className="mt-20 flex items-center justify-center gap-x-2 font-bold">
+              <p className="mt-20 flex items-center justify-center gap-x-2 font-semibold">
                 <RiSearchLine /> Type anything in Search Box.
               </p>
             ) : searchData.users.length === 0 ? (
-              <p className="mt-20 flex items-center justify-center gap-x-2 font-bold">
+              <p className="mt-20 flex items-center justify-center gap-x-2 font-semibold">
                 No Users for Found
               </p>
             ) : searchData.users.length > 0 ? (
               <>
-                <p className="flex items-center gap-3 text-18px font-bold text-[#00bc9f]">Users</p>
+                <p className="flex items-center gap-3 text-18px font-semibold text-[#00bc9f]">Users</p>
 
                 <div className="space-y-2.5 pt-2.5">
                   {searchData.users.map((user) => (
@@ -89,7 +91,8 @@ export default function SearchBox({ ...props }) {
                 </div>
               </>
             ) : null}
-          </div>
+          </div> : ''}
+
         </div>
       </form>
     </>
@@ -103,9 +106,9 @@ function SearchUserTransactions({ user, onBack, onClick }) {
 
   return (
     <div>
-      <p className="flex items-center gap-3 text-18px font-bold text-[#00bc9f]">
+      <p className="flex items-center gap-3 text-18px font-semibold text-[#00bc9f]">
         <button
-          className="rounded-md px-2 py-1  hover:bg-paper hover:text-primary"
+          className="rounded-md py-1  hover:bg-paper hover:text-primary"
           type="button"
           onClick={() => {
             onBack()
@@ -123,7 +126,7 @@ function SearchUserTransactions({ user, onBack, onClick }) {
         </Link>
       </div>
 
-      <p className="mt-5 text-18px font-bold text-[#00bc9f]">Appriciations</p>
+      <p className="mt-5 text-18px font-font-semibold text-[#00bc9f]">Appriciations</p>
       <div className="space-y-2.5 pt-4">
         {userTransactionQuery.data == null || userTransactionQuery.isLoading ? (
           <div className="space-y-2.5">
@@ -139,13 +142,13 @@ function SearchUserTransactions({ user, onBack, onClick }) {
         ) : (
           userTransactionQuery.data.results.map((transaction) => (
             <Link
-              to={`/transactions/${transaction.id}?for=${user.id}`}
-              className="flex items-start gap-2.5 rounded-md p-2 text-16px hover:bg-paper"
+              to={`/transactions/${transaction.id}`}
+              className="flex items-start gap-2.5 rounded-md text-16px hover:bg-paper"
               onClick={onClick}
             >
               <div>
                 <p className="text-black">
-                  <span className="font-bold">
+                  <span className="font-semibold">
                     {transaction.sender[0].first_name} {transaction.sender[0].last_name}
                   </span>{' '}
                   <span className="italic">Appriciated</span>{' '}
@@ -154,7 +157,7 @@ function SearchUserTransactions({ user, onBack, onClick }) {
                   </span>
                 </p>
                 <p className="line-clamp-1 text-ellipsis pt-1">{transaction.message}</p>
-                <p>{transaction.hashtags.join(' ')}</p>
+                <p className="line-clamp-1 text-ellipsis pt-1">{transaction.hashtags.join(' ')}</p>
               </div>
             </Link>
           ))
@@ -167,11 +170,11 @@ function SearchUserTransactions({ user, onBack, onClick }) {
 function SearchUserProfile({ user, onClick }) {
   return (
     <div
-      className="flex cursor-pointer items-start gap-2.5 rounded-md p-2 text-16px hover:bg-paper"
+      className="flex cursor-pointer items-start gap-2.5 rounded-md text-16px hover:bg-paper"
       onClick={onClick}
     >
       <img
-        className="aspect-square w-[50px] rounded-full border border-[#707070]"
+        className="aspect-square w-[55px] rounded-full border border-[#707070]"
         src={user.avtar}
       />
       <div>

@@ -111,7 +111,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
 
   return (
     <div className="mb-3">
-      <div className="rounded-lg bg-white pb-8 pt-6 shadow-md xs:px-4 sm:px-6 md:px-6 lg:px-6 xl:px-6  xxl:px-6">
+      <div className="rounded-lg bg-white pb-6 pt-6 shadow-md xs:px-4 sm:px-6 md:px-6 lg:px-6 xl:px-6  xxl:px-6">
         <div className="flex items-center justify-between gap-3">
           <div className="flex-1">
             <div className="flex items-center justify-between gap-8">
@@ -480,7 +480,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                     <button
                       disabled={(!form.message && !form.image && !form.gif)}
                       className={
-                        'block rounded-r-xl px-5 py-5 font-semibold text-primary transition-all disabled:cursor-auto disabled:text-gray-300'
+                        'block rounded-r-xl pl-0.5 pr-5 py-5 font-semibold text-primary transition-all disabled:cursor-auto disabled:text-gray-300'
                       }
                       form={post.id}
                       type="submit"
