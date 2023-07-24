@@ -36,6 +36,7 @@ import gif from '../assets/images/new-post/gif.svg'
 import chat from '../assets/images/post-img/chat.png'
 import plus from '../assets/images/post-img/plus.png'
 import heart from '../assets/images/post-img/heart.png'
+import { RiSendPlane2Fill } from 'react-icons/ri'
 
 const POINTS = [
   {
@@ -139,9 +140,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                   {post.point + childrenTransactions.reduce((total, post) => total + post.point, 0)}
                 </p>
 
-                <p className="ml-5  font-normal text-[#00BC9F]">
-                  {moment(post.created).fromNow()}
-                </p>
+                <p className="ml-5  font-normal text-[#00BC9F]">{moment(post.created).fromNow()}</p>
               </div>
             </div>
           </div>
@@ -250,7 +249,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                             targetPost.react_by = reacts.react_by
                           }
 
-                          return {...prev}
+                          return { ...prev }
                         })
                       } catch (e) {
                         console.log('postcard > react button', e)
@@ -282,8 +281,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
               {Array.isArray(post.react_by) && post.react_by.length > 0
                 ? post.react_by[post.react_by.length - 1].react
                 : '😊'}{' '}
-              <p className='text-16px pl-[3px]'>{post.react_by?.length || 0}</p>
-              
+              <p className="pl-[3px] text-16px">{post.react_by?.length || 0}</p>
             </div>
             <p className="text-16px text-[#d1d1d1]">
               {commentsAndTransactions.length + ' '}
@@ -296,7 +294,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
           <div className="flex items-center gap-3 pb-1">
             {post.reactions.length > 0 && (
               <div className="text-2xl flex items-center gap-1 rounded-[17px] border-[0.6px] border-[#D1D1D1] pb-[2px] pr-2">
-                {post.reactions[0].emoji} 
+                {post.reactions[0].emoji}
                 <span className=" text-xs text-[#747474]">{post.reactions.length}</span>
               </div>
             )}
@@ -323,48 +321,97 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                   />
                 </div>
                 <div className="w-full flex-1">
-                  <div className="grid grid-cols-[1fr_auto_auto] items-center overflow-x-hidden rounded-b-xl rounded-tr-xl bg-paper">
-                    <form
-                      id={post.id}
-                      onSubmit={async (ev) => {
-                        try {
-                          ev.preventDefault()
+                  <div className="grid grid-cols-[1fr_auto_auto] items-end overflow-x-hidden rounded-b-xl rounded-tr-xl bg-paper">
+                    <div className='self-center'>
+                      <form
+                        id={post.id}
+                        onSubmit={async (ev) => {
+                          try {
+                            ev.preventDefault()
 
-                          console.log(form)
-                          await api.comment.new(
-                            CreatePostComment(me.data.id, {
-                              post_id: post.id,
-                              comment: form.message,
-                              image: form.image,
-                              gif: form.gif,
-                            })
-                          )
+                            console.log(form)
+                            await api.comment.new(
+                              CreatePostComment(me.data.id, {
+                                post_id: post.id,
+                                comment: form.message,
+                                image: form.image,
+                                gif: form.gif,
+                              })
+                            )
 
-                          await queryClient.invalidateQueries('comments')
-                          if (imageInputRef.current) imageInputRef.current.value = ''
-                          setForm({ message: '', image: '', gif: '' })
-                        } catch (e) {
-                          console.log('e', e)
-                          toast.error('Failed to post comment')
-                        }
-                      }}
-                      className="w-full"
-                    >
-                      <input
-                        placeholder="Type your comment here"
-                        name="message"
-                        value={form.message}
-                        onChange={(e) =>
-                          setForm((prev) => ({
-                            ...prev,
-                            message: e.target.value,
-                          }))
-                        }
-                        className=" w-full border-none bg-transparent px-6 py-3 text-[#464646] outline-none placeholder: placeholder:text-[16px] placeholder:text-[#ABACAC]"
-                      />
-                    </form>
+                            await queryClient.invalidateQueries('comments')
+                            if (imageInputRef.current) imageInputRef.current.value = ''
+                            setForm({ message: '', image: '', gif: '' })
+                          } catch (e) {
+                            console.log('e', e)
+                            toast.error('Failed to post comment')
+                          }
+                        }}
+                        className="w-full"
+                      >
+                        <input
+                          placeholder="Type your comment here"
+                          name="message"
+                          value={form.message}
+                          onChange={(e) =>
+                            setForm((prev) => ({
+                              ...prev,
+                              message: e.target.value,
+                            }))
+                          }
+                          className=" placeholder: w-full border-none bg-transparent px-6 py-3 text-[#464646] outline-none placeholder:text-[16px] placeholder:text-[#ABACAC]"
+                        />
+                      </form>
+                      <div className="px-6 pb-6 empty:hidden">
+                        {form.image && (
+                          <div className="group relative flex w-fit items-center pt-3">
+                            <img
+                              className="block w-40 rounded-md"
+                              src={
+                                typeof form.image === 'string'
+                                  ? form.image
+                                  : URL.createObjectURL(form.image)
+                              }
+                            />
 
-                    <div className="ml-auto mr-3 flex items-baseline gap-2">
+                            <button
+                              type="button"
+                              className="ml-4 p-2 text-[#464646] opacity-0 group-hover:opacity-100"
+                              onClick={() => {
+                                if (imageInputRef.current) imageInputRef.current.value = ''
+                                setForm((prev) => {
+                                  delete prev.image
+                                  return { ...prev }
+                                })
+                              }}
+                            >
+                              &times;
+                            </button>
+                          </div>
+                        )}
+
+                        {form.gif && (
+                          <div className="group relative flex w-fit items-center pt-[16px]">
+                            <img className="block w-40 rounded-md" src={form.gif} />
+
+                            <button
+                              type="button"
+                              className="ml-4 p-2 text-[#464646] opacity-0 group-hover:opacity-100"
+                              onClick={() =>
+                                setForm((prev) => {
+                                  delete prev.gif
+                                  return { ...prev }
+                                })
+                              }
+                            >
+                              &times;
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="ml-auto mr-2 flex items-center gap-2 h-[56px]">
                       <button
                         type="button"
                         onClick={() => setModal((prev) => (prev === 'emoji' ? '' : 'emoji'))}
@@ -430,66 +477,16 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                         />
                       </Popover.Root>
                     </div>
-                    {
-                      <button
-                        className={
-                          'block self-stretch rounded-r-xl bg-primary px-5 font-semibold text-white transition-all ' +
-                          (form.message || form.image || form.gif ? '' : 'w-0 !px-0')
-                        }
-                        form={post.id}
-                        type="submit"
-                      >
-                        send
-                      </button>
-                    }
-
-                    <div className="px-6 pb-6 empty:hidden">
-                      {form.image && (
-                        <div className="group relative flex w-fit items-center pt-3">
-                          <img
-                            className="block w-40 rounded-md"
-                            src={
-                              typeof form.image === 'string'
-                                ? form.image
-                                : URL.createObjectURL(form.image)
-                            }
-                          />
-
-                          <button
-                            type="button"
-                            className="ml-4 p-2 text-[#464646] opacity-0 group-hover:opacity-100"
-                            onClick={() => {
-                              if (imageInputRef.current) imageInputRef.current.value = ''
-                              setForm((prev) => {
-                                delete prev.image
-                                return { ...prev }
-                              })
-                            }}
-                          >
-                            &times;
-                          </button>
-                        </div>
-                      )}
-
-                      {form.gif && (
-                        <div className="group relative flex w-fit items-center pt-[16px]">
-                          <img className="block w-40 rounded-md" src={form.gif} />
-
-                          <button
-                            type="button"
-                            className="ml-4 p-2 text-[#464646] opacity-0 group-hover:opacity-100"
-                            onClick={() =>
-                              setForm((prev) => {
-                                delete prev.gif
-                                return { ...prev }
-                              })
-                            }
-                          >
-                            &times;
-                          </button>
-                        </div>
-                      )}
-                    </div>
+                    <button
+                      disabled={(!form.message && !form.image && !form.gif)}
+                      className={
+                        'block rounded-r-xl px-5 py-5 font-semibold text-primary transition-all disabled:cursor-auto disabled:text-gray-300'
+                      }
+                      form={post.id}
+                      type="submit"
+                    >
+                      <RiSendPlane2Fill />
+                    </button>
                   </div>
                 </div>
               </div>
