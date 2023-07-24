@@ -196,8 +196,13 @@ export default function ChildNewPost({ onClose, post, defaultPoint }) {
               onClick={async () => {
                 try {
                   setLoading(true)
-                  if (!validateNewPostForm(form)) return
                   const recipients = form.recipients.filter((userId) => userId !== me.data.id)
+                  if (recipients.length === 0) {
+                    toast.error("Cant give points to your self")
+                    return;
+                  }
+                  if (!validateNewPostForm(form)) return
+
                   const data = CreatePost(me.data.id, post.id, { ...form, recipients })
                   const formData = toFormData(data)
                   window.f = formData
