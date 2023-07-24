@@ -69,7 +69,7 @@ export default function SearchBox({ ...props }) {
             className="absolute top-full z-10 mt-1.5 h-screen max-h-[26rem] w-full overflow-y-auto bg-white px-6 py-4 shadow-[0px_3px_6px_#00000029]"
           >
             {!!selectedUser ? (
-              <SearchUserTransactions user={selectedUser} onBack={() => setSelectedUser(null)} />
+              <SearchUserTransactions user={selectedUser} onBack={() => setSelectedUser(null)} onClick={() => setShow(false)} />
             ) : !Array.isArray(searchData.users) ? (
               <p className="mt-20 flex items-center justify-center gap-x-2 font-bold">
                 <RiSearchLine /> Type anything in Search Box.
@@ -96,7 +96,7 @@ export default function SearchBox({ ...props }) {
   )
 }
 
-function SearchUserTransactions({ user, onBack }) {
+function SearchUserTransactions({ user, onBack, onClick }) {
   const userTransactionQuery = useQuery(['search', 'transaction', user.id], () =>
     api.transactions.all(new URLSearchParams({ pagination: 0, recipients: user.id }))
   )
@@ -107,7 +107,10 @@ function SearchUserTransactions({ user, onBack }) {
         <button
           className="rounded-md px-2 py-1  hover:bg-paper hover:text-primary"
           type="button"
-          onClick={onBack}
+          onClick={() => {
+            onBack()
+            onClick()
+          }}
         >
           <RiArrowLeftLine />
         </button>
@@ -138,6 +141,7 @@ function SearchUserTransactions({ user, onBack }) {
             <Link
               to={`/transactions/${transaction.id}`}
               className="flex items-start gap-2.5 rounded-md p-2 text-16px hover:bg-paper"
+              onClick={onClick}
             >
               <div>
                 <p className="text-black">

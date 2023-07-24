@@ -63,6 +63,7 @@ const router = createBrowserRouter(
         <Route path="my-rewards" element={<MyRewards />} />
         <Route path="directory" element={<DirectoryPage />} />
         <Route path="myProfile" element={<MyProfile />} />
+        <Route path="profile/:id" element={"Not Implemented specific user profile page"} />
         <Route path="analytics" element={<Analytics />} />
         <Route path="company/users" element={<ManageUsers />} />
         <Route path="company/account" element={<Earnings />} />
