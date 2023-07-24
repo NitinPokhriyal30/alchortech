@@ -59,7 +59,7 @@ export default function SearchBox({ ...props }) {
           <input
             type="search"
             name=""
-            className="xs:w-70 py-100 rounded-[20px] bg-transparent pl-[10px] font-Lato text-16px placeholder:font-Lato placeholder:text-[16px] placeholder:text-[#ACACAC] focus:outline-none sm:w-96 md:w-[22rem] lg:w-96 xl:w-96 xxl:w-96"
+            className="xs:w-70 py-100 pr-2 rounded-[20px] bg-transparent pl-[10px] font-Lato text-16px placeholder:font-Lato placeholder:text-[16px] placeholder:text-[#ACACAC] focus:outline-none sm:w-96 md:w-[22rem] lg:w-96 xl:w-96 xxl:w-96"
             placeholder="Search Users, Mentioned, Hashtags…"
             onChange={handleSearch}
           />

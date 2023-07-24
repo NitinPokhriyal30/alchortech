@@ -64,7 +64,7 @@ export default function Transactions({ ...props }) {
         {post == null ? (
           <div className='mt-4 h-64 bg-white animate-pulse rounded-md' />
         ) : (
-          <div className="mt-4">
+          <div className="mt-3">
             <PostCard
               post={post}
               childrenTransactions={getChildTransactionsFor(post.id, allPosts)}
