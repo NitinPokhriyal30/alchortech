@@ -149,3 +149,17 @@ export function CreatePostComment(senderId, form) {
 
   return comment
 }
+
+export const getChildTransactionsFor = (parentId, allTransactions) => {
+  return allTransactions.filter((post) => post.parent_id == parentId)
+}
+
+export const withIsChild = (allTransactions) => {
+  return allTransactions.map((post) => {
+    const hasParent = allTransactions.some((parentPost) => post.parent_id == parentPost.id)
+    // if a transaction has a parent transaction then its a child transaction
+    post.isChild = hasParent
+
+    return post
+  })
+}

@@ -5,7 +5,13 @@ import { CiSearch } from 'react-icons/ci'
 import { useQuery } from 'react-query'
 import { toast } from 'react-toastify'
 import debounce from 'lodash.debounce'
-import { RiArrowLeftLine, RiArrowRightLine, RiLoader2Line } from 'react-icons/ri'
+import {
+  RiArrowLeftLine,
+  RiArrowRightLine,
+  RiLoader2Line,
+  RiSearch2Line,
+  RiSearchLine,
+} from 'react-icons/ri'
 import { Link } from 'react-router-dom'
 
 // not using react query because of debounce input
@@ -18,8 +24,9 @@ export default function SearchBox({ ...props }) {
     initialData: [],
   })
 
-  const handleSearch = debounce(async (e) => {
+  const handleSearch = async (e) => {
     setIsLoading(true)
+    setSelectedUser(null)
     const searchQuery = e.target.value.trim()
 
     if (searchQuery === '') {
@@ -39,7 +46,7 @@ export default function SearchBox({ ...props }) {
     } finally {
       setIsLoading(false)
     }
-  }, 500)
+  }
 
   return (
     <>
@@ -59,33 +66,25 @@ export default function SearchBox({ ...props }) {
 
           <div
             hidden={!show}
-            className="absolute top-full z-10 mt-1.5 max-h-[26rem] w-full overflow-y-auto bg-white px-6 py-4 shadow-[0px_3px_6px_#00000029] "
+            className="absolute top-full z-10 mt-1.5 h-screen max-h-[26rem] w-full overflow-y-auto bg-white px-6 py-4 shadow-[0px_3px_6px_#00000029]"
           >
             {!!selectedUser ? (
               <SearchUserTransactions user={selectedUser} onBack={() => setSelectedUser(null)} />
-            ) : Array.isArray(searchData.users) && searchData.users?.length > 0 && show === true ? (
+            ) : !Array.isArray(searchData.users) ? (
+              <p className="mt-20 flex items-center justify-center gap-x-2 font-bold">
+                <RiSearchLine /> Type anything in Search Box.
+              </p>
+            ) : searchData.users.length === 0 ? (
+              <p className="mt-20 flex items-center justify-center gap-x-2 font-bold">
+                No Users for Found
+              </p>
+            ) : searchData.users.length > 0 ? (
               <>
-                <p className="flex items-center gap-3 text-18px font-bold text-[#00bc9f]">
-                  Users {isLoading && <RiLoader2Line className="animate-spin" />}
-                </p>
+                <p className="flex items-center gap-3 text-18px font-bold text-[#00bc9f]">Users</p>
 
                 <div className="space-y-2.5 pt-2.5">
                   {searchData.users.map((user) => (
-                    <div
-                      className="flex cursor-pointer items-start gap-2.5 rounded-md p-2 text-16px hover:bg-paper"
-                      onClick={() => setSelectedUser(user)}
-                    >
-                      <img
-                        className="aspect-square w-[50px] rounded-full border border-[#707070]"
-                        src={user.avtar}
-                      />
-                      <div>
-                        <p className="font-semibold text-[#2F2F2F]">
-                          {user.first_name} {user.last_name}
-                        </p>
-                        <p className="mt-1 text-[#7B7B7B]">{user.department}</p>
-                      </div>
-                    </div>
+                    <SearchUserProfile user={user} onClick={() => setSelectedUser(user)} />
                   ))}
                 </div>
               </>
@@ -112,8 +111,16 @@ function SearchUserTransactions({ user, onBack }) {
         >
           <RiArrowLeftLine />
         </button>
-        Appriciations
+        Users
       </p>
+
+      <div className="space-y-2.5 pt-2.5">
+        <Link to={`/profile/${user.id}`}>
+          <SearchUserProfile user={user} />
+        </Link>
+      </div>
+
+      <p className="mt-5 text-18px font-bold text-[#00bc9f]">Appriciations</p>
       <div className="space-y-2.5 pt-4">
         {userTransactionQuery.data == null || userTransactionQuery.isLoading ? (
           <div className="space-y-2.5">
@@ -122,10 +129,14 @@ function SearchUserTransactions({ user, onBack }) {
             <div className="h-10 w-full animate-pulse rounded-md bg-paper" />
             <div className="h-10 w-full animate-pulse rounded-md bg-paper" />
           </div>
+        ) : userTransactionQuery.data.results.length === 0 ? (
+          <p className="mt-20 flex items-center justify-center gap-x-2 font-bold">
+            No transactions for "{user.first_name} {user.last_name}"
+          </p>
         ) : (
           userTransactionQuery.data.results.map((transaction) => (
             <Link
-              to={`/profile/?user-id=${user.id}`}
+              to={`/transactions/${transaction.id}`}
               className="flex items-start gap-2.5 rounded-md p-2 text-16px hover:bg-paper"
             >
               <div>
@@ -135,7 +146,7 @@ function SearchUserTransactions({ user, onBack }) {
                   </span>{' '}
                   <span className="italic">Appriciated</span>{' '}
                   <span className="bg-[#fff9c9]">
-                    @{transaction.recipients[0].first_name} {transaction.recipients[0].last_name}
+                    @{user.first_name} {user.last_name}
                   </span>
                 </p>
                 <p className="line-clamp-1 text-ellipsis pt-1">{transaction.message}</p>
@@ -144,6 +155,26 @@ function SearchUserTransactions({ user, onBack }) {
             </Link>
           ))
         )}
+      </div>
+    </div>
+  )
+}
+
+function SearchUserProfile({ user, onClick }) {
+  return (
+    <div
+      className="flex cursor-pointer items-start gap-2.5 rounded-md p-2 text-16px hover:bg-paper"
+      onClick={onClick}
+    >
+      <img
+        className="aspect-square w-[50px] rounded-full border border-[#707070]"
+        src={user.avtar}
+      />
+      <div>
+        <p className="font-semibold text-[#2F2F2F]">
+          {user.first_name} {user.last_name}
+        </p>
+        <p className="mt-1 text-[#7B7B7B]">{user.department}</p>
       </div>
     </div>
   )
