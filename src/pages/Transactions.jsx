@@ -16,11 +16,12 @@ import {
 import { useQuery } from 'react-query'
 import PostCard from '../components/PostCard'
 
-import { useParams } from 'react-router-dom'
+import { Link, useParams, useSearchParams } from 'react-router-dom'
 import HelpIcon from '@/assets/svg/home-sidebar/HelpIcon'
 
 export default function Transactions({ ...props }) {
   const { id } = useParams()
+  const [params] = useSearchParams()
   const sortBy = 'all'
   const postList = useQuery(
     ['transaction', sortBy],
@@ -29,6 +30,9 @@ export default function Transactions({ ...props }) {
       refetchOnWindowFocus: false,
     }
   )
+  const users = useQuery('users', () => api.users.profiles(), {
+    initialData: [],
+  })
   const me = useQuery('me')
 
   let allPosts = postList.data?.results || []
@@ -36,18 +40,23 @@ export default function Transactions({ ...props }) {
   const post = allPosts
     .filter((post) => !post.isChild || getChildTransactionsFor(post.id, allPosts).length > 0)
     .find((post) => post.id === id)
-  console.log({ allPosts })
+
+  const hashtags = new URLSearchParams()
+  post?.hashtags.forEach((tag) => hashtags.append('tag', tag))
+  const forUser = users.data.find(
+    (user) => user.id === params.get('for') || user.id === post?.sender[0].id
+  )
 
   return (
     <>
       <div className="pl-3 pr-3 xs:pt-0 lg:py-3 lg:pl-0 xxl:pt-3">
         <HoverCard.Root>
-          <p className="flex cursor-pointer items-center justify-center leading-4 bg-white rounded-md p-3 text-18px">
+          <p className="flex cursor-pointer items-center justify-center rounded-md bg-white p-3 text-18px leading-4">
             You Have{' '}
             <span className="font-[900]">&nbsp;{me.data.allowance_boost} Points&nbsp;</span>
             to give
             <HoverCard.Trigger className="ml-2 inline-flex h-4 w-4 items-center justify-center text-white">
-              <HelpIcon fill='rgba(0, 0, 200, 0.3)' />
+              <HelpIcon fill="rgba(0, 0, 200, 0.3)" />
             </HoverCard.Trigger>
           </p>
 
@@ -62,7 +71,7 @@ export default function Transactions({ ...props }) {
         </HoverCard.Root>
 
         {post == null ? (
-          <div className='mt-4 h-64 bg-white animate-pulse rounded-md' />
+          <div className="mt-4 h-64 animate-pulse rounded-md bg-white" />
         ) : (
           <div className="mt-4">
             <PostCard
@@ -70,6 +79,28 @@ export default function Transactions({ ...props }) {
               childrenTransactions={getChildTransactionsFor(post.id, allPosts)}
               sortBy={sortBy}
             />
+
+            <div className="mt-20 flex justify-around">
+              <Link
+                to={'/transactions/hashtags?' + hashtags.toString()}
+                className="cursor-pointer rounded-md p-3 text-18px  hover:bg-white"
+              >
+                More Post on
+                <br />
+                <span className="font-bold">{post.hashtags.join(', ')}</span>
+              </Link>
+
+              <Link
+                to={'/profile/' + forUser.id}
+                className="cursor-pointer rounded-md p-3 text-18px hover:bg-white"
+              >
+                More Post for
+                <br />
+                <span className="font-bold">
+                  {forUser.first_name} {forUser.last_name}
+                </span>
+              </Link>
+            </div>
           </div>
         )}
       </div>

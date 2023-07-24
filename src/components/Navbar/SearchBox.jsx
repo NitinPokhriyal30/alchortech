@@ -139,7 +139,7 @@ function SearchUserTransactions({ user, onBack, onClick }) {
         ) : (
           userTransactionQuery.data.results.map((transaction) => (
             <Link
-              to={`/transactions/${transaction.id}`}
+              to={`/transactions/${transaction.id}?for=${user.id}`}
               className="flex items-start gap-2.5 rounded-md p-2 text-16px hover:bg-paper"
               onClick={onClick}
             >
