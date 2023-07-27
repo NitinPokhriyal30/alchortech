@@ -61,7 +61,7 @@ export function getDaysLeftForNextMonth() {
   var currentDate = new Date()
 
   // Set the date to the 1st day of the next month
-  nextMonthDate.setDate(1)
+  nextMonthDate.setDate(0)
 
   // Calculate the difference in milliseconds between the current date and the next month's date
   var timeDiff = nextMonthDate.getTime() - currentDate.getTime()

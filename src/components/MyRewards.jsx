@@ -79,7 +79,7 @@ const MyRewards = () => {
       {/* right sidebar */}
       <div className="flex w-full flex-col gap-3 overflow-y-auto pb-5 pl-3 pt-3 md:pl-1 lg:max-w-[250px] xl:max-w-[319px]">
         <RedeemPointsWidget />
-        <PopularCategories />
+        <PopularCategories /> 
       </div>
     </>
   )

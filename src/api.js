@@ -6,7 +6,7 @@ const wait = (ms) => (resolveWith) =>
     setTimeout(() => res(resolveWith), ms)
   })
 
-axios.defaults.baseURL = 'http://backend.letshigh5.com/'
+axios.defaults.baseURL = 'http://staging.letshigh5.com/'
 axios.defaults.headers.post['Content-Type'] = 'application/json'
 
 axios.interceptors.request.use(
@@ -49,6 +49,7 @@ const api = {
   users: {
     all: () => axios.get('getUsers/').then((r) => r.data),
     profiles: () => axios.get('users/profile/').then((r) => r.data),
+    userById: (id) => axios.get(`getUserDetails/${id}/`).then((r) => r.data),
     search: (params) => axios.get('employees/', { params }).then((r) => r.data),
   },
 
@@ -59,7 +60,7 @@ const api = {
   transactions: {
     new: (data) =>
       axios
-        .post('homepage/transaction/', data, {
+        .post('transaction/', data, {
           headers: { 'Content-Type': 'multipart/form-data' },
         })
         .then((r) => r.data),
@@ -80,7 +81,7 @@ const api = {
     react: (data) => axios.patch('transaction/comments/', data).then((r) => r.data),
   },
   todayEvents: () =>
-    axios.get('http://backend.letshigh5.com/api/today-events/').then((r) => r.data),
+    axios.get('api/today-events/').then((r) => r.data),
 
   properties: () => axios.get('homepage/properties/').then((r) => r.data[0]),
 }

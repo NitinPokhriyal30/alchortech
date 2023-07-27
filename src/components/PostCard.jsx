@@ -37,6 +37,8 @@ import chat from '../assets/images/post-img/chat.png'
 import plus from '../assets/images/post-img/plus.png'
 import heart from '../assets/images/post-img/heart.png'
 import { RiSendPlane2Fill } from 'react-icons/ri'
+import ReactComponent from './ReactComponent'
+import * as Dialog from '@radix-ui/react-dialog'
 
 const POINTS = [
   {
@@ -87,6 +89,7 @@ const sortCommentsAndTransactions = (comments, childrenTransactions) => {
 }
 
 const PostCard = ({ post, childrenTransactions, ...props }) => {
+  console.log(post);
   const [showCommentsFor, setShowCommentsFor] = React.useState('')
   const [modal, setModal] = React.useState('')
   const [point, setPoint] = React.useState(30)
@@ -94,19 +97,16 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
   const imageInputRef = React.useRef()
   const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
   const comments = useQuery('comments', () => api.comment.all())
-  const addedPoints = post.sender.find((x) => x.id === me.id)?.points
+  // const addedPoints = post.sender.find((x) => x.id === me.id)?.points
 
   post.reactions = []
   post.comment = { replies: [] }
 
-  const isMyPost = post.sender.find((user) => user.id === me.data.id)
+  // const isMyPost = post.sender.find((user) => user.id === me.data.id)
   const amIReceiver = post.recipients.find((user) => user.id === me.data.id)
-  const hasAddedPoints =
-    childrenTransactions.find((post) => post.sender.find((user) => user.id === me.data.id))
-      ?.point || 0
 
   const commentsAndTransactions = comments.data
-    ? sortCommentsAndTransactions(getPostComment(post.id, comments.data), childrenTransactions)
+    ? sortCommentsAndTransactions(getPostComment(post.id, comments.data), post.children)
     : []
 
   return (
@@ -116,28 +116,24 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
           <div className="flex-1">
             <div className="flex items-center justify-between gap-8">
               <div className="flex items-center gap-1">
-                {post.sender.map((user) => (
                   <img
-                    key={user.id}
+                  key={post.sender.id}
                     className="h-8.5 w-8.5 rounded-full object-cover"
-                    src={SERVER_URL + user.avtar}
+                    src={SERVER_URL + post.sender.avtar}
                     alt="post-user"
                   />
-                ))}
 
-                {childrenTransactions?.map((post) =>
-                  post.sender.map((user) => (
+                {post.children?.map((post) =>
                     <img
-                      key={user.id}
+                    key={post.sender.id}
                       className="h-8.5 w-8.5 rounded-full object-cover"
-                      src={SERVER_URL + user.avtar}
+                      src={SERVER_URL + post.sender.avtar}
                       alt="post-user"
                     />
-                  ))
                 )}
                 <p className="ml-1  text-18px font-bold text-primary">
                   +
-                  {post.point + childrenTransactions.reduce((total, post) => total + post.point, 0)}
+                  {post.point + post.children.reduce((total, post) => total + post.point, 0)}
                 </p>
 
                 <p className="ml-5  font-normal text-[#00BC9F]">{moment(post.created).fromNow()}</p>
@@ -152,12 +148,12 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
         <div className="mt-4">
           <p className=" text-18px font-bold">
             <span className={`${PROFILE_USERNAME.text}`}>
-              {post.sender[0].first_name} {post.sender[0].last_name}:
+              {post.sender.first_name} {post.sender.last_name}:
             </span>{' '}
             <span className="text-primary">
               {post.recipients.map((user) => `@${user.first_name} ${user.last_name}`).join(' ')}
             </span>{' '}
-            <span className={`${HASHTAG.text}`}>{post.hashtags.map((hash) => hash).join(' ')}</span>
+            <span className={`${HASHTAG.text}`}>{post.hashtags.map((hash) => hash.name).join(' ')}</span>
           </p>
 
           <p className="mt-1.5  text-18px font-normal text-[#464646]">{post.message}</p>
@@ -277,12 +273,19 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
           </div>
 
           <div className="mt-1 flex items-center gap-2 pb-1">
+            <Dialog.Root>
             <div className="flex cursor-pointer items-center rounded-full border-[0.5px] border-[#d1d1d1] px-2  text-[18px] text-[#747474]">
               {Array.isArray(post.react_by) && post.react_by.length > 0
                 ? post.react_by[post.react_by.length - 1].react
-                : '😊'}{' '}
-              <p className="pl-[3px] text-16px">{post.react_by?.length || 0}</p>
-            </div>
+                  : '😊'}{' '}
+                <Dialog.Trigger asChild>
+                  <p className="pl-[3px] text-16px">{post.react_by.length || 0}</p>
+                </Dialog.Trigger>
+              </div>
+              {post.react_by.length !== 0 && post.react_by.length !== undefined && post.react_by.map((item) => {
+                <ReactComponent reactBy={item.userId} />
+              })}
+            </Dialog.Root>
             <p className="text-16px text-[#d1d1d1]">
               {commentsAndTransactions.length + ' '}
               Comment
@@ -519,13 +522,13 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
               >
                 <img
                   className="h-8.5 w-8.5 rounded-full object-cover"
-                  src={SERVER_URL + commentOrTransaction.sender[0].avtar}
+                  src={SERVER_URL + commentOrTransaction.sender.avtar}
                 />
 
                 <div className="relative ">
                   <div className="rounded-[15px] rounded-tl-none bg-paper p-[20px] text-[#464646]">
                     <p className="flex justify-between text-18px">
-                      <span className="font-bold">{commentOrTransaction.sender[0].first_name}</span>
+                      <span className="font-bold">{commentOrTransaction.sender.first_name}</span>
                       <span className="text-[14px] leading-[17px] text-[#919191]">
                         {moment(commentOrTransaction.created).fromNow()}
                       </span>
