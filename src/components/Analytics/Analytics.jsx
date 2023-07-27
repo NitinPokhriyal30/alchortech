@@ -1,15 +1,22 @@
 import React, {useState} from 'react'
-import GoldBadge from '../assets/images/analytics/gold.svg'
-import SilverBadge from '../assets/images/analytics/silver.svg'
-import BronzeBadge from '../assets/images/analytics/bronze.svg'
+import GoldBadge from '../../assets/images/analytics/gold.svg'
+import SilverBadge from '../../assets/images/analytics/silver.svg'
+import BronzeBadge from '../../assets/images/analytics/bronze.svg'
 import ColumnGroupingTable from './ColumnGroupingTable'
 import WordCloudComponent from './WordCloudComponent'
 import BarChart from './BarChart'
-import AmazonLogo from '../assets/images/analytics/Amazon.png'
-import DunkinLogo from '../assets/images/analytics/Dunkin.png'
-import StarbucksLogo from '../assets/images/analytics/Starbucks.png'
+import AreaChart from './AreaChart'
+import AmazonLogo from '../../assets/images/analytics/Amazon.png'
+import DunkinLogo from '../../assets/images/analytics/Dunkin.png'
+import StarbucksLogo from '../../assets/images/analytics/Starbucks.png'
+import { AiFillCaretDown } from 'react-icons/ai';
+
 
 export const Analytics = () => {
+
+  const [sortRegion, setSortRegion] = useState('');
+  const [sortDepartment, setSortDepartment] = useState('');
+  const [sortDate, setSortDate] = useState('60 Days');
 
   const [leaderboard, setleaderboard] = useState([
     {
@@ -84,7 +91,7 @@ export const Analytics = () => {
     }
   ])
 
-  const data = [
+  const barData = [
     { category: 'A', value: 30 },
     { category: 'B', value: 50 },
     { category: 'C', value: 20 },
@@ -96,14 +103,72 @@ export const Analytics = () => {
     { category: 'I', value: 70 },
     { category: 'J', value: 40 },
   ];
-
+  
+  // Define your custom weekly intervals
+  const customWeeklyIntervals = [
+    { date: new Date('2023-07-01'), value: 10 },
+    { date: new Date('2023-07-08'), value: 30 },
+    { date: new Date('2023-07-15'), value: 20 },
+    { date: new Date('2023-07-22'), value: 25 },
+    { date: new Date('2023-07-29'), value: 15 },
+    { date: new Date('2023-08-05'), value: 35 },
+    { date: new Date('2023-08-12'), value: 40 },
+    { date: new Date('2023-08-17'), value: 15 },
+  ];
+  
   return (
     <div>
 
-      <div className='mt-3'>
-        <button className='bg-[#5486E3] text-white text-md font-Lato py-2 px-8 rounded-l-md'>Overall</button>
-        <button className='bg-white py-2 px-6 text-md font-Lato rounded-r-md'>Your Team</button>
+    <div className='mt-3 flex justify-between'>
+      <div className='flex'>
+        <button className='bg-[#5486E3] text-white text-md font-Lato px-10 py-1 rounded-l-md border border-r-0 border-[#5486E3] min-w-[100px]'>
+        Overall
+        </button>
+        <button className='bg-white text-md font-Lato rounded-r-md border border-l-0 border-[#5486E3] min-w-[130px]'>
+        Your Team
+        </button> 
       </div>
+      <div>
+      <div className=" mt-3">
+        <div className='flex'>
+          <div className="font-Lato text-[#7B7B7B] text-sm relative flex items-center mr-4">
+          Region
+          <button className="peer font-Lato flex items-center gap-1 text-sm font-semibold pl-1">
+          {sortRegion}
+          <span><AiFillCaretDown /></span>
+          </button>
+          <div className="hidden drop-shadow-[0px_2px_6px_#44444F1A] w-36 px-4 py-2 rounded-lg bg-white absolute z-10 top-[21px] right-[1px] peer-hover:flex hover:flex  flex-col child:cursor-pointer text-end">
+            <p className="text-sm font-Lato" onClick={() => setSortRegion("India")}>India</p>
+          </div>
+          </div>
+          <div className="font-Lato text-[#7B7B7B] text-sm relative flex items-center mr-4">
+              Departments
+              <button className="peer font-Lato flex items-center gap-1 text-sm font-semibold pl-1">
+              {sortDepartment}
+              <span><AiFillCaretDown /></span>
+              </button>
+              <div className="hidden drop-shadow-[0px_2px_6px_#44444F1A] w-36 px-4 py-2 rounded-lg bg-white absolute z-10 top-[21px] right-[1px] peer-hover:flex hover:flex  flex-col child:cursor-pointer text-end">
+                <p className="text-sm font-Lato" onClick={() => setSortDepartment("Product Development")}>Product Development</p>
+              </div>
+          </div>
+          <div className="font-Lato text-[#7B7B7B] text-sm relative flex items-center">
+              Last
+              <button className="peer font-Lato flex items-center gap-1 text-sm font-semibold pl-1">
+              {sortDate}
+              <span><AiFillCaretDown /></span>
+              </button>
+              <div className="hidden drop-shadow-[0px_2px_6px_#44444F1A] w-36 px-4 py-2 rounded-lg bg-white absolute z-10 top-[21px] right-[1px] peer-hover:flex hover:flex  flex-col child:cursor-pointer text-end">
+                <p className="text-sm font-Lato" onClick={() => setSortDate("60 Days")}>60 Days</p>
+              </div>
+          </div>
+        </div>  
+      </div>
+      </div>  
+    </div>
+    <div className='h-[1px] w-full bg-[#9a9a9a]'></div> 
+     
+    
+   
 
       <div className='my-2 bg-white flex flex-col gap-2 px-4 py-3 rounded-lg drop-shadow-md'>
         <p className='font-bold font-Lato text-[18px]'>Leaderboard</p>
@@ -256,7 +321,7 @@ export const Analytics = () => {
             <span className='text-[20px] font-Lato font-bold'>Points</span>
           </div>
         </div>
-        <BarChart data={data} />
+        <BarChart data={barData} />
         </div>
         <div className="bg-white rounded-lg drop-shadow-md pt-1 my-1 w-1/2">
           <div className='flex bg-[#B3E2A8] rounded-lg m-4'>
@@ -321,8 +386,17 @@ export const Analytics = () => {
         <ColumnGroupingTable />
       </div>
 
-      <div className=' bg-white rounded-lg drop-shadow-md mt-2 mb-4'>
-       <WordCloudComponent />
+      <div className='flex flex-col md:flex-row gap-2'>
+        
+        <div className="bg-white w-1/2 rounded-lg drop-shadow-md mb-4">
+        <div className='text-left border-b-2 mb-4 py-2 px-4 text-[18px] font-Lato font-semibold'>Team Engagement</div>
+          <div className='flex justify-center items-center pt-4'><AreaChart data={customWeeklyIntervals} /></div>
+        </div>
+        
+        <div className='w-1/2 flex-col justify-center items-center bg-white rounded-lg drop-shadow-md mb-4'>
+        <div className='text-left border-b-2 mb-4 py-2 px-4 text-[18px] font-Lato font-semibold'>Word Cloud</div>
+        <div className='flex justify-center items-center'><WordCloudComponent /></div>
+        </div>
       </div>
     </div>
   );

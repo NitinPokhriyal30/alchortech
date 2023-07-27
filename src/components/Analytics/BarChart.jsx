@@ -62,7 +62,7 @@ const BarChart = ({ data }) => {
       .attr('y', d => yScale(d.value))
       .attr('width', xScale.bandwidth())
       .attr('height', d => chartHeight - yScale(d.value))
-      .attr('rx', 0) // Set the horizontal radius of the rounded corners to 0 (no rounding)
+      .attr('rx', 10) // Set the horizontal radius of the rounded corners to 0 (no rounding)
       .attr('ry', 10) // Set the vertical radius for the rounded corners
       .attr('fill', (d, i) => `hsl(${i * 50}, 70%, 50%)`); // Generate colors based on index
 

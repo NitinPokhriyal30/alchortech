@@ -27,7 +27,7 @@ const WordCloudComponent = () => {
   }, []);
 
   const drawWordCloud = () => {
-    const width = 800;
+    const width = 500;
     const height = 400;
 
     // Set up D3 cloud layout
