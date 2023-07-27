@@ -94,7 +94,7 @@ export default function NewPost({ ...props }) {
               <HoverCard.Root>
                 <p className="flex cursor-pointer items-center  leading-4">
                   You Have{' '}
-                  <span className="font-[900]">&nbsp;{me.data.allowance_boost} Points&nbsp;</span>
+                  <span className="font-[900]">&nbsp;{me.data.points_available} Points&nbsp;</span>
                   to give
                   <HoverCard.Trigger className="ml-2 inline-flex h-4 w-4 items-center justify-center">
                     <HelpIcon />
@@ -106,7 +106,7 @@ export default function NewPost({ ...props }) {
                     <HoverCard.Arrow className="fill-white" />
                     You monthly allowance will refresh on 1st {getNextMonthName()}. You have{' '}
                     {getDaysLeftForNextMonth() + ' '}
-                    days to spend {me.data.allowance_boost} points.
+                    days to spend {me.data.points_available} points.
                   </HoverCard.Content>
                 </HoverCard.Portal>
               </HoverCard.Root>
@@ -137,7 +137,7 @@ export default function NewPost({ ...props }) {
                     </span>
                   ))}
 
-                {form.hashtags.map((tag) => (
+                {form.hashtags?.map((tag) => (
                   <span className="text-[#464646]" key={tag}>
                     {tag}{" "}
                   </span>
@@ -360,7 +360,7 @@ export function PointsRangeDialog({ form, setForm }) {
                   className={`flex h-8 w-8 items-center justify-center rounded-full bg-paper font-bold`}
                 />
               ))
-          : points_range.map((point, i) => (
+          : points_range?.map((point, i) => (
               <button
                 key={point}
                 type="button"
@@ -412,7 +412,7 @@ export function RecipientsDropdown({ form, setForm }) {
             </p>
           ) : (
             <>
-              {searchedUser.map((user) => {
+              {searchedUser?.map((user) => {
                 return (
                   <button
                     key={user.id}
@@ -466,7 +466,7 @@ export function HashTagsDropdown({ form, setForm }) {
         {properties.isLoading ? (
           <p className="h-10 w-[15ch] pt-3 text-center">Loading</p>
         ) : (
-          hashtags.map((tag) => {
+          hashtags?.map((tag) => {
             const checked = form.hashtags.includes(tag)
             return (
               <button

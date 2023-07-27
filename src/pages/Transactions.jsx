@@ -35,17 +35,11 @@ export default function Transactions({ ...props }) {
   })
   const me = useQuery('me')
 
-  let allPosts = postList.data?.results || []
-  allPosts = withIsChild(allPosts)
-  const post = allPosts
-    .filter((post) => !post.isChild || getChildTransactionsFor(post.id, allPosts).length > 0)
-    .find((post) => post.id === id)
+  let allPosts = postList.data || []
+  const post = allPosts.find((post) => post.id === id)
 
   const hashtags = new URLSearchParams()
-  post?.hashtags.forEach((tag) => hashtags.append('tag', tag))
-  const forUser = users.data.find(
-    (user) => user.id === params.get('for') || user.id === post?.sender[0].id
-  )
+  post?.hashtags.forEach((tag) => hashtags.append('tag', tag.name))
 
   return (
     <>
@@ -53,7 +47,7 @@ export default function Transactions({ ...props }) {
         <HoverCard.Root>
           <p className="flex cursor-pointer items-center justify-center rounded-md bg-white p-3 text-18px leading-4">
             You Have{' '}
-            <span className="font-[900]">&nbsp;{me.data.allowance_boost} Points&nbsp;</span>
+            <span className="font-[900]">&nbsp;{me.data.points_available} Points&nbsp;</span>
             to give
             <HoverCard.Trigger className="ml-2 inline-flex h-4 w-4 items-center justify-center text-white">
               <HelpIcon fill="rgba(0, 0, 200, 0.3)" />
@@ -65,7 +59,7 @@ export default function Transactions({ ...props }) {
               <HoverCard.Arrow className="fill-white" />
               You monthly allowance will refresh on 1st {getNextMonthName()}. You have{' '}
               {getDaysLeftForNextMonth() + ' '}
-              days to spend {me.data.allowance_boost} points.
+              days to spend {me.data.points_available} points.
             </HoverCard.Content>
           </HoverCard.Portal>
         </HoverCard.Root>
@@ -76,7 +70,6 @@ export default function Transactions({ ...props }) {
           <div className="mt-3">
             <PostCard
               post={post}
-              childrenTransactions={getChildTransactionsFor(post.id, allPosts)}
               sortBy={sortBy}
             />
 

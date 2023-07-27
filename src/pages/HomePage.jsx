@@ -18,7 +18,7 @@ import { useQuery } from 'react-query'
 import { api } from '@/api'
 import { useIntersectionObserver } from 'usehooks-ts'
 import { queryClient } from '@/queryClient'
-import { getChildTransactionsFor, withIsChild } from '@/utils'
+// import { getChildTransactionsFor, withIsChild } from '@/utils'
 
 
 const stickBottomAlign = {
@@ -43,11 +43,8 @@ export default function HomePage() {
   const [stickyStyles, setStickyStyles] = React.useState({})
   const rightSidebarRef = React.useRef()
 
-  let allPosts = postList.data?.results || []
-  allPosts = withIsChild(allPosts)
-  const parentPosts = allPosts.filter(
-    (post) => !post.isChild || getChildTransactionsFor(post.id, allPosts).length > 0
-  )
+  let allPosts = postList.data || []
+  const parentPosts = allPosts
 
   React.useEffect(() => {
     function handleResize() {
@@ -111,7 +108,6 @@ export default function HomePage() {
                   i={i}
                   key={post.id}
                   post={post}
-                  childrenTransactions={getChildTransactionsFor(post.id, allPosts)}
                   sortBy={sortBy}
                 />
               ))
@@ -130,7 +126,6 @@ export default function HomePage() {
                 <PostCard
                   key={index}
                   post={post}
-                  childrenTransactions={getChildTransactionsFor(post.id, allPosts)}
                   sortBy={sortBy}
                 />
               ))
