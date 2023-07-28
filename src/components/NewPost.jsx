@@ -16,7 +16,7 @@ import { Dialog } from '@radix-ui/react-dialog'
 import Cropper from '@/components/Cropper'
 import UserImg from '@/assets/images/user-profile/pp.png'
 import HelpIcon from '@/assets/svg/home-sidebar/HelpIcon'
-import { MAX_IMAGE_SIZE_MB } from '@/constant'
+import { MAX_IMAGE_SIZE_MB, SERVER_URL } from '@/constant'
 import EmojiPickerBox from '@/components/EmojiPickerBox'
 import ImagePickerBox from '@/components/ImagePickerBox'
 import Spinner from '@/components/Spinner'
@@ -116,7 +116,7 @@ export default function NewPost({ ...props }) {
 
         {/* text field */}
 
-        <div className="_px-6 rounded-b-lg bg-white py-6 text-[#b1b1b1] drop-shadow-normal pb-[12px]">
+        <div className="_px-6 rounded-b-lg bg-white py-6 pb-[12px] text-[#b1b1b1] drop-shadow-normal">
           <div className="px-6">
             {showPlaceholder ? (
               <>
@@ -127,19 +127,17 @@ export default function NewPost({ ...props }) {
             ) : (
               <>
                 <span className="text-[#464646]">{form.point ? '+' + form.point : ''} </span>{' '}
-
                 {form.recipients
                   .map((userId) => (users.data || []).find((user) => user.id === userId))
                   .map((user) => `@${user.first_name} ${user.last_name}`)
                   .map((fullName) => (
                     <span className="text-[#464646]" key={fullName}>
-                      {fullName}{" "}
+                      {fullName}{' '}
                     </span>
                   ))}
-
                 {form.hashtags?.map((tag) => (
                   <span className="text-[#464646]" key={tag}>
-                    {tag}{" "}
+                    {tag}{' '}
                   </span>
                 ))}
               </>
@@ -230,7 +228,7 @@ export default function NewPost({ ...props }) {
               }}
             >
               {/* <EmojiEmotions /> */}
-              <img src={smiley} alt="smiley" width={"20px"} />
+              <img src={smiley} alt="smiley" width={'20px'} />
             </EmojiPickerBox>
 
             <ImagePickerBox
@@ -238,17 +236,17 @@ export default function NewPost({ ...props }) {
               onChange={(image) => setForm((prev) => ({ ...prev, image }))}
             >
               {/* <Image /> */}
-              <img src={img} alt="img" width={"26px"} />
+              <img src={img} alt="img" width={'26px'} />
             </ImagePickerBox>
 
             <GifPickerBox onChange={(gif) => setForm((prev) => ({ ...prev, gif }))}>
               {/* <GifBox /> */}
-              <img src={gif} alt="gif" width={"20px"} />
+              <img src={gif} alt="gif" width={'20px'} />
             </GifPickerBox>
 
             <AddLinkBox onChange={(link) => setForm((prev) => ({ ...prev, link }))}>
               {/* <Link /> */}
-              <img src={link} alt="link" width={"20px"} />
+              <img src={link} alt="link" width={'20px'} />
             </AddLinkBox>
 
             <button
@@ -259,13 +257,23 @@ export default function NewPost({ ...props }) {
                 try {
                   setLoading(true)
                   if (!validateNewPostForm(form)) return
-                  const data = CreatePost(me.data.id, '', form)
+
+                  const data = CreatePost(me.data.id, '', {
+                    ...form,
+                    hashtags: form.hashtags.join(','),
+                    recipients: form.recipients.join(','),
+                  })
                   const formData = toFormData(data)
                   // recipients.forEach((userId) => formData.append('recipients', userId))
 
-                  await api.transactions.new(formData)
-                  await queryClient.refetchQueries('transactions')
-                  await queryClient.refetchQueries('me')
+                  const newTransaction = await api.transactions.new(formData)
+                  newTransaction.avtar = newTransaction.avtar.substring(SERVER_URL.length)
+                  await queryClient.setQueryData((['transaction', props.sortBy]), (prev) => {
+                    if (!prev) return;
+
+                    return [newTransaction, ...prev]
+                  })
+                  // await queryClient.refetchQueries('me')
 
                   setForm({
                     point: 0,
@@ -276,7 +284,8 @@ export default function NewPost({ ...props }) {
                     link: '',
                     message: '',
                   })
-                } catch {
+                } catch(e) {
+                  console.log("erro", e)
                   toast.error('Transaction failed. Server error')
                 } finally {
                   setLoading(false)
@@ -360,7 +369,7 @@ export function PointsRangeDialog({ form, setForm }) {
                   className={`flex h-8 w-8 items-center justify-center rounded-full bg-paper font-bold`}
                 />
               ))
-          : points_range?.map((point, i) => (
+          : ([1, 10, 20, 50, 100])?.map((point, i) => (
               <button
                 key={point}
                 type="button"
@@ -466,27 +475,27 @@ export function HashTagsDropdown({ form, setForm }) {
         {properties.isLoading ? (
           <p className="h-10 w-[15ch] pt-3 text-center">Loading</p>
         ) : (
-          hashtags?.map((tag) => {
-            const checked = form.hashtags.includes(tag)
+          ([{ name: 'Collaboration' }, { name: 'thanks' }])?.map((tag) => {
+            const checked = form.hashtags.includes(tag.name)
             return (
               <button
-                key={tag}
+                key={tag.name}
                 type="button"
                 className={`px-4 py-1 text-left ${checked ? 'bg-translucent' : ''}`}
                 onClick={() => {
                   setForm((prev) => {
-                    const checked = prev.hashtags.includes(tag)
+                    const checked = prev.hashtags.includes(tag.name)
                     if (checked) {
-                      prev.hashtags = prev.hashtags.filter((x) => x !== tag)
+                      prev.hashtags = prev.hashtags.filter((x) => x !== tag.name)
                     } else {
-                      prev.hashtags.push(tag)
+                      prev.hashtags.push(tag.name)
                     }
 
                     return { ...prev }
                   })
                 }}
               >
-                {tag}
+                {tag.name}
               </button>
             )
           })
@@ -500,11 +509,8 @@ export function toFormData(data) {
   const formData = new FormData()
   Object.entries(data).forEach(([key, value]) => {
     let _value = value
-    if (key === 'recipients') {
-      value.forEach((userId) => formData.append(key, userId))
-    }
     // stringify only if value is array, object but not image File
-    else if (typeof value == 'object' && !(value instanceof File || value instanceof Blob)) {
+    if (typeof value == 'object' && !(value instanceof File || value instanceof Blob)) {
       _value = JSON.stringify(value)
       formData.set(key, _value)
     } else {

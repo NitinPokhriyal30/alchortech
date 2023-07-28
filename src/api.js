@@ -68,7 +68,7 @@ const api = {
       axios.get(`transaction/?${filters.toString()}`).then((r) => r.data),
     meAsRecipient: (id) => axios.get(`api/posts/?recipients=${id}`).then((r) => r.data),
     meAsSender: (id) => axios.get(`api/posts/?sender=${id}`).then((r) => r.data),
-    react: (data) => axios.patch('transaction/', data).then((r) => r.data),
+    react: (data) => axios.post('add-reaction/', data).then((r) => r.data),
   },
   comment: {
     new: (data) =>

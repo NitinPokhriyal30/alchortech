@@ -91,7 +91,7 @@ export default function HomePage() {
           <ImageSlider />
         </div>
         <div className="xrelative z-20 mt-3">
-          <NewPost />
+          <NewPost sortBy={sortBy} />
         </div>
         <div className="mt-1">
           <SortBy value={sortBy} onChange={setSortBy} />

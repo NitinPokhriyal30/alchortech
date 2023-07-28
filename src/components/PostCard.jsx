@@ -39,6 +39,15 @@ import heart from '../assets/images/post-img/heart.png'
 import { RiSendPlane2Fill } from 'react-icons/ri'
 import ReactComponent from './ReactComponent'
 import * as Dialog from '@radix-ui/react-dialog'
+import { pluralize } from '@/components/HomeRightSidebar/CelebrationWidget'
+
+const reactionsUnicode = {
+  '😊': 'U+1F60A',
+  '😁': 'U+1F601',
+  '😍': 'U+1F60D',
+  '👍': 'U+1F44D',
+  '👏': 'U+1F44F',
+}
 
 const POINTS = [
   {
@@ -89,7 +98,6 @@ const sortCommentsAndTransactions = (comments, childrenTransactions) => {
 }
 
 const PostCard = ({ post, childrenTransactions, ...props }) => {
-  console.log(post);
   const [showCommentsFor, setShowCommentsFor] = React.useState('')
   const [modal, setModal] = React.useState('')
   const [point, setPoint] = React.useState(30)
@@ -105,9 +113,11 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
   // const isMyPost = post.sender.find((user) => user.id === me.data.id)
   const amIReceiver = post.recipients.find((user) => user.id === me.data.id)
 
-  const commentsAndTransactions = comments.data
-    ? sortCommentsAndTransactions(getPostComment(post.id, comments.data), post.children)
-    : []
+  const commentsAndTransactions = sortCommentsAndTransactions(post.comments, post.children)
+
+    console.log("comment", post.comments)
+    console.log("child", post.children)
+    console.log("comments", commentsAndTransactions)
 
   return (
     <div className="mb-3">
@@ -116,24 +126,23 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
           <div className="flex-1">
             <div className="flex items-center justify-between gap-8">
               <div className="flex items-center gap-1">
-                  <img
+                <img
                   key={post.sender.id}
+                  className="h-8.5 w-8.5 rounded-full object-cover"
+                  src={SERVER_URL + post.sender.avtar}
+                  alt="post-user"
+                />
+
+                {post.children?.map((post) => (
+                  <img
+                    key={post.sender.id}
                     className="h-8.5 w-8.5 rounded-full object-cover"
                     src={SERVER_URL + post.sender.avtar}
                     alt="post-user"
                   />
-
-                {post.children?.map((post) =>
-                    <img
-                    key={post.sender.id}
-                      className="h-8.5 w-8.5 rounded-full object-cover"
-                      src={SERVER_URL + post.sender.avtar}
-                      alt="post-user"
-                    />
-                )}
+                ))}
                 <p className="ml-1  text-18px font-bold text-primary">
-                  +
-                  {post.point + post.children.reduce((total, post) => total + post.point, 0)}
+                  +{post.point + post.children.reduce((total, post) => total + post.point, 0)}
                 </p>
 
                 <p className="ml-5  font-normal text-[#00BC9F]">{moment(post.created).fromNow()}</p>
@@ -153,7 +162,9 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
             <span className="text-primary">
               {post.recipients.map((user) => `@${user.first_name} ${user.last_name}`).join(' ')}
             </span>{' '}
-            <span className={`${HASHTAG.text}`}>{post.hashtags.map((hash) => hash.name).join(' ')}</span>
+            <span className={`${HASHTAG.text}`}>
+              {post.hashtags.map((hash) => hash.name).join(' ')}
+            </span>
           </p>
 
           <p className="mt-1.5  text-18px font-normal text-[#464646]">{post.message}</p>
@@ -232,20 +243,23 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                     className="inline-block h-6 w-6 rounded-full  text-[20px] font-black hover:bg-translucent"
                     onClick={async () => {
                       try {
-                        const reacts = CreateReact(
-                          me.data,
-                          { id: post.id, react_by: post.react_by },
-                          emoji
-                        )
-                        await api.transactions.react(toFormData(reacts))
+                        const reacts = {
+                          reaction_hash: reactionsUnicode[emoji],
+                          object_id: post.id,
+                          content_type: 'transaction',
+                        }
+
+                        await api.transactions.react(reacts)
                         await queryClient.setQueryData(['transaction', props.sortBy], (prev) => {
                           if (!prev) return
-                          const targetPost = prev.results.find((_post) => _post.id === post.id)
+                          const targetPost = prev.find((_post) => _post.id === post.id)
                           if (targetPost) {
-                            targetPost.react_by = reacts.react_by
+                            targetPost.reaction_hashes = [...(targetPost.reaction_hashes || []), reacts.reaction_hash];
+                            targetPost.latest_user_reaction_full_name = me.data.first_name + " " + me.data.last_name;
+                            targetPost.total_user_reaction_counts += 1;
                           }
 
-                          return { ...prev }
+                          return [ ...prev ]
                         })
                       } catch (e) {
                         console.log('postcard > react button', e)
@@ -274,17 +288,28 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
 
           <div className="mt-1 flex items-center gap-2 pb-1">
             <Dialog.Root>
-            <div className="flex cursor-pointer items-center rounded-full border-[0.5px] border-[#d1d1d1] px-2  text-[18px] text-[#747474]">
-              {Array.isArray(post.react_by) && post.react_by.length > 0
-                ? post.react_by[post.react_by.length - 1].react
-                  : '😊'}{' '}
+              <div className="flex cursor-pointer items-center rounded-full border-[0.5px] border-[#d1d1d1] px-2  text-[16px] text-[#747474]">
+                {post.reaction_hashes.length > 0 ? (
+                  <span>
+                    {post.reaction_hashes.map((hash) =>
+                      String.fromCodePoint(parseInt(hash.substring(2), 16))
+                    )}
+                    {post.latest_user_reaction_full_name}
+                    {post.reaction_hashes.length > 1
+                      ? 'and ' + pluralize(post.reaction_hashes.length - 1, 'other', 's')
+                      : ''}
+                  </span>
+                ) : (
+                  '😊'
+                )}{' '}
                 <Dialog.Trigger asChild>
-                  <p className="pl-[3px] text-16px">{post.react_by.length || 0}</p>
+                  <p className="pl-[3px] text-16px">{post.total_user_reaction_counts}</p>
                 </Dialog.Trigger>
               </div>
-              {post.react_by.length !== 0 && post.react_by.length !== undefined && post.react_by.map((item) => {
-                <ReactComponent reactBy={item.userId} />
-              })}
+              {post.reaction_hashes.length > 0 &&
+                post.reaction_hashes.map((item) => {
+                  ;<ReactComponent reactBy={item.userId} />
+                })}
             </Dialog.Root>
             <p className="text-16px text-[#d1d1d1]">
               {commentsAndTransactions.length + ' '}
@@ -325,14 +350,13 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                 </div>
                 <div className="w-full flex-1">
                   <div className="grid grid-cols-[1fr_auto_auto] items-end overflow-x-hidden rounded-b-xl rounded-tr-xl bg-paper">
-                    <div className='self-center'>
+                    <div className="self-center">
                       <form
                         id={post.id}
                         onSubmit={async (ev) => {
                           try {
                             ev.preventDefault()
 
-                            console.log(form)
                             await api.comment.new(
                               CreatePostComment(me.data.id, {
                                 post_id: post.id,
@@ -414,7 +438,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                       </div>
                     </div>
 
-                    <div className="ml-auto mr-2 flex items-center gap-2 h-[56px]">
+                    <div className="ml-auto mr-2 flex h-[56px] items-center gap-2">
                       <button
                         type="button"
                         onClick={() => setModal((prev) => (prev === 'emoji' ? '' : 'emoji'))}
@@ -481,9 +505,9 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                       </Popover.Root>
                     </div>
                     <button
-                      disabled={(!form.message && !form.image && !form.gif)}
+                      disabled={!form.message && !form.image && !form.gif}
                       className={
-                        'block rounded-r-xl pl-0.5 pr-5 py-5 font-semibold text-primary transition-all disabled:cursor-auto disabled:text-gray-300'
+                        'block rounded-r-xl py-5 pl-0.5 pr-5 font-semibold text-primary transition-all disabled:cursor-auto disabled:text-gray-300'
                       }
                       form={post.id}
                       type="submit"

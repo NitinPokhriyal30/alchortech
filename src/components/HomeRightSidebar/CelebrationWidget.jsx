@@ -105,6 +105,6 @@ export default function CelebrationWidget() {
   )
 }
 
-function pluralize(count, noun, suffix) {
+export function pluralize(count, noun, suffix) {
   return count + ' ' + noun + (count > 1 ? suffix : '')
 }

@@ -101,8 +101,8 @@ export default function ChildNewPost({ onClose, post, defaultPoint }) {
               <span>#HashTag</span>
             ) : (
               form.hashtags.map((tag) => (
-                <span className="text-[#464646]" key={tag}>
-                  {tag}
+                <span className="text-[#464646]" key={tag.name}>
+                  {tag.name}
                 </span>
               ))
             )}
@@ -196,16 +196,16 @@ export default function ChildNewPost({ onClose, post, defaultPoint }) {
               onClick={async () => {
                 try {
                   setLoading(true)
-                  const recipients = form.recipients.filter((userId) => userId !== me.data.id)
+                  const recipients = form.recipients.filter((userId) => userId !== me.data.id).join(",")
+                  const hashtags = form.hashtags.map(({name}) => name).join(",")
                   if (recipients.length === 0) {
                     toast.error("Cant give points to your self")
                     return;
                   }
                   if (!validateNewPostForm(form)) return
 
-                  const data = CreatePost(me.data.id, post.id, { ...form, recipients })
+                  const data = CreatePost(me.data.id, post.id, { ...form, recipients, hashtags })
                   const formData = toFormData(data)
-                  window.f = formData
                   await api.transactions.new(formData)
                   await queryClient.refetchQueries('transactions')
                   await queryClient.refetchQueries('me')
