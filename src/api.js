@@ -73,12 +73,12 @@ const api = {
   comment: {
     new: (data) =>
       axios
-        .post('comments/', data, {
+        .post(`comments/${data.post_id}`, data, {
           headers: { 'Content-Type': 'multipart/form-data' },
         })
         .then((r) => r.data),
     all: () => axios.get('comments/').then((r) => r.data),
-    react: (data) => axios.patch('transaction/comments/', data).then((r) => r.data),
+    react: (data) => axios.post('add-reaction/', data).then((r) => r.data),
   },
   todayEvents: () =>
     axios.get('api/today-events/').then((r) => r.data),

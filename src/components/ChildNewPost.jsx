@@ -2,7 +2,7 @@ import { api } from '@/api'
 import Cropper from '@/components/Cropper'
 import { AddLinkBox, HashTagsDropdown, PointsRangeDialog, toFormData } from '@/components/NewPost'
 import ToolTip from '@/components/ToolTip'
-import { MAX_IMAGE_SIZE_MB } from '@/constant'
+import { MAX_IMAGE_SIZE_MB, SERVER_URL } from '@/constant'
 import { queryClient } from '@/queryClient'
 import { CreatePost } from '@/utils'
 import { Close, EmojiEmotions, GifBox, Image, Link } from '@mui/icons-material'
@@ -198,6 +198,7 @@ export default function ChildNewPost({ onClose, post, defaultPoint }) {
                   setLoading(true)
                   const recipients = form.recipients.filter((userId) => userId !== me.data.id).join(",")
                   const hashtags = form.hashtags.map(({name}) => name).join(",")
+
                   if (recipients.length === 0) {
                     toast.error("Cant give points to your self")
                     return;
@@ -206,8 +207,16 @@ export default function ChildNewPost({ onClose, post, defaultPoint }) {
 
                   const data = CreatePost(me.data.id, post.id, { ...form, recipients, hashtags })
                   const formData = toFormData(data)
-                  await api.transactions.new(formData)
-                  await queryClient.refetchQueries('transactions')
+                  const newTransaction = await api.transactions.new(formData)
+                  newTransaction.avtar = newTransaction.avtar.substring(SERVER_URL.length)
+                  queryClient.setQueryData(['transaction', sortBy], prev => {
+                    if (!prev) return;
+                    const targetPost  = prev.find(_post => _post.id === postId)
+                    if (targetPost) 
+                      targetPost.children.push(newTransaction)
+
+                    return [...prev]
+                  })
                   await queryClient.refetchQueries('me')
 
                   onClose()

@@ -269,11 +269,11 @@ export default function NewPost({ ...props }) {
                   const newTransaction = await api.transactions.new(formData)
                   newTransaction.avtar = newTransaction.avtar.substring(SERVER_URL.length)
                   await queryClient.setQueryData((['transaction', props.sortBy]), (prev) => {
-                    if (!prev) return;
+                    if (!prev) return [newTransaction];
 
                     return [newTransaction, ...prev]
                   })
-                  // await queryClient.refetchQueries('me')
+                  await queryClient.refetchQueries('me')
 
                   setForm({
                     point: 0,

@@ -41,7 +41,7 @@ import ReactComponent from './ReactComponent'
 import * as Dialog from '@radix-ui/react-dialog'
 import { pluralize } from '@/components/HomeRightSidebar/CelebrationWidget'
 
-const reactionsUnicode = {
+export const reactionsUnicode = {
   '😊': 'U+1F60A',
   '😁': 'U+1F601',
   '😍': 'U+1F60D',
@@ -115,9 +115,9 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
 
   const commentsAndTransactions = sortCommentsAndTransactions(post.comments, post.children)
 
-    console.log("comment", post.comments)
-    console.log("child", post.children)
-    console.log("comments", commentsAndTransactions)
+  console.log('comment', post.comments)
+  console.log('child', post.children)
+  console.log('comments', commentsAndTransactions)
 
   return (
     <div className="mb-3">
@@ -254,12 +254,17 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                           if (!prev) return
                           const targetPost = prev.find((_post) => _post.id === post.id)
                           if (targetPost) {
-                            targetPost.reaction_hashes = [...(targetPost.reaction_hashes || []), reacts.reaction_hash];
-                            targetPost.latest_user_reaction_full_name = me.data.first_name + " " + me.data.last_name;
-                            targetPost.total_user_reaction_counts += 1;
+                            targetPost.user_reaction_info.reaction_hashes = reacts.reaction_hash
+                            // [
+                            //   ...(targetPost.reaction_hashes || []),
+                            //   reacts.reaction_hash,
+                            // ]
+                            targetPost.user_reaction_info.latest_user_reaction_full_name =
+                              me.data.first_name + ' ' + me.data.last_name
+                            targetPost.total_reaction_counts += 1
                           }
 
-                          return [ ...prev ]
+                          return [...prev]
                         })
                       } catch (e) {
                         console.log('postcard > react button', e)
@@ -289,14 +294,13 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
           <div className="mt-1 flex items-center gap-2 pb-1">
             <Dialog.Root>
               <div className="flex cursor-pointer items-center rounded-full border-[0.5px] border-[#d1d1d1] px-2  text-[16px] text-[#747474]">
-                {post.reaction_hashes.length > 0 ? (
+                {post.user_reaction_info.reaction_hashes != null ? (
                   <span>
-                    {post.reaction_hashes.map((hash) =>
-                      String.fromCodePoint(parseInt(hash.substring(2), 16))
-                    )}
-                    {post.latest_user_reaction_full_name}
-                    {post.reaction_hashes.length > 1
-                      ? 'and ' + pluralize(post.reaction_hashes.length - 1, 'other', 's')
+                    {unicodeToEmoji(post.user_reaction_info.reaction_hashes)}
+                    {post.user_reaction_info.latest_user_reaction_full_name}
+                    {post.user_reaction_info.total_reaction_counts > 1
+                      ? 'and ' +
+                        pluralize(post.user_reaction_info.total_reaction_counts - 1, 'other', 's')
                       : ''}
                   </span>
                 ) : (
@@ -306,34 +310,12 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                   <p className="pl-[3px] text-16px">{post.total_user_reaction_counts}</p>
                 </Dialog.Trigger>
               </div>
-              {post.reaction_hashes.length > 0 &&
-                post.reaction_hashes.map((item) => {
-                  ;<ReactComponent reactBy={item.userId} />
-                })}
             </Dialog.Root>
+
             <p className="text-16px text-[#d1d1d1]">
               {commentsAndTransactions.length + ' '}
               Comment
             </p>
-          </div>
-        </div>
-
-        <div>
-          <div className="flex items-center gap-3 pb-1">
-            {post.reactions.length > 0 && (
-              <div className="text-2xl flex items-center gap-1 rounded-[17px] border-[0.6px] border-[#D1D1D1] pb-[2px] pr-2">
-                {post.reactions[0].emoji}
-                <span className=" text-xs text-[#747474]">{post.reactions.length}</span>
-              </div>
-            )}
-
-            {post.comment.replies.length > 0 && (
-              <div>
-                <p className=" text-[16px] text-[#D1D1D1]">
-                  {post.comment.replies.length} Comments
-                </p>
-              </div>
-            )}
           </div>
         </div>
 
@@ -357,14 +339,12 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                           try {
                             ev.preventDefault()
 
-                            await api.comment.new(
-                              CreatePostComment(me.data.id, {
-                                post_id: post.id,
-                                comment: form.message,
-                                image: form.image,
-                                gif: form.gif,
-                              })
-                            )
+                            await api.comment.new({
+                              post_id: post.id,
+                              comment: form.message,
+                              image: form.image,
+                              gif: form.gif,
+                            })
 
                             await queryClient.invalidateQueries('comments')
                             if (imageInputRef.current) imageInputRef.current.value = ''
@@ -538,7 +518,12 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
           {/* <PostCommentList postId={post.id} /> */}
           {commentsAndTransactions.map(({ type, commentOrTransaction }) =>
             type === 'comment' ? (
-              <PostComment key={commentOrTransaction.id} comment={commentOrTransaction} />
+              <PostComment
+                key={commentOrTransaction.id}
+                comment={commentOrTransaction}
+                postId={post.id}
+                sortBy={props.sortBy}
+              />
             ) : (
               <div
                 key={commentOrTransaction.id}
@@ -646,4 +631,8 @@ function toFormData(data) {
     formData.set(key, _value)
   })
   return formData
+}
+
+export function unicodeToEmoji(hash) {
+  return String.fromCodePoint(parseInt(hash.substring(2), 16))
 }
