@@ -115,10 +115,6 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
 
   const commentsAndTransactions = sortCommentsAndTransactions(post.comments, post.children)
 
-  console.log('comment', post.comments)
-  console.log('child', post.children)
-  console.log('comments', commentsAndTransactions)
-
   return (
     <div className="mb-3">
       <div className="rounded-lg bg-white pb-6 pt-6 shadow-md xs:px-4 sm:px-6 md:px-6 lg:px-6 xl:px-6  xxl:px-6">

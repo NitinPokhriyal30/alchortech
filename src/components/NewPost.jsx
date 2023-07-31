@@ -13,10 +13,8 @@ import { useQuery } from 'react-query'
 import { toast } from 'react-toastify'
 import GifPicker, { GifPickerBox } from './GifPickerPopover'
 import { Dialog } from '@radix-ui/react-dialog'
-import Cropper from '@/components/Cropper'
-import UserImg from '@/assets/images/user-profile/pp.png'
 import HelpIcon from '@/assets/svg/home-sidebar/HelpIcon'
-import { MAX_IMAGE_SIZE_MB, SERVER_URL } from '@/constant'
+import { SERVER_URL } from '@/constant'
 import EmojiPickerBox from '@/components/EmojiPickerBox'
 import ImagePickerBox from '@/components/ImagePickerBox'
 import Spinner from '@/components/Spinner'
@@ -55,6 +53,7 @@ export default function NewPost({ ...props }) {
   const [loading, setLoading] = React.useState(false)
   const [processedImage, setProcessedImage] = React.useState('')
   const inputRef = React.useRef()
+  const properties = useQuery('properties', () => api.properties())
 
   const [form, setForm] = React.useState({
     point: 0,
@@ -369,7 +368,7 @@ export function PointsRangeDialog({ form, setForm }) {
                   className={`flex h-8 w-8 items-center justify-center rounded-full bg-paper font-bold`}
                 />
               ))
-          : ([1, 10, 20, 50, 100])?.map((point, i) => (
+          : properties.data?.points_allowed?.map((point, i) => (
               <button
                 key={point}
                 type="button"

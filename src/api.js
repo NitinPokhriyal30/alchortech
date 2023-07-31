@@ -83,7 +83,7 @@ const api = {
   todayEvents: () =>
     axios.get('api/today-events/').then((r) => r.data),
 
-  properties: () => axios.get('homepage/properties/').then((r) => r.data[0]),
+  properties: () => axios.get('properties/').then((r) => r.data),
 }
 
 export { api }

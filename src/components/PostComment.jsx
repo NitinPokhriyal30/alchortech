@@ -17,7 +17,6 @@ export default function PostComment({ modal, setModal, sortBy, postId, comment, 
   const users = useQuery('users', () => api.users.profiles(), {
     initialData: [],
   })
-  console.log('x', comment)
 
   const placeholderUser = { avtar: GrayBG, first_name: 'FirstName', last_name: '&nbsp;' }
   const user = comment.created_by
