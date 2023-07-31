@@ -254,14 +254,25 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                           if (!prev) return
                           const targetPost = prev.find((_post) => _post.id === post.id)
                           if (targetPost) {
-                            targetPost.user_reaction_info.reaction_hashes = reacts.reaction_hash
-                            // [
-                            //   ...(targetPost.reaction_hashes || []),
-                            //   reacts.reaction_hash,
-                            // ]
-                            targetPost.user_reaction_info.latest_user_reaction_full_name =
-                              me.data.first_name + ' ' + me.data.last_name
-                            targetPost.total_reaction_counts += 1
+                            if (typeof targetPost.user_reaction_info === 'string') {
+                              targetPost.user_reaction_info = {
+                                reaction_hashes: reacts.reaction_hash,
+                                latest_user_reaction_full_name:
+                                  me.data.first_name + ' ' + me.data.last_name,
+                                total_reaction_counts: 1,
+                              }
+                            } else {
+                              targetPost.user_reaction_info = {
+                                reaction_hashes: [
+                                  ...targetPost.user_reaction_info.reaction_hashes,
+                                  reacts.reaction_hash,
+                                ],
+                                latest_user_reaction_full_name:
+                                  me.data.first_name + ' ' + me.data.last_name,
+                                total_reaction_counts:
+                                  targetPost.user_reaction_info.total_reaction_counts + 1,
+                              }
+                            }
                           }
 
                           return [...prev]
@@ -339,14 +350,26 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                           try {
                             ev.preventDefault()
 
-                            await api.comment.new({
+                            const newComment = await api.comment.new({
                               post_id: post.id,
                               comment: form.message,
                               image: form.image,
                               gif: form.gif,
                             })
 
-                            await queryClient.invalidateQueries('comments')
+                            await queryClient.setQueryData(
+                              ['transaction', props.sortBy],
+                              (prev) => {
+                                if (!prev) return prev
+
+                                const targetPostComments = prev.find(
+                                  (_post) => _post.id === post.id
+                                ).comments
+                                targetPostComments?.push(newComment)
+
+                                return [...prev]
+                              }
+                            )
                             if (imageInputRef.current) imageInputRef.current.value = ''
                             setForm({ message: '', image: '', gif: '' })
                           } catch (e) {
@@ -510,6 +533,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                   post={post}
                   defaultPoint={point}
                   onClose={() => setModal('')}
+                  sortBy={props.sortBy}
                 />
               </div>
             </div>
@@ -567,16 +591,66 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                       </div>
                     ) : null}
                   </div>
-                  <div className="relative z-10 mt-[1px] px-[20px] text-[12px] leading-[15px] text-primary">
+                  <div className="relative z-10 flex h-[32px] -translate-y-1.5 items-center text-[12px] leading-[15px] text-primary">
+                    <p className="lex items-center gap-3 pb-1">
+                      {commentOrTransaction.user_reaction_info.reaction_hashes.length > 0 ? (
+                        <div className="flex items-center gap-1 rounded-[17px] border-[0.6px] border-[#D1D1D1] bg-white px-[5px] pr-2 text-lg">
+                          {unicodeToEmoji(
+                            commentOrTransaction.user_reaction_info.reaction_hashes[0]
+                          )}
+                          <span className=" text-sm text-[#747474]">
+                            {commentOrTransaction.user_reaction_info.total_reaction_count}
+                          </span>
+                        </div>
+                      ) : null}
+                    </p>
                     <HoverCard.Root>
-                      <HoverCard.Trigger className="cursor-pointer">React</HoverCard.Trigger>
+                      <HoverCard.Trigger className="ml-3  cursor-pointer">React</HoverCard.Trigger>
                       <HoverCard.Content className="border">
                         <div className="absolute bottom-[20px] left-1/2 z-10 flex -translate-x-1/2 gap-4 rounded-[19px] bg-white px-4 py-2 drop-shadow-[0px_2px_3px_#00000029]">
-                          {['❤', '👍', '👏', '✔ ', '😍'].map((emoji) => (
+                          {['😊', '😁', '😍', '👍', '👏'].map((emoji) => (
                             <button
                               key={emoji}
                               className="inline-block h-6 w-6 rounded-full  text-sm font-black hover:bg-translucent"
-                              onClick={() => addReaction(post.id, emoji)}
+                              onClick={async () => {
+                                try {
+                                  const reacts = {
+                                    reaction_hash: reactionsUnicode[emoji],
+                                    object_id: commentOrTransaction.id,
+                                    content_type: 'transaction',
+                                  }
+
+                                  await api.transactions.react(reacts)
+                                  await queryClient.setQueryData(
+                                    ['transaction', props.sortBy],
+                                    (prev) => {
+                                      if (!prev) return prev
+
+                                      const targetPost = prev
+                                        .find((_post) => _post.id === post.id)
+                                        ?.children.find(
+                                          (_post) => _post.id === commentOrTransaction.id
+                                        )
+
+                                      if (targetPost) {
+                                        targetPost.user_reaction_info = {
+                                          reaction_hashes: [
+                                            ...targetPost.user_reaction_info.reaction_hashes,
+                                            reacts.reaction_hash,
+                                          ],
+                                          total_reaction_count:
+                                            targetPost.user_reaction_info.total_reaction_count + 1,
+                                        }
+                                      }
+
+                                      return [...prev]
+                                    }
+                                  )
+                                } catch (e) {
+                                  console.log('postcard > react button', e)
+                                  toast.error("Server Error! Can't react on this post/comment")
+                                }
+                              }}
                             >
                               {emoji}
                             </button>

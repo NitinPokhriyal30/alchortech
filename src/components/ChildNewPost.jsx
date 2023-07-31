@@ -37,7 +37,7 @@ function validateNewPostForm(form) {
   return isValid
 }
 
-export default function ChildNewPost({ onClose, post, defaultPoint }) {
+export default function ChildNewPost({ onClose, post, defaultPoint, sortBy, }) {
   const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
   const users = useQuery('users', () => api.users.profiles(), { initialData: [] })
   const [loading, setLoading] = React.useState(false)
@@ -69,7 +69,7 @@ export default function ChildNewPost({ onClose, post, defaultPoint }) {
           <ul className="flex flex-wrap items-center gap-y-3 divide-x divide-primary-400 first:pl-0 child:pl-4">
             {/* points button */}
 
-            <li className="group pr-4 !pl-0">
+            <li className="group !pl-0 pr-4">
               <PointsRangeDialog {...{ form, setForm }} />
             </li>
 
@@ -81,7 +81,7 @@ export default function ChildNewPost({ onClose, post, defaultPoint }) {
 
         {/* text field */}
 
-        <div className="_px-6 rounded-b-lg bg-white pt-6 pb-3 text-[#b1b1b1] drop-shadow-normal">
+        <div className="_px-6 rounded-b-lg bg-white pb-3 pt-6 text-[#b1b1b1] drop-shadow-normal">
           <div className="px-6">
             {form.point == 0 ? (
               <span>+30 </span>
@@ -171,22 +171,22 @@ export default function ChildNewPost({ onClose, post, defaultPoint }) {
               }
             >
               {/* <EmojiEmotions /> */}
-              <img src={smiley} alt="smiley" width={"20px"} />
+              <img src={smiley} alt="smiley" width={'20px'} />
             </EmojiPickerBox>
 
             <ImagePickerBox onChange={(image) => setForm((prev) => ({ ...prev, image }))}>
               {/* <Image /> */}
-              <img src={img} alt="img" width={"26px"} />
+              <img src={img} alt="img" width={'26px'} />
             </ImagePickerBox>
 
             <GifPickerBox onChange={(url) => setForm((prev) => ({ ...prev, gif: url }))}>
               {/* <GifBox /> */}
-              <img src={gif} alt="gif" width={"20px"} />
+              <img src={gif} alt="gif" width={'20px'} />
             </GifPickerBox>
 
             <AddLinkBox onChange={(link) => setForm((prev) => ({ ...prev, link }))}>
               {/* <Link /> */}
-              <img src={link} alt="link" width={"20px"} />
+              <img src={link} alt="link" width={'20px'} />
             </AddLinkBox>
 
             <button
@@ -196,31 +196,35 @@ export default function ChildNewPost({ onClose, post, defaultPoint }) {
               onClick={async () => {
                 try {
                   setLoading(true)
-                  const recipients = form.recipients.filter((userId) => userId !== me.data.id).join(",")
-                  const hashtags = form.hashtags.map(({name}) => name).join(",")
+                  const recipients = form.recipients
+                    .filter((userId) => userId !== me.data.id)
+                    .join(',')
+                  const hashtags = form.hashtags.map(({ name }) => name).join(',')
 
                   if (recipients.length === 0) {
-                    toast.error("Cant give points to your self")
-                    return;
+                    toast.error('Cant give points to your self')
+                    return
                   }
                   if (!validateNewPostForm(form)) return
 
                   const data = CreatePost(me.data.id, post.id, { ...form, recipients, hashtags })
                   const formData = toFormData(data)
                   const newTransaction = await api.transactions.new(formData)
-                  newTransaction.avtar = newTransaction.avtar.substring(SERVER_URL.length)
-                  queryClient.setQueryData(['transaction', sortBy], prev => {
-                    if (!prev) return;
-                    const targetPost  = prev.find(_post => _post.id === postId)
-                    if (targetPost) 
-                      targetPost.children.push(newTransaction)
+                  newTransaction.sender.avtar = newTransaction.sender.avtar.substring(
+                    SERVER_URL.length
+                  )
+                  queryClient.setQueryData(['transaction', sortBy], (prev) => {
+                    if (!prev) return
+                    const targetPost = prev.find((_post) => _post.id === post.id)
+                    if (targetPost) targetPost.children.push(newTransaction)
 
                     return [...prev]
                   })
                   await queryClient.refetchQueries('me')
 
                   onClose()
-                } catch {
+                } catch (e) {
+                  console.log('child-new-post', e)
                   toast.error('Transaction failed. Server error')
                 } finally {
                   setLoading(false)

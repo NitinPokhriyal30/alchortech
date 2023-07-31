@@ -20,13 +20,11 @@ export default function PostComment({ modal, setModal, sortBy, postId, comment, 
   console.log('x', comment)
 
   const placeholderUser = { avtar: GrayBG, first_name: 'FirstName', last_name: '&nbsp;' }
-  const user = users.data
-    ? getUserById(comment.created_by, users.data) || placeholderUser
-    : placeholderUser
+  const user = comment.created_by
 
   return (
     <div className="grid grid-cols-[auto_1fr] gap-4 pl-0 pt-[7px]">
-      <img className="h-8.5 w-8.5 rounded-full object-cover" src={user.avtar} />
+      <img className="h-8.5 w-8.5 rounded-full object-cover" src={SERVER_URL + user.avtar} />
 
       <div className="relative ">
         <div className="rounded-[15px] rounded-tl-none bg-paper p-[20px] text-[#464646]">
@@ -54,7 +52,7 @@ export default function PostComment({ modal, setModal, sortBy, postId, comment, 
             {comment.reaction_hashes.length > 0 ? (
               <div className="flex items-center gap-1 rounded-[17px] border-[0.6px] border-[#D1D1D1] bg-white px-[5px] pr-2 text-lg">
                 {unicodeToEmoji(comment.reaction_hashes[0])}
-                <span className=" text-sm text-[#747474]">{comment.react_by.length}</span>
+                <span className=" text-sm text-[#747474]">{comment.total_reaction_counts}</span>
               </div>
             ) : null}
           </p>
@@ -75,11 +73,14 @@ export default function PostComment({ modal, setModal, sortBy, postId, comment, 
                         }
 
                         await api.comment.react(reacts)
-                        await queryClient.setQueryData(["transaction", sortBy], (prev) => {
+                        await queryClient.setQueryData(['transaction', sortBy], (prev) => {
                           if (!prev) return
-                          const targetComment = prev.find((_post) => _post.id === postId)?.comment.find(_comment => _comment.id === comment.id)
+                          const targetComment = prev
+                            .find((_post) => _post.id === postId)
+                            ?.comments.find((_comment) => _comment.id === comment.id)
                           if (targetComment) {
-                            targetComment.reaction_hashes = [...targetComment.reaction_hashes, reacts.reaction_hash]
+                            targetComment.reaction_hashes.push(reacts.reaction_hash)
+                            targetComment.total_reaction_counts += 1
                           }
 
                           return [...prev]

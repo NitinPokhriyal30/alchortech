@@ -73,7 +73,7 @@ const api = {
   comment: {
     new: (data) =>
       axios
-        .post(`comments/${data.post_id}`, data, {
+        .post(`comments/${data.post_id}/`, data, {
           headers: { 'Content-Type': 'multipart/form-data' },
         })
         .then((r) => r.data),
