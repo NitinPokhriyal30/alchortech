@@ -53,7 +53,6 @@ export default function NewPost({ ...props }) {
   const [loading, setLoading] = React.useState(false)
   const [processedImage, setProcessedImage] = React.useState('')
   const inputRef = React.useRef()
-  const properties = useQuery('properties', () => api.properties())
 
   const [form, setForm] = React.useState({
     point: 0,
@@ -135,8 +134,8 @@ export default function NewPost({ ...props }) {
                     </span>
                   ))}
                 {form.hashtags?.map((tag) => (
-                  <span className="text-[#464646]" key={tag}>
-                    {tag}{' '}
+                  <span className="text-[#464646]" key={tag.name}>
+                    {tag.name}{' '}
                   </span>
                 ))}
               </>
@@ -259,9 +258,12 @@ export default function NewPost({ ...props }) {
 
                   const data = CreatePost(me.data.id, '', {
                     ...form,
-                    hashtags: form.hashtags.join(','),
+                    // hashtags: form.hashtags.join(','),
+                    hashtags: form.hashtags.map(item => item.name).join(','),
                     recipients: form.recipients.join(','),
                   })
+
+                  console.log(data);
                   const formData = toFormData(data)
                   // recipients.forEach((userId) => formData.append('recipients', userId))
 
@@ -343,7 +345,6 @@ export function AddLinkPopup({ onChange }) {
 
 export function PointsRangeDialog({ form, setForm }) {
   const properties = useQuery('properties', () => api.properties())
-  const points_range = properties.data?.points_range
 
   const points_colors = [
     'text-[#03BFC7]',
@@ -463,7 +464,7 @@ export function RecipientsDropdown({ form, setForm }) {
 export function HashTagsDropdown({ form, setForm }) {
   const properties = useQuery('properties', () => api.properties())
 
-  const hashtags = properties.data?.hashtage
+  const hashtags = properties.data?.hashtags
 
   return (
     <>
@@ -474,27 +475,28 @@ export function HashTagsDropdown({ form, setForm }) {
         {properties.isLoading ? (
           <p className="h-10 w-[15ch] pt-3 text-center">Loading</p>
         ) : (
-          ([{ name: 'Collaboration' }, { name: 'thanks' }])?.map((tag) => {
-            const checked = form.hashtags.includes(tag.name)
-            return (
-              <button
-                key={tag.name}
+            hashtags?.map((tag) => {
+              const checked = form.hashtags.includes(tag)
+              // console.log(checked);
+              return (
+                <button
+                key={tag}
                 type="button"
                 className={`px-4 py-1 text-left ${checked ? 'bg-translucent' : ''}`}
                 onClick={() => {
                   setForm((prev) => {
-                    const checked = prev.hashtags.includes(tag.name)
+                    prev.hashtags = prev.hashtags.filter((x) => x.name !== tag)
+                    const checked = prev.hashtags.includes(tag)
                     if (checked) {
-                      prev.hashtags = prev.hashtags.filter((x) => x !== tag.name)
+                      prev.hashtags = prev.hashtags.filter((x) => x.name !== tag)
                     } else {
-                      prev.hashtags.push(tag.name)
+                      prev.hashtags.push({ 'name': tag })
                     }
-
                     return { ...prev }
                   })
                 }}
               >
-                {tag.name}
+                {tag}
               </button>
             )
           })

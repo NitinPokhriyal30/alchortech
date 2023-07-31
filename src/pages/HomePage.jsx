@@ -34,6 +34,7 @@ export default function HomePage() {
   const [page, setPage] = React.useState(1)
   const [sortBy, setSortBy] = React.useState('all')
 
+   
   const postList = useQuery(['transaction', sortBy], () =>
     api.transactions.all(new URLSearchParams({ key_param: sortBy, page: page, pagination: 1, page_size: 5 })),
     {

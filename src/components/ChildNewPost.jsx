@@ -38,6 +38,8 @@ function validateNewPostForm(form) {
 }
 
 export default function ChildNewPost({ onClose, post, defaultPoint, sortBy, }) {
+
+  // console.log(post);
   const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
   const users = useQuery('users', () => api.users.profiles(), { initialData: [] })
   const [loading, setLoading] = React.useState(false)
@@ -94,7 +96,7 @@ export default function ChildNewPost({ onClose, post, defaultPoint, sortBy, }) {
 
               .map((user) => (
                 <span className="text-[#464646]" key={user.id}>
-                  @{user.first_name} {user.last_name}
+                  @{user.first_name} {user.last_name} { }
                 </span>
               ))}{' '}
             {form.hashtags.length == 0 ? (
@@ -102,7 +104,7 @@ export default function ChildNewPost({ onClose, post, defaultPoint, sortBy, }) {
             ) : (
               form.hashtags.map((tag) => (
                 <span className="text-[#464646]" key={tag.name}>
-                  {tag.name}
+                  {'#' + tag.name + ' '}
                 </span>
               ))
             )}
@@ -199,7 +201,7 @@ export default function ChildNewPost({ onClose, post, defaultPoint, sortBy, }) {
                   const recipients = form.recipients
                     .filter((userId) => userId !== me.data.id)
                     .join(',')
-                  const hashtags = form.hashtags.map(({ name }) => name).join(',')
+                  // const hashtags = form.hashtags.map(({ name }) => name).join(',')
 
                   if (recipients.length === 0) {
                     toast.error('Cant give points to your self')
@@ -207,7 +209,7 @@ export default function ChildNewPost({ onClose, post, defaultPoint, sortBy, }) {
                   }
                   if (!validateNewPostForm(form)) return
 
-                  const data = CreatePost(me.data.id, post.id, { ...form, recipients, hashtags })
+                  const data = CreatePost(me.data.id, post.id, { ...form, recipients, hashtags: form.hashtags.map(item => item.name).join(',') })
                   const formData = toFormData(data)
                   const newTransaction = await api.transactions.new(formData)
                   newTransaction.sender.avtar = newTransaction.sender.avtar.substring(

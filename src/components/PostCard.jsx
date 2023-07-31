@@ -1,32 +1,19 @@
 import React, { useRef } from 'react'
 import * as Popover from '@radix-ui/react-popover'
-import { store } from '../redux/store'
 import {
-  BsFillChatRightTextFill,
-  BsFillImageFill,
-  BsPlusCircleFill,
   BsThreeDots,
 } from 'react-icons/bs'
 import PostUser from '../assets/images/post-img/post-user.png'
-import MyProfileImg from '../assets/images/user-profile/male_avatar.jpg'
-import { BiHeartCircle, BiXCircle } from 'react-icons/bi'
-import { HiEmojiHappy } from 'react-icons/hi'
-import { AiOutlineCaretDown, AiOutlineFileGif } from 'react-icons/ai'
-import ThumbNailX from '../assets/slider/slider-bg2.png'
 import GifPicker from './GifPickerPopover'
 import EmojiPicker from 'emoji-picker-react'
-import { addPoints, addReaction, addComment, addCommentReaction } from '../redux/postAction'
-import { useSelector } from 'react-redux'
 import HoveringWidget from '@/components/HoveringWidget'
 import { SERVER_URL } from '@/constant'
 import { api } from '@/api'
 import Cookies from 'js-cookie'
 import { useQuery } from 'react-query'
-import { getTodayDate, CreatePostComment, CreatePost, CreateReact } from '@/utils'
 import { queryClient } from '@/queryClient'
 import ChildNewPost from '@/components/ChildNewPost'
 import { toast } from 'react-toastify'
-import PostCommentList from '@/components/PostCommentList'
 import moment from 'moment'
 import PostComment from '@/components/PostComment'
 import * as HoverCard from '@radix-ui/react-hover-card'
@@ -41,6 +28,7 @@ import ReactComponent from './ReactComponent'
 import * as Dialog from '@radix-ui/react-dialog'
 import { pluralize } from '@/components/HomeRightSidebar/CelebrationWidget'
 
+
 export const reactionsUnicode = {
   '😊': 'U+1F60A',
   '😁': 'U+1F601',
@@ -49,31 +37,14 @@ export const reactionsUnicode = {
   '👏': 'U+1F44F',
 }
 
-const POINTS = [
-  {
-    points: 10,
-    color: '#0374C7',
-  },
-  {
-    points: 20,
-    color: '#0374C7',
-  },
-  {
-    points: 30,
-    color: '#6554E3',
-  },
-  {
-    points: 40,
-    color: '#B754E3',
-  },
-  {
-    points: 50,
-    color: '#F46CE9',
-  },
+const points_colors = [
+  'text-[#03BFC7]',
+  'text-[#0374C7]',
+  'text-[#6554E3]',
+  'text-[#B754E3]',
+  'text-[#F46CE9]',
 ]
 
-const getPostComment = (postId, comments) =>
-  comments.filter((comment) => comment.post_id === postId)
 
 const sortCommentsAndTransactions = (comments, childrenTransactions) => {
   const _childrenTransactions = childrenTransactions.map((transaction) => ({
@@ -105,6 +76,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
   const imageInputRef = React.useRef()
   const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
   const comments = useQuery('comments', () => api.comment.all())
+  const properties = useQuery('properties', () => api.properties())
   // const addedPoints = post.sender.find((x) => x.id === me.id)?.points
 
   post.reactions = []
@@ -159,7 +131,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
               {post.recipients.map((user) => `@${user.first_name} ${user.last_name}`).join(' ')}
             </span>{' '}
             <span className={`${HASHTAG.text}`}>
-              {post.hashtags.map((hash) => hash.name).join(' ')}
+              {post.hashtags.map((hash) => '#' + hash.name).join(' ')}
             </span>
           </p>
 
@@ -205,11 +177,11 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                 </button>
 
                 <div className="absolute bottom-8 left-0 hidden gap-1 rounded-[19px] bg-white px-4 py-2 drop-shadow-[0px_2px_3px_#00000029] hover:flex peer-hover:flex">
-                  {POINTS.map(({ points, color }) => (
+                  {properties?.data?.points_allowed?.map((points, index ) => (
                     <button
-                      key={points}
-                      style={{ color: color }}
-                      className={`h-8 w-8 rounded-full  text-sm font-black hover:bg-translucent`}
+                      key={index}
+                      // style={{ color: color }}
+                      className={`h-8 w-8 rounded-full  text-sm font-black hover:bg-translucent ${points_colors[index]}`}
                       onClick={() => {
                         setPoint(points)
                         setModal('child-new-post')
@@ -311,7 +283,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                       : ''}
                   </span>
                 ) : (
-                  '😊'
+                  '0 😊'
                 )}{' '}
                 <Dialog.Trigger asChild>
                   <p className="pl-[3px] text-16px">{post.total_user_reaction_counts}</p>
@@ -589,7 +561,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                   </div>
                   <div className="relative z-10 flex h-[32px] -translate-y-1.5 items-center text-[12px] leading-[15px] text-primary">
                     <p className="lex items-center gap-3 pb-1">
-                      {commentOrTransaction.user_reaction_info.reaction_hashes.length > 0 ? (
+                      {commentOrTransaction?.user_reaction_info?.reaction_hashes?.length > 0 ? (
                         <div className="flex items-center gap-1 rounded-[17px] border-[0.6px] border-[#D1D1D1] bg-white px-[5px] pr-2 text-lg">
                           {unicodeToEmoji(
                             commentOrTransaction.user_reaction_info.reaction_hashes[0]
