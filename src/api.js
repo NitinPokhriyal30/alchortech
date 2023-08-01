@@ -64,11 +64,11 @@ const api = {
           headers: { 'Content-Type': 'multipart/form-data' },
         })
         .then((r) => r.data),
-    all: (filters) =>
-      axios.get(`transaction/?${filters.toString()}`).then((r) => r.data),
+    all: (filters) => axios.get(`transaction/?${filters.toString()}`).then((r) => r.data),
     meAsRecipient: (id) => axios.get(`api/posts/?recipients=${id}`).then((r) => r.data),
     meAsSender: (id) => axios.get(`api/posts/?sender=${id}`).then((r) => r.data),
     react: (data) => axios.post('add-reaction/', data).then((r) => r.data),
+    allReactions: (data) => axios.get(`transaction-reactions/${data.post_id}/`).then((r) => r.data),
   },
   comment: {
     new: (data) =>
@@ -80,8 +80,7 @@ const api = {
     all: () => axios.get('comments/').then((r) => r.data),
     react: (data) => axios.post('add-reaction/', data).then((r) => r.data),
   },
-  todayEvents: () =>
-    axios.get('api/today-events/').then((r) => r.data),
+  todayEvents: () => axios.get('api/today-events/').then((r) => r.data),
 
   properties: () => axios.get('properties/').then((r) => r.data),
 }

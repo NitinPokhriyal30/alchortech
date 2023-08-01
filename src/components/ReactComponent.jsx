@@ -1,142 +1,129 @@
 import React, { useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { RxCross2 } from 'react-icons/rx'
-import { AiFillCaretDown } from 'react-icons/ai';
+import { AiFillCaretDown } from 'react-icons/ai'
 import { useQuery } from 'react-query'
+import { RiCloseLine } from 'react-icons/ri'
+import { api } from '@/api'
+import { reactionsUnicode, unicodeToEmoji } from '@/components/PostCard'
+import Spinner from '@/components/Spinner'
 
-const ReactComponent = () => {
+const getReactions = (reactions, emoji) => {
+  return reactions.filter((reaction) => reaction.reaction.includes(reactionsUnicode[emoji]))
+}
 
-    const [activeTab, setActiveTab] = useState(1);
+const ReactComponent = ({ postId, post }) => {
+  const [activeTab, setActiveTab] = useState('')
+  const reactionQuery = useQuery(['reactions', postId], () =>
+    api.transactions.allReactions({ post_id: postId })
+  )
 
-    const handleTabClick = (tabIndex) => {
-        setActiveTab(tabIndex);
-    };
+  reactionQuery.data?.length > 0 && console.log('reaction', post, reactionQuery.data)
 
-    return (
-        <Dialog.Portal>
-            <Dialog.Overlay className="bg-black bg-opacity-20 fixed z-50 inset-0" />
+  const handleTabClick = (tabIndex) => {
+    setActiveTab(tabIndex)
+  }
 
-            <Dialog.Content className="fixed z-[99] left-1/2 top-2/5 -translate-x-1/2 -translate-y-1/2">
+  return (
+    <Dialog.Portal>
+      <Dialog.Overlay className="fixed inset-0 z-50 bg-black bg-opacity-20" />
 
-                    <div className="bg-white shadow border border-[#efefef] rounded-md p-5 w-screen md:max-w-4xl max-w-xs">
-                        <div className="grow  h-full mx-auto  py-2 mt-5">
-                            <div className="border-b-[1px] flex items-start justify-between">
-                                <nav className=" flex gap-4 mx-3 w-[70%] ">
-                                    <button
-                                        className={`${activeTab === 1
-                                            ? " rounded-tl-md rounded-tr-md border-b-2 border-[#292929] "
-                                            : "font-semibold  rounded-md border-b-2 border-transparent"
-                                            }    font-semibold font-Montserrat text-[#292929] `}
-                                        onClick={() => handleTabClick(1)}
-                                    >
-                                        All 3
-                                    </button>
-                                    <button
-                                        className={`${activeTab === 2
-                                            ? "bg-white rounded-tl-md rounded-tr-md border-b-2 border-[#292929] "
-                                            : "font-semibold  rounded-md border-b-2 border-transparent"
-                                            }    font-semibold font-Montserrat text-[#292929] `}
-                                        onClick={() => handleTabClick(2)}
-                                    >
-                                        😊 2
-                                    </button>
-                                    <button
-                                        className={`${activeTab === 3
-                                            ? "bg-white rounded-tl-md rounded-tr-md border-b-2 border-[#292929] "
-                                            : "font-semibold  rounded-md border-b-2 border-transparent"
-                                            }    font-semibold font-Montserrat text-[#292929] `}
-                                        onClick={() => handleTabClick(3)}
-                                    >
-                                        ❤ 1
-                                    </button>
-                                </nav>
-                                <button className="pr-4  text-gray-400">x</button>
-                            </div>
-                            <div className="bg-white px-4 rounded-tr-md rounded-br-md rounded-bl-md">
-                                <div className={`${activeTab === 1 ? "block" : "hidden"}`}>
-                                    <div className=" py-4 flex justify-between items-center border-b-[1px]">
-                                        <div className="flex gap-6 items-center">
-                                            <div>🤷‍♀️</div>
-                                            <div>
-                                                <p>
-                                                <span> Sunita Gulia</span> | <span>Ditector - Product</span>
-                                                    Development
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div>😊</div>
-                                    </div>
-                                    <div className=" py-4 flex justify-between items-center border-b-[1px]">
-                                        <div className="flex gap-6 items-center">
-                                            <div>🤷‍♀️</div>
-                                            <div>
-                                                <p>
-                                                    <span> Sunita Gulia</span> | Ditector - Product
-                                                    Development
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div>😊</div>
-                                    </div>
-                                    <div className=" py-4 flex justify-between items-center">
-                                        <div className="flex gap-6 items-center">
-                                            <div>🤷‍♀️</div>
-                                            <div>
-                                                <p>
-                                                    <span> Sunita Gulia</span> | Ditector - Product
-                                                    Development
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div>💖</div>
-                                    </div>
-                                </div>
-                                <div className={`${activeTab === 2 ? "block" : "hidden"} `}>
-                                    <div className=" py-4 flex justify-between items-center border-b-[1px]">
-                                        <div className="flex gap-6 items-center">
-                                            <div>🤷‍♀️</div>
-                                            <div>
-                                                <p>
-                                                    <span> Sunita Gulia</span> | Ditector - Product
-                                                    Development
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div>😊</div>
-                                    </div>
-                                    <div className=" py-4 flex justify-between items-center border-b-[1px]">
-                                        <div className="flex gap-6 items-center">
-                                            <div>🤷‍♀️</div>
-                                            <div>
-                                                <p>
-                                                    <span> Sunita Gulia</span> | Ditector - Product
-                                                    Development
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div>😊</div>
-                                    </div>
-                                </div>
-                                <div className={`${activeTab === 3 ? "block" : "hidden"}`}>
-                                    <div className=" py-4 flex justify-between items-center border-b-[1px]">
-                                        <div className="flex gap-6 items-center">
-                                            <div>🤷‍♀️</div>
-                                            <div>
-                                                <p>
-                                                    <span> Sunita Gulia</span> | Ditector - Product
-                                                    Development
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div>💖</div>
-                                    </div>
-                                </div>
-                            </div>
+      <Dialog.Content className="fixed left-1/2 top-2/5 z-[99] -translate-x-1/2 -translate-y-1/2">
+        {reactionQuery.isLoading ? (
+          <div className="relative min-h-[10rem] w-screen max-w-xs rounded-md border border-[#efefef] bg-white p-5 shadow md:max-w-4xl">
+            <Spinner isLoading />
+          </div>
+        ) : (
+          <div className="w-screen max-w-xs rounded-md border border-[#efefef] bg-white p-5 shadow md:max-w-4xl">
+            <div className="mx-auto  mt-5 h-full  grow py-2">
+              <div className="flex items-start justify-between border-b-[1px]">
+                <nav className=" mx-3 flex w-[70%] gap-4 ">
+                  <button
+                    className={`${
+                      activeTab === ''
+                        ? ' rounded-tl-md rounded-tr-md border-b-2 border-[#292929] '
+                        : 'rounded-md  border-b-2 border-transparent font-semibold'
+                    }    font-Montserrat font-semibold text-[#292929] `}
+                    onClick={() => handleTabClick('')}
+                  >
+                    All {reactionQuery.data.length}
+                  </button>
+
+                  {Object.keys(reactionsUnicode).map((emoji, i) => (
+                    <button
+                      className={`
+                      ${getReactions(reactionQuery.data, emoji).length === 0 ? 'hidden ' : ''}
+                      ${
+                        activeTab === emoji
+                          ? 'rounded-tl-md rounded-tr-md border-b-2 border-[#292929] bg-white '
+                          : 'rounded-md  border-b-2 border-transparent font-semibold'
+                      }    font-Montserrat font-semibold text-[#292929] `}
+                      onClick={() => handleTabClick(emoji)}
+                    >
+                      {emoji} {getReactions(reactionQuery.data, emoji).length}
+                    </button>
+                  ))}
+                </nav>
+                <Dialog.Close className="pr-4  text-gray-400">
+                  <RiCloseLine />
+                </Dialog.Close>
+              </div>
+
+              <div className="rounded-bl-md rounded-br-md rounded-tr-md bg-white px-4">
+                <div className={`${activeTab === '' ? 'block' : 'hidden'}`}>
+                  {reactionQuery.data.map((reaction) => (
+                    <>
+                      <div className=" flex items-center justify-between border-b-[1px] py-4">
+                        <div className="flex items-center gap-6">
+                          <div>🤷‍♀️</div>
+                          <div>
+                            <p>
+                              <span>{reaction.user_full_name}</span> | {reaction.user_role} -{' '}
+                              {reaction.user_department}
+                            </p>
+                          </div>
                         </div>
-                    </div>
-            </Dialog.Content>
-        </Dialog.Portal>
-    )
+                        <div>{unicodeToEmoji(reaction.reaction)}</div>
+                      </div>
+                    </>
+                  ))}
+                </div>
+
+                {Object.keys(reactionsUnicode).map((emoji) => (
+                  <div
+                    className={`${
+                      activeTab === emoji && getReactions(reactionQuery.data, emoji).length > 0
+                        ? 'block'
+                        : 'hidden'
+                    } `}
+                  >
+                    {reactionQuery.data
+                      .filter((reaction) => reaction.reaction === reactionsUnicode[emoji])
+                      .map((reaction) => (
+                        <>
+                          <div className=" flex items-center justify-between border-b-[1px] py-4">
+                            <div className="flex items-center gap-6">
+                              <div>🤷‍♀️</div>
+                              <div>
+                                <p>
+                                  <span>{reaction.user_full_name}</span> | {reaction.user_role} -{' '}
+                                  {reaction.user_department}
+                                </p>
+                              </div>
+                            </div>
+                            <div>{emoji}</div>
+                          </div>
+                        </>
+                      ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </Dialog.Content>
+    </Dialog.Portal>
+  )
 }
 
 export default ReactComponent

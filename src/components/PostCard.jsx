@@ -1,8 +1,6 @@
 import React, { useRef } from 'react'
 import * as Popover from '@radix-ui/react-popover'
-import {
-  BsThreeDots,
-} from 'react-icons/bs'
+import { BsThreeDots } from 'react-icons/bs'
 import PostUser from '../assets/images/post-img/post-user.png'
 import GifPicker from './GifPickerPopover'
 import EmojiPicker from 'emoji-picker-react'
@@ -28,7 +26,6 @@ import ReactComponent from './ReactComponent'
 import * as Dialog from '@radix-ui/react-dialog'
 import { pluralize } from '@/components/HomeRightSidebar/CelebrationWidget'
 
-
 export const reactionsUnicode = {
   '😊': 'U+1F60A',
   '😁': 'U+1F601',
@@ -44,7 +41,6 @@ const points_colors = [
   'text-[#B754E3]',
   'text-[#F46CE9]',
 ]
-
 
 const sortCommentsAndTransactions = (comments, childrenTransactions) => {
   const _childrenTransactions = childrenTransactions.map((transaction) => ({
@@ -177,7 +173,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                 </button>
 
                 <div className="absolute bottom-8 left-0 hidden gap-1 rounded-[19px] bg-white px-4 py-2 drop-shadow-[0px_2px_3px_#00000029] hover:flex peer-hover:flex">
-                  {properties?.data?.points_allowed?.map((points, index ) => (
+                  {properties?.data?.points_allowed?.map((points, index) => (
                     <button
                       key={index}
                       // style={{ color: color }}
@@ -272,25 +268,31 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
 
           <div className="mt-1 flex items-center gap-2 pb-1">
             <Dialog.Root>
-              <div className="flex cursor-pointer items-center rounded-full border-[0.5px] border-[#d1d1d1] px-2  text-[16px] text-[#747474]">
-                <Dialog.Trigger >
-                {post.user_reaction_info === 'not available' && post.user_reaction_info.reaction_hashes != null ? (
-                  <span>
-                    {unicodeToEmoji(post.user_reaction_info.reaction_hashes)}
-                    {post.user_reaction_info.latest_user_reaction_full_name}
-                    {post.user_reaction_info.total_reaction_counts > 1
-                      ? 'and ' +
-                      pluralize(post.user_reaction_info.total_reaction_counts - 1, 'other', 's')
-                      : ''}
-                  </span>
-                ) : (
-                  '0 😊'
-                )}{' '}
-                
+              <div className="flex items-center rounded-full border-[0.5px] border-[#d1d1d1] px-2  text-[16px] text-[#747474]">
+                <Dialog.Trigger
+                  className={
+                    post.user_reaction_info.total_reaction_counts === 0 &&
+                    'pointer-events-none cursor-default'
+                  }
+                >
+                  {post.user_reaction_info === 'not available' &&
+                  post.user_reaction_info.reaction_hashes != null ? (
+                    <span>
+                      {unicodeToEmoji(post.user_reaction_info.reaction_hashes)}
+                      {post.user_reaction_info.latest_user_reaction_full_name}
+                      {post.user_reaction_info.total_reaction_counts > 1
+                        ? 'and ' +
+                          pluralize(post.user_reaction_info.total_reaction_counts - 1, 'other', 's')
+                        : ''}
+                    </span>
+                  ) : (
+                    '0 😊'
+                  )}{' '}
                   {/* <p className="pl-[3px] text-16px">{post.total_user_reaction_counts}</p> */}
                 </Dialog.Trigger>
               </div>
-              <ReactComponent />
+
+              <ReactComponent postId={post.id} post={post} />
             </Dialog.Root>
 
             <p className="text-16px text-[#d1d1d1]">
