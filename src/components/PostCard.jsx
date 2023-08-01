@@ -213,7 +213,14 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                           content_type: 'transaction',
                         }
 
-                        await api.transactions.react(reacts)
+                        if (post.user_reaction_info?.is_reacted === true) {
+                          await api.transactions.updateReaction({
+                            post_id: post.id,
+                            reaction_hash: reactionsUnicode[emoji],
+                          })
+                        } else {
+                          await api.transactions.react(reacts)
+                        }
                         await queryClient.setQueryData(['transaction', props.sortBy], (prev) => {
                           if (!prev) return
                           const targetPost = prev.find((_post) => _post.id === post.id)
@@ -228,8 +235,10 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                             } else {
                               targetPost.user_reaction_info = {
                                 reaction_hashes: [
-                                  ...targetPost.user_reaction_info.reaction_hashes,
-                                  reacts.reaction_hash,
+                                  ...new Set([
+                                    ...targetPost.user_reaction_info.reaction_hashes,
+                                    reacts.reaction_hash,
+                                  ]),
                                 ],
                                 latest_user_reaction_full_name:
                                   me.data.first_name + ' ' + me.data.last_name,
@@ -268,27 +277,37 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
 
           <div className="mt-1 flex items-center gap-2 pb-1">
             <Dialog.Root>
-              <div className="flex items-center rounded-full border-[0.5px] border-[#d1d1d1] px-2  text-[16px] text-[#747474]">
+              <div className="rounded-full border-[0.5px] border-[#d1d1d1] px-2  text-[16px] text-[#747474]">
                 <Dialog.Trigger
                   className={
-                    post.user_reaction_info.total_reaction_counts === 0 &&
-                    'pointer-events-none cursor-default'
+                    ((post.user_reaction_info == null ||
+                      post.user_reaction_info.total_reaction_counts === 0) &&
+                      'pointer-events-none cursor-default ') + ' flex items-center '
                   }
                 >
-                  {post.user_reaction_info === 'not available' &&
-                  post.user_reaction_info.reaction_hashes != null ? (
-                    <span>
-                      {unicodeToEmoji(post.user_reaction_info.reaction_hashes)}
-                      {post.user_reaction_info.latest_user_reaction_full_name}
-                      {post.user_reaction_info.total_reaction_counts > 1
-                        ? 'and ' +
-                          pluralize(post.user_reaction_info.total_reaction_counts - 1, 'other', 's')
-                        : ''}
-                    </span>
+                  {post.user_reaction_info != null ? (
+                    <>
+                      <span>
+                        {post.user_reaction_info.reaction_hashes.map((hash) =>
+                          unicodeToEmoji(hash)
+                        )}
+                        {post.user_reaction_info.latest_user_reaction_full_name}
+                        {post.user_reaction_info.total_reaction_counts > 1
+                          ? 'and ' +
+                            pluralize(
+                              post.user_reaction_info.total_reaction_counts - 1,
+                              'other',
+                              's'
+                            )
+                          : ''}
+                      </span>
+                      {/* <p className="pl-[3px] text-16px">
+                        {post.user_reaction_info?.total_reaction_counts}
+                      </p> */}
+                    </>
                   ) : (
-                    '0 😊'
+                    '😊 0'
                   )}{' '}
-                  {/* <p className="pl-[3px] text-16px">{post.total_user_reaction_counts}</p> */}
                 </Dialog.Trigger>
               </div>
 
