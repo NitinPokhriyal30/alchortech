@@ -268,6 +268,7 @@ export default function NewPost({ ...props }) {
                   // recipients.forEach((userId) => formData.append('recipients', userId))
 
                   const newTransaction = await api.transactions.new(formData)
+                  newTransaction.image = newTransaction.image.substring(SERVER_URL.length)
                   newTransaction.sender.avtar = newTransaction.sender.avtar.substring(SERVER_URL.length)
                   await queryClient.setQueryData((['transaction', props.sortBy]), (prev) => {
                     if (!prev) return [newTransaction];
@@ -465,6 +466,7 @@ export function HashTagsDropdown({ form, setForm }) {
   const properties = useQuery('properties', () => api.properties())
 
   const hashtags = properties.data?.hashtags
+  console.log({hashtags})
 
   return (
     <>
@@ -476,7 +478,7 @@ export function HashTagsDropdown({ form, setForm }) {
           <p className="h-10 w-[15ch] pt-3 text-center">Loading</p>
         ) : (
             hashtags?.map((tag) => {
-              const checked = form.hashtags.includes(tag)
+              const checked = form.hashtags.findIndex((_tag) => _tag.name === tag) !== -1;
               // console.log(checked);
               return (
                 <button
@@ -485,12 +487,11 @@ export function HashTagsDropdown({ form, setForm }) {
                 className={`px-4 py-1 text-left ${checked ? 'bg-translucent' : ''}`}
                 onClick={() => {
                   setForm((prev) => {
-                    prev.hashtags = prev.hashtags.filter((x) => x.name !== tag)
-                    const checked = prev.hashtags.includes(tag)
+                    const checked = prev.hashtags.findIndex(_tag => _tag.name === tag) !== -1;
                     if (checked) {
                       prev.hashtags = prev.hashtags.filter((x) => x.name !== tag)
                     } else {
-                      prev.hashtags.push({ 'name': tag })
+                      prev.hashtags.push({name: tag})
                     }
                     return { ...prev }
                   })
