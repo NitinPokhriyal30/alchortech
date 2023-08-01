@@ -75,7 +75,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
   const [form, setForm] = React.useState({ image: '', gif: '', message: '' })
   const imageInputRef = React.useRef()
   const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
-  const comments = useQuery('comments', () => api.comment.all())
+  // const comments = useQuery('comments', () => api.comment.all())
   const properties = useQuery('properties', () => api.properties())
   // const addedPoints = post.sender.find((x) => x.id === me.id)?.points
 
@@ -83,7 +83,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
   post.comment = { replies: [] }
 
   // const isMyPost = post.sender.find((user) => user.id === me.data.id)
-  const amIReceiver = post.recipients.find((user) => user.id === me.data.id)
+  // const amIReceiver = post.recipients.find((user) => user.id === me.data.id)
 
   const commentsAndTransactions = sortCommentsAndTransactions(post.comments, post.children)
 
@@ -273,22 +273,24 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
           <div className="mt-1 flex items-center gap-2 pb-1">
             <Dialog.Root>
               <div className="flex cursor-pointer items-center rounded-full border-[0.5px] border-[#d1d1d1] px-2  text-[16px] text-[#747474]">
-                {post.user_reaction_info.reaction_hashes != null ? (
+                <Dialog.Trigger >
+                {post.user_reaction_info === 'not available' && post.user_reaction_info.reaction_hashes != null ? (
                   <span>
                     {unicodeToEmoji(post.user_reaction_info.reaction_hashes)}
                     {post.user_reaction_info.latest_user_reaction_full_name}
                     {post.user_reaction_info.total_reaction_counts > 1
                       ? 'and ' +
-                        pluralize(post.user_reaction_info.total_reaction_counts - 1, 'other', 's')
+                      pluralize(post.user_reaction_info.total_reaction_counts - 1, 'other', 's')
                       : ''}
                   </span>
                 ) : (
                   '0 😊'
                 )}{' '}
-                <Dialog.Trigger asChild>
-                  <p className="pl-[3px] text-16px">{post.total_user_reaction_counts}</p>
+                
+                  {/* <p className="pl-[3px] text-16px">{post.total_user_reaction_counts}</p> */}
                 </Dialog.Trigger>
               </div>
+              <ReactComponent />
             </Dialog.Root>
 
             <p className="text-16px text-[#d1d1d1]">
