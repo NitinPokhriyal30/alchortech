@@ -1,7 +1,7 @@
 import React from 'react'
 import { AiFillCaretDown } from 'react-icons/ai'
 
-const SortBy = ({ value, onChange }) => {
+const SortBy = ({ value, onChange }) => { 
   return (
     <div>
       <div className="flex items-center justify-between gap-2">
@@ -18,7 +18,7 @@ const SortBy = ({ value, onChange }) => {
           </div>
 
           <div className='hidden group-hover:block absolute right-0 z-10 p-2  rounded-md bg-white shadow border child:cursor-pointer'>
-            <p className="bg-translucent  text-sm" onClick={() => onChange('all')}>
+            <p className="bg-translucent  text-sm" onClick={() => onChange('everything')}>
               Everything
             </p>
             <p className="bg-translucent  text-sm" onClick={() => onChange('popular')}>

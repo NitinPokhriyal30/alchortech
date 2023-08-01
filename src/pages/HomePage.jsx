@@ -18,7 +18,7 @@ import { useQuery } from 'react-query'
 import { api } from '@/api'
 import { useIntersectionObserver } from 'usehooks-ts'
 import { queryClient } from '@/queryClient'
-import { getChildTransactionsFor, withIsChild } from '@/utils'
+// import { getChildTransactionsFor, withIsChild } from '@/utils'
 
 
 const stickBottomAlign = {
@@ -34,6 +34,7 @@ export default function HomePage() {
   const [page, setPage] = React.useState(1)
   const [sortBy, setSortBy] = React.useState('all')
 
+   
   const postList = useQuery(['transaction', sortBy], () =>
     api.transactions.all(new URLSearchParams({ key_param: sortBy, page: page, pagination: 1, page_size: 5 })),
     {
@@ -43,11 +44,8 @@ export default function HomePage() {
   const [stickyStyles, setStickyStyles] = React.useState({})
   const rightSidebarRef = React.useRef()
 
-  let allPosts = postList.data?.results || []
-  allPosts = withIsChild(allPosts)
-  const parentPosts = allPosts.filter(
-    (post) => !post.isChild || getChildTransactionsFor(post.id, allPosts).length > 0
-  )
+  let allPosts = postList.data || []
+  const parentPosts = allPosts
 
   React.useEffect(() => {
     function handleResize() {
@@ -94,7 +92,7 @@ export default function HomePage() {
           <ImageSlider />
         </div>
         <div className="xrelative z-20 mt-3">
-          <NewPost />
+          <NewPost sortBy={sortBy} />
         </div>
         <div className="mt-1">
           <SortBy value={sortBy} onChange={setSortBy} />
@@ -111,7 +109,6 @@ export default function HomePage() {
                   i={i}
                   key={post.id}
                   post={post}
-                  childrenTransactions={getChildTransactionsFor(post.id, allPosts)}
                   sortBy={sortBy}
                 />
               ))
@@ -130,7 +127,6 @@ export default function HomePage() {
                 <PostCard
                   key={index}
                   post={post}
-                  childrenTransactions={getChildTransactionsFor(post.id, allPosts)}
                   sortBy={sortBy}
                 />
               ))

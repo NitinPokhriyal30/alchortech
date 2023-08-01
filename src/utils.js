@@ -61,7 +61,7 @@ export function getDaysLeftForNextMonth() {
   var currentDate = new Date()
 
   // Set the date to the 1st day of the next month
-  nextMonthDate.setDate(1)
+  nextMonthDate.setDate(0)
 
   // Calculate the difference in milliseconds between the current date and the next month's date
   var timeDiff = nextMonthDate.getTime() - currentDate.getTime()
@@ -107,21 +107,19 @@ export function CreatePost(senderId, parent_id, form) {
 
   const post = {
     sender: senderId,
-    active: 'True',
-    flag_transaction: 'False',
-    react_by: form.react_by || [],
-    created_by: senderId,
-    updated_by: senderId,
-    created: today,
-    updated: today,
-
-    point: form.point,
+    active: 'true',
     recipients: form.recipients,
+    flag_transaction: 'false',
     hashtags: form.hashtags,
+    point: form.point,
     image: form.image,
     gif: form.gif,
     link: form.link,
     message: form.message,
+    created_by: senderId,
+    updated_by: senderId,
+    created: today,
+    updated: today,
   }
 
   if (parent_id) post.parent_id = parent_id

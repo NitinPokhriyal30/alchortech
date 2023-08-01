@@ -6,7 +6,7 @@ const wait = (ms) => (resolveWith) =>
     setTimeout(() => res(resolveWith), ms)
   })
 
-axios.defaults.baseURL = 'http://backend.letshigh5.com/'
+axios.defaults.baseURL = 'http://staging.letshigh5.com/'
 axios.defaults.headers.post['Content-Type'] = 'application/json'
 
 axios.interceptors.request.use(
@@ -45,11 +45,11 @@ const api = {
     changeAvatar: (id, formData) =>
       axios.put(`updateUserAvtar/${id}/`, formData).then((r) => r.data),
     me: (id) => axios.get(`getUserDetails/${id}/`).then((r) => r.data),
-    user: (userId) => axios.get(`getUserDetails/${userId}/`).then((r) => r.data),
   },
   users: {
     all: () => axios.get('getUsers/').then((r) => r.data),
     profiles: () => axios.get('users/profile/').then((r) => r.data),
+    userById: (id) => axios.get(`getUserDetails/${id}/`).then((r) => r.data),
     search: (params) => axios.get('employees/', { params }).then((r) => r.data),
   },
 
@@ -60,7 +60,7 @@ const api = {
   transactions: {
     new: (data) =>
       axios
-        .post('homepage/transaction/', data, {
+        .post('transaction/', data, {
           headers: { 'Content-Type': 'multipart/form-data' },
         })
         .then((r) => r.data),
@@ -74,22 +74,22 @@ const api = {
       axios
         .get(`transaction/?sender=${id}&date_range=${sortBy}`)
         .then((r) => r.data),
-    react: (data) => axios.patch('transaction/', data).then((r) => r.data),
+    react: (data) => axios.post('add-reaction/', data).then((r) => r.data),
   },
   comment: {
     new: (data) =>
       axios
-        .post('comments/', data, {
+        .post(`comments/${data.post_id}/`, data, {
           headers: { 'Content-Type': 'multipart/form-data' },
         })
         .then((r) => r.data),
     all: () => axios.get('comments/').then((r) => r.data),
-    react: (data) => axios.patch('transaction/comments/', data).then((r) => r.data),
+    react: (data) => axios.post('add-reaction/', data).then((r) => r.data),
   },
   todayEvents: () =>
-    axios.get('http://backend.letshigh5.com/api/today-events/').then((r) => r.data),
+    axios.get('api/today-events/').then((r) => r.data),
 
-  properties: () => axios.get('homepage/properties/').then((r) => r.data[0]),
+  properties: () => axios.get('properties/').then((r) => r.data),
 }
 
 export { api }

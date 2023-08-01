@@ -10,6 +10,7 @@ import { useQuery } from 'react-query'
 import { Link } from 'react-router-dom'
 import { Hidden } from '@mui/material'
 import SearchBox from '@/components/Navbar/SearchBox'
+import { SERVER_URL } from '@/constant'
 
 export default function MainNavbar() {
   const showSidebar = useSelector((store) => store.sidebar)
@@ -36,7 +37,7 @@ export default function MainNavbar() {
                 <h2 className="text-2xl font-bold">
                   <img
                     className="h-12 w-[126px] object-cover xxl:ml-10"
-                    src={properties.data?.company.logo}
+                    src={ SERVER_URL + properties.data?.company.logo}
                     alt={properties.data?.company.name}
                   />
                 </h2>

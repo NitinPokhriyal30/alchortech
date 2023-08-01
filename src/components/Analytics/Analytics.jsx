@@ -119,29 +119,28 @@ export const Analytics = () => {
   return (
     <div>
 
-    <div className='mt-3 flex justify-between'>
-      <div className='flex'>
+    <div className='mt-3 flex'>
+       <div className='flex'>
         <button className='bg-[#5486E3] text-white text-md font-Lato px-10 py-1 rounded-l-md border border-r-0 border-[#5486E3] min-w-[100px]'>
-        Overall
-        </button>
-        <button className='bg-white text-md font-Lato rounded-r-md border border-l-0 border-[#5486E3] min-w-[130px]'>
-        Your Team
-        </button> 
-      </div>
-      <div>
-      <div className=" mt-3">
-        <div className='flex'>
-          <div className="font-Lato text-[#7B7B7B] text-sm relative flex items-center mr-4">
-          Region
-          <button className="peer font-Lato flex items-center gap-1 text-sm font-semibold pl-1">
-          {sortRegion}
-          <span><AiFillCaretDown /></span>
+          Overall
           </button>
-          <div className="hidden drop-shadow-[0px_2px_6px_#44444F1A] w-36 px-4 py-2 rounded-lg bg-white absolute z-10 top-[21px] right-[1px] peer-hover:flex hover:flex  flex-col child:cursor-pointer text-end">
-            <p className="text-sm font-Lato" onClick={() => setSortRegion("India")}>India</p>
-          </div>
-          </div>
-          <div className="font-Lato text-[#7B7B7B] text-sm relative flex items-center mr-4">
+          <button className='bg-white text-md font-Lato rounded-r-md border border-l-0 border-[#5486E3] min-w-[130px]'>
+          Your Team
+          </button> 
+       </div>
+       <div className='flex w-full'>
+        <div className='flex w-full justify-end border-b-2 border-[#c7c5c5]'>
+            <div className="font-Lato text-[#7B7B7B] text-sm relative flex items-center mr-4">
+              Region
+              <button className="peer font-Lato flex items-center gap-1 text-sm font-semibold pl-1">
+              {sortRegion}
+              <span><AiFillCaretDown /></span>
+              </button>
+              <div className="hidden drop-shadow-[0px_2px_6px_#44444F1A] w-36 px-4 py-2 rounded-lg bg-white absolute z-10 top-[21px] right-[1px] peer-hover:flex hover:flex  flex-col child:cursor-pointer text-end">
+                <p className="text-sm font-Lato" onClick={() => setSortRegion("India")}>India</p>
+              </div>
+            </div>
+            <div className="font-Lato text-[#7B7B7B] text-sm relative flex items-center mr-4">
               Departments
               <button className="peer font-Lato flex items-center gap-1 text-sm font-semibold pl-1">
               {sortDepartment}
@@ -150,8 +149,8 @@ export const Analytics = () => {
               <div className="hidden drop-shadow-[0px_2px_6px_#44444F1A] w-36 px-4 py-2 rounded-lg bg-white absolute z-10 top-[21px] right-[1px] peer-hover:flex hover:flex  flex-col child:cursor-pointer text-end">
                 <p className="text-sm font-Lato" onClick={() => setSortDepartment("Product Development")}>Product Development</p>
               </div>
-          </div>
-          <div className="font-Lato text-[#7B7B7B] text-sm relative flex items-center">
+            </div>
+            <div className="font-Lato text-[#7B7B7B] text-sm relative flex items-center">
               Last
               <button className="peer font-Lato flex items-center gap-1 text-sm font-semibold pl-1">
               {sortDate}
@@ -160,17 +159,12 @@ export const Analytics = () => {
               <div className="hidden drop-shadow-[0px_2px_6px_#44444F1A] w-36 px-4 py-2 rounded-lg bg-white absolute z-10 top-[21px] right-[1px] peer-hover:flex hover:flex  flex-col child:cursor-pointer text-end">
                 <p className="text-sm font-Lato" onClick={() => setSortDate("60 Days")}>60 Days</p>
               </div>
-          </div>
-        </div>  
-      </div>
-      </div>  
+            </div>
+          </div> 
+       </div>      
     </div>
-    <div className='h-[1px] w-full bg-[#9a9a9a]'></div> 
      
-    
-   
-
-      <div className='my-2 bg-white flex flex-col gap-2 px-4 py-3 rounded-lg drop-shadow-md'>
+      <div className='my-2 bg-white flex flex-col gap-2 px-4 py-3 rounded-lg drop-shadow-md overflow-x-auto sm:w-[880px] md:w-full'>
         <p className='font-bold font-Lato text-[18px]'>Leaderboard</p>
           <div className='flex items-center'>
             <div className='h-9 w-10 rounded-full bg-black'></div>
@@ -310,7 +304,7 @@ export const Analytics = () => {
       </div>
 
       <div className='flex flex-col md:flex-row gap-2'>
-        <div className="bg-white rounded-lg drop-shadow-md pt-1 my-1 w-1/2">
+        <div className="bg-white rounded-lg drop-shadow-md pt-1 my-1 sm:w-full md:w-1/2">
         <div className='flex bg-[#FCEAAE] rounded-lg m-4'>
           <div className='px-6 py-2'>
             <span className='text-[46px] font-Lato font-bold pr-4'>520</span>
@@ -323,7 +317,7 @@ export const Analytics = () => {
         </div>
         <BarChart data={barData} />
         </div>
-        <div className="bg-white rounded-lg drop-shadow-md pt-1 my-1 w-1/2">
+        <div className="bg-white rounded-lg drop-shadow-md pt-1 my-1 sm:w-full md:w-1/2">
           <div className='flex bg-[#B3E2A8] rounded-lg m-4'>
           <div className='px-6 py-2'>
             <span className='text-[46px] font-Lato font-bold pr-4'>69</span>
@@ -381,7 +375,7 @@ export const Analytics = () => {
         </div>
       </div>
 
-      <div className='bg-white rounded-lg my-3'>
+      <div className='bg-white rounded-lg my-3 overflow-x-auto sm:w-[880px] md:w-full'>
         <div className='py-3 px-6 font-Lato font-bold text-[20px]'>Recognition Statistics</div>
         <ColumnGroupingTable />
       </div>

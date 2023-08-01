@@ -3,7 +3,7 @@ import Flag from '../assets/images/user-profile/flag.png';
 import AnniversaryBg from '../assets/images/user-profile/anniversarybg1.png';
 import Uparrow from '../assets/svg/Uparrow.svg';
 import Downarrow from '../assets/svg/Downarrow.svg';
-import MyHashtags from './HomeRightSidebar/MyHashtags';
+import MyHashtags from './MyHashtags';
 import { AiFillCaretDown } from 'react-icons/ai';
 import PostCard from '../components/PostCard';
 import { AchievementBanner } from '../components/AchievementBanner';
@@ -13,6 +13,7 @@ import { SERVER_URL } from '@/constant';
 import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import { useLocation } from 'react-router-dom';
+import UserInteraction from './UserInteraction'
 
 const getChildTransactionsFor = (parentId, allTransactions) => {
     return allTransactions.filter((post) => post.parent_id === parentId);
@@ -71,6 +72,7 @@ export default function MyProfile() {
     useEffect(() => {
         // Refetch the transactions query when appreciationType changes
         transactionsQuery.refetch();
+        console.log(transactionsQuery)
         const fetchCounts = async () => {
           const receivedPromise = api.transactions.meAsRecipient(userId, sortBy);
           const givenPromise = api.transactions.meAsSender(userId, sortBy);
@@ -113,6 +115,27 @@ export default function MyProfile() {
         }
     }
 
+    const getSortByLabel = (sortBy) => {
+        switch (sortBy) {
+          case 'all':
+            return 'All';
+          case 'year_to_date':
+            return 'This Year';
+          case 'last_six_months':
+            return 'Last six Months';
+          case 'last_quarter':
+            return 'Last Quarter';
+          case 'this_quarter':
+            return 'This Quarter';
+          case 'last_month':
+            return 'Last Month'; 
+          case 'this_month':
+            return 'This Month'; 
+          default:
+            return sortBy;
+        }
+      };
+
     return (
         <div className="drop-shadow-md">
             <div className="flex flex-col md:flex-row gap-3 mt-3">
@@ -135,7 +158,7 @@ export default function MyProfile() {
                     <p className="font-bold font-Lato text-[#292929] text-[25px]">{me.first_name} {me.last_name}</p>
                     <div className="md:flex mt-2 mb-4">
                         <div className="pr-0 md:pr-4">
-                            <p className="font-bold font-lato text-[#000000] text-[18px]">{me.role}</p>
+                            <p className="font-bold font-lato text-[#000000] text-[18px]">{me.title}</p>
                             <p className="font-normal font-lato text-[#000000] text-[18px]">{me.department}</p>
                         </div>
                         <div className="md:border-l-[1px] sm:border-l-0 pl-0 md:pl-4  border-[#27C4A0]">
@@ -173,13 +196,13 @@ export default function MyProfile() {
                             <div className="font-Lato text-[#7B7B7B] text-sm relative flex items-center ml-20">
                                 Sort By:
                                 <button className="peer font-Lato flex items-center gap-1 text-sm font-semibold pl-1">
-                                {sortBy}
+                                {getSortByLabel(sortBy)}
                                 <span><AiFillCaretDown /></span>
                                 </button>
                                 <div className="hidden drop-shadow-[0px_2px_6px_#44444F1A] w-36 px-4 py-2 rounded-lg bg-white absolute z-10 top-[21px] right-[1px] peer-hover:flex hover:flex  flex-col child:cursor-pointer text-end">
-                                <p className="text-sm font-Lato" onClick={() => setSortBy("all")}>All</p>
-                                <p className="text-sm font-Lato" onClick={() => setSortBy("last_year")}>Previous year</p> 
-                                <p className="text-sm font-Lato" onClick={() => setSortBy("year_to_date")}>This year</p> 
+                                <p className="text-sm font-Lato" onClick={() => setSortBy("all")}>All</p> 
+                                <p className="text-sm font-Lato" onClick={() => setSortBy("year_to_date")}>This year</p>
+                                <p className="text-sm font-Lato" onClick={() => setSortBy("last_six_months")}>Last 6 months</p> 
                                 <p className="text-sm font-Lato" onClick={() => setSortBy("last_quarter")}>Last quarter</p>
                                 <p className="text-sm font-Lato" onClick={() => setSortBy("this_quarter")}>This quarter</p>
                                 <p className="text-sm font-Lato" onClick={() => setSortBy("last_month")}>Last month</p>
@@ -209,48 +232,8 @@ export default function MyProfile() {
                     <div className="mt-4">
                         <div className="bg-white mb-4 rounded-lg h-auto w-auto drop-shadow-md">
                             {activeTab === 'overview' && (
-                                <div className="flex flex-col md:flex-row items-center md:items-start md:justify-center">
-                                <div className="hidden md:block w-2/5 text-center py-4 border-r-2">
-                                    <p className="text-[16px] text-[#000000] font-Lato font-bold">Robin's Interaction</p>
-                                </div>
-                                <div className="w-3/5 py-4 flex justify-center">
-                                    <table className="border-collapse">
-                                    <thead>
-                                        <tr>
-                                        <th className="pb-4 text-start pl-4 text-[16px] text-[#000000] font-Lato font-bold">Name</th>
-                                        <th className="pb-4 px-6 text-[#27C4A0]">Received</th>
-                                        <th className="pb-4 px-6 text-[#2BBFE2]">Given</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr className="hover:bg-[#ececec] rounded-xl">
-                                        <td className="p-4 text-[#5486E3] font-semibold text-[16px]">Pulkit Aggarwal</td>
-                                        <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal">05</td>
-                                        <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal md:pl-6">06</td>
-                                        </tr>
-                                        <tr className="hover:bg-[#ececec] rounded-xl">
-                                        <td className="p-4 text-[#5486E3] font-semibold text-[16px]">Swarup Vuddagiri</td>
-                                        <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal">07</td>
-                                        <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal md:pl-6">04</td>
-                                        </tr>
-                                        <tr className="hover:bg-[#ececec] rounded-xl">
-                                        <td className="p-4 text-[#5486E3] font-semibold text-[16px]">Neha Bhati</td>
-                                        <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal">10</td>
-                                        <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal md:pl-6">06</td>
-                                        </tr>
-                                        <tr className="hover:bg-[#ececec] rounded-xl">
-                                        <td className="p-4 text-[#5486E3] font-semibold text-[16px]">Rafael Merces</td>
-                                        <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal">09</td>
-                                        <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal md:pl-6">03</td>
-                                        </tr>
-                                        <tr className="hover:bg-[#ececec] rounded-xl">
-                                        <td className="p-4 text-[#5486E3] font-semibold text-[16px]">Deepak Kanavikar</td>
-                                        <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal">01</td>
-                                        <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal md:pl-6">03</td>
-                                        </tr>
-                                    </tbody>
-                                    </table>
-                                </div>
+                                <div>
+                                  <UserInteraction sortBy={sortBy} userId={userId}/>
                                 </div>
                             )}
                             {activeTab === 'recentActivities' && (
