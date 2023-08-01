@@ -268,7 +268,9 @@ export default function NewPost({ ...props }) {
                   // recipients.forEach((userId) => formData.append('recipients', userId))
 
                   const newTransaction = await api.transactions.new(formData)
-                  newTransaction.image = newTransaction.image.substring(SERVER_URL.length)
+                  if (newTransaction.image) { 
+                    newTransaction.image = newTransaction.image.substring(SERVER_URL.length)
+                  }
                   newTransaction.sender.avtar = newTransaction.sender.avtar.substring(SERVER_URL.length)
                   await queryClient.setQueryData((['transaction', props.sortBy]), (prev) => {
                     if (!prev) return [newTransaction];

@@ -225,9 +225,9 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                           if (!prev) return
                           const targetPost = prev.find((_post) => _post.id === post.id)
                           if (targetPost) {
-                            if (typeof targetPost.user_reaction_info === 'string') {
+                            if (targetPost.user_reaction_info == null) {
                               targetPost.user_reaction_info = {
-                                reaction_hashes: reacts.reaction_hash,
+                                reaction_hashes: [reacts.reaction_hash],
                                 latest_user_reaction_full_name:
                                   me.data.first_name + ' ' + me.data.last_name,
                                 total_reaction_counts: 1,
@@ -244,6 +244,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                                   me.data.first_name + ' ' + me.data.last_name,
                                 total_reaction_counts:
                                   targetPost.user_reaction_info.total_reaction_counts + 1,
+                                  is_reacted: true
                               }
                             }
                           }

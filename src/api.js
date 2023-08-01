@@ -70,7 +70,7 @@ const api = {
     react: (data) => axios.post('add-reaction/', data).then((r) => r.data),
     allReactions: (data) => axios.get(`transaction-reactions/${data.post_id}/`).then((r) => r.data),
     updateReaction: (data) =>
-      axios.patch(`update-user-reaction/${data.post_id}`, data).then((r) => r.data),
+      axios.patch(`update-user-reaction/${data.post_id}/`, data).then((r) => r.data),
   },
   comment: {
     new: (data) =>
