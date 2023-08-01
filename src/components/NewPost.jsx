@@ -466,7 +466,6 @@ export function HashTagsDropdown({ form, setForm }) {
   const properties = useQuery('properties', () => api.properties())
 
   const hashtags = properties.data?.hashtags
-  console.log({hashtags})
 
   return (
     <>

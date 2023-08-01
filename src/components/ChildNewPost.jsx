@@ -55,8 +55,6 @@ export default function ChildNewPost({ onClose, post, defaultPoint, sortBy, }) {
     message: '',
   })
 
-  console.log({"form.hashtags": form.hashtags})
-
   return (
     <>
       {/* {rawImage && (

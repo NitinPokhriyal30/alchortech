@@ -20,7 +20,6 @@ import { useIntersectionObserver } from 'usehooks-ts'
 import { queryClient } from '@/queryClient'
 // import { getChildTransactionsFor, withIsChild } from '@/utils'
 
-
 const stickBottomAlign = {
   position: 'sticky',
   alignSelf: 'flex-end',
@@ -29,16 +28,20 @@ const stickBottomAlign = {
 export default function HomePage() {
   const infiniteLoaderDivRef = React.useRef()
   const [infiniteLoading, setInfiniteLoading] = React.useState(false)
+  const [hasNextPage, setHasNextPage] = React.useState(true)
   const entry = useIntersectionObserver(infiniteLoaderDivRef, {})
 
   const [page, setPage] = React.useState(1)
   const [sortBy, setSortBy] = React.useState('all')
 
-   
-  const postList = useQuery(['transaction', sortBy], () =>
-    api.transactions.all(new URLSearchParams({ key_param: sortBy, page: page, pagination: 1, page_size: 5 })),
+  const postList = useQuery(
+    ['transaction', sortBy],
+    () =>
+      api.transactions.all(
+        new URLSearchParams({ key_param: sortBy, page: page, pagination: 1, page_size: 5 })
+      ),
     {
-      refetchOnWindowFocus: false
+      refetchOnWindowFocus: false,
     }
   )
   const [stickyStyles, setStickyStyles] = React.useState({})
@@ -65,19 +68,39 @@ export default function HomePage() {
   }, [])
 
   React.useEffect(() => {
-    if (entry?.isIntersecting === true && infiniteLoading === false && !!postList.data?.next) {
+    console.log('use eff', {
+      'entry.isInter': entry?.isIntersecting,
+      infiniteLoading,
+      '!!postListt.data': postList.data,
+    })
+    if (entry?.isIntersecting === true && infiniteLoading === false) {
+      console.log('fetching')
       setInfiniteLoading(true)
       api.transactions
-        .all(new URLSearchParams({ key_param: sortBy, page: page + 1, pagination: 1, page_size: 5 }))
+        .all(
+          new URLSearchParams({ key_param: sortBy, page: page + 1, pagination: 1, page_size: 5 })
+        )
         .then((data) => {
-          queryClient.setQueryData(['transaction', sortBy], (prev) => ({
-            ...prev,
-            ...data,
-            results: [...prev.results, ...data.results],
-          }))
-          setPage(page + 1)
+          if (Array.isArray(data)) {
+            console.log(data)
+            queryClient.setQueryData(['transaction', sortBy], (prev) => {
+              console.log(prev)
+              return [
+                // ...prev,
+                // ...data,
+                ...prev,
+                ...data,
+              ]
+            })
+            setPage(page + 1)
+          }
         })
-        .catch((e) => console.log(e))
+        .catch((e) => {
+          if (e.isAxiosError === true && e.response.data.detail === "Invalid page.") {
+            setHasNextPage(false)
+          }
+          return console.log(e)
+        })
         .finally(() => {
           setInfiniteLoading(false)
         })
@@ -104,14 +127,7 @@ export default function HomePage() {
           ) : (
             parentPosts
               .slice(0, 2)
-              .map((post, i) => (
-                <PostCard
-                  i={i}
-                  key={post.id}
-                  post={post}
-                  sortBy={sortBy}
-                />
-              ))
+              .map((post, i) => <PostCard i={i} key={post.id} post={post} sortBy={sortBy} />)
           )}
         </div>
         <div className="mt-1">
@@ -123,16 +139,10 @@ export default function HomePage() {
           ) : (
             parentPosts
               .slice(2)
-              .map((post, index) => (
-                <PostCard
-                  key={index}
-                  post={post}
-                  sortBy={sortBy}
-                />
-              ))
+              .map((post, index) => <PostCard key={index} post={post} sortBy={sortBy} />)
           )}
 
-          {postList.data?.next === null ? (
+          {hasNextPage === false ? (
             <p className="flex h-32 items-center justify-center">You have reached the end🥳</p>
           ) : (
             <div className="h-64 animate-pulse rounded-md bg-gray-300" ref={infiniteLoaderDivRef} />
