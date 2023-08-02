@@ -6,7 +6,7 @@ import RedStar from '../../assets/svg/red.svg'
 import User1 from '../../assets/images/user-profile/pp.png'
 import { useQuery } from 'react-query'
 import { api } from '@/api'
-import { SERVER_URL } from '@/constant'
+import { processAvatarUrl } from '@/utils'
 
 
 export default function Top5UserWidget({ ...props }) {
@@ -67,7 +67,9 @@ export default function Top5UserWidget({ ...props }) {
             <div className=" px-4">
               <div className="flex pb-2 gap-3 ml-1 justify-between items-center">
                 <div className="flex relative items-center gap-3">
-                  <img src={ SERVER_URL + user.avtar} className="rounded-full w-12 h-12" alt="user1" />
+                  <img
+                    src={processAvatarUrl(user.avtar)}
+                    className="rounded-full w-12 h-12" alt="user1" />
                   {index <= 2 && (
                     <img
                       src={

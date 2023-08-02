@@ -22,7 +22,6 @@ import Cookies from 'js-cookie'
 import { queryClient } from '@/queryClient'
 import { useQuery } from 'react-query'
 import { api } from '@/api'
-import { SERVER_URL } from '@/constant'
 import HomeIcon from '@/assets/svg/home-sidebar/HomeIcon'
 import PhoneIcon from '@/assets/svg/home-sidebar/phonebook.svg'
 import Icon1 from '@/assets/svg/home-sidebar/Group 672'
@@ -34,12 +33,15 @@ import Icon5 from '@/assets/svg/home-sidebar/Group3'
 import AnalyticsIcon from '@/assets/svg/home-sidebar/noun-analytics-5506185.svg'
 import PowerOffIcon from '@/assets/svg/home-sidebar/power-off (1).svg'
 import HelpIcon from '@/assets/svg/home-sidebar/HelpIcon'
+import { processAvatarUrl } from '@/utils'
 
 export default function HomeSidebar({}) {
   const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
   const showSidebar = useSelector((store) => store.sidebar)
   const dispatch = useDispatch()
   const setShowSidebar = (show) => dispatch({ type: 'sidebar', show })
+
+  const userId = Cookies.get('user_id');
 
   return (
     <>
@@ -81,13 +83,13 @@ export default function HomeSidebar({}) {
           {/*------------- Profile  ----------------------*/}
           <div className="px-[10px]">
             <MenuLink
-              to="/myProfile"
+              to={`/myProfile?userId=${userId}`}
               className="mb-[11px] mt-[11px] flex items-center gap-3 rounded-[5px] px-3 hover:bg-white/[8%] xs:py-[11px] md:mb-[18px] [&.active]:bg-white/[8%]"
             >
               <div>
                 <img
                   className="h-14 w-14 overflow-hidden rounded-full bg-gray-300"
-                  src={SERVER_URL + me.data.avtar}
+                  src={processAvatarUrl(me.data.avtar)}
                   alt="user avatar"
                 />
               </div>

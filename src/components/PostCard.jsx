@@ -5,7 +5,6 @@ import PostUser from '../assets/images/post-img/post-user.png'
 import GifPicker from './GifPickerPopover'
 import EmojiPicker from 'emoji-picker-react'
 import HoveringWidget from '@/components/HoveringWidget'
-import { SERVER_URL } from '@/constant'
 import { api } from '@/api'
 import Cookies from 'js-cookie'
 import { useQuery } from 'react-query'
@@ -25,6 +24,7 @@ import { RiSendPlane2Fill } from 'react-icons/ri'
 import ReactComponent from './ReactComponent'
 import * as Dialog from '@radix-ui/react-dialog'
 import { pluralize } from '@/components/HomeRightSidebar/CelebrationWidget'
+import { processAvatarUrl } from '@/utils'
 
 export const reactionsUnicode = {
   '😊': 'U+1F60A',
@@ -93,7 +93,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                 <img
                   key={post.sender.id}
                   className="h-8.5 w-8.5 rounded-full object-cover"
-                  src={SERVER_URL + post.sender.avtar}
+                  src={processAvatarUrl(post.sender.avtar)}
                   alt="post-user"
                 />
 
@@ -101,7 +101,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                   <img
                     key={post.sender.id}
                     className="h-8.5 w-8.5 rounded-full object-cover"
-                    src={SERVER_URL + post.sender.avtar}
+                    src={processAvatarUrl(post.sender.avtar)}
                     alt="post-user"
                   />
                 ))}
@@ -152,7 +152,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                   className="block max-w-full rounded-md object-contain"
                   src={
                     typeof post.image === 'string'
-                      ? SERVER_URL + post.image
+                      ? processAvatarUrl(post.image)
                       : URL.createObjectURL(post.image)
                   }
                 />
@@ -213,15 +213,19 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                           content_type: 'transaction',
                         }
 
-                        if (post.user_reaction_info?.is_reacted === true) {
+                        if (post.user_reaction_info?.is_reacted === true) { 
                           await api.transactions.updateReaction({
                             post_id: post.id,
                             reaction_hash: reactionsUnicode[emoji],
                           })
                         } else {
                           await api.transactions.react(reacts)
+<<<<<<< HEAD
                         }
                         const reactions = await api.transactions.allReactions({ post_id: post.id })
+=======
+                        } 
+>>>>>>> 10037fbe2f99e2dbd9dab15410655f483f426188
                         await queryClient.setQueryData(['transaction', props.sortBy], (prev) => {
                           if (!prev) return
                           const targetPost = prev.find((_post) => _post.id === post.id)
@@ -272,7 +276,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
             <Dialog.Root>
               <div
                 className={
-                  'rounded-full border-[0.5px] border-[#d1d1d1] px-2  text-[16px] text-[#747474] ' +
+                  'rounded-full border-[0.5px] border-[#d1d1d1] px-3 text-[16px] text-[#747474] ' +
                   (post.user_reaction_info == null ||
                   post.user_reaction_info.total_reaction_counts === 0
                     ? 'hidden'
@@ -289,10 +293,12 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                   {post.user_reaction_info != null ? (
                     <>
                       <span>
+                        <span className='text-lg'>
                         {post.user_reaction_info.reaction_hashes.map((hash) =>
                           unicodeToEmoji(hash)
-                        )}
-                        {post.user_reaction_info.latest_user_reaction_full_name}
+                          )}
+                        </span>
+                        {' ' + post.user_reaction_info.latest_user_reaction_full_name + ' '}
                         {post.user_reaction_info.total_reaction_counts > 1
                           ? 'and ' +
                             pluralize(
@@ -333,7 +339,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                 <div>
                   <img
                     className="h-[34px] w-[34px] rounded-full object-cover"
-                    src={SERVER_URL + me.data.avtar}
+                    src={processAvatarUrl(me.data.avtar)}
                     alt="comment"
                   />
                 </div>
@@ -520,7 +526,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
           ) : modal === 'child-new-post' ? (
             <div className="mb-2 mt-2 flex gap-4">
               <img
-                src={SERVER_URL + me.data.avtar}
+                  src={processAvatarUrl(me.data.avtar)}
                 className="h-[34px] w-[34px] rounded-full object-contain"
               />
               <div className="flex-1">
@@ -551,7 +557,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
               >
                 <img
                   className="h-8.5 w-8.5 rounded-full object-cover"
-                  src={SERVER_URL + commentOrTransaction.sender.avtar}
+                    src={processAvatarUrl(commentOrTransaction.sender.avtar)}
                 />
 
                 <div className="relative ">

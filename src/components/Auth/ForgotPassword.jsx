@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { api } from '../../api'
-import ForgotBackground from '../../assets/images/login-signup/ForgotBackground.png'
+import ForgotBackground from '../../assets/images/login-signup/ForgotPwBg.png'
 import High5Logo from '../../assets/images/login-signup/High5Logo.png'
 import AlcorLogo from '../../assets/images/login-signup/AlcorLogo.png'
 import SuccessLogo from '../../assets/images/login-signup/SuccessLogo.png'
@@ -60,7 +60,7 @@ const ForgotPassword = () => {
                     name="email" 
                     placeholder="Email Id" 
                     required 
-                    className="text-[16px]  text-[#ACACAC] border-b-2 border-gray-300 py-2 w-full focus:outline-none placeholder-opacity-50"
+                    className="text-[16px] font-Lato text-[#000000] border-b-2 border-gray-300 py-2 w-full focus:outline-none placeholder-opacity-50"
                   />
                   <div>
                     <button 
