@@ -231,6 +231,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                                 latest_user_reaction_full_name:
                                   me.data.first_name + ' ' + me.data.last_name,
                                 total_reaction_counts: 1,
+                                is_reacted: true,
                               }
                             } else {
                               targetPost.user_reaction_info = {
@@ -244,7 +245,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                                   me.data.first_name + ' ' + me.data.last_name,
                                 total_reaction_counts:
                                   targetPost.user_reaction_info.total_reaction_counts + 1,
-                                  is_reacted: true
+                                is_reacted: true,
                               }
                             }
                           }
@@ -276,9 +277,17 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
             </div>
           </div>
 
-          <div className="mt-1 flex items-center gap-2 pb-1">
+          <div className={'mt-1 flex items-center gap-2 pb-1 '}>
             <Dialog.Root>
-              <div className="rounded-full border-[0.5px] border-[#d1d1d1] px-2  text-[16px] text-[#747474]">
+              <div
+                className={
+                  'rounded-full border-[0.5px] border-[#d1d1d1] px-2  text-[16px] text-[#747474] ' +
+                  (post.user_reaction_info == null ||
+                  post.user_reaction_info.total_reaction_counts === 0
+                    ? 'hidden'
+                    : '')
+                }
+              >
                 <Dialog.Trigger
                   className={
                     ((post.user_reaction_info == null ||
@@ -315,7 +324,11 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
               <ReactComponent postId={post.id} post={post} />
             </Dialog.Root>
 
-            <p className="text-16px text-[#d1d1d1]">
+            <p
+              className={
+                'text-16px text-[#d1d1d1] ' + (commentsAndTransactions.length === 0 ? 'hidden' : '')
+              }
+            >
               {commentsAndTransactions.length + ' '}
               Comment
             </p>
@@ -625,13 +638,21 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                                         )
 
                                       if (targetPost) {
-                                        targetPost.user_reaction_info = {
-                                          reaction_hashes: [
-                                            ...targetPost.user_reaction_info.reaction_hashes,
-                                            reacts.reaction_hash,
-                                          ],
-                                          total_reaction_count:
-                                            targetPost.user_reaction_info.total_reaction_count + 1,
+                                        if (targetPost.user_reaction_info == null) {
+                                          targetPost.user_reaction_info = {
+                                            reaction_hashes: [reacts.reaction_hash],
+                                            total_reaction_count: 1,
+                                          }
+                                        } else {
+                                          targetPost.user_reaction_info = {
+                                            reaction_hashes: [
+                                              ...targetPost.user_reaction_info.reaction_hashes,
+                                              reacts.reaction_hash,
+                                            ],
+                                            total_reaction_count:
+                                              targetPost.user_reaction_info.total_reaction_count +
+                                              1,
+                                          }
                                         }
                                       }
 

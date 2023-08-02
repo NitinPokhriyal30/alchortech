@@ -32,7 +32,7 @@ export default function HomePage() {
   const entry = useIntersectionObserver(infiniteLoaderDivRef, {})
 
   const [page, setPage] = React.useState(1)
-  const [sortBy, setSortBy] = React.useState('all')
+  const [sortBy, setSortBy] = React.useState('everything')
 
   const postList = useQuery(
     ['transaction', sortBy],

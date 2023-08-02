@@ -9,7 +9,7 @@ const SortBy = ({ value, onChange }) => {
         <div className="group relative whitespace-nowrap xs:w-[50%] sm:w-[40%] md:w-[33%] lg:w-fit xxl:w-fit">
           <div className="relative flex items-center  text-sm text-[#7B7B7B]">
             Sort By:
-            <button className="peer flex items-center gap-1 pl-1  text-sm font-semibold">
+            <button className="peer flex items-center gap-1 pl-1  text-sm font-semibold capitalize">
               {value}
               <span>
                 <AiFillCaretDown />
