@@ -221,33 +221,24 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                         } else {
                           await api.transactions.react(reacts)
                         }
+                        const reactions = await api.transactions.allReactions({ post_id: post.id })
                         await queryClient.setQueryData(['transaction', props.sortBy], (prev) => {
                           if (!prev) return
                           const targetPost = prev.find((_post) => _post.id === post.id)
                           if (targetPost) {
-                            if (targetPost.user_reaction_info == null) {
-                              targetPost.user_reaction_info = {
-                                reaction_hashes: [reacts.reaction_hash],
-                                latest_user_reaction_full_name:
-                                  me.data.first_name + ' ' + me.data.last_name,
-                                total_reaction_counts: 1,
-                                is_reacted: true,
-                              }
-                            } else {
-                              targetPost.user_reaction_info = {
-                                reaction_hashes: [
-                                  ...new Set([
-                                    ...targetPost.user_reaction_info.reaction_hashes,
-                                    reacts.reaction_hash,
-                                  ]),
-                                ],
-                                latest_user_reaction_full_name:
-                                  me.data.first_name + ' ' + me.data.last_name,
-                                total_reaction_counts:
-                                  targetPost.user_reaction_info.total_reaction_counts + 1,
-                                is_reacted: true,
-                              }
+                            targetPost.user_reaction_info = {
+                              reaction_hashes: Array.from(
+                                new Set(reactions.map(({ reaction }) => reaction))
+                              ),
+                              total_reaction_counts: reactions.length,
+                              latest_user_reaction_full_name:
+                                me.data.first_name + ' ' + me.data.last_name,
+                              is_reacted: true,
                             }
+                            console.log(
+                              'post card > parent react btn',
+                              targetPost.user_reaction_info
+                            )
                           }
 
                           return [...prev]
@@ -625,8 +616,22 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                                     content_type: 'transaction',
                                   }
 
-                                  await api.transactions.react(reacts)
-                                  await queryClient.setQueryData(
+                                  if (
+                                    commentOrTransaction.user_reaction_info?.is_reacted === true
+                                  ) {
+                                    await api.transactions.updateReaction({
+                                      post_id: commentOrTransaction.id,
+                                      reaction_hash: reactionsUnicode[emoji],
+                                    })
+                                  } else {
+                                    await api.transactions.react(reacts)
+                                  }
+
+                                  const reactions = await api.transactions.allReactions({
+                                    post_id: commentOrTransaction.id,
+                                  })
+
+                                  queryClient.setQueryData(
                                     ['transaction', props.sortBy],
                                     (prev) => {
                                       if (!prev) return prev
@@ -638,21 +643,14 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                                         )
 
                                       if (targetPost) {
-                                        if (targetPost.user_reaction_info == null) {
-                                          targetPost.user_reaction_info = {
-                                            reaction_hashes: [reacts.reaction_hash],
-                                            total_reaction_count: 1,
-                                          }
-                                        } else {
-                                          targetPost.user_reaction_info = {
-                                            reaction_hashes: [
-                                              ...targetPost.user_reaction_info.reaction_hashes,
-                                              reacts.reaction_hash,
-                                            ],
-                                            total_reaction_count:
-                                              targetPost.user_reaction_info.total_reaction_count +
-                                              1,
-                                          }
+                                        targetPost.user_reaction_info = {
+                                          reaction_hashes: Array.from(
+                                            new Set(reactions.map(({ reaction }) => reaction))
+                                          ),
+                                          total_reaction_count: reactions.length,
+                                          latest_user_reaction_full_name:
+                                            me.data.first_name + ' ' + me.data.last_name,
+                                          is_reacted: true,
                                         }
                                       }
 

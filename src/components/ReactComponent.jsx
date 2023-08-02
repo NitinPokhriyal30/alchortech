@@ -19,8 +19,6 @@ const ReactComponent = ({ postId, post }) => {
     api.transactions.allReactions({ post_id: postId })
   )
 
-  reactionQuery.data?.length > 0 && console.log('reaction', post, reactionQuery.data)
-
   const handleTabClick = (tabIndex) => {
     setActiveTab(tabIndex)
   }
