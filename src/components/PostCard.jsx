@@ -220,12 +220,8 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                           })
                         } else {
                           await api.transactions.react(reacts)
-<<<<<<< HEAD
                         }
                         const reactions = await api.transactions.allReactions({ post_id: post.id })
-=======
-                        } 
->>>>>>> 10037fbe2f99e2dbd9dab15410655f483f426188
                         await queryClient.setQueryData(['transaction', props.sortBy], (prev) => {
                           if (!prev) return
                           const targetPost = prev.find((_post) => _post.id === post.id)
