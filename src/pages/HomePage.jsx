@@ -68,13 +68,7 @@ export default function HomePage() {
   }, [])
 
   React.useEffect(() => {
-    console.log('use eff', {
-      'entry.isInter': entry?.isIntersecting,
-      infiniteLoading,
-      '!!postListt.data': postList.data,
-    })
     if (entry?.isIntersecting === true && infiniteLoading === false) {
-      console.log('fetching')
       setInfiniteLoading(true)
       api.transactions
         .all(
@@ -117,8 +111,13 @@ export default function HomePage() {
         <div className="xrelative z-20 mt-3">
           <NewPost sortBy={sortBy} />
         </div>
+
         <div className="mt-1">
-          <SortBy value={sortBy} onChange={setSortBy} />
+          <SortBy value={sortBy} onChange={sortOption => {
+            setPage(1)
+            setHasNextPage(true)
+            setSortBy(sortOption)
+          }} />
         </div>
 
         <div className="relative mt-1" id="post-list">
