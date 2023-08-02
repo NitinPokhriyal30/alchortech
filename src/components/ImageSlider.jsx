@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 
 const ImageSlider = () => {
-  const bgs = ['bg-hero-slider3', 'bg-hero-slider3', 'bg-hero-slider3']
+  const bgs = ['bg-hero-slider1', 'bg-hero-slider2', 'bg-hero-slider3']
   const [counter, setCounter] = React.useState(1)
 
   useEffect(() => {

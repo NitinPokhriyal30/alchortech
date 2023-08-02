@@ -17,15 +17,15 @@ const InteractionChart = ({ interactionData, myAvatar }) => {
 
   return (
     <div>
-      <div className='flex gap-32 mx-14 py-8'>
+      <div className='flex justify-between mx-14 py-8'>
         {interactionData[0] && 
           <div>
           <img
-              className='rounded-full h-11 w-12'
+              className='rounded-full h-12 w-12'
               src={processAvatarUrl(interactionData[0]?.avtar)}
             />
           </div>}
-        {interactionData[1] && <div><img className='rounded-full h-11 w-12'
+        {interactionData[1] && <div><img className='rounded-full h-12 w-12'
           src={processAvatarUrl(interactionData[1]?.avtar)}
         /></div>}
       </div>
@@ -40,7 +40,7 @@ const InteractionChart = ({ interactionData, myAvatar }) => {
       } z-10`}
         src={processAvatarUrl(myAvatar)}/>
       </div>
-      <div className='flex gap-40 mx-8'>
+      <div className='flex justify-between mx-5 pt-8'>
         {interactionData[2] && <div><img className='rounded-full h-12 w-12'
           src={processAvatarUrl(interactionData[2]?.avtar)}
         /></div>}
@@ -48,25 +48,25 @@ const InteractionChart = ({ interactionData, myAvatar }) => {
           src={processAvatarUrl(interactionData[3]?.avtar)}
         /></div>}
       </div>
-      {interactionData[4] && <div className='flex justify-center py-4'><img className='rounded-full h-12 w-12'
+      {interactionData[4] && <div className='flex justify-center py-2'><img className='rounded-full h-12 w-12'
         src={processAvatarUrl(interactionData[4]?.avtar)}
       /></div>}
       
       <svg className='absolute top-0 left-0 h-full w-full'>
         {/*1 Pic Line*/}
-        {interactionData[0] && <line x1='94' y1='106' x2='141' y2='158' stroke='gray' strokeWidth={isHovered ? 3 : 1} />}
+        {interactionData[0] && <line x1='100' y1='110' x2='141' y2='158' stroke='gray' strokeWidth={isHovered ? 3 : 1} />}
         
         {/*2 Pic Line*/}
-        {interactionData[1] && <line x1='234' y1='108' x2='184' y2='159' stroke='gray' strokeWidth={isHovered ? 3 : 1} />}
+        {interactionData[1] && <line x1='205' y1='110' x2='152' y2='172' stroke='gray' strokeWidth={isHovered ? 3 : 1} />}
         
         {/*3 Pic Line*/}
-        {interactionData[2] && <line x1='79' y1='224' x2='139' y2='190' stroke='gray' strokeWidth={isHovered ? 3 : 1} />}
+        {interactionData[2] && <line x1='62' y1='250' x2='139' y2='190' stroke='gray' strokeWidth={isHovered ? 3 : 1} />}
         
         {/*4 Pic Line*/}
-        {interactionData[3] && <line x1='242' y1='220' x2='186' y2='190' stroke='gray' strokeWidth={isHovered ? 3 : 1} />}
+        {interactionData[3] && <line x1='240' y1='250' x2='170' y2='190' stroke='gray' strokeWidth={isHovered ? 3 : 1} />}
         
         {/*5 Pic Line*/}
-        {interactionData[4] && <line x1='162' y1='270' x2='162' y2='203' stroke='gray' strokeWidth={isHovered ? 3 : 1} />}
+        {interactionData[4] && <line x1='152' y1='297' x2='152' y2='203' stroke='gray' strokeWidth={isHovered ? 3 : 1} />}
         
       </svg>
     </div>

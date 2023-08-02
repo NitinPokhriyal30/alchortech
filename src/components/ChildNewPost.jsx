@@ -132,7 +132,7 @@ export default function ChildNewPost({ onClose, post, defaultPoint, sortBy, }) {
                 <img
                   src={URL.createObjectURL(form.image)}
                   key={form.image}
-                  className="mt-4 w-40 border"
+                  className="mt-4 w-40 border rounded-md border"
                 />
               </div>
             )}
@@ -140,7 +140,7 @@ export default function ChildNewPost({ onClose, post, defaultPoint, sortBy, }) {
             {form.gif && (
               <div>
                 <div className="group flex items-center pb-2">
-                  <img src={form.gif} key={form.image} className="mt-4 w-40 border" />
+                  <img src={form.gif} key={form.image} className="mt-4 w-40 border rounded-md border" />
 
                   <button
                     className="ml-4 hidden group-hover:inline-block"
