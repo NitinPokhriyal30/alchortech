@@ -7,7 +7,7 @@ import { RiCloseLine } from 'react-icons/ri'
 import { api } from '@/api'
 import { reactionsUnicode, unicodeToEmoji } from '@/components/PostCard'
 import Spinner from '@/components/Spinner'
-import { SERVER_URL } from '@/constant'
+import { processAvatarUrl } from '@/utils'
 
 const getReactions = (reactions, emoji) => {
   return reactions.filter((reaction) => reaction.reaction.includes(reactionsUnicode[emoji]))
@@ -76,7 +76,9 @@ const ReactComponent = ({ postId, post }) => {
                     <>
                       <div className=" flex items-center justify-between border-b-[1px] py-2.5 last-of-type:border-b-0">
                         <div className="flex items-center gap-8.5">
-                          <div><img src={SERVER_URL + reaction.user_avtar} className='w-9 aspect-square rounded-full ' /></div>
+                                  <div><img
+                                      src={processAvatarUrl(reaction.user_avtar)}
+                                      className='w-9 aspect-square rounded-full ' /></div>
                           <div>
                             <p className='text-[14px]'>
                               <span className='text-16px text-primary'>{reaction.user_full_name}</span> | {reaction.user_role} -{' '}
@@ -104,7 +106,9 @@ const ReactComponent = ({ postId, post }) => {
                         <>
                           <div className=" flex items-center justify-between border-b-[1px] py-2.5 last-of-type:border-b-0">
                             <div className="flex items-center gap-8.5">
-                              <div><img src={SERVER_URL + reaction.user_avtar} className='w-9 aspect-square rounded-full' /></div>
+                                      <div><img
+                                          src={processAvatarUrl(reaction.user_avtar)}
+                                          className='w-9 aspect-square rounded-full' /></div>
                               <div>
                                 <p className='text-[14px]'>
                                   <span className="text-16px text-primary">{reaction.user_full_name}</span> | {reaction.user_role} -{' '}

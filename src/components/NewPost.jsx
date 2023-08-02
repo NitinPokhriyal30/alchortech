@@ -141,7 +141,7 @@ export default function NewPost({ ...props }) {
                   ))}
                 {form.hashtags?.map((tag) => (
                   <span className="text-[#464646]" key={tag.name}>
-                    {tag.name}{' '}
+                    {'#' + tag.name}{' '}
                   </span>
                 ))}
               </>
@@ -504,7 +504,7 @@ export function HashTagsDropdown({ form, setForm }) {
                   })
                 }}
               >
-                {tag}
+                {'# ' + tag}
               </button>
             )
           })

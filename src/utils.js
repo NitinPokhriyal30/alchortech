@@ -161,3 +161,13 @@ export const withIsChild = (allTransactions) => {
     return post
   })
 }
+
+export const processAvatarUrl = (Url) => {
+  const targetString = "http://staging.letshigh5.com/";
+
+  if (Url && !Url.includes(targetString)) {
+    return targetString + Url;
+  } else {
+    return Url;
+  }
+}

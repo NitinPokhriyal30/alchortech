@@ -4,11 +4,10 @@ import { useQuery } from 'react-query'
 import { api } from '@/api'
 import moment from 'moment'
 import * as HoverCard from '@radix-ui/react-hover-card'
-import { CreateReact } from '@/utils'
+import { CreateReact, processAvatarUrl } from '@/utils'
 import { toFormData } from '@/components/NewPost'
 import { queryClient } from '@/queryClient'
 import { reactionsUnicode, unicodeToEmoji } from '@/components/PostCard'
-import { SERVER_URL } from '@/constant'
 
 const getUserById = (userId, users) => users.find((user) => user.id === userId)
 
@@ -23,7 +22,9 @@ export default function PostComment({ modal, setModal, sortBy, postId, comment, 
 
   return (
     <div className="grid grid-cols-[auto_1fr] gap-4 pl-0 pt-[7px]">
-      <img className="h-8.5 w-8.5 rounded-full object-cover" src={SERVER_URL + user.avtar} />
+      <img className="h-8.5 w-8.5 rounded-full object-cover"
+        src={processAvatarUrl(user.avtar)}
+      />
 
       <div className="relative ">
         <div className="rounded-[15px] rounded-tl-none bg-paper p-[20px] text-[#464646]">
@@ -39,7 +40,9 @@ export default function PostComment({ modal, setModal, sortBy, postId, comment, 
           {comment.image || comment.gif ? (
             <div className="mt-[10px] space-y-[12px]">
               {comment.image && (
-                <img className="w-full rounded-md" src={SERVER_URL + comment.image} />
+                <img className="w-full rounded-md"
+                  src={processAvatarUrl(comment.image)}
+                />
               )}
               {comment.gif && <img className="w-full rounded-md" src={comment.gif} />}
             </div>
