@@ -19,7 +19,7 @@ import img from '../assets/images/new-post/img.svg'
 import gif from '../assets/images/new-post/gif.svg'
 import link from '../assets/images/new-post/link.svg'
 
-function validateNewPostForm(form) {
+function validateNewPostForm(form, me) {
   let isValid = true
   if (form.recipients.length === 0) {
     toast.error('Add atleast one recipient')
@@ -34,6 +34,12 @@ function validateNewPostForm(form) {
     toast.error('Add a message')
     isValid = false
   }
+  if (form.point > me.points_available) {
+    toast.error('You don\'t have enough points to give')
+
+    isValid = false
+  }
+
   return isValid
 }
 
@@ -207,7 +213,7 @@ export default function ChildNewPost({ onClose, post, defaultPoint, sortBy, }) {
                     toast.error('Cant give points to your self')
                     return
                   }
-                  if (!validateNewPostForm(form)) return
+                  if (!validateNewPostForm(form, me.data)) return
 
                   const data = CreatePost(me.data.id, post.id, { ...form, recipients, hashtags: form.hashtags.map(item => item.name).join(',') })
                   const formData = toFormData(data)

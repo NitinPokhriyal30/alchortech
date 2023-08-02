@@ -23,7 +23,7 @@ import gif from '../assets/images/new-post/gif.svg'
 import link from '../assets/images/new-post/link.svg'
 import smiley from '../assets/images/new-post/smiley.svg'
 
-function validateNewPostForm(form) {
+function validateNewPostForm(form, me) {
   let isValid = true
   if (form.point === 0) {
     toast.error('Select amount of points')
@@ -40,6 +40,12 @@ function validateNewPostForm(form) {
   }
   if (form.message.length === 0) {
     toast.error('Add a message')
+    isValid = false
+  }
+
+  if (form.point > me.points_available) {
+    toast.error('You don\'t have enough points to give')
+
     isValid = false
   }
   return isValid
@@ -254,7 +260,7 @@ export default function NewPost({ ...props }) {
               onClick={async function newPost() {
                 try {
                   setLoading(true)
-                  if (!validateNewPostForm(form)) return
+                  if (!validateNewPostForm(form, me.data)) return
 
                   const data = CreatePost(me.data.id, '', {
                     ...form,
