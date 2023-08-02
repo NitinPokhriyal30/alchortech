@@ -213,14 +213,14 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                           content_type: 'transaction',
                         }
 
-                        if (post.user_reaction_info?.is_reacted === true) {
+                        if (post.user_reaction_info?.is_reacted === true) { 
                           await api.transactions.updateReaction({
                             post_id: post.id,
                             reaction_hash: reactionsUnicode[emoji],
                           })
                         } else {
                           await api.transactions.react(reacts)
-                        }
+                        } 
                         await queryClient.setQueryData(['transaction', props.sortBy], (prev) => {
                           if (!prev) return
                           const targetPost = prev.find((_post) => _post.id === post.id)
@@ -281,7 +281,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
             <Dialog.Root>
               <div
                 className={
-                  'rounded-full border-[0.5px] border-[#d1d1d1] px-2  text-[16px] text-[#747474] ' +
+                  'rounded-full border-[0.5px] border-[#d1d1d1] px-3 text-[16px] text-[#747474] ' +
                   (post.user_reaction_info == null ||
                   post.user_reaction_info.total_reaction_counts === 0
                     ? 'hidden'
@@ -298,10 +298,12 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                   {post.user_reaction_info != null ? (
                     <>
                       <span>
+                        <span className='text-lg'>
                         {post.user_reaction_info.reaction_hashes.map((hash) =>
                           unicodeToEmoji(hash)
-                        )}
-                        {post.user_reaction_info.latest_user_reaction_full_name}
+                          )}
+                        </span>
+                        {' ' + post.user_reaction_info.latest_user_reaction_full_name + ' '}
                         {post.user_reaction_info.total_reaction_counts > 1
                           ? 'and ' +
                             pluralize(

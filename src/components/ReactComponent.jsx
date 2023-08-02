@@ -27,15 +27,15 @@ const ReactComponent = ({ postId, post }) => {
 
   return (
     <Dialog.Portal>
-      <Dialog.Overlay className="fixed inset-0 z-50 bg-black bg-opacity-20" />
+      <Dialog.Overlay className="fixed inset-0 z-50 bg-black bg-opacity-50" />
 
-      <Dialog.Content className="fixed left-1/2 top-2/5 z-[99] -translate-x-1/2 -translate-y-1/2 px-4 w-full md:w-auto">
+      <Dialog.Content className="fixed left-1/2 top-1/2 z-[99] -translate-x-1/2 -translate-y-1/2 px-4 w-full md:w-auto">
         {reactionQuery.isLoading ? (
           <div className="relative min-h-[10rem] w-screen max-w-xs rounded-md border border-[#efefef] bg-white p-5 shadow md:max-w-4xl">
             <Spinner isLoading />
           </div>
         ) : (
-          <div className="w-full md:w-screen rounded-md border border-[#efefef] bg-white shadow md:max-w-4xl">
+          <div className="w-full md:w-screen rounded-md border border-[#efefef] bg-white shadow md:max-w-3xl">
             <div className="mx-auto h-full py-6 text-16px">
               <div className="flex items-start justify-between border-b-[1px]">
                 <nav className="px-6 flex w-[70%] gap-8 child:pb-2.5">
