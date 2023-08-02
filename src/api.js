@@ -65,8 +65,16 @@ const api = {
         })
         .then((r) => r.data),
     all: (filters) => axios.get(`transaction/?${filters.toString()}`).then((r) => r.data),
-    meAsRecipient: (id) => axios.get(`api/posts/?recipients=${id}`).then((r) => r.data),
-    meAsSender: (id) => axios.get(`api/posts/?sender=${id}`).then((r) => r.data),
+    // meAsRecipient: (id) => axios.get(`api/posts/?recipients=${id}`).then((r) => r.data),
+    // meAsSender: (id) => axios.get(`api/posts/?sender=${id}`).then((r) => r.data),
+    meAsRecipient: (id, sortBy) =>
+      axios
+        .get(`transaction/?recipients=${id}&date_range=${sortBy}`)
+        .then((r) => r.data),
+    meAsSender: (id, sortBy) =>
+      axios
+        .get(`transaction/?sender=${id}&date_range=${sortBy}`)
+        .then((r) => r.data),
     react: (data) => axios.post('add-reaction/', data).then((r) => r.data),
     allReactions: (data) => axios.get(`transaction-reactions/${data.post_id}/`).then((r) => r.data),
     updateReaction: (data) =>

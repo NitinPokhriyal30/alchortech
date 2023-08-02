@@ -41,6 +41,8 @@ export default function HomeSidebar({}) {
   const dispatch = useDispatch()
   const setShowSidebar = (show) => dispatch({ type: 'sidebar', show })
 
+  const userId = Cookies.get('user_id');
+
   return (
     <>
       {/* backdrop */}
@@ -81,7 +83,7 @@ export default function HomeSidebar({}) {
           {/*------------- Profile  ----------------------*/}
           <div className="px-[10px]">
             <MenuLink
-              to="/myProfile"
+              to={`/myProfile?userId=${userId}`}
               className="mb-[11px] mt-[11px] flex items-center gap-3 rounded-[5px] px-3 hover:bg-white/[8%] xs:py-[11px] md:mb-[18px] [&.active]:bg-white/[8%]"
             >
               <div>

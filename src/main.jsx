@@ -36,7 +36,7 @@ import { queryClient } from '@/queryClient'
 import { ToastContainer } from 'react-toastify'
 import Cookies from 'js-cookie'
 import { api } from '@/api'
-import { Analytics } from './components/Analytics'
+import { Analytics } from './components/Analytics/Analytics'
 import Transactions from '@/pages/Transactions'
 
 const router = createBrowserRouter(

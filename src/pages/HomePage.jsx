@@ -146,6 +146,12 @@ export default function HomePage() {
           ) : (
             <div className="h-64 animate-pulse rounded-md bg-gray-300" ref={infiniteLoaderDivRef} />
           )}
+
+          {postList.data?.next === null ? (
+            <p className="flex h-32 items-center justify-center">You have reached the end🥳</p>
+          ) : (
+            <div className="h-64 animate-pulse rounded-md bg-gray-300" ref={infiniteLoaderDivRef} />
+          )}
         </div>
       </div>
 
