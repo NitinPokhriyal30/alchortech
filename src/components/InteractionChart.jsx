@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import { SERVER_URL } from '@/constant';
+import { processAvatarUrl } from '@/utils';
 
 const InteractionChart = ({ interactionData, myAvatar }) => {
 
@@ -20,9 +21,13 @@ const InteractionChart = ({ interactionData, myAvatar }) => {
         {interactionData[0] && 
           <div>
           <img
-           className='rounded-full h-11 w-12' src={SERVER_URL + interactionData[0]?.avtar}/>
+              className='rounded-full h-11 w-12'
+              src={processAvatarUrl(interactionData[0]?.avtar)}
+            />
           </div>}
-        {interactionData[1] && <div><img className='rounded-full h-11 w-12' src={SERVER_URL + interactionData[1]?.avtar} /></div>}
+        {interactionData[1] && <div><img className='rounded-full h-11 w-12'
+          src={processAvatarUrl(interactionData[1]?.avtar)}
+        /></div>}
       </div>
       <div 
         className='flex justify-center relative'
@@ -33,13 +38,19 @@ const InteractionChart = ({ interactionData, myAvatar }) => {
       className={`rounded-full h-14 w-14 border-2 ${
         isHovered ? 'border-black' : 'hover:border-black'
       } z-10`}
-      src={SERVER_URL + myAvatar}/>
+        src={processAvatarUrl(myAvatar)}/>
       </div>
       <div className='flex gap-40 mx-8'>
-        {interactionData[2] && <div><img className='rounded-full h-12 w-12' src={SERVER_URL + interactionData[2]?.avtar} /></div>}
-        {interactionData[3] && <div><img className='rounded-full h-12 w-12' src={SERVER_URL + interactionData[3]?.avtar} /></div>}
+        {interactionData[2] && <div><img className='rounded-full h-12 w-12'
+          src={processAvatarUrl(interactionData[2]?.avtar)}
+        /></div>}
+        {interactionData[3] && <div><img className='rounded-full h-12 w-12'
+          src={processAvatarUrl(interactionData[3]?.avtar)}
+        /></div>}
       </div>
-     {interactionData[4] &&  <div className='flex justify-center py-4'><img className='rounded-full h-12 w-12' src={SERVER_URL + interactionData[4]?.avtar} /></div>}
+      {interactionData[4] && <div className='flex justify-center py-4'><img className='rounded-full h-12 w-12'
+        src={processAvatarUrl(interactionData[4]?.avtar)}
+      /></div>}
       
       <svg className='absolute top-0 left-0 h-full w-full'>
         {/*1 Pic Line*/}
