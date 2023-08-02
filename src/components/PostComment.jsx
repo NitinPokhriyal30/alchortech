@@ -48,10 +48,13 @@ export default function PostComment({ modal, setModal, sortBy, postId, comment, 
 
         <div className="relative z-10 flex h-[32px] -translate-y-1.5 items-center text-[12px] leading-[15px] text-primary">
           <p className="lex items-center gap-3 pb-1">
-            {comment.reaction_hashes?.length > 0 ? (
+            {comment.user_reaction_info != null &&
+            comment.user_reaction_info.reaction_hashes.length > 0 ? (
               <div className="flex items-center gap-1 rounded-[17px] border-[0.6px] border-[#D1D1D1] bg-white px-[5px] pr-2 text-lg">
-                {unicodeToEmoji(comment.reaction_hashes[0])}
-                <span className=" text-sm text-[#747474]">{comment.total_reaction_counts}</span>
+                {unicodeToEmoji(comment.user_reaction_info.reaction_hashes[0])}
+                <span className=" text-sm text-[#747474]">
+                  {comment.user_reaction_info.total_reaction_count}
+                </span>
               </div>
             ) : null}
           </p>
@@ -71,15 +74,29 @@ export default function PostComment({ modal, setModal, sortBy, postId, comment, 
                           content_type: 'comment',
                         }
 
-                        await api.comment.react(reacts)
+                        if (comment.user_reaction_info?.is_reacted === true) {
+                          await api.transactions.updateReaction({
+                            post_id: comment.id,
+                            reaction_hash: reactionsUnicode[emoji],
+                          })
+                        } else {
+                          await api.comment.react(reacts)
+                        }
+
                         await queryClient.setQueryData(['transaction', sortBy], (prev) => {
                           if (!prev) return
                           const targetComment = prev
                             .find((_post) => _post.id === postId)
                             ?.comments.find((_comment) => _comment.id === comment.id)
                           if (targetComment) {
-                            targetComment.reaction_hashes = [...(targetComment.reaction_hashes || []), (reacts.reaction_hash)]
-                            targetComment.total_reaction_counts = (targetComment.total_reaction_counts || 0)  + 1
+                            targetComment.user_reaction_info.reaction_hashes = [
+                              ...(targetComment.user_reaction_info.reaction_hashes || []),
+                              reacts.reaction_hash,
+                            ]
+                            targetComment.user_reaction_info.total_reaction_count =
+                              (targetComment.user_reaction_info.total_reaction_count || 0) + 1
+
+                            targetComment.user_reaction_info.is_reacted = true
                           }
 
                           return [...prev]
