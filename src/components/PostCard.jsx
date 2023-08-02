@@ -314,7 +314,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                 </Dialog.Trigger>
               </div>
 
-              <ReactComponent postId={post.id} post={post} />
+              <ReactComponent postId={post.id} key={post.user_reaction_info?.total_reaction_counts + post.user_reaction_info?.reaction_hashes.join()} />
             </Dialog.Root>
 
             <p

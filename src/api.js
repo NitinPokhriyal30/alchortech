@@ -89,6 +89,7 @@ const api = {
         .then((r) => r.data),
     all: () => axios.get('comments/').then((r) => r.data),
     react: (data) => axios.post('add-reaction/', data).then((r) => r.data),
+    by_id: (data) => axios.get(`comments/${data.post_id}/`).then(r=> r.data)
   },
   todayEvents: () => axios.get('api/today-events/').then((r) => r.data),
 

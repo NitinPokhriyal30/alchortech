@@ -86,20 +86,14 @@ export default function PostComment({ modal, setModal, sortBy, postId, comment, 
                           await api.comment.react(reacts)
                         }
 
-                        await queryClient.setQueryData(['transaction', sortBy], (prev) => {
+                        const comments = await api.comment.by_id({post_id: postId})
+                        queryClient.setQueryData(['transaction', sortBy], (prev) => {
                           if (!prev) return
-                          const targetComment = prev
+                          const targetPost = prev
                             .find((_post) => _post.id === postId)
-                            ?.comments.find((_comment) => _comment.id === comment.id)
-                          if (targetComment) {
-                            targetComment.user_reaction_info.reaction_hashes = [
-                              ...(targetComment.user_reaction_info.reaction_hashes || []),
-                              reacts.reaction_hash,
-                            ]
-                            targetComment.user_reaction_info.total_reaction_count =
-                              (targetComment.user_reaction_info.total_reaction_count || 0) + 1
 
-                            targetComment.user_reaction_info.is_reacted = true
+                          if (targetPost) {
+                            targetPost.comments = comments;
                           }
 
                           return [...prev]
