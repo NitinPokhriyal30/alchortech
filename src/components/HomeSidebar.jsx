@@ -156,7 +156,7 @@ export default function HomeSidebar({}) {
               <div className="w-[23px]">
                 <img src={Icon4} />
               </div>
-              <span>Survey</span>
+              <span>Surveys</span>
             </MenuLink>
             <MenuLink
               to="/voice-out"

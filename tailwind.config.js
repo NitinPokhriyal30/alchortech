@@ -17,7 +17,7 @@ export default {
       xl: '1280px',
       // => @media (min-width: 1280px) { ... }
 
-      xxl: '1536px',
+      xxl: '1550px',
       // => @media (min-width: 1536px) { ... }
     },
     fontSize: {

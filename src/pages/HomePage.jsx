@@ -18,6 +18,7 @@ import { useQuery } from 'react-query'
 import { api } from '@/api'
 import { useIntersectionObserver } from 'usehooks-ts'
 import { queryClient } from '@/queryClient'
+import Loader from '@/components/Loader'
 // import { getChildTransactionsFor, withIsChild } from '@/utils'
 
 const stickBottomAlign = {
@@ -33,6 +34,7 @@ export default function HomePage() {
 
   const [page, setPage] = React.useState(1)
   const [sortBy, setSortBy] = React.useState('everything')
+
 
   const postList = useQuery(
     ['transaction', sortBy],
@@ -51,20 +53,22 @@ export default function HomePage() {
   const parentPosts = allPosts
 
   React.useEffect(() => {
-    function handleResize() {
-      if (!rightSidebarRef.current) {
-        return
-      }
+    if (window.innerWidth > 768) {
+      function handleResize() {
+        if (!rightSidebarRef.current) {
+          return
+        }
 
-      const rightSidebar = rightSidebarRef.current
-      const height = rightSidebar.getBoundingClientRect().height
-      if (height > window.innerHeight) {
-        setStickyStyles(stickBottomAlign)
+        const rightSidebar = rightSidebarRef.current
+        const height = rightSidebar.getBoundingClientRect().height
+        if (height > window.innerHeight) {
+          setStickyStyles(stickBottomAlign)
+        }
       }
+      handleResize()
+      window.addEventListener('resize', handleResize)
+      return () => window.removeEventListener('resize', handleResize)
     }
-    handleResize()
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
   }, [])
 
   React.useEffect(() => {
@@ -142,15 +146,15 @@ export default function HomePage() {
           )}
 
           {hasNextPage === false ? (
-            <p className="flex h-32 items-center justify-center">You have reached the end🥳</p>
+            <p className="flex h-32 items-center justify-center">You have reached the end 🥳</p>
           ) : (
-            <div className="h-64 animate-pulse rounded-md bg-gray-300" ref={infiniteLoaderDivRef} />
+            <div className='flex justify-center' ref={infiniteLoaderDivRef} >
+              <Loader />
+            </div>
           )}
 
-          {postList.data?.next === null ? (
-            <p className="flex h-32 items-center justify-center">You have reached the end🥳</p>
-          ) : (
-            <div className="h-64 animate-pulse rounded-md bg-gray-300" ref={infiniteLoaderDivRef} />
+          {postList.data?.next === null && (
+            <p className="flex h-32 items-center justify-center">You have reached the end 🥳</p>
           )}
         </div>
       </div>
