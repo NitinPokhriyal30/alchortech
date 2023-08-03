@@ -7,6 +7,7 @@ import User1 from '../../assets/images/user-profile/pp.png'
 import { useQuery } from 'react-query'
 import { api } from '@/api'
 import { processAvatarUrl } from '@/utils'
+import Loader from '../Loader'
 
 
 export default function Top5UserWidget({ ...props }) {
@@ -15,42 +16,12 @@ export default function Top5UserWidget({ ...props }) {
     initialData: [],
   });
 
-
-  const [topUsers, setTopUsers] = React.useState(() => [
-    {
-      id: Math.random().toString(),
-      image: User1,
-      fullName: 'Sunita Gulia',
-      stars: 21,
-    },
-    {
-      id: Math.random().toString(),
-      image: User1,
-      fullName: 'John Doe',
-      stars: 19,
-    },
-    {
-      id: Math.random().toString(),
-      image: User1,
-      fullName: 'Alexa',
-      stars: 18,
-    },
-    {
-      id: Math.random().toString(),
-      image: User1,
-      fullName: 'Alice',
-      stars: 15,
-    },
-    {
-      id: Math.random().toString(),
-      image: User1,
-      fullName: 'Bob',
-      stars: 14,
-    },
-  ])
-
   if (top5.isLoading) {
-    return null
+    return (
+      <div className='flex justify-center' ref={infiniteLoaderDivRef} >
+        <Loader />
+      </div>
+    )
   }
 
   return (
