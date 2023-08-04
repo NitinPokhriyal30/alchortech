@@ -542,7 +542,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
           ) : modal === 'child-new-post' ? (
             <div className="mb-2 mt-2 flex gap-4">
                 <img
-                  className="h-[34px] w-[34px] rounded-full object-contain"
+                  className="h-[34px] w-[34px] rounded-full"
                   src={getAvatarAttributes(`${me.data.first_name} ${me.data.last_name}`, processAvatarUrl(me.data.avtar)).src}
                   alt={getAvatarAttributes(`${me.data.first_name} ${me.data.last_name}`, processAvatarUrl(me.data.avtar)).alt}
                   onError={(e) => {
