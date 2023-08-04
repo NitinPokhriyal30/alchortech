@@ -127,39 +127,39 @@ const UserInteraction = ({ sortBy, userId }) => {
 
   return (
     <div className="flex flex-col md:flex-row items-center md:items-start md:justify-center">
-    <div className="hidden md:block w-2/5 text-center py-4 border-r-2">
+      <div className="hidden md:block w-2/5 text-center py-4 border-r-2">
         <p className="text-[16px] text-[#000000] font-Lato font-bold">{`${me.first_name}'s Interaction`}</p>
-        <div><InteractionChart interactionData={interactionData} myAvatar={me.avtar}/></div>
-    </div>
-        <div className="w-3/5 py-4 flex justify-center">
-        <div>
-        {interactionData.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="border-collapse">
-              <thead>
-                <tr>
-                  <th className="pb-4 text-start pl-4 text-[16px] text-[#000000] font-Lato font-bold">Name</th>
-                  <th className="pb-4 px-6 text-[#27C4A0]">Received</th>
-                  <th className="pb-4 px-6 text-[#2BBFE2]">Given</th>
-                </tr>
-              </thead>
-              <tbody>
-                {interactionData.map((interaction, index) => (
-                  <tr key={index} className="hover:bg-[#ececec] rounded-xl">
-                    <td className="p-4 text-[#5486E3] font-semibold text-[16px]">{interaction.name}</td>
-                    <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal">{interaction.received}</td>
-                    <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal md:pl-6">{interaction.given}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <div className="text-center py-4">No Interaction Data Found</div>
-        )}
+        <div><InteractionChart interactionData={interactionData} myAvatar={me.avtar} /></div>
       </div>
-    </div>
-   
+      <div className="w-3/5 py-4 flex justify-center">
+        <div>
+          {interactionData.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="border-collapse">
+                <thead>
+                  <tr>
+                    <th className="pb-4 text-start pl-4 text-[16px] text-[#000000] font-Lato font-bold">Name</th>
+                    <th className="pb-4 px-6 text-[#27C4A0]">Received</th>
+                    <th className="pb-4 px-6 text-[#2BBFE2]">Given</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {interactionData.map((interaction, index) => (
+                    <tr key={index} className="hover:bg-[#ececec] rounded-xl">
+                      <td className="p-4 text-[#5486E3] font-semibold text-[16px]">{interaction.name}</td>
+                      <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal">{interaction.received}</td>
+                      <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal md:pl-6">{interaction.given}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="text-center py-4">No Interaction Data Found</div>
+          )}
+        </div>
+      </div>
+
     </div>
   );
 };

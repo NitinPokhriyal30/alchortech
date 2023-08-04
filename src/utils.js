@@ -72,7 +72,7 @@ export function getDaysLeftForNextMonth() {
   return daysLeft
 }
 
-export function CreateReact(sender, {id, react_by: prevReact_by}, emoji) {
+export function CreateReact(sender, { id, react_by: prevReact_by }, emoji) {
   const newReact = {
     avtar: sender.avtar,
     email: sender.email,
@@ -165,9 +165,23 @@ export const withIsChild = (allTransactions) => {
 export const processAvatarUrl = (Url) => {
   const targetString = "http://staging.letshigh5.com/";
 
-  if (Url && !Url.includes(targetString)) {
-    return targetString + Url;
-  } else {
-    return Url;
-  }
+    if (Url && !Url.includes(targetString)) {
+      return targetString + Url;
+    } else {
+      return Url;
+    }
+}
+
+export const getAvatarAttributes = (fullName , avatar) => {
+
+  // URL to the default placeholder avatar image
+  const defaultAvatarUrl = "URL_TO_DEFAULT_AVATAR_IMAGE"; // Replace this with the URL of your default avatar image
+
+  const avatarUrl = avatar ? avatar : defaultAvatarUrl;
+  const avatarAltText = avatar ? fullName : "Default Avatar";
+
+  return {
+    src: avatarUrl,
+    alt: avatarAltText,
+  };
 }

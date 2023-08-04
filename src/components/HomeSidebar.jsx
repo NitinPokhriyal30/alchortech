@@ -33,7 +33,7 @@ import Icon5 from '@/assets/svg/home-sidebar/Group3'
 import AnalyticsIcon from '@/assets/svg/home-sidebar/noun-analytics-5506185.svg'
 import PowerOffIcon from '@/assets/svg/home-sidebar/power-off (1).svg'
 import HelpIcon from '@/assets/svg/home-sidebar/HelpIcon'
-import { processAvatarUrl } from '@/utils'
+import { getAvatarAttributes, processAvatarUrl } from '@/utils'
 
 export default function HomeSidebar({}) {
   const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
@@ -42,6 +42,9 @@ export default function HomeSidebar({}) {
   const setShowSidebar = (show) => dispatch({ type: 'sidebar', show })
 
   const userId = Cookies.get('user_id');
+
+  const { first_name, last_name, avtar } = me.data;
+  const { src, alt } = getAvatarAttributes(first_name, last_name, processAvatarUrl(avtar));
 
   return (
     <>
@@ -89,14 +92,22 @@ export default function HomeSidebar({}) {
               <div>
                 <img
                   className="h-14 w-14 overflow-hidden rounded-full bg-gray-300"
-                  src={processAvatarUrl(me.data.avtar)}
-                  alt="user avatar"
+                  src={src}
+                  alt={alt}
+                  style={{"color": "white"}}
+                  onError={(e) => {
+                    // If the image fails to load, use the name initials instead
+                    e.target.onerror = null;
+                    e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                      first_name.charAt(0) + last_name.charAt(0)
+                    )}&color=${"#464646"}&background=${"FFFFFF"}`; 
+                  }}
                 />
               </div>
               <div>
                 <p className=" text-[16px] font-black text-white">Hi,</p>
                 <span className=" text-[16px] font-normal text-white">
-                  {me.data.first_name} {me.data.last_name}
+                  {first_name} {last_name}
                 </span>
               </div>
             </MenuLink>

@@ -13,6 +13,8 @@ import {
   RiSearchLine,
 } from 'react-icons/ri'
 import { Link } from 'react-router-dom'
+import Loader from '../Loader'
+import { getAvatarAttributes, processAvatarUrl } from '@/utils'
 
 // not using react query because of debounce input
 export default function SearchBox({ ...props }) {
@@ -83,9 +85,10 @@ export default function SearchBox({ ...props }) {
                   onClick={() => setShow(false)}
                 />
               ) : isLoading ? (
-                <p className="mt-20 flex items-center justify-center gap-x-2 font-semibold">
-                  <RiLoader2Line className="animate-spin" />
-                </p>
+                <p className="mt-[50%] flex justify-center">
+                    {/* <RiLoader2Line className="animate-spin" /> */}
+                    <Loader />
+                </p> 
               ) : !Array.isArray(searchData.users) ? (
                 <p className="mt-20 flex items-center justify-center gap-x-2 font-semibold">
                   <RiSearchLine /> Type anything in Search Box.
@@ -234,7 +237,15 @@ function SearchUserProfile({ user, onClick }) {
     >
       <img
         className="aspect-square w-[55px] rounded-full border border-[#707070]"
-        src={user.avtar}
+        src={getAvatarAttributes(`${user.first_name} ${user.last_name}`, processAvatarUrl(user.avtar)).src}
+        alt={getAvatarAttributes(`${user.first_name} ${user.last_name}`, processAvatarUrl(user.avtar)).alt}
+        onError={(e) => {
+          // If the image fails to load, use the name initials instead
+          e.target.onerror = null;
+          e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+            user.first_name.charAt(0) + user.last_name.charAt(0)
+          )}&color=${"#464646"}&background=${"FFFFFF"}`;
+        }}
       />
       <div>
         <p className="font-semibold text-[#2F2F2F]">

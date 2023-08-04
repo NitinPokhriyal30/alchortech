@@ -268,8 +268,6 @@ export default function NewPost({ ...props }) {
                     hashtags: form.hashtags.map(item => item.name).join(','),
                     recipients: form.recipients.join(','),
                   })
-
-                  console.log(data);
                   const formData = toFormData(data)
                   // recipients.forEach((userId) => formData.append('recipients', userId))
 

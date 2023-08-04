@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import { SERVER_URL } from '@/constant';
-import { processAvatarUrl } from '@/utils';
+import { getAvatarAttributes, processAvatarUrl } from '@/utils';
 
 const InteractionChart = ({ interactionData, myAvatar }) => {
 
@@ -20,37 +20,96 @@ const InteractionChart = ({ interactionData, myAvatar }) => {
       <div className='flex justify-between mx-14 py-8'>
         {interactionData[0] && 
           <div>
-          <img
-              className='rounded-full h-12 w-12'
-              src={processAvatarUrl(interactionData[0]?.avtar)}
+            <img
+              className="rounded-full h-12 w-12"
+              src={getAvatarAttributes(`${interactionData[0]?.name.split(' ')[0]} ${interactionData[0]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[0]?.avtar)).src}
+              alt={getAvatarAttributes(`${interactionData[0]?.name.split(' ')[0]} ${interactionData[0]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[0]?.avtar)).alt}
+            onError={(e) => {
+              // If the image fails to load, use the name initials instead
+              e.target.onerror = null;
+              e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                interactionData[0]?.name.split(' ')[0].charAt(0) + interactionData[0]?.name.split(' ')[1].charAt(0)
+              )}&color=${"#464646"}&background=${"FFFFFF"}`;
+            }}
             />
           </div>}
-        {interactionData[1] && <div><img className='rounded-full h-12 w-12'
-          src={processAvatarUrl(interactionData[1]?.avtar)}
-        /></div>}
+        {interactionData[1] && <div>
+          <img
+            className="rounded-full h-12 w-12"
+            src={getAvatarAttributes(`${interactionData[1]?.name.split(' ')[0]} ${interactionData[1]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[1]?.avtar)).src}
+            alt={getAvatarAttributes(`${interactionData[1]?.name.split(' ')[0]} ${interactionData[1]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[1]?.avtar)).alt}
+            onError={(e) => {
+              // If the image fails to load, use the name initials instead
+              e.target.onerror = null;
+              e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                interactionData[1]?.name.split(' ')[0].charAt(0) + interactionData[1]?.name.split(' ')[1].charAt(0)
+              )}&color=${"#464646"}&background=${"FFFFFF"}`;
+            }}
+          />
+        </div>}
       </div>
       <div 
         className='flex justify-center relative'
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-      <img 
-      className={`rounded-full h-14 w-14 border-2 ${
-        isHovered ? 'border-black' : 'hover:border-black'
-      } z-10`}
-        src={processAvatarUrl(myAvatar)}/>
+        <img
+          className="rounded-full h-12 w-12"
+          src={getAvatarAttributes(`${interactionData[4]?.name.split(' ')[0]} ${interactionData[4]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[4]?.avtar)).src}
+          alt={getAvatarAttributes(`${interactionData[4]?.name.split(' ')[0]} ${interactionData[4]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[4]?.avtar)).alt}
+          onError={(e) => {
+            // If the image fails to load, use the name initials instead
+            e.target.onerror = null;
+            e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+              interactionData[4]?.name.split(' ')[0].charAt(0) + interactionData[4]?.name.split(' ')[1].charAt(0)
+            )}&color=${"#464646"}&background=${"FFFFFF"}`;
+          }}
+        />
       </div>
       <div className='flex justify-between mx-5 pt-8'>
-        {interactionData[2] && <div><img className='rounded-full h-12 w-12'
-          src={processAvatarUrl(interactionData[2]?.avtar)}
-        /></div>}
-        {interactionData[3] && <div><img className='rounded-full h-12 w-12'
-          src={processAvatarUrl(interactionData[3]?.avtar)}
-        /></div>}
+        {interactionData[2] && <div>
+          <img
+            className="rounded-full h-12 w-12"
+            src={getAvatarAttributes(`${interactionData[2]?.name.split(' ')[0]} ${interactionData[2]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[2]?.avtar)).src}
+            alt={getAvatarAttributes(`${interactionData[2]?.name.split(' ')[0]} ${interactionData[2]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[2]?.avtar)).alt}
+            onError={(e) => {
+              // If the image fails to load, use the name initials instead
+              e.target.onerror = null;
+              e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                interactionData[2]?.name.split(' ')[0].charAt(0) + interactionData[2]?.name.split(' ')[1].charAt(0)
+              )}&color=${"#464646"}&background=${"FFFFFF"}`;
+            }}
+          />
+        </div>}
+        {interactionData[3] && <div>
+          <img
+            className="rounded-full h-12 w-12"
+            src={getAvatarAttributes(`${interactionData[3]?.name.split(' ')[0]} ${interactionData[3]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[3]?.avtar)).src}
+            alt={getAvatarAttributes(`${interactionData[3]?.name.split(' ')[0]} ${interactionData[3]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[3]?.avtar)).alt}
+            onError={(e) => {
+              // If the image fails to load, use the name initials instead
+              e.target.onerror = null;
+              e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                interactionData[3]?.name.split(' ')[0].charAt(0) + interactionData[3]?.name.split(' ')[1].charAt(0)
+              )}&color=${"#464646"}&background=${"FFFFFF"}`;
+            }}
+          />
+        </div>}
       </div>
-      {interactionData[4] && <div className='flex justify-center py-2'><img className='rounded-full h-12 w-12'
-        src={processAvatarUrl(interactionData[4]?.avtar)}
-      /></div>}
+      {interactionData[4] && <div className='flex justify-center py-2'>
+        <img
+          className="rounded-full h-12 w-12"
+          src={getAvatarAttributes(`${interactionData[4]?.name.split(' ')[0]} ${interactionData[4]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[4]?.avtar)).src}
+          alt={getAvatarAttributes(`${interactionData[4]?.name.split(' ')[0]} ${interactionData[4]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[4]?.avtar)).alt}
+          onError={(e) => {
+            // If the image fails to load, use the name initials instead
+            e.target.onerror = null;
+            e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+              interactionData[4]?.name.split(' ')[0].charAt(0) + interactionData[4]?.name.split(' ')[1].charAt(0)
+            )}&color=${"#464646"}&background=${"FFFFFF"}`;
+          }}
+        />
+      </div>}
       
       <svg className='absolute top-0 left-0 h-full w-full'>
         {/*1 Pic Line*/}
