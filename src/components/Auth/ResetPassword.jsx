@@ -84,7 +84,7 @@ const ResetPassword = () => {
               </div>
 
               <div className='text-center px-16 pb-4'>
-                <p className="text-[22px] mb-4 font-Lato font-black text-[#000000] leading-25">Change Password</p>
+                <p className="text-[22px] mb-4  font-black text-[#000000] leading-25">Change Password</p>
               </div>
 
               <div className="bg-white rounded-xl drop-shadow-lg p-8 mx-24 w-80  h-auto">

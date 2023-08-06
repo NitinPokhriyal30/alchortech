@@ -1,13 +1,10 @@
 import React, { useRef } from 'react'
 import * as Popover from '@radix-ui/react-popover'
-import {
-  BsThreeDots,
-} from 'react-icons/bs'
+import { BsThreeDots } from 'react-icons/bs'
 import PostUser from '../assets/images/post-img/post-user.png'
 import GifPicker from './GifPickerPopover'
 import EmojiPicker from 'emoji-picker-react'
 import HoveringWidget from '@/components/HoveringWidget'
-import { SERVER_URL } from '@/constant'
 import { api } from '@/api'
 import Cookies from 'js-cookie'
 import { useQuery } from 'react-query'
@@ -27,7 +24,7 @@ import { RiSendPlane2Fill } from 'react-icons/ri'
 import ReactComponent from './ReactComponent'
 import * as Dialog from '@radix-ui/react-dialog'
 import { pluralize } from '@/components/HomeRightSidebar/CelebrationWidget'
-
+import { processAvatarUrl } from '@/utils'
 
 export const reactionsUnicode = {
   '😊': 'U+1F60A',
@@ -44,7 +41,6 @@ const points_colors = [
   'text-[#B754E3]',
   'text-[#F46CE9]',
 ]
-
 
 const sortCommentsAndTransactions = (comments, childrenTransactions) => {
   const _childrenTransactions = childrenTransactions.map((transaction) => ({
@@ -97,7 +93,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                 <img
                   key={post.sender.id}
                   className="h-8.5 w-8.5 rounded-full object-cover"
-                  src={SERVER_URL + post.sender.avtar}
+                  src={processAvatarUrl(post.sender.avtar)}
                   alt="post-user"
                 />
 
@@ -105,7 +101,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                   <img
                     key={post.sender.id}
                     className="h-8.5 w-8.5 rounded-full object-cover"
-                    src={SERVER_URL + post.sender.avtar}
+                    src={processAvatarUrl(post.sender.avtar)}
                     alt="post-user"
                   />
                 ))}
@@ -156,7 +152,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                   className="block max-w-full rounded-md object-contain"
                   src={
                     typeof post.image === 'string'
-                      ? SERVER_URL + post.image
+                      ? processAvatarUrl(post.image)
                       : URL.createObjectURL(post.image)
                   }
                 />
@@ -177,7 +173,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                 </button>
 
                 <div className="absolute bottom-8 left-0 hidden gap-1 rounded-[19px] bg-white px-4 py-2 drop-shadow-[0px_2px_3px_#00000029] hover:flex peer-hover:flex">
-                  {properties?.data?.points_allowed?.map((points, index ) => (
+                  {properties?.data?.points_allowed?.map((points, index) => (
                     <button
                       key={index}
                       // style={{ color: color }}
@@ -217,30 +213,32 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                           content_type: 'transaction',
                         }
 
-                        await api.transactions.react(reacts)
+                        if (post.user_reaction_info?.is_reacted === true) { 
+                          await api.transactions.updateReaction({
+                            post_id: post.id,
+                            reaction_hash: reactionsUnicode[emoji],
+                          })
+                        } else {
+                          await api.transactions.react(reacts)
+                        }
+                        const reactions = await api.transactions.allReactions({ post_id: post.id })
                         await queryClient.setQueryData(['transaction', props.sortBy], (prev) => {
                           if (!prev) return
                           const targetPost = prev.find((_post) => _post.id === post.id)
                           if (targetPost) {
-                            if (typeof targetPost.user_reaction_info === 'string') {
-                              targetPost.user_reaction_info = {
-                                reaction_hashes: reacts.reaction_hash,
-                                latest_user_reaction_full_name:
-                                  me.data.first_name + ' ' + me.data.last_name,
-                                total_reaction_counts: 1,
-                              }
-                            } else {
-                              targetPost.user_reaction_info = {
-                                reaction_hashes: [
-                                  ...targetPost.user_reaction_info.reaction_hashes,
-                                  reacts.reaction_hash,
-                                ],
-                                latest_user_reaction_full_name:
-                                  me.data.first_name + ' ' + me.data.last_name,
-                                total_reaction_counts:
-                                  targetPost.user_reaction_info.total_reaction_counts + 1,
-                              }
+                            targetPost.user_reaction_info = {
+                              reaction_hashes: Array.from(
+                                new Set(reactions.map(({ reaction }) => reaction))
+                              ),
+                              total_reaction_counts: reactions.length,
+                              latest_user_reaction_full_name:
+                                me.data.first_name + ' ' + me.data.last_name,
+                              is_reacted: true,
                             }
+                            console.log(
+                              'post card > parent react btn',
+                              targetPost.user_reaction_info
+                            )
                           }
 
                           return [...prev]
@@ -270,30 +268,60 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
             </div>
           </div>
 
-          <div className="mt-1 flex items-center gap-2 pb-1">
+          <div className={'mt-1 flex items-center gap-2 pb-1 '}>
             <Dialog.Root>
-              <div className="flex cursor-pointer items-center rounded-full border-[0.5px] border-[#d1d1d1] px-2  text-[16px] text-[#747474]">
-                <Dialog.Trigger >
-                {post.user_reaction_info === 'not available' && post.user_reaction_info.reaction_hashes != null ? (
-                  <span>
-                    {unicodeToEmoji(post.user_reaction_info.reaction_hashes)}
-                    {post.user_reaction_info.latest_user_reaction_full_name}
-                    {post.user_reaction_info.total_reaction_counts > 1
-                      ? 'and ' +
-                      pluralize(post.user_reaction_info.total_reaction_counts - 1, 'other', 's')
-                      : ''}
-                  </span>
-                ) : (
-                  '0 😊'
-                )}{' '}
-                
-                  {/* <p className="pl-[3px] text-16px">{post.total_user_reaction_counts}</p> */}
+              <div
+                className={
+                  'rounded-full border-[0.5px] border-[#d1d1d1] px-3 text-[16px] text-[#747474] ' +
+                  (post.user_reaction_info == null ||
+                  post.user_reaction_info.total_reaction_counts === 0
+                    ? 'hidden'
+                    : '')
+                }
+              >
+                <Dialog.Trigger
+                  className={
+                    ((post.user_reaction_info == null ||
+                      post.user_reaction_info.total_reaction_counts === 0) &&
+                      'pointer-events-none cursor-default ') + ' flex items-center '
+                  }
+                >
+                  {post.user_reaction_info != null ? (
+                    <>
+                      <span>
+                        <span className='text-lg'>
+                        {post.user_reaction_info.reaction_hashes.map((hash) =>
+                          unicodeToEmoji(hash)
+                          )}
+                        </span>
+                        {' ' + post.user_reaction_info.latest_user_reaction_full_name + ' '}
+                        {post.user_reaction_info.total_reaction_counts > 1
+                          ? 'and ' +
+                            pluralize(
+                              post.user_reaction_info.total_reaction_counts - 1,
+                              'other',
+                              's'
+                            )
+                          : ''}
+                      </span>
+                      {/* <p className="pl-[3px] text-16px">
+                        {post.user_reaction_info?.total_reaction_counts}
+                      </p> */}
+                    </>
+                  ) : (
+                    '😊 0'
+                  )}{' '}
                 </Dialog.Trigger>
               </div>
-              <ReactComponent />
+
+              <ReactComponent postId={post.id} key={post.user_reaction_info?.total_reaction_counts + post.user_reaction_info?.reaction_hashes.join()} />
             </Dialog.Root>
 
-            <p className="text-16px text-[#d1d1d1]">
+            <p
+              className={
+                'text-16px text-[#d1d1d1] ' + (commentsAndTransactions.length === 0 ? 'hidden' : '')
+              }
+            >
               {commentsAndTransactions.length + ' '}
               Comment
             </p>
@@ -307,7 +335,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                 <div>
                   <img
                     className="h-[34px] w-[34px] rounded-full object-cover"
-                    src={SERVER_URL + me.data.avtar}
+                    src={processAvatarUrl(me.data.avtar)}
                     alt="comment"
                   />
                 </div>
@@ -494,7 +522,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
           ) : modal === 'child-new-post' ? (
             <div className="mb-2 mt-2 flex gap-4">
               <img
-                src={SERVER_URL + me.data.avtar}
+                  src={processAvatarUrl(me.data.avtar)}
                 className="h-[34px] w-[34px] rounded-full object-contain"
               />
               <div className="flex-1">
@@ -525,7 +553,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
               >
                 <img
                   className="h-8.5 w-8.5 rounded-full object-cover"
-                  src={SERVER_URL + commentOrTransaction.sender.avtar}
+                    src={processAvatarUrl(commentOrTransaction.sender.avtar)}
                 />
 
                 <div className="relative ">
@@ -590,8 +618,22 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                                     content_type: 'transaction',
                                   }
 
-                                  await api.transactions.react(reacts)
-                                  await queryClient.setQueryData(
+                                  if (
+                                    commentOrTransaction.user_reaction_info?.is_reacted === true
+                                  ) {
+                                    await api.transactions.updateReaction({
+                                      post_id: commentOrTransaction.id,
+                                      reaction_hash: reactionsUnicode[emoji],
+                                    })
+                                  } else {
+                                    await api.transactions.react(reacts)
+                                  }
+
+                                  const reactions = await api.transactions.allReactions({
+                                    post_id: commentOrTransaction.id,
+                                  })
+
+                                  queryClient.setQueryData(
                                     ['transaction', props.sortBy],
                                     (prev) => {
                                       if (!prev) return prev
@@ -604,12 +646,13 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
 
                                       if (targetPost) {
                                         targetPost.user_reaction_info = {
-                                          reaction_hashes: [
-                                            ...targetPost.user_reaction_info.reaction_hashes,
-                                            reacts.reaction_hash,
-                                          ],
-                                          total_reaction_count:
-                                            targetPost.user_reaction_info.total_reaction_count + 1,
+                                          reaction_hashes: Array.from(
+                                            new Set(reactions.map(({ reaction }) => reaction))
+                                          ),
+                                          total_reaction_count: reactions.length,
+                                          latest_user_reaction_full_name:
+                                            me.data.first_name + ' ' + me.data.last_name,
+                                          is_reacted: true,
                                         }
                                       }
 

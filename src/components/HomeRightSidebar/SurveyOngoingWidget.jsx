@@ -7,19 +7,19 @@ export default function SurveyOngoingWidget({ ...props }) {
     {
       id: Math.random().toString(),
       title: 'Survey Title goes here',
-      endDate: '05/15/2023',
+      endDate: '05/15/2025',
       reward: 20,
     },
     {
       id: Math.random().toString(),
       title: 'Web fronted framework Survey',
-      endDate: '05/17/2023',
+      endDate: '05/17/2025',
       reward: 15,
     },
     {
       id: Math.random().toString(),
       title: 'Cafeteria & Food Survey',
-      endDate: '05/19/2023',
+      endDate: '05/19/2025',
       reward: 25,
     },
   ])

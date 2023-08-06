@@ -9,11 +9,11 @@ import PostCard from '../components/PostCard';
 import { AchievementBanner } from '../components/AchievementBanner';
 import { api } from '@/api';
 import { useQuery } from 'react-query';
-import { SERVER_URL } from '@/constant';
 import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import { useLocation } from 'react-router-dom';
 import UserInteraction from './UserInteraction'
+import { processAvatarUrl } from '@/utils';
 
 const getChildTransactionsFor = (parentId, allTransactions) => {
     return allTransactions.filter((post) => post.parent_id === parentId);
@@ -34,7 +34,7 @@ export default function MyProfile() {
     const [appreciationType, setAppreciationType] = useState('received');
     const [receivedCount, setReceivedCount] = useState(0);
     const [givenCount, setGivenCount] = useState(0);
-    const [sortBy, setSortBy] = useState('all');
+    const [filterBy, setFilterBy] = useState('all');
 
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
@@ -57,9 +57,9 @@ export default function MyProfile() {
         ['transactions', appreciationType], // Added appreciationType as a dependency to trigger the query when it changes
         () => {
           if (appreciationType === 'received') {
-            return api.transactions.meAsRecipient(userId, sortBy);
+            return api.transactions.meAsRecipient(userId, filterBy);
           } else {
-            return api.transactions.meAsSender(userId, sortBy);
+            return api.transactions.meAsSender(userId, filterBy);
           }
         }, 
     );
@@ -74,8 +74,8 @@ export default function MyProfile() {
         transactionsQuery.refetch();
         console.log(transactionsQuery)
         const fetchCounts = async () => {
-          const receivedPromise = api.transactions.meAsRecipient(userId, sortBy);
-          const givenPromise = api.transactions.meAsSender(userId, sortBy);
+          const receivedPromise = api.transactions.meAsRecipient(userId, filterBy);
+          const givenPromise = api.transactions.meAsSender(userId, filterBy);
           
           const receivedCount = await receivedPromise;
           const givenCount = await givenPromise;
@@ -85,7 +85,7 @@ export default function MyProfile() {
         };
         
         fetchCounts()
-    }, [appreciationType, sortBy, userId]);
+    }, [appreciationType, filterBy, userId]);
 
     const handleTabClick = (tab) => {
         setActiveTab(tab);
@@ -115,8 +115,8 @@ export default function MyProfile() {
         }
     }
 
-    const getSortByLabel = (sortBy) => {
-        switch (sortBy) {
+    const getFilterByLabel = (filterBy) => {
+        switch (filterBy) {
           case 'all':
             return 'All';
           case 'year_to_date':
@@ -132,7 +132,7 @@ export default function MyProfile() {
           case 'this_month':
             return 'This Month'; 
           default:
-            return sortBy;
+            return filterBy;
         }
       };
 
@@ -141,9 +141,11 @@ export default function MyProfile() {
             <div className="flex flex-col md:flex-row gap-3 mt-3">
               <div className="flex flex-col md:flex-row items-center md:w-[70%] bg-white rounded-lg border-t-8 md:border-t-0 border-l-0 md:border-l-8 border-[#27C4A0] mx-2 md:mx-0">
                 <div className="h-32 md:h-36 w-32 md:w-36 rounded-full overflow-hidden relative ml-4 mr-8 my-8">
-                    <img className="w-full h-full object-cover" src={SERVER_URL + (me.avtar || '')} alt="user avatar"/>
+                        <img className="w-full h-full object-cover"
+                            src={processAvatarUrl(me.avtar)}
+                            alt="user avatar" />
                     <label htmlFor='imageInput' className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center opacity-0 transition-opacity duration-300 hover:opacity-100">
-                        <p className="text-white font-normal font-lato text-sm text-center">
+                        <p className="text-white font-normal  text-sm text-center">
                         Change<br />Picture
                         </p>
                     </label>
@@ -155,15 +157,15 @@ export default function MyProfile() {
                             <img className="" src={Flag} alt="flag"/>
                         </div>
                     </div>
-                    <p className="font-bold font-Lato text-[#292929] text-[25px]">{me.first_name} {me.last_name}</p>
+                    <p className="font-bold  text-[#292929] text-[25px]">{me.first_name} {me.last_name}</p>
                     <div className="md:flex mt-2 mb-4">
                         <div className="pr-0 md:pr-4">
                             <p className="font-bold font-lato text-[#000000] text-[18px]">{me.title}</p>
                             <p className="font-normal font-lato text-[#000000] text-[18px]">{me.department}</p>
                         </div>
                         <div className="md:border-l-[1px] sm:border-l-0 pl-0 md:pl-4  border-[#27C4A0]">
-                            <p className="font-normal font-lato text-[#000000] text-[18px]">{me.email}</p>
-                            <p className="font-normal font-lato text-[#000000] text-[18px]">+91 {me.phone_number}</p>
+                            <p className="font-normal  text-[#000000] text-[18px]">{me.email}</p>
+                            <p className="font-normal  text-[#000000] text-[18px]">+91 {me.phone_number}</p>
                         </div>
                     </div>
                 </div>
@@ -178,7 +180,7 @@ export default function MyProfile() {
             </div>
         </div>
 
-            <div className="text-[#8D8D8D] font-semibold text-[14px] font-lato text-left mr-3 mt-4 mb-4">
+            <div className="text-[#8D8D8D] font-semibold text-[14px]  text-left mr-3 mt-4 mb-4">
                 <div className="flex flex-col md:flex-row sm:justify-center md:justify-between">
                     <div className="flex justify-center">
                         <button className={activeTab === 'overview' ? 'text-[#000000] border-b-2 border-[#000000]' : ''} onClick={() => handleTabClick('overview')}>
@@ -193,20 +195,20 @@ export default function MyProfile() {
                     </div>
                     <div>
                         <div className="flex justify-end">
-                            <div className="font-Lato text-[#7B7B7B] text-sm relative flex items-center ml-20">
-                                Sort By:
+                            <div className=" text-[#7B7B7B] text-sm relative flex items-center ml-20">
+                                Filter By:
                                 <button className="peer font-Lato flex items-center gap-1 text-sm font-semibold pl-1">
-                                {getSortByLabel(sortBy)}
+                                {getFilterByLabel(filterBy)}
                                 <span><AiFillCaretDown /></span>
                                 </button>
                                 <div className="hidden drop-shadow-[0px_2px_6px_#44444F1A] w-36 px-4 py-2 rounded-lg bg-white absolute z-10 top-[21px] right-[1px] peer-hover:flex hover:flex  flex-col child:cursor-pointer text-end">
-                                <p className="text-sm font-Lato" onClick={() => setSortBy("all")}>All</p> 
-                                <p className="text-sm font-Lato" onClick={() => setSortBy("year_to_date")}>This year</p>
-                                <p className="text-sm font-Lato" onClick={() => setSortBy("last_six_months")}>Last 6 months</p> 
-                                <p className="text-sm font-Lato" onClick={() => setSortBy("last_quarter")}>Last quarter</p>
-                                <p className="text-sm font-Lato" onClick={() => setSortBy("this_quarter")}>This quarter</p>
-                                <p className="text-sm font-Lato" onClick={() => setSortBy("last_month")}>Last month</p>
-                                <p className="text-sm font-Lato" onClick={() => setSortBy("this_month")}>This month</p>
+                                <p className="text-sm font-Lato" onClick={() => setFilterBy("all")}>All</p> 
+                                <p className="text-sm font-Lato" onClick={() => setFilterBy("year_to_date")}>This year</p>
+                                <p className="text-sm font-Lato" onClick={() => setFilterBy("last_six_months")}>Last 6 months</p> 
+                                <p className="text-sm font-Lato" onClick={() => setFilterBy("last_quarter")}>Last quarter</p>
+                                <p className="text-sm font-Lato" onClick={() => setFilterBy("this_quarter")}>This quarter</p>
+                                <p className="text-sm font-Lato" onClick={() => setFilterBy("last_month")}>Last month</p>
+                                <p className="text-sm font-Lato" onClick={() => setFilterBy("this_month")}>This month</p>
                                 </div>
                             </div>
                         </div>
@@ -233,7 +235,7 @@ export default function MyProfile() {
                         <div className="bg-white mb-4 rounded-lg h-auto w-auto drop-shadow-md">
                             {activeTab === 'overview' && (
                                 <div>
-                                  <UserInteraction sortBy={sortBy} userId={userId}/>
+                                  <UserInteraction filterBy={filterBy} userId={userId}/>
                                 </div>
                             )}
                             {activeTab === 'recentActivities' && (
@@ -261,7 +263,7 @@ export default function MyProfile() {
                 </div>
                 <div className="md:w-[28%] h-fit mb-4 md:ml-2 bg-white rounded-lg drop-shadow-md">
                     <div>
-                        <MyHashtags sortBy={sortBy} userId={userId} />
+                        <MyHashtags filterBy={filterBy} userId={userId} />
                     </div>
                 </div>
             </div>

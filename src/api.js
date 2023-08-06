@@ -64,17 +64,21 @@ const api = {
           headers: { 'Content-Type': 'multipart/form-data' },
         })
         .then((r) => r.data),
-    all: (filters) =>
-      axios.get(`transaction/?${filters.toString()}`).then((r) => r.data),
-    meAsRecipient: (id, sortBy) => 
+    all: (filters) => axios.get(`transaction/?${filters.toString()}`).then((r) => r.data),
+    // meAsRecipient: (id) => axios.get(`api/posts/?recipients=${id}`).then((r) => r.data),
+    // meAsSender: (id) => axios.get(`api/posts/?sender=${id}`).then((r) => r.data),
+    meAsRecipient: (id, filterBy) =>
       axios
-        .get(`transaction/?recipients=${id}&date_range=${sortBy}`)
+        .get(`transaction/?recipients=${id}&date_range=${filterBy}`)
         .then((r) => r.data),
-    meAsSender: (id, sortBy) => 
+    meAsSender: (id, filterBy) =>
       axios
-        .get(`transaction/?sender=${id}&date_range=${sortBy}`)
+        .get(`transaction/?sender=${id}&date_range=${filterBy}`)
         .then((r) => r.data),
     react: (data) => axios.post('add-reaction/', data).then((r) => r.data),
+    allReactions: (data) => axios.get(`transaction-reactions/${data.post_id}/`).then((r) => r.data),
+    updateReaction: (data) =>
+      axios.patch(`update-user-reaction/${data.post_id}/`, data).then((r) => r.data),
   },
   comment: {
     new: (data) =>
@@ -85,9 +89,9 @@ const api = {
         .then((r) => r.data),
     all: () => axios.get('comments/').then((r) => r.data),
     react: (data) => axios.post('add-reaction/', data).then((r) => r.data),
+    by_id: (data) => axios.get(`comments/${data.post_id}/`).then(r=> r.data)
   },
-  todayEvents: () =>
-    axios.get('api/today-events/').then((r) => r.data),
+  todayEvents: () => axios.get('api/today-events/').then((r) => r.data),
 
   properties: () => axios.get('properties/').then((r) => r.data),
 }

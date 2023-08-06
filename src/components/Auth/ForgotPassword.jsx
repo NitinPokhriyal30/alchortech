@@ -44,8 +44,8 @@ const ForgotPassword = () => {
               {!showSuccess ? 
                 <div>
                   <div className='text-center px-16 pb-14'>
-                    <p className="text-[24px] mb-4 font-Lato font-black text-[#000000] leading-25">Forgot Password?</p>
-                    <span className="text-[18px] font-Lato font-md text-[#5D5D5D]">Please enter the email address you'd like your password reset imformation sent to</span>
+                    <p className="text-[24px] mb-4  font-black text-[#000000] leading-25">Forgot Password?</p>
+                    <span className="text-[18px]  font-md text-[#5D5D5D]">Please enter the email address you'd like your password reset imformation sent to</span>
                   </div>
 
                   <div className="bg-white rounded-xl drop-shadow-lg p-8 mx-auto w-80 h-auto " >
@@ -76,9 +76,9 @@ const ForgotPassword = () => {
                 <div className="w-[500px]">
                   <div><img className='mx-auto mb-4' src={SuccessLogo} alt='success-logo' /></div>
                   <div className='text-center pb-14'>
-                    <p className="text-[24px] mb-4 font-Lato font-black text-[#000000] leading-25">Reset Link Sent</p>
-                    <span className="text-[18px] font-Lato font-md text-[#5D5D5D]">We have sent password reset link to your email</span>
-                    <p className='mt-4 text-[14px] font-Lato font-md text-[#5486E3]'>{email}</p>
+                    <p className="text-[24px] mb-4  font-black text-[#000000] leading-25">Reset Link Sent</p>
+                    <span className="text-[18px]  font-md text-[#5D5D5D]">We have sent password reset link to your email</span>
+                    <p className='mt-4 text-[14px]  font-md text-[#5486E3]'>{email}</p>
                   </div>
                 </div> 
               }

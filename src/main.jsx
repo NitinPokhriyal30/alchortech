@@ -37,6 +37,7 @@ import { ToastContainer } from 'react-toastify'
 import Cookies from 'js-cookie'
 import { api } from '@/api'
 import { Analytics } from './components/Analytics/Analytics'
+import CampaignsTable from './components/Campaigns/CampaignsTable'
 import Transactions from '@/pages/Transactions'
 
 const router = createBrowserRouter(
@@ -68,6 +69,7 @@ const router = createBrowserRouter(
         <Route path="company/users" element={<ManageUsers />} />
         <Route path="company/account" element={<Earnings />} />
         <Route path="transactions/:id" element={<Transactions />} />
+        <Route path="campaigns" element={<CampaignsTable />} />
       </Route>
       <Route path="/reset/password/passwordreset/:uidb64/:token" element={<ResetPassword />} />
       <Route

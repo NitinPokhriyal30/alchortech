@@ -23,7 +23,7 @@ import gif from '../assets/images/new-post/gif.svg'
 import link from '../assets/images/new-post/link.svg'
 import smiley from '../assets/images/new-post/smiley.svg'
 
-function validateNewPostForm(form) {
+function validateNewPostForm(form, me) {
   let isValid = true
   if (form.point === 0) {
     toast.error('Select amount of points')
@@ -40,6 +40,12 @@ function validateNewPostForm(form) {
   }
   if (form.message.length === 0) {
     toast.error('Add a message')
+    isValid = false
+  }
+
+  if (form.point > me.points_available) {
+    toast.error('You don\'t have enough points to give')
+
     isValid = false
   }
   return isValid
@@ -135,7 +141,7 @@ export default function NewPost({ ...props }) {
                   ))}
                 {form.hashtags?.map((tag) => (
                   <span className="text-[#464646]" key={tag.name}>
-                    {tag.name}{' '}
+                    {'#' + tag.name}{' '}
                   </span>
                 ))}
               </>
@@ -254,7 +260,7 @@ export default function NewPost({ ...props }) {
               onClick={async function newPost() {
                 try {
                   setLoading(true)
-                  if (!validateNewPostForm(form)) return
+                  if (!validateNewPostForm(form, me.data)) return
 
                   const data = CreatePost(me.data.id, '', {
                     ...form,
@@ -268,6 +274,9 @@ export default function NewPost({ ...props }) {
                   // recipients.forEach((userId) => formData.append('recipients', userId))
 
                   const newTransaction = await api.transactions.new(formData)
+                  if (newTransaction.image) { 
+                    newTransaction.image = newTransaction.image.substring(SERVER_URL.length)
+                  }
                   newTransaction.sender.avtar = newTransaction.sender.avtar.substring(SERVER_URL.length)
                   await queryClient.setQueryData((['transaction', props.sortBy]), (prev) => {
                     if (!prev) return [newTransaction];
@@ -476,7 +485,7 @@ export function HashTagsDropdown({ form, setForm }) {
           <p className="h-10 w-[15ch] pt-3 text-center">Loading</p>
         ) : (
             hashtags?.map((tag) => {
-              const checked = form.hashtags.includes(tag)
+              const checked = form.hashtags.findIndex((_tag) => _tag.name === tag) !== -1;
               // console.log(checked);
               return (
                 <button
@@ -485,18 +494,17 @@ export function HashTagsDropdown({ form, setForm }) {
                 className={`px-4 py-1 text-left ${checked ? 'bg-translucent' : ''}`}
                 onClick={() => {
                   setForm((prev) => {
-                    prev.hashtags = prev.hashtags.filter((x) => x.name !== tag)
-                    const checked = prev.hashtags.includes(tag)
+                    const checked = prev.hashtags.findIndex(_tag => _tag.name === tag) !== -1;
                     if (checked) {
                       prev.hashtags = prev.hashtags.filter((x) => x.name !== tag)
                     } else {
-                      prev.hashtags.push({ 'name': tag })
+                      prev.hashtags.push({name: tag})
                     }
                     return { ...prev }
                   })
                 }}
               >
-                {tag}
+                {'# ' + tag}
               </button>
             )
           })

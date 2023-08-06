@@ -22,7 +22,6 @@ import Cookies from 'js-cookie'
 import { queryClient } from '@/queryClient'
 import { useQuery } from 'react-query'
 import { api } from '@/api'
-import { SERVER_URL } from '@/constant'
 import HomeIcon from '@/assets/svg/home-sidebar/HomeIcon'
 import PhoneIcon from '@/assets/svg/home-sidebar/phonebook.svg'
 import Icon1 from '@/assets/svg/home-sidebar/Group 672'
@@ -34,6 +33,7 @@ import Icon5 from '@/assets/svg/home-sidebar/Group3'
 import AnalyticsIcon from '@/assets/svg/home-sidebar/noun-analytics-5506185.svg'
 import PowerOffIcon from '@/assets/svg/home-sidebar/power-off (1).svg'
 import HelpIcon from '@/assets/svg/home-sidebar/HelpIcon'
+import { processAvatarUrl } from '@/utils'
 
 export default function HomeSidebar({}) {
   const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
@@ -89,7 +89,7 @@ export default function HomeSidebar({}) {
               <div>
                 <img
                   className="h-14 w-14 overflow-hidden rounded-full bg-gray-300"
-                  src={SERVER_URL + me.data.avtar}
+                  src={processAvatarUrl(me.data.avtar)}
                   alt="user avatar"
                 />
               </div>
@@ -141,7 +141,7 @@ export default function HomeSidebar({}) {
               <span>Analytics</span>
             </MenuLink>
             <MenuLink
-              to="/campaign"
+              to="/campaigns"
               className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px]  text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
             >
               <div className="w-[23px]">
