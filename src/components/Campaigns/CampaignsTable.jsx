@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {AiOutlinePlus, AiFillClockCircle, AiFillCloseCircle, AiFillRightCircle, AiFillCaretDown} from 'react-icons/ai'
 import {BsPencilFill} from 'react-icons/bs'
 import {RxCross1} from 'react-icons/rx'
+import { Link } from 'react-router-dom'
 
 const CampaignsTable = () => {
 
@@ -13,9 +14,10 @@ const [sortBy, setSortBy] = useState('Last 30 Days');
       <div className='flex justify-between mt-4 mx-4'>
        <div className='text-[20px] font-Lato text-[#464646] font-bold'>Campaigns</div>
        <div className='bg-[#5486E3] rounded-md p-2 text-white font-Lato'>
-            <button className='flex items-center gap-1'>
-            <span>{<AiOutlinePlus />}</span>
-            Create Campaign</button>
+       <Link to="/campaign/create" className="flex items-center gap-1">
+        <span>{<AiOutlinePlus />}</span>
+        Create Campaign
+       </Link>
        </div> 
       </div>
 

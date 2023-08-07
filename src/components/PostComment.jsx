@@ -1,29 +1,28 @@
 import * as React from 'react'
-import GrayBG from '@/assets/images/gray-bg.jpg'
-import { useQuery } from 'react-query'
 import { api } from '@/api'
 import moment from 'moment'
 import * as HoverCard from '@radix-ui/react-hover-card'
-import { CreateReact, processAvatarUrl } from '@/utils'
-import { toFormData } from '@/components/NewPost'
+import { getAvatarAttributes, processAvatarUrl } from '@/utils'
 import { queryClient } from '@/queryClient'
 import { reactionsUnicode, unicodeToEmoji } from '@/components/PostCard'
 
-const getUserById = (userId, users) => users.find((user) => user.id === userId)
 
 export default function PostComment({ modal, setModal, sortBy, postId, comment, ...props }) {
-  const me = useQuery('me')
-  const users = useQuery('users', () => api.users.profiles(), {
-    initialData: [],
-  })
-
-  const placeholderUser = { avtar: GrayBG, first_name: 'FirstName', last_name: '&nbsp;' }
   const user = comment.created_by
 
   return (
     <div className="grid grid-cols-[auto_1fr] gap-4 pl-0 pt-[7px]">
-      <img className="h-8.5 w-8.5 rounded-full object-cover"
-        src={processAvatarUrl(user.avtar)}
+      <img
+        className="h-8.5 w-8.5 rounded-full object-cover"
+        src={getAvatarAttributes(`${user.first_name} ${user.last_name}`, processAvatarUrl(user.avtar)).src}
+        alt={getAvatarAttributes(`${user.first_name} ${user.last_name}`, processAvatarUrl(user.avtar)).alt}
+        onError={(e) => {
+          // If the image fails to load, use the name initials instead
+          e.target.onerror = null;
+          e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+            user.first_name.charAt(0) + user.last_name.charAt(0)
+          )}&color=${"#464646"}&background=${"FFFFFF"}`;
+        }}
       />
 
       <div className="relative ">
@@ -52,7 +51,7 @@ export default function PostComment({ modal, setModal, sortBy, postId, comment, 
         <div className="relative z-10 flex h-[32px] -translate-y-1.5 items-center text-[12px] leading-[15px] text-primary">
           <p className="lex items-center gap-3 pb-1">
             {comment.user_reaction_info != null &&
-            comment.user_reaction_info.reaction_hashes.length > 0 ? (
+              comment.user_reaction_info.reaction_hashes.length > 0 ? (
               <div className="flex items-center gap-1 rounded-[17px] border-[0.6px] border-[#D1D1D1] bg-white px-[5px] pr-2 text-lg">
                 {unicodeToEmoji(comment.user_reaction_info.reaction_hashes[0])}
                 <span className=" text-sm text-[#747474]">
@@ -86,7 +85,7 @@ export default function PostComment({ modal, setModal, sortBy, postId, comment, 
                           await api.comment.react(reacts)
                         }
 
-                        const comments = await api.comment.by_id({post_id: postId})
+                        const comments = await api.comment.by_id({ post_id: postId })
                         queryClient.setQueryData(['transaction', sortBy], (prev) => {
                           if (!prev) return
                           const targetPost = prev

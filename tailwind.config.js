@@ -17,7 +17,7 @@ export default {
       xl: '1280px',
       // => @media (min-width: 1280px) { ... }
 
-      xxl: '1536px',
+      xxl: '1550px',
       // => @media (min-width: 1536px) { ... }
     },
     fontSize: {
@@ -56,8 +56,10 @@ export default {
         'primary-400': '#93c5fd',
         translucent: '#F7F7F7',
         'translucent-white': 'rgba(256 256 256 / 0.15)',
+        'translucent-black': 'rgba(0 0 0 / 0.15)',
         paper: 'rgb(231, 235, 240)',
         iconColor: '#D1D1D1',
+        "text-black": "#464646",
 
         // borderColors
         300: '#efefef',

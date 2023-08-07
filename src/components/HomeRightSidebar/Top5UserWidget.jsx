@@ -6,51 +6,22 @@ import RedStar from '../../assets/svg/red.svg'
 import User1 from '../../assets/images/user-profile/pp.png'
 import { useQuery } from 'react-query'
 import { api } from '@/api'
-import { processAvatarUrl } from '@/utils'
+import { getAvatarAttributes, processAvatarUrl } from '@/utils'
+import Loader from '../Loader'
 
 
-export default function Top5UserWidget({ ...props }) {
+export default function Top5UserWidget() {
 
   const top5 = useQuery("top5", () => api.topStars.all(), {
     initialData: [],
   });
 
-
-  const [topUsers, setTopUsers] = React.useState(() => [
-    {
-      id: Math.random().toString(),
-      image: User1,
-      fullName: 'Sunita Gulia',
-      stars: 21,
-    },
-    {
-      id: Math.random().toString(),
-      image: User1,
-      fullName: 'John Doe',
-      stars: 19,
-    },
-    {
-      id: Math.random().toString(),
-      image: User1,
-      fullName: 'Alexa',
-      stars: 18,
-    },
-    {
-      id: Math.random().toString(),
-      image: User1,
-      fullName: 'Alice',
-      stars: 15,
-    },
-    {
-      id: Math.random().toString(),
-      image: User1,
-      fullName: 'Bob',
-      stars: 14,
-    },
-  ])
-
   if (top5.isLoading) {
-    return null
+    return (
+      <div className='flex justify-center' ref={infiniteLoaderDivRef} >
+        <Loader />
+      </div>
+    )
   }
 
   return (
@@ -63,41 +34,52 @@ export default function Top5UserWidget({ ...props }) {
         </div>
 
         {top5.data?.map((user, index) => (
-          <div key={user.id}>
-            <div className=" px-4">
-              <div className="flex pb-2 gap-3 ml-1 justify-between items-center">
-                <div className="flex relative items-center gap-3">
-                  <img
-                    src={processAvatarUrl(user.avtar)}
-                    className="rounded-full w-12 h-12" alt="user1" />
-                  {index <= 2 && (
+          <>
+            <div key={user.id}>
+              <div className=" px-4">
+                <div className="flex pb-2 gap-3 ml-1 justify-between items-center">
+                  <div className="flex relative items-center gap-3">
                     <img
-                      src={
-                        index === 0
-                          ? GreenStar
-                          : index === 1
-                            ? FadeStar
-                            : index === 2
-                              ? RedStar
-                              : null
-                      }
-                      alt="Green Star"
-                      className="absolute top-0 left-[-8px]"
+                      src={getAvatarAttributes(user.recipient, processAvatarUrl(user.avtar)).src}
+                      alt={getAvatarAttributes(user.recipient, processAvatarUrl(user.avtar)).alt}
+                      className="rounded-full w-12 h-12"
+                      onError={(e) => {
+                        // If the image fails to load, use the name initials instead
+                        e.target.onerror = null;
+                        e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                          user.recipient.split(' ')[0].charAt(0) + user.recipient.split(' ')[1].charAt(0)
+                        )}&color=${"#464646"}&background=${"FFFFFF"}`;
+                      }}
                     />
-                  )}
-                  <div>
-                    <p className="text-[14px]  font-normal text-[#050505]">
-                      {user.recipient}
-                    </p>
+                    {index <= 2 && (
+                      <img
+                        src={
+                          index === 0
+                            ? GreenStar
+                            : index === 1
+                              ? FadeStar
+                              : index === 2
+                                ? RedStar
+                                : null
+                        }
+                        alt="Green Star"
+                        className="absolute top-0 left-[-8px]"
+                      />
+                    )}
+                    <div>
+                      <p className="text-[14px]  font-normal text-[#050505]">
+                        {user.recipient}
+                      </p>
+                    </div>
                   </div>
-                </div>
 
-                <div>
-                  <span className="text-[#464646] text-[12px]">{user.count}</span>
+                  <div>
+                    <span className="text-[#464646] text-[12px]">{user.count}</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          </>
         ))}
       </div>
     </div>

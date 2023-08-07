@@ -1,18 +1,6 @@
 import User from '../assets/images/user-profile/user.png'
 import HighLogo from '../assets/images/navbar/high5mobile.png'
 import CampaignIcon from '@/assets/svg/home-sidebar/Group 672'
-
-import { AiFillHome, AiFillGift } from 'react-icons/ai'
-import {
-  RiContactsBookFill,
-  RiLogoutCircleFill,
-  RiLogoutCircleRFill,
-  RiSurveyFill,
-  RiUserVoiceFill,
-} from 'react-icons/ri'
-import { SiGoogleanalytics } from 'react-icons/si'
-import { HiSpeakerphone } from 'react-icons/hi'
-import { BsQuestionCircle } from 'react-icons/bs'
 import { Link, NavLink } from 'react-router-dom'
 import Notification from './Notification'
 import { useSelector } from 'react-redux'
@@ -24,7 +12,6 @@ import { useQuery } from 'react-query'
 import { api } from '@/api'
 import HomeIcon from '@/assets/svg/home-sidebar/HomeIcon'
 import PhoneIcon from '@/assets/svg/home-sidebar/phonebook.svg'
-import Icon1 from '@/assets/svg/home-sidebar/Group 672'
 import Icon2 from '@/assets/svg/home-sidebar/Group 950.svg'
 import Icon3 from '@/assets/svg/home-sidebar/Group 947'
 import Icon4 from '@/assets/svg/home-sidebar/Path 266.svg'
@@ -33,7 +20,7 @@ import Icon5 from '@/assets/svg/home-sidebar/Group3'
 import AnalyticsIcon from '@/assets/svg/home-sidebar/noun-analytics-5506185.svg'
 import PowerOffIcon from '@/assets/svg/home-sidebar/power-off (1).svg'
 import HelpIcon from '@/assets/svg/home-sidebar/HelpIcon'
-import { processAvatarUrl } from '@/utils'
+import { getAvatarAttributes, processAvatarUrl } from '@/utils'
 
 export default function HomeSidebar({}) {
   const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
@@ -89,8 +76,15 @@ export default function HomeSidebar({}) {
               <div>
                 <img
                   className="h-14 w-14 overflow-hidden rounded-full bg-gray-300"
-                  src={processAvatarUrl(me.data.avtar)}
-                  alt="user avatar"
+                  src={getAvatarAttributes(`${me.data.first_name} ${me.data.last_name}`, processAvatarUrl(me.data.avtar)).src}
+                  alt={getAvatarAttributes(`${me.data.first_name} ${me.data.last_name}`, processAvatarUrl(me.data.avtar)).alt}
+                  onError={(e) => {
+                    // If the image fails to load, use the name initials instead
+                    e.target.onerror = null;
+                    e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                      me.data.first_name.charAt(0) + me.data.last_name.charAt(0)
+                    )}&color=${"#464646"}&background=${"FFFFFF"}`;
+                  }}
                 />
               </div>
               <div>
@@ -156,7 +150,7 @@ export default function HomeSidebar({}) {
               <div className="w-[23px]">
                 <img src={Icon4} />
               </div>
-              <span>Survey</span>
+              <span>Surveys</span>
             </MenuLink>
             <MenuLink
               to="/voice-out"

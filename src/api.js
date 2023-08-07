@@ -34,6 +34,13 @@ axios.interceptors.response.use(
 )
 
 const api = {
+  users: {
+    all: () => axios.get('getUsers/').then((r) => r.data),
+    profiles: () => axios.get('users/profile/').then((r) => r.data),
+    userById: (id) => axios.get(`getUserDetails/${id}/`).then((r) => r.data),
+    search: (params) => axios.get('employees/', { params }).then((r) => r.data),
+  },
+  
   auth: {
     login: (data) => axios.post('login/', data).then((r) => r.data),
 
@@ -45,12 +52,6 @@ const api = {
     changeAvatar: (id, formData) =>
       axios.put(`updateUserAvtar/${id}/`, formData).then((r) => r.data),
     me: (id) => axios.get(`getUserDetails/${id}/`).then((r) => r.data),
-  },
-  users: {
-    all: () => axios.get('getUsers/').then((r) => r.data),
-    profiles: () => axios.get('users/profile/').then((r) => r.data),
-    userById: (id) => axios.get(`getUserDetails/${id}/`).then((r) => r.data),
-    search: (params) => axios.get('employees/', { params }).then((r) => r.data),
   },
 
   topStars: {
@@ -68,9 +69,9 @@ const api = {
     // meAsRecipient: (id) => axios.get(`api/posts/?recipients=${id}`).then((r) => r.data),
     // meAsSender: (id) => axios.get(`api/posts/?sender=${id}`).then((r) => r.data),
     meAsRecipient: (id, filterBy) =>
-      axios
-        .get(`transaction/?recipients=${id}&date_range=${filterBy}`)
-        .then((r) => r.data),
+    axios
+      .get(`transaction/?recipients=${id}&date_range=${filterBy}`)
+      .then((r) => r.data),
     meAsSender: (id, filterBy) =>
       axios
         .get(`transaction/?sender=${id}&date_range=${filterBy}`)

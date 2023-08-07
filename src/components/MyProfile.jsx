@@ -9,11 +9,11 @@ import PostCard from '../components/PostCard';
 import { AchievementBanner } from '../components/AchievementBanner';
 import { api } from '@/api';
 import { useQuery } from 'react-query';
-import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import { useLocation } from 'react-router-dom';
 import UserInteraction from './UserInteraction'
-import { processAvatarUrl } from '@/utils';
+import { getAvatarAttributes, processAvatarUrl } from '@/utils';
+import Loader from '@/components/Loader';
 
 const getChildTransactionsFor = (parentId, allTransactions) => {
     return allTransactions.filter((post) => post.parent_id === parentId);
@@ -142,8 +142,16 @@ export default function MyProfile() {
               <div className="flex flex-col md:flex-row items-center md:w-[70%] bg-white rounded-lg border-t-8 md:border-t-0 border-l-0 md:border-l-8 border-[#27C4A0] mx-2 md:mx-0">
                 <div className="h-32 md:h-36 w-32 md:w-36 rounded-full overflow-hidden relative ml-4 mr-8 my-8">
                         <img className="w-full h-full object-cover"
-                            src={processAvatarUrl(me.avtar)}
-                            alt="user avatar" />
+                        src={getAvatarAttributes(`${me.first_name} ${me.last_name}`, processAvatarUrl(me.avtar)).src}
+                        alt={getAvatarAttributes(`${me.first_name} ${me.last_name}`, processAvatarUrl(me.avtar)).alt}
+                        onError={(e) => {
+                          // If the image fails to load, use the name initials instead
+                          e.target.onerror = null;
+                          e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                            me.first_name + me.last_name
+                          )}&color=${"#464646"}&background=${"FFFFFF"}`;
+                        }}
+                       />
                     <label htmlFor='imageInput' className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center opacity-0 transition-opacity duration-300 hover:opacity-100">
                         <p className="text-white font-normal  text-sm text-center">
                         Change<br />Picture
@@ -241,7 +249,7 @@ export default function MyProfile() {
                             {activeTab === 'recentActivities' && (
                                 <div className='flex flex-col bg-white rounded-lg pb-4'>
                                 {transactionsQuery.isLoading ? (
-                                    <div className="h-64 rounded-md bg-gray-900" />
+                                    <div className='flex justify-center'><Loader/></div>
                                 ) : transactionsQuery.data && transactionsQuery.data.length > 0 ? (
                                     parentPosts.slice(0, 2).map((post, i) => (
                                     <div className='px-4 mt-4' key={post.id}>

@@ -24,7 +24,7 @@ import { RiSendPlane2Fill } from 'react-icons/ri'
 import ReactComponent from './ReactComponent'
 import * as Dialog from '@radix-ui/react-dialog'
 import { pluralize } from '@/components/HomeRightSidebar/CelebrationWidget'
-import { processAvatarUrl } from '@/utils'
+import { getAvatarAttributes, processAvatarUrl } from '@/utils'
 
 export const reactionsUnicode = {
   '😊': 'U+1F60A',
@@ -78,10 +78,9 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
   post.reactions = []
   post.comment = { replies: [] }
 
-  // const isMyPost = post.sender.find((user) => user.id === me.data.id)
-  // const amIReceiver = post.recipients.find((user) => user.id === me.data.id)
-
   const commentsAndTransactions = sortCommentsAndTransactions(post.comments, post.children)
+
+  console.log(me.data);
 
   return (
     <div className="mb-3">
@@ -93,16 +92,30 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                 <img
                   key={post.sender.id}
                   className="h-8.5 w-8.5 rounded-full object-cover"
-                  src={processAvatarUrl(post.sender.avtar)}
-                  alt="post-user"
+                  src={getAvatarAttributes(`${post.sender.first_name} ${ post.sender.last_name }`, processAvatarUrl(post.sender.avtar)).src}
+                  alt={getAvatarAttributes(`${post.sender.first_name} ${post.sender.last_name}`, processAvatarUrl(post.sender.avtar)).alt}
+                  onError={(e) => { 
+                    // If the image fails to load, use the name initials instead
+                    e.target.onerror = null;
+                    e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                      post.sender.first_name.charAt(0) + post.sender.last_name.charAt(0)
+                    )}&color=${"#464646"}&background=${"FFFFFF"}`;
+                  }}
                 />
 
                 {post.children?.map((post) => (
                   <img
                     key={post.sender.id}
                     className="h-8.5 w-8.5 rounded-full object-cover"
-                    src={processAvatarUrl(post.sender.avtar)}
-                    alt="post-user"
+                    src={getAvatarAttributes(`${post.sender.first_name} ${post.sender.last_name}`, processAvatarUrl(post.sender.avtar)).src}
+                    alt={getAvatarAttributes(`${post.sender.first_name} ${post.sender.last_name}`, processAvatarUrl(post.sender.avtar)).alt}
+                    onError={(e) => {
+                      // If the image fails to load, use the name initials instead
+                      e.target.onerror = null;
+                      e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                        post.sender.first_name.charAt(0) + post.sender.last_name.charAt(0)
+                      )}&color=${"#464646"}&background=${"FFFFFF"}`;
+                    }}
                   />
                 ))}
                 <p className="ml-1  text-18px font-bold text-primary">
@@ -335,8 +348,15 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                 <div>
                   <img
                     className="h-[34px] w-[34px] rounded-full object-cover"
-                    src={processAvatarUrl(me.data.avtar)}
-                    alt="comment"
+                    src={getAvatarAttributes(`${me.data.first_name} ${ me.data.last_name }`, processAvatarUrl(me.data.avtar)).src}
+                    alt={me.data.first_name}
+                    onError={(e) => {
+                      // If the image fails to load, use the name initials instead
+                      e.target.onerror = null;
+                      e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                        me.data.first_name.charAt(0) + me.data.last_name.charAt(0)
+                      )}&color=${"#464646"}&background=${"FFFFFF"}`;
+                    }}
                   />
                 </div>
                 <div className="w-full flex-1">
@@ -521,10 +541,18 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
             </div>
           ) : modal === 'child-new-post' ? (
             <div className="mb-2 mt-2 flex gap-4">
-              <img
-                  src={processAvatarUrl(me.data.avtar)}
-                className="h-[34px] w-[34px] rounded-full object-contain"
-              />
+                <img
+                  className="h-[34px] w-[34px] rounded-full"
+                  src={getAvatarAttributes(`${me.data.first_name} ${me.data.last_name}`, processAvatarUrl(me.data.avtar)).src}
+                  alt={getAvatarAttributes(`${me.data.first_name} ${me.data.last_name}`, processAvatarUrl(me.data.avtar)).alt}
+                  onError={(e) => {
+                    // If the image fails to load, use the name initials instead
+                    e.target.onerror = null;
+                    e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                      me.data.first_name.charAt(0) + me.data.last_name.charAt(0)
+                    )}&color=${"#464646"}&background=${"FFFFFF"}`;
+                  }}
+                />
               <div className="flex-1">
                 <ChildNewPost
                   key={point}
@@ -551,10 +579,18 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                 key={commentOrTransaction.id}
                 className="grid grid-cols-[auto_1fr] gap-4 pl-0 pt-[7px]"
               >
-                <img
-                  className="h-8.5 w-8.5 rounded-full object-cover"
-                    src={processAvatarUrl(commentOrTransaction.sender.avtar)}
-                />
+                  <img
+                    className="h-8.5 w-8.5 rounded-full object-cover"
+                    src={getAvatarAttributes(`${commentOrTransaction.sender.first_name} ${commentOrTransaction.sender.last_name}`, processAvatarUrl(commentOrTransaction.sender.avtar)).src}
+                    alt={getAvatarAttributes(`${commentOrTransaction.sender.first_name} ${commentOrTransaction.sender.last_name}`, processAvatarUrl(commentOrTransaction.sender.avtar)).alt}
+                    onError={(e) => {
+                      // If the image fails to load, use the name initials instead
+                      e.target.onerror = null;
+                      e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                        commentOrTransaction.sender.first_name.charAt(0) + commentOrTransaction.sender.last_name.charAt(0)
+                      )}&color=${"#464646"}&background=${"FFFFFF"}`;
+                    }}
+                  />
 
                 <div className="relative ">
                   <div className="rounded-[15px] rounded-tl-none bg-paper p-[20px] text-[#464646]">

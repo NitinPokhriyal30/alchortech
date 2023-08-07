@@ -96,7 +96,7 @@ export default function NewPost({ ...props }) {
 
             <li style={{ borderWidth: 0 }} className="basis-full md:flex-shrink md:basis-auto">
               <HoverCard.Root>
-                <p className="flex cursor-pointer items-center  leading-4">
+                <p className="flex cursor-pointer items-center  leading-4 ">
                   You Have{' '}
                   <span className="font-[900]">&nbsp;{me.data.points_available} Points&nbsp;</span>
                   to give
@@ -268,8 +268,6 @@ export default function NewPost({ ...props }) {
                     hashtags: form.hashtags.map(item => item.name).join(','),
                     recipients: form.recipients.join(','),
                   })
-
-                  console.log(data);
                   const formData = toFormData(data)
                   // recipients.forEach((userId) => formData.append('recipients', userId))
 

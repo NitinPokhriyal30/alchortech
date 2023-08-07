@@ -6,7 +6,6 @@ import { useSelector } from 'react-redux'
 import { Navigate } from 'react-router-dom'
 
 export default function ProtectedRoute({ children }) {
-  console.log("render")
   const me = useQuery(
     'me',
     async () => api.auth.me(Cookies.get('user_id')).catch(() => ({})),

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { api } from '@/api';
 import { useQuery } from 'react-query';
 import InteractionChart from './InteractionChart'
+import Loader from '@/components/Loader';
 
 const UserInteraction = ({ filterBy, userId }) => {
   const [sortedSenders, setSortedSenders] = useState([]);
@@ -125,6 +126,14 @@ const UserInteraction = ({ filterBy, userId }) => {
     setInteractionData(sortedData);
   }, [sortedSenders, sortedRecipients]);
 
+  if(meQuery.isLoading || receivedTransactions.isLoading || givenTransactions.isLoading) {
+    return (
+      <div className='flex justify-center'>
+      <Loader />
+      </div>
+    )
+  }
+
   return (
     <div className="flex flex-col md:flex-row items-center md:items-start md:justify-center">
     <div className="hidden md:block w-2/5 text-center py-4 border-r-2">
@@ -145,7 +154,11 @@ const UserInteraction = ({ filterBy, userId }) => {
               </thead>
               <tbody>
                 {interactionData.map((interaction, index) => (
-                  <tr key={index} className="hover:bg-[#ececec] rounded-xl">
+                  <tr
+                    key={index}
+                    style={{ borderRadius: '0.5rem' }}
+                    className="group hover:bg-gray-200 rounded-xl"
+                  >
                     <td className="p-4 text-[#5486E3] font-semibold text-[16px]">{interaction.name}</td>
                     <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal">{interaction.received}</td>
                     <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal md:pl-6">{interaction.given}</td>

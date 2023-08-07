@@ -52,7 +52,7 @@ export default function CelebrationWidget() {
       <div className="right-sidebar-container !pt-0">
         <div className="border-b border-[#EDEDED] py-[8.5px] px-3">
           <p className="leading-[24px]  font-bold text-[#464646] text-center ">
-            Celebration
+            Celebrations
           </p>
         </div>
         <div>
