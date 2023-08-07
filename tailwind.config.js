@@ -59,6 +59,7 @@ export default {
         'translucent-black': 'rgba(0 0 0 / 0.15)',
         paper: 'rgb(231, 235, 240)',
         iconColor: '#D1D1D1',
+        "text-black": "#464646",
 
         // borderColors
         300: '#efefef',

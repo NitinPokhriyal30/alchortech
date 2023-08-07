@@ -39,6 +39,7 @@ import { api } from '@/api'
 import { Analytics } from './components/Analytics/Analytics'
 import Transactions from '@/pages/Transactions'
 import SurveyTable from '@/components/Survey/SurveryTable'
+import SurveyCreate from '@/components/Survey/SurveyCreate'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -76,23 +77,33 @@ const router = createBrowserRouter(
         path="/survey"
         element={
           <ProtectedRoute>
-            <Outlet />
+            <main className="bg-[#ededed]">
+              <MainNavbar />
+              <div className="mx-auto grid w-full max-w-[1536px] grid-cols-[1fr] pl-0 pt-nav md:grid-cols-smallDevice md:px-[40px] lg:grid-cols-mediumDevice">
+                <Outlet />
+              </div>
+            </main>
           </ProtectedRoute>
         }
       >
         <Route
           index
           element={
-            <main className="bg-[#ededed]">
-              <MainNavbar />
-              <div className="mx-auto grid w-full max-w-[1536px] grid-cols-[1fr] pl-0 pt-nav md:grid-cols-smallDevice md:px-[40px] lg:grid-cols-mediumDevice">
-                <HomeSidebar />
-                <SurveyTable />
-              </div>
-            </main>
+            <>
+              <HomeSidebar />
+              <SurveyTable />
+            </>
           }
         />
-        <Route path="/survey/create" element={<SurveryCreatePage />} />
+        <Route
+          path="create"
+          element={
+            <>
+              <HomeSidebar />
+              <SurveyCreate />
+            </>
+          }
+        />
       </Route>
     </React.Fragment>
   )

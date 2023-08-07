@@ -8,6 +8,7 @@ import {
 } from 'react-icons/ai'
 import { BsPencilFill } from 'react-icons/bs'
 import { RxCross1 } from 'react-icons/rx'
+import { Link } from 'react-router-dom'
 
 const SORT_OPTIONS = [
   { label: 'Last 60 days', value: '1' },
@@ -26,10 +27,10 @@ const SurveyTable = () => {
       <div className="mt-4 flex justify-between px-4">
         <div className="font-Lato text-[20px] font-bold text-[#464646]">Survey</div>
         <div className="rounded-md bg-[#5486E3] p-2 font-Lato text-white">
-          <button className="flex items-center gap-1">
+          <Link to="/survey/create" className="flex items-center gap-1">
             <span>{<AiOutlinePlus />}</span>
             Create Survey
-          </button>
+          </Link>
         </div>
       </div>
 
