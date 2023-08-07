@@ -56,6 +56,7 @@ export default {
         'primary-400': '#93c5fd',
         translucent: '#F7F7F7',
         'translucent-white': 'rgba(256 256 256 / 0.15)',
+        'translucent-black': 'rgba(0 0 0 / 0.15)',
         paper: 'rgb(231, 235, 240)',
         iconColor: '#D1D1D1',
 

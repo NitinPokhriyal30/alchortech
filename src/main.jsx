@@ -38,6 +38,7 @@ import Cookies from 'js-cookie'
 import { api } from '@/api'
 import { Analytics } from './components/Analytics/Analytics'
 import Transactions from '@/pages/Transactions'
+import SurveyTable from '@/components/Survey/SurveryTable'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -63,23 +64,34 @@ const router = createBrowserRouter(
         <Route path="my-rewards" element={<MyRewards />} />
         <Route path="directory" element={<DirectoryPage />} />
         <Route path="myProfile" element={<MyProfile />} />
-        <Route path="profile/:id" element={"Not Implemented specific user profile page"} />
+        <Route path="profile/:id" element={'Not Implemented specific user profile page'} />
         <Route path="analytics" element={<Analytics />} />
         <Route path="company/users" element={<ManageUsers />} />
         <Route path="company/account" element={<Earnings />} />
         <Route path="transactions/:id" element={<Transactions />} />
       </Route>
       <Route path="/reset/password/passwordreset/:uidb64/:token" element={<ResetPassword />} />
+
       <Route
         path="/survey"
         element={
-          <React.Fragment>
-            <AdminNavbar to="/survey" title="Survey Dashboard" />
+          <ProtectedRoute>
             <Outlet />
-          </React.Fragment>
+          </ProtectedRoute>
         }
       >
-        <Route index element={<SurveyListPage />}></Route>
+        <Route
+          index
+          element={
+            <main className="bg-[#ededed]">
+              <MainNavbar />
+              <div className="mx-auto grid w-full max-w-[1536px] grid-cols-[1fr] pl-0 pt-nav md:grid-cols-smallDevice md:px-[40px] lg:grid-cols-mediumDevice">
+                <HomeSidebar />
+                <SurveyTable />
+              </div>
+            </main>
+          }
+        />
         <Route path="/survey/create" element={<SurveryCreatePage />} />
       </Route>
     </React.Fragment>
