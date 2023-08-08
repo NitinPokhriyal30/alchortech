@@ -1,4 +1,5 @@
 import CampaignDetails from '@/components/Campaigns/CampaignDetails'
+import CampaignParticipants from '@/components/Campaigns/CampaignParticipants'
 import * as React from 'react'
 import { Link } from 'react-router-dom'
 
@@ -63,15 +64,19 @@ const CampaignCreate = () => {
         <div className="h-px w-full bg-400" />
       </div>
 
-      <section className="px-6">{step === 0 ? <CampaignDetails /> : '🚧dev. in progress 🏗️'}</section>
+      <section className="px-6">
+        {step === 0 ? <CampaignDetails /> : null}
+        {step === 1 ? <CampaignParticipants /> : null}
+        {step === 2 ? <RulesAndRewards /> : null}
+      </section>
 
-      <section className="flex justify-between p-11">
-        <button type="button" className="btn-ghost" onClick={() => setStep((p) => --p)}>
-          back
+      <section className="flex justify-end gap-3 p-11">
+        <button type="button" className=" text-[#ACACAC] hover:text-black border border-[#ACACAC] py-2 px-8 rounded-md" onClick={() => setStep((p) => --p)}>
+          Go Back
         </button>
         <button
           type="button"
-          className="btn-ghost bg-primary text-white transition-colors hover:text-primary"
+          className="bg-primary text-white hover:text-black py-2 px-8 rounded-md"
           onClick={() => setStep((p) => ++p)}
         >
           Continue
