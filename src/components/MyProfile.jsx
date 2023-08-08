@@ -148,7 +148,7 @@ export default function MyProfile() {
                           // If the image fails to load, use the name initials instead
                           e.target.onerror = null;
                           e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                            me.first_name + me.last_name
+                            me.first_name.charAt(0) + me.last_name.charAt(0)
                           )}&color=${"#464646"}&background=${"FFFFFF"}`;
                         }}
                        />

@@ -1,11 +1,11 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DatePicker } from '@mui/x-date-pickers'
 import { DesktopTimePicker } from '@mui/x-date-pickers'
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import './campaigns.css'
+import './campaigns.css';
 
 const COLORS = {
   gray: 'text-[#A5A5A5]',
@@ -29,6 +29,11 @@ const CampaignDetails = () => {
   const [tnc, setTnc] = useState("");
   const [isEvent, setIsEvent] = useState(false);
   const [isEndDate, setIsEndDate] = useState(false);
+
+  useEffect(() => {
+   console.log(description)
+  }, [description])
+  
 
   return (
     <div className="rounded-lg bg-white px-5 py-6 shadow-[0px_2px_3px_#00000029]">
