@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { api } from '@/api';
 import { useQuery } from 'react-query';
 import Cookies from 'js-cookie';
+import { getAvatarAttributes, processAvatarUrl } from '@/utils';
 
 const COLORS = {
   gray: 'text-[#A5A5A5]',
@@ -12,6 +13,24 @@ export default function CampaignParticipants() {
   const [form, setForm] = React.useState({
     recipients: [],
   });
+
+  const [groups, setGroups] = useState([
+    {
+      groupName: 'Group 1',
+      recipients: [],
+    },
+  ]);
+
+  const addNewGroup = () => {
+    const newGroupName = `Group ${groups.length + 1}`;
+    setGroups((prevGroups) => [
+      ...prevGroups,
+      {
+        groupName: newGroupName,
+        recipients: [],
+      },
+    ]);
+  };
 
   return (
     <div>
@@ -92,6 +111,51 @@ export default function CampaignParticipants() {
           </div>
         </div>
       )}
+
+      {participantType == 'Group' &&
+        groups.map((group, index) => (
+          <div key={index} className="relative">
+          
+            <div className="rounded-lg bg-white px-5 py-6 drop-shadow-md mt-2">
+            <button
+                className="absolute top-0 right-0 p-2 text-gray-500"
+                onClick={() => {
+                    const updatedGroups = groups.filter((_, i) => i !== index);
+                    setGroups(updatedGroups);
+                }}
+                >
+                &#x2715; {/* Unicode cross symbol */}
+            </button>
+              <div className="grid grid-cols-[1fr_2fr] items-center gap-8">
+                {/* col 1 */}
+                <div>
+                  <p className="text-18px font-bold text-text-black">{group.groupName}</p>
+                </div>
+
+                {/* col 2 */}
+                <div>
+                  <input
+                    className="w-full py-2 px-2 my-4 rounded border-[2px]"
+                    type="text"
+                    placeholder="Name the Group"
+                  />
+
+                  <div className={'rounded border-[2px] ring-primary focus-within:ring-1'}>
+                    <ul className="group p-2">
+                      <RecipientsDropdown {...{ form, setForm }} />
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div>        
+        ))}
+        {participantType === 'Group' && (
+            <button className="text-primary mt-2 mx-4" onClick={addNewGroup}>
+              + Add new group
+            </button>
+        )}
     </div>
   );
 }
@@ -129,6 +193,7 @@ export function RecipientsDropdown({ form, setForm }) {
               <span key={userId} className="border-[2px] px-2 py-1 rounded-lg mx-1">
                 {user ? (
                   <span className=''>
+                    {console.log(user)}
                     {user.first_name} {user.last_name}{' '}
                     <button
                       className="ml-1 text-black cursor-pointer"
@@ -164,7 +229,7 @@ export function RecipientsDropdown({ form, setForm }) {
               Loading...
             </p>
           ) : (
-            <>
+            <div>
               {searchedUser?.map((user) => {
                 return (
                   <button
@@ -185,12 +250,28 @@ export function RecipientsDropdown({ form, setForm }) {
                       });
                     }}
                   >
-                    {user.first_name} {user.last_name}
+                    <div className='flex items-center'>
+                    <span>
+                    <img className="h-6 w-6 rounded-full mr-2"
+                    src={getAvatarAttributes(`${user.first_name} ${user.last_name}`, processAvatarUrl(user.avtar)).src}
+                    alt={getAvatarAttributes(`${user.first_name} ${user.last_name}`, processAvatarUrl(user.avtar)).alt}
+                    onError={(e) => {
+                        // If the image fails to load, use the name initials instead
+                        e.target.onerror = null;
+                        e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                        user.first_name.charAt(0) + user.last_name.charAt(0)
+                        )}&color=${"#464646"}&background=${"FFFFFF"}`;
+                    }}
+                    />
+                    </span>
+                    <span className='font-bold'>{`${user.first_name} ${user.last_name}`}</span>
+                    {` | ${user.title} - ${user.department}`}
+                    </div>
                   </button>
                   
                 );
               })}
-            </>
+            </div>
           )}
         </div>
 
