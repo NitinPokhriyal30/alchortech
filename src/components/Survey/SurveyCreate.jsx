@@ -1,6 +1,7 @@
 import SurveyDetails from '@/components/Survey/steps/SurveyDetails'
 import * as React from 'react'
 import { Link } from 'react-router-dom'
+import Questions from './steps/Questions'
 
 const STEPPER = [
   {
@@ -23,6 +24,20 @@ const STEPPER = [
 
 const SurveyCreate = () => {
   const [step, setStep] = React.useState(STEPPER[0].value)
+
+  const [survey, setServey] = React.useState({
+    title: '',
+    description: '',
+    dateAndTime: {
+      start: '',
+      end: ''
+    },
+    termsAndConditions: '',
+    isTimeBounded: false,
+    questions: []
+  })
+
+  console.log(survey);
 
   return (
     <div>
@@ -67,19 +82,25 @@ const SurveyCreate = () => {
         <div className="h-px w-full bg-400" />
       </div>
 
-      <section className="px-6">{step === 0 ? <SurveyDetails /> : '🚧dev. in progress 🏗️'}</section>
+      <section className="px-6">{step === 0 ? <SurveyDetails surveyDetails={survey} setSurveyDetails={setServey} /> : step === 1 ? <Questions questions={survey} setQuestions={setServey} /> : '🚧dev. in progress 🏗️'}</section>
 
       <section className="flex justify-between p-11">
         <button type="button" className="btn-ghost" onClick={() => setStep((p) => --p)}>
           back
         </button>
-        <button
+        {step < 3 ? <button
           type="button"
           className="btn-ghost bg-primary text-white transition-colors hover:text-primary"
           onClick={() => setStep((p) => ++p)}
         >
           Continue
-        </button>
+        </button> : <button
+          type="button"
+          className="btn-ghost bg-primary text-white transition-colors hover:text-primary"
+        >
+          submit
+        </button>}
+        
       </section>
     </div>
   )

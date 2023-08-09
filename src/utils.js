@@ -1,3 +1,5 @@
+import moment from 'moment'
+
 function getNextMonthDate() {
   // Get the current date
   var currentDate = new Date()
@@ -184,4 +186,17 @@ export const getAvatarAttributes = (fullName , avatar) => {
     src: avatarUrl,
     alt: avatarAltText,
   };
+}
+
+
+export const formatTimeFromNow = (timestamp) => {
+  const now = moment();
+  const timeDifference = now.diff(timestamp, 'seconds');
+
+  if (timeDifference < 60) {
+    return 'Just now';
+  } else {
+    const formattedTime = moment(timestamp).fromNow();
+    return formattedTime.replace('a minute ago', '1 minute ago').replace('an hour ago', '1 hour ago');
+  }
 }

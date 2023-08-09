@@ -7,7 +7,7 @@ import { RiCloseLine } from 'react-icons/ri'
 import { api } from '@/api'
 import { reactionsUnicode, unicodeToEmoji } from '@/components/PostCard'
 import Spinner from '@/components/Spinner'
-import { processAvatarUrl } from '@/utils'
+import { getAvatarAttributes, processAvatarUrl } from '@/utils'
 
 const getReactions = (reactions, emoji) => {
   return reactions.filter((reaction) => reaction.reaction.includes(reactionsUnicode[emoji]))
@@ -79,8 +79,16 @@ const ReactComponent = ({ postId, post }) => {
                         <div className="flex items-center gap-8.5">
                           <div>
                             <img
-                              src={processAvatarUrl(reaction.user_avtar)}
-                              className="aspect-square w-9 rounded-full "
+                              className="h-8.5 w-8.5 rounded-full object-cover"
+                              src={getAvatarAttributes(`${reaction.user_full_name.split(' ')[0]} ${reaction.user_full_name.split(' ')[1]}`, processAvatarUrl(reaction.user_avtar)).src}
+                              alt={getAvatarAttributes(`${reaction.user_full_name.split(' ')[0]} ${reaction.user_full_name.split(' ')[1]}`, processAvatarUrl(reaction.user_avtar)).alt}
+                              onError={(e) => {
+                                // If the image fails to load, use the name initials instead
+                                e.target.onerror = null;
+                                e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                                  reaction.user_full_name.split(' ')[0].charAt(0) + reaction.user_full_name.split(' ')[1].charAt(0)
+                                )}&color=${"#464646"}&background=${"FFFFFF"}`;
+                              }}
                             />
                           </div>
                           <div>
@@ -114,8 +122,16 @@ const ReactComponent = ({ postId, post }) => {
                             <div className="flex items-center gap-8.5">
                               <div>
                                 <img
-                                  src={processAvatarUrl(reaction.user_avtar)}
-                                  className="aspect-square w-9 rounded-full"
+                                  className="h-8.5 w-8.5 rounded-full object-cover"
+                                  src={getAvatarAttributes(`${reaction.user_full_name.split(' ')[0]} ${reaction.user_full_name.split(' ')[1]}`, processAvatarUrl(reaction.user_avtar)).src}
+                                  alt={getAvatarAttributes(`${reaction.user_full_name.split(' ')[0]} ${reaction.user_full_name.split(' ')[1]}`, processAvatarUrl(reaction.user_avtar)).alt}
+                                  onError={(e) => {
+                                    // If the image fails to load, use the name initials instead
+                                    e.target.onerror = null;
+                                    e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                                      reaction.user_full_name.split(' ')[0].charAt(0) + reaction.user_full_name.split(' ')[1].charAt(0)
+                                    )}&color=${"#464646"}&background=${"FFFFFF"}`;
+                                  }}
                                 />
                               </div>
                               <div>

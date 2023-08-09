@@ -140,6 +140,7 @@ export default function MyProfile() {
       <div className="flex flex-col md:flex-row gap-3 mt-3">
         <div className="flex flex-col md:flex-row items-center md:w-[70%] bg-white rounded-lg border-t-8 md:border-t-0 border-l-0 md:border-l-8 border-[#27C4A0] mx-2 md:mx-0">
           <div className="h-32 md:h-36 w-32 md:w-36 rounded-full overflow-hidden relative ml-4 mr-8 my-8">
+            {console.log(me)}
             <img
               className="w-full h-full object-cover"
               src={getAvatarAttributes(`${me.first_name} ${me.last_name}`, processAvatarUrl(me.avtar)).src}
@@ -148,7 +149,7 @@ export default function MyProfile() {
                 // If the image fails to load, use the name initials instead
                 e.target.onerror = null;
                 e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                  me.first_name + me.last_name
+                  me.first_name.charAt(0) + me.last_name.charAt(0)
                 )}&color=${"#464646"}&background=${"FFFFFF"}`;
               }}
             />

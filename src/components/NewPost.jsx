@@ -273,9 +273,10 @@ export default function NewPost({ ...props }) {
 
                   const newTransaction = await api.transactions.new(formData)
                   if (newTransaction.image) { 
-                    newTransaction.image = newTransaction.image.substring(SERVER_URL.length)
+                    newTransaction.image = newTransaction.image?.substring(SERVER_URL.length) || ''
                   }
-                  newTransaction.sender.avtar = newTransaction.sender.avtar.substring(SERVER_URL.length)
+                  { console.log(newTransaction.sender.avtar)}
+                  newTransaction.sender.avtar = newTransaction.sender.avtar?.substring(SERVER_URL.length) || ''
                   await queryClient.setQueryData((['transaction', props.sortBy]), (prev) => {
                     if (!prev) return [newTransaction];
 

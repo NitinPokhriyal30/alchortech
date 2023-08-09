@@ -18,6 +18,7 @@ import PostCard from '../components/PostCard'
 
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import HelpIcon from '@/assets/svg/home-sidebar/HelpIcon'
+import Loader from '@/components/Loader'
 
 export default function Transactions({ ...props }) {
   const { id } = useParams()
@@ -65,7 +66,10 @@ export default function Transactions({ ...props }) {
         </HoverCard.Root>
 
         {post == null ? (
-          <div className="mt-4 h-64 animate-pulse rounded-md bg-white" />
+          // <div className="mt-4 h-64 animate-pulse rounded-md bg-white" /> 
+          <div className='flex justify-center'>
+            <Loader />
+          </div>
         ) : (
           <div className="mt-3">
             <PostCard
