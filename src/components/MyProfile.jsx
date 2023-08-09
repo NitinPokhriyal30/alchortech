@@ -252,7 +252,7 @@ export default function MyProfile() {
                                 {transactionsQuery.isLoading ? (
                                     <div className='flex justify-center'><Loader/></div>
                                 ) : transactionsQuery.data && transactionsQuery.data.length > 0 ? (
-                                    parentPosts.slice(0, 2).map((post, i) => (
+                                    parentPosts.slice(0, 5).map((post, i) => (
                                     <div className='px-4 mt-4' key={post.id}>
                                         <PostCard i={i} post={post} childrenTransactions={getChildTransactionsFor(post.id, allPosts)} />
                                     </div>

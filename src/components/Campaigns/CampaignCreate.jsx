@@ -11,16 +11,20 @@ const STEPPER = [
   },
   {
     label: 'Select Participants',
-    value: 2,
+    value: 1,
   },
   {
     label: 'Rules & Rewards',
-    value: 3,
+    value: 2,
   },
 ]
 
 const CampaignCreate = () => {
   const [step, setStep] = React.useState(STEPPER[0].value)
+
+  const handleStepClick = (newValue) => {
+    setStep(newValue);
+  };
 
   return (
     <div>
@@ -35,28 +39,35 @@ const CampaignCreate = () => {
       <section className="flex gap-2 mx-6">
         {STEPPER.map((stepOption, i) => (
           <div className="flex items-center gap-2" key={stepOption.value}>
-            <span
-              className={
-                'inline-block h-0.5 w-[max(100px,_2vw)] bg-text-black' + (i == 0 ? ' hidden' : '')
-              }
-            ></span>
-            <span
-              className={
-                'inline-flex aspect-square w-[2em] items-center justify-center rounded-full border-2 font-bold  ' +
-                (stepOption.value === step
-                  ? 'border-primary bg-primary text-white'
-                  : 'border-text-black text-text-black')
-              }
+            <Link
+              to="#" // Replace "#" with the actual route for each step
+              onClick={() => handleStepClick(stepOption.value)}
+              className="flex items-center gap-2"
             >
-              {i + 1}
-            </span>
-            <span
-              className={
-                'font-semibold ' + (stepOption.value === step ? 'text-primary' : 'text-text-black')
-              }
-            >
-              {stepOption.label}
-            </span>
+              <span
+                className={
+                  'inline-block h-0.5 w-[max(100px,_2vw)] bg-text-black' + (i === 0 ? ' hidden' : '')
+                }
+              ></span>
+              <span
+                className={
+                  'inline-flex aspect-square w-[2em] items-center justify-center rounded-full border-2 font-bold  ' +
+                  (stepOption.value === step
+                    ? 'border-primary bg-primary text-white'
+                    : 'border-text-black text-text-black')
+                }
+              >
+                {i + 1}
+              </span>
+              <span
+                className={
+                  'font-semibold ' +
+                  (stepOption.value === step ? 'text-primary' : 'text-text-black')
+                }
+              >
+                {stepOption.label}
+              </span>
+            </Link>
           </div>
         ))}
       </section>
@@ -72,13 +83,17 @@ const CampaignCreate = () => {
       </section>
 
       <section className="flex justify-end gap-3 p-11">
-        <button type="button" className=" text-[#ACACAC] hover:text-black border border-[#ACACAC] py-2 px-8 rounded-md" onClick={() => setStep((p) => --p)}>
+        <button
+          type="button"
+          className="text-[#ACACAC] hover:text-black border border-[#ACACAC] py-2 px-8 rounded-md"
+          onClick={() => setStep((p) => Math.max(p - 1, 0))}
+        >
           Go Back
         </button>
         <button
           type="button"
           className="bg-primary text-white hover:text-black py-2 px-8 rounded-md"
-          onClick={() => setStep((p) => ++p)}
+          onClick={() => setStep((p) => Math.min(p + 1, STEPPER.length - 1))}
         >
           Continue
         </button>
