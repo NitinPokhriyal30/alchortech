@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getAvatarAttributes, processAvatarUrl } from '@/utils';
 
-const InteractionChart = ({ interactionData, myAvatar, hoveredRowIndex, onRowHover, setHoveredImageIndex }) => {
+const InteractionChart = ({ interactionData, me, hoveredRowIndex, onRowHover, setHoveredImageIndex }) => {
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [isCenterImageHovered, setIsCenterImageHovered] = useState(false);
   
@@ -63,16 +63,16 @@ const InteractionChart = ({ interactionData, myAvatar, hoveredRowIndex, onRowHov
       </div>
 
       <div className="flex justify-center relative">
-        <img
+      <img
           className={`rounded-full h-14 w-14 border-2 ${isCenterImageHovered ? 'border-black' : 'hover:border-black'} z-10`}
           onMouseEnter={() => setIsCenterImageHovered(true)} onMouseLeave={handleMouseLeave}
-          src={getAvatarAttributes(`${myAvatar?.name.split(' ')[0]} ${myAvatar?.name.split(' ')[1]}`, processAvatarUrl(myAvatar?.avtar)).src}
-          alt={getAvatarAttributes(`${myAvatar?.name.split(' ')[0]} ${myAvatar?.name.split(' ')[1]}`, processAvatarUrl(myAvatar?.avtar)).alt}
+          src={getAvatarAttributes(`${me.first_name} ${me.last_name}`, processAvatarUrl(me.avtar)).src}
+          alt={getAvatarAttributes(`${me.first_name} ${me.last_name}`, processAvatarUrl(me.avtar)).alt}
           onError={(e) => {
             // If the image fails to load, use the name initials instead
             e.target.onerror = null;
             e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-              myAvatar?.name.split(' ')[0].charAt(0) + myAvatar?.name.split(' ')[1].charAt(0)
+              me.first_name.charAt(0) + me.last_name.charAt(0)
             )}&color=${"#464646"}&background=${"FFFFFF"}`;
           }}
         />
