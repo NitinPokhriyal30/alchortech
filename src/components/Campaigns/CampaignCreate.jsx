@@ -1,5 +1,6 @@
 import CampaignDetails from '@/components/Campaigns/CampaignDetails'
 import CampaignParticipants from '@/components/Campaigns/CampaignParticipants'
+import RulesnRewards from '@/components/Campaigns/RulesnRewards'
 import * as React from 'react'
 import { Link } from 'react-router-dom'
 
@@ -67,7 +68,7 @@ const CampaignCreate = () => {
       <section className="px-6">
         {step === 0 ? <CampaignDetails /> : null}
         {step === 1 ? <CampaignParticipants /> : null}
-        {step === 2 ? <RulesAndRewards /> : null}
+        {step === 2 ? <RulesnRewards /> : null}
       </section>
 
       <section className="flex justify-end gap-3 p-11">
