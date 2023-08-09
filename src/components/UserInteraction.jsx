@@ -3,7 +3,7 @@ import { api } from '@/api';
 import { useQuery } from 'react-query';
 import InteractionChart from './InteractionChart'
 
-const UserInteraction = ({ sortBy, userId }) => {
+const UserInteraction = ({ filterBy, userId }) => {
   const [sortedSenders, setSortedSenders] = useState([]);
   const [sortedRecipients, setSortedRecipients] = useState([]);
   const [interactionData, setInteractionData] = useState([]);
@@ -13,18 +13,18 @@ const UserInteraction = ({ sortBy, userId }) => {
 
   const receivedTransactions = useQuery(
     'receivedTransactions',
-    () => api.transactions.meAsRecipient(userId, sortBy),
+    () => api.transactions.meAsRecipient(userId, filterBy),
     { enabled: false } // Disable the query by default and enable it manually
   );
 
   const givenTransactions = useQuery(
     'givenTransactions',
-    () => api.transactions.meAsSender(userId, sortBy),
+    () => api.transactions.meAsSender(userId, filterBy),
     { enabled: false } // Disable the query by default and enable it manually
   );
 
   useEffect(() => {
-    if (sortBy) {
+    if (filterBy) {
       // Enable the queries when sortBy prop is available
       receivedTransactions.refetch();
       givenTransactions.refetch();
@@ -50,10 +50,10 @@ const UserInteraction = ({ sortBy, userId }) => {
 
       setSortedSenders(sortedSenders);
     }
-  }, [receivedTransactions.data, sortBy, userId]);
+  }, [receivedTransactions.data, filterBy, userId]);
 
   useEffect(() => {
-    if (sortBy) {
+    if (filterBy) {
       // Enable the query when sortBy prop is available
       givenTransactions.refetch();
     }
@@ -90,7 +90,7 @@ const UserInteraction = ({ sortBy, userId }) => {
 
       setSortedRecipients(sortedRecipients);
     }
-  }, [givenTransactions.data, sortBy, userId]);
+  }, [givenTransactions.data, filterBy, userId]);
 
   useEffect(() => {
     // Combine the sender and recipient data into mergedData

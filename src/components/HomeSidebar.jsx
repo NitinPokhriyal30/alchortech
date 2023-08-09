@@ -135,7 +135,7 @@ export default function HomeSidebar({}) {
               <span>Analytics</span>
             </MenuLink>
             <MenuLink
-              to="/campaign"
+              to="/campaigns"
               className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px]  text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
             >
               <div className="w-[23px]">

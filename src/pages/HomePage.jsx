@@ -35,7 +35,6 @@ export default function HomePage() {
   const [page, setPage] = React.useState(1)
   const [sortBy, setSortBy] = React.useState('everything')
 
-
   const postList = useQuery(
     ['transaction', sortBy],
     () =>

@@ -9,11 +9,11 @@ import PostCard from '../components/PostCard';
 import { AchievementBanner } from '../components/AchievementBanner';
 import { api } from '@/api';
 import { useQuery } from 'react-query';
-import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import { useLocation } from 'react-router-dom';
 import UserInteraction from './UserInteraction'
 import { getAvatarAttributes, processAvatarUrl } from '@/utils';
+import Loader from '@/components/Loader';
 
 const getChildTransactionsFor = (parentId, allTransactions) => {
   return allTransactions.filter((post) => post.parent_id === parentId);
@@ -34,14 +34,14 @@ export default function MyProfile() {
   const [appreciationType, setAppreciationType] = useState('received');
   const [receivedCount, setReceivedCount] = useState(0);
   const [givenCount, setGivenCount] = useState(0);
-  const [sortBy, setSortBy] = useState('all');
+  const [filterBy, setFilterBy] = useState('all');
 
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const userId = queryParams.get('userId');
 
-  const meQuery = useQuery(['profile', userId], () => api.users.userById(userId));
-  const me = meQuery.data || {};
+  const meQuery = useQuery('me', () => api.auth.user(userId));
+  const me = meQuery.data;
 
   const formattedBirthDate = new Date(me?.birth_date).toLocaleDateString('en-US', {
     month: 'long',
@@ -57,9 +57,9 @@ export default function MyProfile() {
     ['transactions', appreciationType], // Added appreciationType as a dependency to trigger the query when it changes
     () => {
       if (appreciationType === 'received') {
-        return api.transactions.meAsRecipient(userId, sortBy);
+        return api.transactions.meAsRecipient(userId, filterBy);
       } else {
-        return api.transactions.meAsSender(userId, sortBy);
+        return api.transactions.meAsSender(userId, filterBy);
       }
     },
   );
@@ -71,10 +71,12 @@ export default function MyProfile() {
 
   useEffect(() => {
     // Refetch the transactions query when appreciationType changes
+    { transactionsQuery.isLoading && <Loader /> }
     transactionsQuery.refetch();
+    console.log(transactionsQuery)
     const fetchCounts = async () => {
-      const receivedPromise = api.transactions.meAsRecipient(userId, sortBy);
-      const givenPromise = api.transactions.meAsSender(userId, sortBy);
+      const receivedPromise = api.transactions.meAsRecipient(userId, filterBy);
+      const givenPromise = api.transactions.meAsSender(userId, filterBy);
 
       const receivedCount = await receivedPromise;
       const givenCount = await givenPromise;
@@ -84,7 +86,7 @@ export default function MyProfile() {
     };
 
     fetchCounts()
-  }, [appreciationType, sortBy, userId]);
+  }, [appreciationType, filterBy, userId]);
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -114,13 +116,13 @@ export default function MyProfile() {
     }
   }
 
-  const getSortByLabel = (sortBy) => {
-    switch (sortBy) {
+  const getFilterByLabel = (filterBy) => {
+    switch (filterBy) {
       case 'all':
         return 'All';
       case 'year_to_date':
         return 'This Year';
-      case 'last_six_months':
+      case 'last_six_month':
         return 'Last six Months';
       case 'last_quarter':
         return 'Last Quarter';
@@ -131,7 +133,7 @@ export default function MyProfile() {
       case 'this_month':
         return 'This Month';
       default:
-        return sortBy;
+        return filterBy;
     }
   };
 
@@ -140,9 +142,7 @@ export default function MyProfile() {
       <div className="flex flex-col md:flex-row gap-3 mt-3">
         <div className="flex flex-col md:flex-row items-center md:w-[70%] bg-white rounded-lg border-t-8 md:border-t-0 border-l-0 md:border-l-8 border-[#27C4A0] mx-2 md:mx-0">
           <div className="h-32 md:h-36 w-32 md:w-36 rounded-full overflow-hidden relative ml-4 mr-8 my-8">
-            {console.log(me)}
-            <img
-              className="w-full h-full object-cover"
+            <img className="w-full h-full object-cover"
               src={getAvatarAttributes(`${me.first_name} ${me.last_name}`, processAvatarUrl(me.avtar)).src}
               alt={getAvatarAttributes(`${me.first_name} ${me.last_name}`, processAvatarUrl(me.avtar)).alt}
               onError={(e) => {
@@ -205,19 +205,19 @@ export default function MyProfile() {
           <div>
             <div className="flex justify-end">
               <div className=" text-[#7B7B7B] text-sm relative flex items-center ml-20">
-                Sort By:
+                Filter By:
                 <button className="peer font-Lato flex items-center gap-1 text-sm font-semibold pl-1">
-                  {getSortByLabel(sortBy)}
+                  {getFilterByLabel(filterBy)}
                   <span><AiFillCaretDown /></span>
                 </button>
                 <div className="hidden drop-shadow-[0px_2px_6px_#44444F1A] w-36 px-4 py-2 rounded-lg bg-white absolute z-10 top-[21px] right-[1px] peer-hover:flex hover:flex  flex-col child:cursor-pointer text-end">
-                  <p className="text-sm font-Lato" onClick={() => setSortBy("all")}>All</p>
-                  <p className="text-sm font-Lato" onClick={() => setSortBy("year_to_date")}>This year</p>
-                  <p className="text-sm font-Lato" onClick={() => setSortBy("last_six_months")}>Last 6 months</p>
-                  <p className="text-sm font-Lato" onClick={() => setSortBy("last_quarter")}>Last quarter</p>
-                  <p className="text-sm font-Lato" onClick={() => setSortBy("this_quarter")}>This quarter</p>
-                  <p className="text-sm font-Lato" onClick={() => setSortBy("last_month")}>Last month</p>
-                  <p className="text-sm font-Lato" onClick={() => setSortBy("this_month")}>This month</p>
+                  <p className="text-sm font-Lato" onClick={() => setFilterBy("all")}>All</p>
+                  <p className="text-sm font-Lato" onClick={() => setFilterBy("year_to_date")}>This year</p>
+                  <p className="text-sm font-Lato" onClick={() => setFilterBy("last_six_month")}>Last 6 months</p>
+                  <p className="text-sm font-Lato" onClick={() => setFilterBy("last_quarter")}>Last quarter</p>
+                  <p className="text-sm font-Lato" onClick={() => setFilterBy("this_quarter")}>This quarter</p>
+                  <p className="text-sm font-Lato" onClick={() => setFilterBy("last_month")}>Last month</p>
+                  <p className="text-sm font-Lato" onClick={() => setFilterBy("this_month")}>This month</p>
                 </div>
               </div>
             </div>
@@ -244,15 +244,15 @@ export default function MyProfile() {
             <div className="bg-white mb-4 rounded-lg h-auto w-auto drop-shadow-md">
               {activeTab === 'overview' && (
                 <div>
-                  <UserInteraction sortBy={sortBy} userId={userId} />
+                  <UserInteraction filterBy={filterBy} userId={userId} />
                 </div>
               )}
               {activeTab === 'recentActivities' && (
                 <div className='flex flex-col bg-white rounded-lg pb-4'>
                   {transactionsQuery.isLoading ? (
-                    <div className="h-64 rounded-md bg-gray-900" />
+                    <div className='flex justify-center'><Loader /></div>
                   ) : transactionsQuery.data && transactionsQuery.data.length > 0 ? (
-                    parentPosts.slice(0, 2).map((post, i) => (
+                    parentPosts.slice(0, 5).map((post, i) => (
                       <div className='px-4 mt-4' key={post.id}>
                         <PostCard i={i} post={post} childrenTransactions={getChildTransactionsFor(post.id, allPosts)} />
                       </div>
@@ -272,7 +272,7 @@ export default function MyProfile() {
         </div>
         <div className="md:w-[28%] h-fit mb-4 md:ml-2 bg-white rounded-lg drop-shadow-md">
           <div>
-            <MyHashtags sortBy={sortBy} userId={userId} />
+            <MyHashtags filterBy={filterBy} userId={userId} />
           </div>
         </div>
       </div>

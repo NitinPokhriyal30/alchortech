@@ -3,17 +3,17 @@ import { api } from '@/api';
 import { useQuery } from 'react-query';
 import Cookies from 'js-cookie';
 
-const MyHashtags = ({ sortBy, userId }) => {
+const MyHashtags = ({ filterBy, userId }) => {
 
   const [sortedHashtags, setSortedHashtags] = useState([]);
   const receivedTransactions = useQuery(
     'transactions',
-    () => api.transactions.meAsRecipient(userId, sortBy),
+    () => api.transactions.meAsRecipient(userId, filterBy),
     { enabled: false } // Disable the query by default and enable it manually
   );
 
   useEffect(() => {
-    if (sortBy) {
+    if (filterBy) {
       // Enable the query when sortBy prop is available
       receivedTransactions.refetch();
     }
@@ -38,7 +38,7 @@ const MyHashtags = ({ sortBy, userId }) => {
       setSortedHashtags(sortedHashtags);
     }
 
-  }, [receivedTransactions.data, sortBy, userId]);
+  }, [receivedTransactions.data, filterBy, userId]);
 
   return (
 
