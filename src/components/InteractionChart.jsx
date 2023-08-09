@@ -62,9 +62,10 @@ const InteractionChart = ({ interactionData, myAvatar, hoveredRowIndex, onRowHov
         )}
       </div>
 
-      <div className="flex justify-center relative" onMouseEnter={() => setIsCenterImageHovered(true)} onMouseLeave={handleMouseLeave}>
+      <div className="flex justify-center relative">
         <img
           className={`rounded-full h-14 w-14 border-2 ${isCenterImageHovered ? 'border-black' : 'hover:border-black'} z-10`}
+          onMouseEnter={() => setIsCenterImageHovered(true)} onMouseLeave={handleMouseLeave}
           src={getAvatarAttributes(`${myAvatar?.name.split(' ')[0]} ${myAvatar?.name.split(' ')[1]}`, processAvatarUrl(myAvatar?.avtar)).src}
           alt={getAvatarAttributes(`${myAvatar?.name.split(' ')[0]} ${myAvatar?.name.split(' ')[1]}`, processAvatarUrl(myAvatar?.avtar)).alt}
           onError={(e) => {
