@@ -71,6 +71,7 @@ export default function MyProfile() {
 
     useEffect(() => {
         // Refetch the transactions query when appreciationType changes
+        {transactionsQuery.isLoading && <Loader />}
         transactionsQuery.refetch();
         console.log(transactionsQuery)
         const fetchCounts = async () => {
@@ -121,7 +122,7 @@ export default function MyProfile() {
             return 'All';
           case 'year_to_date':
             return 'This Year';
-          case 'last_six_months':
+          case 'last_six_month':
             return 'Last six Months';
           case 'last_quarter':
             return 'Last Quarter';
@@ -212,7 +213,7 @@ export default function MyProfile() {
                                 <div className="hidden drop-shadow-[0px_2px_6px_#44444F1A] w-36 px-4 py-2 rounded-lg bg-white absolute z-10 top-[21px] right-[1px] peer-hover:flex hover:flex  flex-col child:cursor-pointer text-end">
                                 <p className="text-sm font-Lato" onClick={() => setFilterBy("all")}>All</p> 
                                 <p className="text-sm font-Lato" onClick={() => setFilterBy("year_to_date")}>This year</p>
-                                <p className="text-sm font-Lato" onClick={() => setFilterBy("last_six_months")}>Last 6 months</p> 
+                                <p className="text-sm font-Lato" onClick={() => setFilterBy("last_six_month")}>Last 6 months</p> 
                                 <p className="text-sm font-Lato" onClick={() => setFilterBy("last_quarter")}>Last quarter</p>
                                 <p className="text-sm font-Lato" onClick={() => setFilterBy("this_quarter")}>This quarter</p>
                                 <p className="text-sm font-Lato" onClick={() => setFilterBy("last_month")}>Last month</p>

@@ -8,6 +8,17 @@ const UserInteraction = ({ filterBy, userId }) => {
   const [sortedSenders, setSortedSenders] = useState([]);
   const [sortedRecipients, setSortedRecipients] = useState([]);
   const [interactionData, setInteractionData] = useState([]);
+  const [hoveredRowIndex, setHoveredRowIndex] = useState(null);
+  const [hoveredImageIndex, setHoveredImageIndex] = useState(null);
+
+  useEffect(() => {
+    console.log(hoveredImageIndex)
+    
+  }, [hoveredImageIndex])
+
+  const handleRowHover = (index) => {
+    setHoveredRowIndex(index); // Update hoveredRowIndex state
+  };
 
   const meQuery = useQuery('me', () => api.auth.user(userId));
   const me = meQuery.data;
@@ -138,7 +149,15 @@ const UserInteraction = ({ filterBy, userId }) => {
     <div className="flex flex-col md:flex-row items-center md:items-start md:justify-center">
     <div className="hidden md:block w-2/5 text-center py-4 border-r-2">
         <p className="text-[16px] text-[#000000] font-Lato font-bold">{`${me.first_name}'s Interaction`}</p>
-        <div><InteractionChart interactionData={interactionData} myAvatar={me.avtar}/></div>
+        <div>
+          <InteractionChart 
+          interactionData={interactionData} 
+          myAvatar={me.avtar} 
+          hoveredRowIndex={hoveredRowIndex} 
+          onRowHover={handleRowHover}
+          setHoveredImageIndex={setHoveredImageIndex}
+          />
+        </div>
     </div>
         <div className="w-3/5 py-4 flex justify-center">
         <div>
@@ -157,7 +176,11 @@ const UserInteraction = ({ filterBy, userId }) => {
                   <tr
                     key={index}
                     style={{ borderRadius: '0.5rem' }}
-                    className="group hover:bg-gray-200 rounded-xl"
+                    className={`group ${
+                      (hoveredImageIndex === index || (hoveredImageIndex === 0 && index === 0)) ? 'bg-gray-200' : 'hover:bg-gray-200'
+                    }`}
+                    onMouseEnter={() => handleRowHover(index)} // Call handleRowHover with the index on mouse enter
+                    onMouseLeave={() => handleRowHover(null)}   // Clear hoveredRowIndex on mouse leave
                   >
                     <td className="p-4 text-[#5486E3] font-semibold text-[16px]">{interaction.name}</td>
                     <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal">{interaction.received}</td>
@@ -165,6 +188,8 @@ const UserInteraction = ({ filterBy, userId }) => {
                   </tr>
                 ))}
               </tbody>
+
+
             </table>
           </div>
         ) : (
@@ -178,3 +203,69 @@ const UserInteraction = ({ filterBy, userId }) => {
 };
 
 export default UserInteraction;
+
+
+
+// <tbody>
+//                 {/* Row 1 */}
+//                 <tr
+//                   key={0}
+//                   className={hoveredImageIndex === 0 ? 'bg-gray-200' : ''}
+//                   style={{ borderRadius: '0.5rem' }}
+//                   onMouseEnter={() => handleRowHover(0)}
+//                   onMouseLeave={() => handleRowHover(null)}
+//                 >
+//                   <td className="p-4 text-[#5486E3] font-semibold text-[16px]">{interactionData[0].name}</td>
+//                   <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal">{interactionData[0].received}</td>
+//                   <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal md:pl-6">{interactionData[0].given}</td>
+//                 </tr>
+
+//                 {/* Row 2 */}
+//                 <tr
+//                   key={1}
+//                   style={{ borderRadius: '0.5rem' }}
+//                   onMouseEnter={() => handleRowHover(1)}
+//                   onMouseLeave={() => handleRowHover(null)}
+//                 >
+//                   <td className="p-4 text-[#5486E3] font-semibold text-[16px]">{interactionData[1].name}</td>
+//                   <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal">{interactionData[1].received}</td>
+//                   <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal md:pl-6">{interactionData[1].given}</td>
+//                 </tr>
+
+//                 {/* Row 3 */}
+//                 <tr
+//                   key={2}
+//                   style={{ borderRadius: '0.5rem' }}
+//                   onMouseEnter={() => handleRowHover(2)}
+//                   onMouseLeave={() => handleRowHover(null)}
+//                 >
+//                   <td className="p-4 text-[#5486E3] font-semibold text-[16px]">{interactionData[2].name}</td>
+//                   <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal">{interactionData[2].received}</td>
+//                   <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal md:pl-6">{interactionData[2].given}</td>
+//                 </tr>
+
+//                 {/* Row 4 */}
+//                 <tr
+//                   key={3}
+//                   style={{ borderRadius: '0.5rem' }}
+//                   onMouseEnter={() => handleRowHover(3)}
+//                   onMouseLeave={() => handleRowHover(null)}
+//                 >
+//                   <td className="p-4 text-[#5486E3] font-semibold text-[16px]">{interactionData[3].name}</td>
+//                   <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal">{interactionData[3].received}</td>
+//                   <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal md:pl-6">{interactionData[3].given}</td>
+//                 </tr>
+
+//                 {/* Row 5 */}
+//                 <tr
+//                   key={4}
+//                   style={{ borderRadius: '0.5rem' }}
+//                   className={hoveredImageIndex === 4 ? "hover:bg-gray-500" : ''}
+//                   onMouseEnter={() => handleRowHover(4)}
+//                   onMouseLeave={() => handleRowHover(null)}
+//                 >
+//                   <td className="p-4 text-[#5486E3] font-semibold text-[16px]">{interactionData[4].name}</td>
+//                   <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal">{interactionData[4].received}</td>
+//                   <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal md:pl-6">{interactionData[4].given}</td>
+//                 </tr>
+//               </tbody>

@@ -1,18 +1,20 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getAvatarAttributes, processAvatarUrl } from '@/utils';
 
-const InteractionChart = ({ interactionData, myAvatar }) => {
+const InteractionChart = ({ interactionData, myAvatar, hoveredRowIndex, onRowHover, setHoveredImageIndex }) => {
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [isCenterImageHovered, setIsCenterImageHovered] = useState(false);
-
+  
   const handleMouseEnter = (index) => {
-    console.log('Mouse enter event triggered for index:', index);
     setHoveredIndex(index);
+    setHoveredImageIndex(index);
+    onRowHover(index);
   };
   
   const handleMouseLeave = () => {
-    console.log('Mouse leave event triggered');
     setHoveredIndex(null);
+    setHoveredImageIndex(null);
+    onRowHover(null);
     setIsCenterImageHovered(false);
   };
   return (
@@ -25,7 +27,7 @@ const InteractionChart = ({ interactionData, myAvatar }) => {
             onMouseLeave={handleMouseLeave}
           >
             <img
-              className={`rounded-full h-12 w-12 ${hoveredIndex === 0 ? 'border-2 border-black' : 'hover:border-black'}`}
+              className={`rounded-full h-12 w-12 ${(hoveredIndex === 0 || hoveredRowIndex === 0) ? 'border-2 border-black' : 'hover:border-black'}`}
               src={getAvatarAttributes(`${interactionData[0]?.name.split(' ')[0]} ${interactionData[0]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[0]?.avtar)).src}
               alt={getAvatarAttributes(`${interactionData[0]?.name.split(' ')[0]} ${interactionData[0]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[0]?.avtar)).alt}
               onError={(e) => {
@@ -45,7 +47,7 @@ const InteractionChart = ({ interactionData, myAvatar }) => {
             onMouseLeave={handleMouseLeave}
           >
             <img
-              className={`rounded-full h-12 w-12 ${hoveredIndex === 1 ? 'border-2 border-black' : 'hover:border-black'}`}
+              className={`rounded-full h-12 w-12 ${(hoveredIndex === 1 || hoveredRowIndex === 1) ? 'border-2 border-black' : 'hover:border-black'}`}
               src={getAvatarAttributes(`${interactionData[1]?.name.split(' ')[0]} ${interactionData[1]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[1]?.avtar)).src}
               alt={getAvatarAttributes(`${interactionData[1]?.name.split(' ')[0]} ${interactionData[1]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[1]?.avtar)).alt}
               onError={(e) => {
@@ -83,7 +85,7 @@ const InteractionChart = ({ interactionData, myAvatar }) => {
             onMouseLeave={handleMouseLeave}
           >
             <img
-              className={`rounded-full h-12 w-12 ${hoveredIndex === 2 ? 'border-2 border-black' : 'hover:border-black'}`}
+              className={`rounded-full h-12 w-12 ${(hoveredIndex === 2 || hoveredRowIndex === 2) ? 'border-2 border-black' : 'hover:border-black'}`}
               src={getAvatarAttributes(`${interactionData[2]?.name.split(' ')[0]} ${interactionData[2]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[2]?.avtar)).src}
               alt={getAvatarAttributes(`${interactionData[2]?.name.split(' ')[0]} ${interactionData[2]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[2]?.avtar)).alt}
               onError={(e) => {
@@ -103,7 +105,7 @@ const InteractionChart = ({ interactionData, myAvatar }) => {
             onMouseLeave={handleMouseLeave}
           >
             <img
-              className={`rounded-full h-12 w-12 ${hoveredIndex === 3 ? 'border-2 border-black' : 'hover:border-black'}`}
+              className={`rounded-full h-12 w-12 ${(hoveredIndex === 3 || hoveredRowIndex === 3) ? 'border-2 border-black' : 'hover:border-black'}`}
               src={getAvatarAttributes(`${interactionData[3]?.name.split(' ')[0]} ${interactionData[3]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[3]?.avtar)).src}
               alt={getAvatarAttributes(`${interactionData[3]?.name.split(' ')[0]} ${interactionData[3]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[3]?.avtar)).alt}
               onError={(e) => {
@@ -127,7 +129,7 @@ const InteractionChart = ({ interactionData, myAvatar }) => {
           onMouseLeave={handleMouseLeave}
         >
           <img
-            className={`rounded-full h-12 w-12 ${hoveredIndex === 4 ? 'border-2 border-black' : 'hover:border-black'}`}
+            className={`rounded-full h-12 w-12 ${(hoveredIndex === 4 || hoveredRowIndex === 4) ? 'border-2 border-black' : 'hover:border-black'}`}
             src={getAvatarAttributes(`${interactionData[4]?.name.split(' ')[0]} ${interactionData[4]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[4]?.avtar)).src}
             alt={getAvatarAttributes(`${interactionData[4]?.name.split(' ')[0]} ${interactionData[4]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[4]?.avtar)).alt}
             onError={(e) => {
@@ -142,7 +144,7 @@ const InteractionChart = ({ interactionData, myAvatar }) => {
       )}
       </div>
 
-      <svg className="absolute top-0 left-0 h-full w-full">
+      <svg className="absolute top-0 left-0 h-full w-full z-[-10]">
         {/* 1st Pic Line */}
         {interactionData[0] && (
           <line
@@ -150,8 +152,8 @@ const InteractionChart = ({ interactionData, myAvatar }) => {
             y1="30%"
             x2="18%"
             y2="46%"
-            stroke={(hoveredIndex === 0 || isCenterImageHovered) ? 'black' : 'gray'}
-            strokeWidth={(hoveredIndex === 0 || isCenterImageHovered) ? 3 : 1}
+            stroke={(hoveredIndex === 0 || hoveredRowIndex === 0 || isCenterImageHovered) ? 'black' : 'gray'}
+            strokeWidth={(hoveredIndex === 0 || hoveredRowIndex === 0 || isCenterImageHovered) ? 3 : 1}
           />
         )}
 
@@ -162,8 +164,8 @@ const InteractionChart = ({ interactionData, myAvatar }) => {
             y1="30%"
             x2="22%"
             y2="46%"
-            stroke={(hoveredIndex === 1 || isCenterImageHovered) ? 'black' : 'gray'}
-            strokeWidth={(hoveredIndex === 1 || isCenterImageHovered) ? 3 : 1}
+            stroke={(hoveredIndex === 1 || hoveredRowIndex === 1 || isCenterImageHovered) ? 'black' : 'gray'}
+            strokeWidth={(hoveredIndex === 1 || hoveredRowIndex === 1 ||  isCenterImageHovered) ? 3 : 1}
           />
         )}
 
@@ -174,8 +176,8 @@ const InteractionChart = ({ interactionData, myAvatar }) => {
             y1="70%"
             x2="18%"
             y2="54%"
-            stroke={(hoveredIndex === 2 || isCenterImageHovered) ? 'black' : 'gray'}
-            strokeWidth={(hoveredIndex === 2 || isCenterImageHovered) ? 3 : 1}
+            stroke={(hoveredIndex === 2 || hoveredRowIndex === 2 || isCenterImageHovered) ? 'black' : 'gray'}
+            strokeWidth={(hoveredIndex === 2 || hoveredRowIndex === 2 || isCenterImageHovered) ? 3 : 1}
           />
         )}
 
@@ -186,8 +188,8 @@ const InteractionChart = ({ interactionData, myAvatar }) => {
             y1="70%"
             x2="22%"
             y2="54%"
-            stroke={(hoveredIndex === 3 || isCenterImageHovered) ? 'black' : 'gray'}
-            strokeWidth={(hoveredIndex === 3 || isCenterImageHovered) ? 3 : 1}
+            stroke={(hoveredIndex === 3 || hoveredRowIndex === 3 || isCenterImageHovered) ? 'black' : 'gray'}
+            strokeWidth={(hoveredIndex === 3 || hoveredRowIndex === 3 || isCenterImageHovered) ? 3 : 1}
           />
         )}
 
@@ -198,8 +200,8 @@ const InteractionChart = ({ interactionData, myAvatar }) => {
             y1="81%"
             x2="20%"
             y2="56%"
-            stroke={(hoveredIndex === 4 || isCenterImageHovered) ? 'black' : 'gray'}
-            strokeWidth={(hoveredIndex === 4 || isCenterImageHovered) ? 3 : 1}
+            stroke={(hoveredIndex === 4 || hoveredRowIndex === 4 || isCenterImageHovered) ? 'black' : 'gray'}
+            strokeWidth={(hoveredIndex === 4 || hoveredRowIndex === 4 || isCenterImageHovered) ? 3 : 1}
           />
         )}
       </svg>
