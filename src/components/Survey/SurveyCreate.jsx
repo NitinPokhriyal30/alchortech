@@ -42,6 +42,8 @@ const SurveyCreate = () => {
   console.log(survey);
 
   return (
+  <>
+  <pre className='overflow-x-auto'>{JSON.stringify(survey.questions, null, 2)}</pre>
     <div>
       <section className="mt-4 flex justify-between pl-11">
         <p className="text-[20px] font-bold text-text-black">Create Survey</p>
@@ -105,6 +107,8 @@ const SurveyCreate = () => {
         
       </section>
     </div>
+
+  </>
   )
 }
 
