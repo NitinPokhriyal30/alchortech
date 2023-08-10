@@ -41,6 +41,7 @@ import CampaignsTable from './components/Campaigns/CampaignsTable'
 import Transactions from '@/pages/Transactions'
 import SurveyTable from '@/components/Survey/SurveryTable'
 import SurveyCreate from '@/components/Survey/SurveyCreate'
+import CampaignCreate from './components/Campaigns/CampaignCreate'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -72,6 +73,7 @@ const router = createBrowserRouter(
         <Route path="company/account" element={<Earnings />} />
         <Route path="transactions/:id" element={<Transactions />} />
         <Route path="campaigns" element={<CampaignsTable />} />
+        <Route path="campaign/create" element={<CampaignCreate />} />
       </Route>
       <Route path="/reset/password/passwordreset/:uidb64/:token" element={<ResetPassword />} />
 
