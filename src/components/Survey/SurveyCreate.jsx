@@ -2,6 +2,8 @@ import SurveyDetails from '@/components/Survey/steps/SurveyDetails'
 import * as React from 'react'
 import { Link } from 'react-router-dom'
 import Questions from './steps/Questions'
+import SelectParticipants from './steps/SelectParticipants'
+import RuleAndRewards from './steps/RuleAndRewards'
 
 const STEPPER = [
   {
@@ -82,7 +84,7 @@ const SurveyCreate = () => {
         <div className="h-px w-full bg-400" />
       </div>
 
-      <section className="px-6">{step === 0 ? <SurveyDetails surveyDetails={survey} setSurveyDetails={setServey} /> : step === 1 ? <Questions questions={survey} setQuestions={setServey} /> : '🚧dev. in progress 🏗️'}</section>
+      <section className="px-6">{step === 0 ? <SurveyDetails surveyDetails={survey} setSurveyDetails={setServey} /> : step === 1 ? <Questions questions={survey} setQuestions={setServey} /> : step === 2 ? <SelectParticipants /> : step === 3 ? <RuleAndRewards /> : '🚧dev. in progress 🏗️'}</section>
 
       <section className="flex justify-between p-11">
         <button type="button" className="btn-ghost" onClick={() => setStep((p) => --p)}>
