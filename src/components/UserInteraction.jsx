@@ -2,11 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { api } from '@/api';
 import { useQuery } from 'react-query';
 import InteractionChart from './InteractionChart'
+import Loader from '@/components/Loader';
 
 const UserInteraction = ({ filterBy, userId }) => {
   const [sortedSenders, setSortedSenders] = useState([]);
   const [sortedRecipients, setSortedRecipients] = useState([]);
   const [interactionData, setInteractionData] = useState([]);
+  const [hoveredRowIndex, setHoveredRowIndex] = useState(null);
+  const [hoveredImageIndex, setHoveredImageIndex] = useState(null);
+
+  useEffect(() => {
+    console.log(hoveredImageIndex)
+
+  }, [hoveredImageIndex])
+
+  const handleRowHover = (index) => {
+    setHoveredRowIndex(index); // Update hoveredRowIndex state
+  };
 
   const meQuery = useQuery('me', () => api.auth.user(userId));
   const me = meQuery.data;
@@ -125,11 +137,27 @@ const UserInteraction = ({ filterBy, userId }) => {
     setInteractionData(sortedData);
   }, [sortedSenders, sortedRecipients]);
 
+  if (meQuery.isLoading || receivedTransactions.isLoading || givenTransactions.isLoading) {
+    return (
+      <div className='flex justify-center'>
+        <Loader />
+      </div>
+    )
+  }
+
   return (
     <div className="flex flex-col md:flex-row items-center md:items-start md:justify-center">
-      <div className="hidden md:block w-2/5 text-center py-4 border-r-2">
+      <div className="h-[370px] hidden md:block w-2/5 text-center py-4 border-r-2">
         <p className="text-[16px] text-[#000000] font-Lato font-bold">{`${me.first_name}'s Interaction`}</p>
-        <div><InteractionChart interactionData={interactionData} myAvatar={me.avtar} /></div>
+        <div>
+          <InteractionChart
+            interactionData={interactionData}
+            me={me}
+            hoveredRowIndex={hoveredRowIndex}
+            onRowHover={handleRowHover}
+            setHoveredImageIndex={setHoveredImageIndex}
+          />
+        </div>
       </div>
       <div className="w-3/5 py-4 flex justify-center">
         <div>
@@ -145,13 +173,22 @@ const UserInteraction = ({ filterBy, userId }) => {
                 </thead>
                 <tbody>
                   {interactionData.map((interaction, index) => (
-                    <tr key={index} className="hover:bg-[#ececec] rounded-xl">
+                    <tr
+                      key={index}
+                      style={{ borderRadius: '0.5rem' }}
+                      className={`group ${(hoveredImageIndex === index || (hoveredImageIndex === 0 && index === 0)) ? 'bg-gray-200' : 'hover:bg-gray-200'
+                        }`}
+                      onMouseEnter={() => handleRowHover(index)} // Call handleRowHover with the index on mouse enter
+                      onMouseLeave={() => handleRowHover(null)}   // Clear hoveredRowIndex on mouse leave
+                    >
                       <td className="p-4 text-[#5486E3] font-semibold text-[16px]">{interaction.name}</td>
                       <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal">{interaction.received}</td>
                       <td className="p-4 text-center text-[16px] text-[#000000] font-Lato font-normal md:pl-6">{interaction.given}</td>
                     </tr>
                   ))}
                 </tbody>
+
+
               </table>
             </div>
           ) : (
