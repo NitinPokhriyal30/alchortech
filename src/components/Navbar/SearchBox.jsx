@@ -182,7 +182,7 @@ function SearchUserTransactions({ user, onBack, onClick }) {
 
       <div className="space-y-2.5 pt-2.5">
         <Link to={`/myProfile?userId=${user.id}`}>
-          <SearchUserProfile user={user} />
+          <SearchUserProfile user={user} onClick={onClick}/>
         </Link>
       </div>
 

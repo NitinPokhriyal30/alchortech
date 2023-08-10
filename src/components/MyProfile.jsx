@@ -40,7 +40,7 @@ export default function MyProfile() {
   const queryParams = new URLSearchParams(location.search);
   const userId = queryParams.get('userId');
 
-  const meQuery = useQuery('me', () => api.auth.user(userId));
+  const meQuery = useQuery(['user', userId], () => api.users.userById(userId));
   const me = meQuery.data;
 
   const formattedBirthDate = new Date(me?.birth_date).toLocaleDateString('en-US', {
@@ -137,7 +137,14 @@ export default function MyProfile() {
     }
   };
 
+  if (meQuery.isLoading) {
+    return (<div className='flex justify-center' >
+      <Loader />
+    </div>)
+  }
+
   return (
+
     <div className="drop-shadow-md">
       <div className="flex flex-col md:flex-row gap-3 mt-3">
         <div className="flex flex-col md:flex-row items-center md:w-[70%] bg-white rounded-lg border-t-8 md:border-t-0 border-l-0 md:border-l-8 border-[#27C4A0] mx-2 md:mx-0">
