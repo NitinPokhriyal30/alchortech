@@ -16,7 +16,7 @@ import { RiInformationLine } from 'react-icons/ri'
  *  }
  * }} param0
  */
-const Questions = ({ questions, setQuestions }) => {
+const Questions = ({ questions, setQuestions, errors }) => {
   // State for selected question type and radio options
   const [selectedOption, setSelectedOption] = useState('input')
 
@@ -103,7 +103,7 @@ const Questions = ({ questions, setQuestions }) => {
   const handleCheckboxAnswerChange = (questionIndex, optionIndex) => (event) => {
     const updatedQuestions = { ...questions }
     const value = encodeURIComponent(event.target.value)
-    const answer = updatedQuestions.questions[questionIndex].answer.split(",").filter(Boolean)
+    const answer = updatedQuestions.questions[questionIndex].answer.split(',').filter(Boolean)
 
     if (answer.includes(value)) {
       answer.splice(answer.indexOf(value), 1)
@@ -111,7 +111,7 @@ const Questions = ({ questions, setQuestions }) => {
       answer.push(value)
     }
 
-    updatedQuestions.questions[questionIndex].answer = Array.from(new Set(answer)).join(",");
+    updatedQuestions.questions[questionIndex].answer = Array.from(new Set(answer)).join(',')
 
     setQuestions(updatedQuestions)
   }
@@ -218,7 +218,7 @@ const Questions = ({ questions, setQuestions }) => {
                   {question.options.map((item, optionIndex) => (
                     <div key={optionIndex} style={{ display: 'flex', alignItems: 'center' }}>
                       {/* Checkbox Option */}
-                      <FormControlLabel value={item} control={<Checkbox checked={question.answer.split(",").includes(encodeURIComponent(item))} />} label={item} onChange={handleCheckboxAnswerChange(index, optionIndex)} />
+                      <FormControlLabel value={item} control={<Checkbox checked={question.answer.split(',').includes(encodeURIComponent(item))} />} label={item} onChange={handleCheckboxAnswerChange(index, optionIndex)} />
                       {/* Edit Checkbox Option */}
                       <IconButton
                         onClick={() => {
@@ -291,6 +291,13 @@ const Questions = ({ questions, setQuestions }) => {
                   Delete Question
                 </Button>
               </div>
+            )}
+
+            {errors?.find(([_index]) => _index === index)?.[1] && (
+              <p className="text-small mt-2 text-red-500">
+                <RiInformationLine className="inline align-text-bottom text-[1.1em]" />
+                {errors.find(([_index]) => _index === index)[1]}
+              </p>
             )}
           </div>
         </div>
