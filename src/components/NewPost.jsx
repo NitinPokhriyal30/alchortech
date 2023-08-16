@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react'
 import { api } from '@/api'
 import ToolTip from '@/components/ToolTip'
 import { queryClient } from '@/queryClient'
@@ -5,14 +6,11 @@ import { CreatePost, getDaysLeftForNextMonth, getNextMonthName, getTodayDate } f
 import { Close, EmojiEmotions, GifBox, Image, Link } from '@mui/icons-material'
 import * as HoverCard from '@radix-ui/react-hover-card'
 import * as Popover from '@radix-ui/react-popover'
-import EmojiPicker from 'emoji-picker-react'
 import Cookies from 'js-cookie'
-import * as React from 'react'
 import { RxCross2 } from 'react-icons/rx'
 import { useQuery } from 'react-query'
 import { toast } from 'react-toastify'
-import GifPicker, { GifPickerBox } from './GifPickerPopover'
-import { Dialog } from '@radix-ui/react-dialog'
+import { GifPickerBox } from './GifPickerPopover'
 import HelpIcon from '@/assets/svg/home-sidebar/HelpIcon'
 import { SERVER_URL } from '@/constant'
 import EmojiPickerBox from '@/components/EmojiPickerBox'
@@ -22,6 +20,7 @@ import img from '../assets/images/new-post/img.svg'
 import gif from '../assets/images/new-post/gif.svg'
 import link from '../assets/images/new-post/link.svg'
 import smiley from '../assets/images/new-post/smiley.svg'
+import Loader from './Loader'
 
 function validateNewPostForm(form, me) {
   let isValid = true
@@ -52,12 +51,26 @@ function validateNewPostForm(form, me) {
 }
 
 export default function NewPost({ ...props }) {
+
   const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
   const users = useQuery('users', () => api.users.profiles(), {
     initialData: [],
   })
   const [loading, setLoading] = React.useState(false)
-  const [processedImage, setProcessedImage] = React.useState('')
+  const { data: userPoints, isError, isLoading } = useQuery('currentUserPoints', async () => {
+    try {
+      const { points_available, points_received, points_redeemed } = await api.auth.currentUser();
+      return {
+        points_available,
+        points_received,
+        points_redeemed
+      };
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      throw error;
+    }
+  });
+
   const inputRef = React.useRef()
 
   const [form, setForm] = React.useState({
@@ -72,6 +85,20 @@ export default function NewPost({ ...props }) {
 
   const showPlaceholder =
     form.point === 0 && form.recipients.length === 0 && form.hashtags.length === 0
+
+  if (isLoading) {
+    return (
+      <div className="bg-[#E0EBFF] text-center px-5 pt-3 pb-1 rounded-[9px] drop-shadow-[0px_2px_3px_#00000029]">
+        <div className='flex justify-center' >
+          <Loader />
+        </div>
+      </div>
+    )
+  }
+
+  if (isError) {
+    return <div>Error fetching data.</div>;
+  }
 
   return (
     <>
@@ -98,7 +125,7 @@ export default function NewPost({ ...props }) {
               <HoverCard.Root>
                 <p className="flex cursor-pointer items-center  leading-4 ">
                   You Have{' '}
-                  <span className="font-[900]">&nbsp;{me.data.points_available} Points&nbsp;</span>
+                  <span className="font-[900]">&nbsp;{userPoints.points_available} Points&nbsp;</span>
                   to give
                   <HoverCard.Trigger className="ml-2 inline-flex h-4 w-4 items-center justify-center">
                     <HelpIcon />
@@ -110,7 +137,7 @@ export default function NewPost({ ...props }) {
                     <HoverCard.Arrow className="fill-white" />
                     You monthly allowance will refresh on 1st {getNextMonthName()}. You have{' '}
                     {getDaysLeftForNextMonth() + ' '}
-                    days to spend {me.data.points_available} points.
+                    days to spend {userPoints.points_available} points.
                   </HoverCard.Content>
                 </HoverCard.Portal>
               </HoverCard.Root>
@@ -267,11 +294,9 @@ export default function NewPost({ ...props }) {
                     hashtags: form.hashtags.map(item => item.name).join(','),
                     recipients: form.recipients.join(','),
                   })
-                  console.log(data);
                   const formData = toFormData(data)
                   // recipients.forEach((userId) => formData.append('recipients', userId))
                   const newTransaction = await api.transactions.new(formData)
-                  console.log(newTransaction);
                   if (newTransaction.image) {
                     newTransaction.image = newTransaction.image?.substring(SERVER_URL.length) || ''
                   }
@@ -295,7 +320,7 @@ export default function NewPost({ ...props }) {
                   })
                 } catch (e) {
                   console.log("erro", e)
-                  toast.error('Transaction failed. Server error')
+                  toast.error(e.response.data.message)
                 } finally {
                   setLoading(false)
                 }
@@ -527,3 +552,4 @@ export function toFormData(data) {
   })
   return formData
 }
+
