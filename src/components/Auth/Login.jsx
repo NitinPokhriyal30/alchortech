@@ -17,32 +17,32 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   
-  useEffect(() => {
-    // Check if the access token is expired and refresh if needed
-    const checkTokenExpiryAndRefresh = async () => {
-      const token = Cookies.get('token');
-      if (token) {
-        const decodedToken = JSON.parse(atob(token.split('.')[1]));
-        console.log(decodedToken);
-        const currentTimestamp = Date.now() / 1000; // Convert to seconds
-        console.log(currentTimestamp);
-        if (decodedToken.exp < currentTimestamp) {
-          try {
-            setIsLoading(true);
-            const refreshToken = Cookies.get('refresh');
-            const { access } = await api.auth.refreshToken({ refresh: refreshToken });
-            Cookies.set('token', access);
-            setIsLoading(false);
-          } catch (error) {
-            console.log('Error refreshing token:', error);
-            setIsLoading(false);
-          }
-        }
-      }
-    };
+  // useEffect(() => {
+  //   // Check if the access token is expired and refresh if needed
+  //   const checkTokenExpiryAndRefresh = async () => {
+  //     const token = Cookies.get('token');
+  //     if (token) {
+  //       const decodedToken = JSON.parse(atob(token.split('.')[1]));
+  //       console.log(decodedToken);
+  //       const currentTimestamp = Date.now() / 1000; // Convert to seconds
+  //       console.log(currentTimestamp);
+  //       if (decodedToken.exp < currentTimestamp) {
+  //         try {
+  //           setIsLoading(true);
+  //           const refreshToken = Cookies.get('refresh');
+  //           const { access } = await api.auth.refreshToken({ refresh: refreshToken });
+  //           Cookies.set('token', access);
+  //           setIsLoading(false);
+  //         } catch (error) {
+  //           console.log('Error refreshing token:', error);
+  //           setIsLoading(false);
+  //         }
+  //       }
+  //     }
+  //   };
 
-    checkTokenExpiryAndRefresh();
-  }, []);
+  //   checkTokenExpiryAndRefresh();
+  // }, []);
   
   const handleLogin = async (event) => {
     event.preventDefault()
