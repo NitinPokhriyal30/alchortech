@@ -80,22 +80,21 @@ const router = createBrowserRouter(
       <Route
         path="/survey"
         element={
-          // <ProtectedRoute>
-            <main className="bg-[#ededed]">
-              <MainNavbar />
-              <div className="mx-auto grid w-full max-w-[1536px] grid-cols-[1fr] pl-0 pt-nav md:grid-cols-smallDevice md:px-[40px] lg:grid-cols-mediumDevice">
-                <Outlet />
-              </div>
-            </main>
-          // </ProtectedRoute>
+          <ProtectedRoute>
+          <main className="bg-[#ededed]">
+            <MainNavbar />
+            <div className="mx-auto grid w-full max-w-[1536px] grid-cols-[1fr] pl-0 pt-nav md:grid-cols-smallDevice md:px-[40px] lg:grid-cols-mediumDevice">
+              <Outlet />
+            </div>
+          </main>
+          </ProtectedRoute>
         }
       >
         <Route
           index
           element={
             <>
-              <div />
-              {/* <HomeSidebar /> */}
+              <HomeSidebar />
               <SurveyTable />
             </>
           }
@@ -104,7 +103,7 @@ const router = createBrowserRouter(
           path="create"
           element={
             <>
-              {/* <HomeSidebar /> */}
+              <HomeSidebar />
               <SurveyCreate />
             </>
           }

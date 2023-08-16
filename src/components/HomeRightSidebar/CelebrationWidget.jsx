@@ -65,7 +65,7 @@ export default function CelebrationWidget() {
               </div>
             ) : (
                 <>
-                  {birthDays[0] ? <div className="flex pb-2 gap-3">
+                  {birthDays && birthDays[0] ? <div className="flex pb-2 gap-3">
                     <p className="text-primary">
                       <MdOutlineCake fontSize={22} />
                     </p>

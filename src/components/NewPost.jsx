@@ -133,7 +133,7 @@ export default function NewPost({ ...props }) {
                 <span className="text-[#464646]">{form.point ? '+' + form.point : ''} </span>{' '}
                 {form.recipients
                   .map((userId) => (users.data || []).find((user) => user.id === userId))
-                  .map((user) => `@${user.first_name} ${user.last_name}`)
+                  .map((user) => `@${user.full_name}`)
                   .map((fullName) => (
                     <span className="text-[#464646]" key={fullName}>
                       {fullName}{' '}
@@ -264,18 +264,18 @@ export default function NewPost({ ...props }) {
 
                   const data = CreatePost(me.data.id, '', {
                     ...form,
-                    // hashtags: form.hashtags.join(','),
                     hashtags: form.hashtags.map(item => item.name).join(','),
                     recipients: form.recipients.join(','),
                   })
+                  console.log(data);
                   const formData = toFormData(data)
                   // recipients.forEach((userId) => formData.append('recipients', userId))
-
                   const newTransaction = await api.transactions.new(formData)
-                  if (newTransaction.image) { 
+                  console.log(newTransaction);
+                  if (newTransaction.image) {
                     newTransaction.image = newTransaction.image?.substring(SERVER_URL.length) || ''
                   }
-                  { console.log(newTransaction.sender.avtar)}
+                  { console.log(newTransaction) }
                   newTransaction.sender.avtar = newTransaction.sender.avtar?.substring(SERVER_URL.length) || ''
                   await queryClient.setQueryData((['transaction', props.sortBy]), (prev) => {
                     if (!prev) return [newTransaction];
@@ -293,7 +293,7 @@ export default function NewPost({ ...props }) {
                     link: '',
                     message: '',
                   })
-                } catch(e) {
+                } catch (e) {
                   console.log("erro", e)
                   toast.error('Transaction failed. Server error')
                 } finally {
@@ -370,27 +370,26 @@ export function PointsRangeDialog({ form, setForm }) {
       <div className="absolute z-10 hidden gap-2 rounded-full bg-white p-2 text-black shadow group-hover:flex">
         {properties.isLoading
           ? Array(5)
-              .fill()
-              .map((_, i) => (
-                <div
-                  key={i}
-                  className={`flex h-8 w-8 items-center justify-center rounded-full bg-paper font-bold`}
-                />
-              ))
+            .fill()
+            .map((_, i) => (
+              <div
+                key={i}
+                className={`flex h-8 w-8 items-center justify-center rounded-full bg-paper font-bold`}
+              />
+            ))
           : properties.data?.points_allowed?.map((point, i) => (
-              <button
-                key={point}
-                type="button"
-                className={`flex h-8 w-8 items-center justify-center rounded-full font-bold hover:bg-primary  hover:text-white ${
-                  form.point === point ? 'bg-translucent' : ''
+            <button
+              key={point}
+              type="button"
+              className={`flex h-8 w-8 items-center justify-center rounded-full font-bold hover:bg-primary  hover:text-white ${form.point === point ? 'bg-translucent' : ''
                 } ${points_colors[i]}`}
-                onClick={() => {
-                  setForm((prev) => ({ ...prev, point }))
-                }}
-              >
-                +{point}
-              </button>
-            ))}
+              onClick={() => {
+                setForm((prev) => ({ ...prev, point }))
+              }}
+            >
+              +{point}
+            </button>
+          ))}
       </div>
     </>
   )
@@ -400,14 +399,16 @@ export function RecipientsDropdown({ form, setForm }) {
   const users = useQuery('users', () => api.users.profiles(), {
     initialData: [],
   })
-  const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
 
+  const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
   const usersWithoutMe = users.isLoading ? [] : users.data.filter((x) => x.id !== me.data.id)
 
   const [searchUserQuery, setSearchUserQuery] = React.useState('')
   let searchedUser = usersWithoutMe.filter((user) =>
     JSON.stringify(user).toLocaleLowerCase().includes(searchUserQuery)
   )
+
+
 
   const USER_BTN_HEIGHT = 28
   const isSelected = (user) => form.recipients.includes(user.id)
@@ -434,9 +435,8 @@ export function RecipientsDropdown({ form, setForm }) {
                   <button
                     key={user.id}
                     style={{ height: USER_BTN_HEIGHT }}
-                    className={`block w-full  px-4 py-1 text-left ${
-                      isSelected(user) ? 'border-b border-primary/80 bg-primary/30' : ''
-                    }`}
+                    className={`block w-full  px-4 py-1 text-left ${isSelected(user) ? 'border-b border-primary/80 bg-primary/30' : ''
+                      }`}
                     type="button"
                     onClick={() => {
                       setForm((prev) => {
@@ -450,7 +450,7 @@ export function RecipientsDropdown({ form, setForm }) {
                       })
                     }}
                   >
-                    {user.first_name} {user.last_name}
+                    {user.full_name}
                   </button>
                 )
               })}
@@ -483,11 +483,11 @@ export function HashTagsDropdown({ form, setForm }) {
         {properties.isLoading ? (
           <p className="h-10 w-[15ch] pt-3 text-center">Loading</p>
         ) : (
-            hashtags?.map((tag) => {
-              const checked = form.hashtags.findIndex((_tag) => _tag.name === tag) !== -1;
-              // console.log(checked);
-              return (
-                <button
+          hashtags?.map((tag) => {
+            const checked = form.hashtags.findIndex((_tag) => _tag.name === tag) !== -1;
+            // console.log(checked);
+            return (
+              <button
                 key={tag}
                 type="button"
                 className={`px-4 py-1 text-left ${checked ? 'bg-translucent' : ''}`}
@@ -497,7 +497,7 @@ export function HashTagsDropdown({ form, setForm }) {
                     if (checked) {
                       prev.hashtags = prev.hashtags.filter((x) => x.name !== tag)
                     } else {
-                      prev.hashtags.push({name: tag})
+                      prev.hashtags.push({ name: tag })
                     }
                     return { ...prev }
                   })

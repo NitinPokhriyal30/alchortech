@@ -5,6 +5,7 @@ import Questions from './steps/Questions'
 import SelectParticipants from './steps/SelectParticipants'
 import RuleAndRewards from './steps/RuleAndRewards'
 import { toast } from 'react-toastify'
+import dayjs from 'dayjs'
 
 const STEPPER = [
   {
@@ -39,6 +40,10 @@ function handleValidateSurveyDetails(survey) {
   } else if (survey.description.split(" ").length > 150) {
     errors.push(['description', 'Survey Description should be less than or 150 words'])
   }
+  
+  if (survey.dateAndTime.start >= survey.dateAndTime.end) {
+    errors.push(['dateAndTime', 'Survey EndDate always greater than StartDate'])
+  }
 
   if (survey.termsAndConditions.length === 0) {
     errors.push(['termsAndConditions', 'Must have a Survey Terms and Conditions'])
@@ -66,7 +71,6 @@ function handleValidateQuestions(questions) {
 const SurveyCreate = () => {
   const [step, setStep] = React.useState(STEPPER[0].value)
   const [errors, setErrors] = React.useState({})
-  console.log(errors)
 
   const [survey, setServey] = React.useState({
     title: '',
@@ -118,7 +122,6 @@ const SurveyCreate = () => {
 
   return (
     <>
-      <pre className="overflow-x-auto">{JSON.stringify(survey.questions, null, 2)}</pre>
       <div>
         <section className="mt-4 flex justify-between pl-11">
           <p className="text-[20px] font-bold text-text-black">Create Survey</p>
@@ -146,7 +149,7 @@ const SurveyCreate = () => {
           {step === 0 ? (
             <SurveyDetails surveyDetails={survey} setSurveyDetails={setServey} errors={errors.surveyDetails} />
           ) : step === 1 ? (
-            <Questions questions={survey} setQuestions={setServey} errors={errors.questions} />
+              <Questions questions={survey} setQuestions={setServey} errors={errors.questions} isTimeBounded={survey.isTimeBounded} />
           ) : step === 2 ? (
             <SelectParticipants />
           ) : step === 3 ? (

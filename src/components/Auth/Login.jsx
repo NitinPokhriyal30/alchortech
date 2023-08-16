@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import LoginBackground from '../../assets/images/login-signup/LoginBackground.png'
@@ -16,14 +16,44 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false);
 
+  
+  useEffect(() => {
+    // Check if the access token is expired and refresh if needed
+    const checkTokenExpiryAndRefresh = async () => {
+      const token = Cookies.get('token');
+      if (token) {
+        const decodedToken = JSON.parse(atob(token.split('.')[1]));
+        console.log(decodedToken);
+        const currentTimestamp = Date.now() / 1000; // Convert to seconds
+        console.log(currentTimestamp);
+        if (decodedToken.exp < currentTimestamp) {
+          try {
+            setIsLoading(true);
+            const refreshToken = Cookies.get('refresh');
+            const { access } = await api.auth.refreshToken({ refresh: refreshToken });
+            Cookies.set('token', access);
+            setIsLoading(false);
+          } catch (error) {
+            console.log('Error refreshing token:', error);
+            setIsLoading(false);
+          }
+        }
+      }
+    };
+
+    checkTokenExpiryAndRefresh();
+  }, []);
+  
   const handleLogin = async (event) => {
     event.preventDefault()
     const email = event.target.email.value
     const password = event.target.password.value
     try {
       setIsLoading(true)
-      const { token, id } = await api.auth.login({ email, password })
-      Cookies.set('token', token)
+      const { access, refresh } = await api.auth.login({ email, password })
+      Cookies.set('token', access)
+      Cookies.set('refresh', refresh)
+      const { id } = await api.auth.currentUser()
       Cookies.set('user_id', id)
       const user = await api.auth.me(id)
       await queryClient.setQueryData('me', user)

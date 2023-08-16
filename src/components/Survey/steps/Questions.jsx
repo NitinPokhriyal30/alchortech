@@ -16,26 +16,10 @@ import { RiInformationLine } from 'react-icons/ri'
  *  }
  * }} param0
  */
-const Questions = ({ questions, setQuestions, errors }) => {
+const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
   // State for selected question type and radio options
   const [selectedOption, setSelectedOption] = useState('input')
-
-  // Initial questions state
-  // const [questions, setQuestions] = useState({
-  //     "questions": [
-  //         {
-  //             question: 'What is your reason for working from home?',
-  //             answer: '',
-  //             selectedQuestionType: 'input',
-  //             radio: ['option1', 'option2'],
-  //             options: [
-  //                 { label: 'option1', selected: false },
-  //                 { label: 'option2', selected: false },
-  //             ],
-  //             dropdown: ['option1', 'option2'],
-  //         },
-  //     ]
-  // });
+  // const [isTimeBounded, setIsTimeBounded] = useState(true)
 
   // Handler for changing the question type
   const handleOptionChange = (event, questionIndex) => {
@@ -134,22 +118,25 @@ const Questions = ({ questions, setQuestions, errors }) => {
     gray: 'text-[#A5A5A5]',
   }
 
-  console.log(questions)
-
   return (
     <div className="rounded-lg bg-white px-5 py-10 shadow-[0px_2px_3px_#00000029]">
       {questions.questions.map((question, index) => (
         <div className="items-top mb-5 grid grid-cols-[1fr_2fr] gap-8" key={index}>
           {/* Question Type Selector */}
           <div>
-            <p className="mb-3 text-18px font-bold text-text-black">Question {index + 1}</p>
-            <Select id={`demo-simple-select-${index}`} value={question.type || selectedOption} onChange={(event) => handleOptionChange(event, index)} fullWidth>
+            <p className="my-[25px] text-18px font-bold text-text-black">Question {index + 1}</p>
+            {isTimeBounded ? <Select id={`demo-simple-select-${index}`} value={question.type || selectedOption} onChange={(event) => handleOptionChange(event, index)} fullWidth>
+              <MenuItem value="radio">Radio Button</MenuItem>
+              <MenuItem value="check-box">Checkboxes</MenuItem>
+              <MenuItem value="dropdown">Dropdown</MenuItem>
+            </Select> : <Select id={`demo-simple-select-${index}`} value={question.type || selectedOption} onChange={(event) => handleOptionChange(event, index)} fullWidth>
               <MenuItem value="input">Text Box</MenuItem>
               <MenuItem value="text-area">Text Area</MenuItem>
               <MenuItem value="radio">Radio Button</MenuItem>
               <MenuItem value="check-box">Checkboxes</MenuItem>
               <MenuItem value="dropdown">Dropdown</MenuItem>
-            </Select>
+            </Select>}
+            
             <p className={'mt-2.5 ' + COLORS.gray}>
               <RiInformationLine className="inline align-text-bottom text-[1.1em]" /> Question Type
             </p>
@@ -158,7 +145,7 @@ const Questions = ({ questions, setQuestions, errors }) => {
           {/* Question and Input Fields */}
           <div>
             <TextField fullWidth margin="normal" variant="standard" placeholder="Enter your question" value={question.question} onChange={(event) => handleQuestionChange(event, index)} />
-            {question.type === 'input' && (
+            {!isTimeBounded && question.type === 'input' && (
               <div>
                 <TextField margin="normal" fullWidth variant="outlined" placeholder="Answer" value={question.answer} onChange={(event) => handleInputAnswerChange(event, index)} />
                 {/* Delete Question Button */}
@@ -167,7 +154,7 @@ const Questions = ({ questions, setQuestions, errors }) => {
                 </Button>
               </div>
             )}
-            {question.type === 'text-area' && (
+            {!isTimeBounded && question.type === 'text-area' && (
               <div>
                 <TextField fullWidth margin="normal" variant="outlined" multiline placeholder="Answer" rows={4} value={question.answer} onChange={(event) => handleTextAreaAnswerChange(event, index)} />
                 {/* Delete Question Button */}
@@ -251,7 +238,7 @@ const Questions = ({ questions, setQuestions, errors }) => {
             {question.type === 'dropdown' && (
               <div>
                 <FormControl fullWidth>
-                  <Select labelId={`demo-simple-select-label-${index}`} id={`demo-simple-select-${index}`} value={question.answer} onChange={(event) => handleInputAnswerChange(event, index)}>
+                  <Select className='my-[15px]' labelId={`demo-simple-select-label-${index}`} id={`demo-simple-select-${index}`} value={question.answer} onChange={(event) => handleInputAnswerChange(event, index)}>
                     {question.options.map((item, optionIndex) => (
                       <MenuItem key={optionIndex} value={item}>
                         {item}

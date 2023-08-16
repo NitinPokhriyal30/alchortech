@@ -20,12 +20,12 @@ const handleChange = (setQuery) => (ev) => {
 /**
  * get department from profiles api
  */
-const getDepartment = (profiles) => Array.from(new Set(profiles.map(user => user.department)));
+const getDepartment = (profiles) => Array.from(new Set(profiles?.map(user => user.department)));
 
 /**
  * get department from profiles api
  */
-const getLocation = (profiles) => Array.from(new Set(profiles.map(user => user.location)));
+const getLocation = (profiles) => Array.from(new Set(profiles?.map(user => user.location)));
 
 export default function DirectoryPage({ ...props }) {
   const profiles = useQuery("users", () => api.users.profiles(), {
@@ -70,7 +70,7 @@ export default function DirectoryPage({ ...props }) {
               onChange={(ev) => setDepartmentFilter(ev.target.value)}
             >
               <option value="">Filter by Department</option>
-              {department.map((depart) => (
+              {department?.map((depart) => (
                 <option value={depart} key={depart}>
                   {depart}
                 </option>
@@ -85,7 +85,7 @@ export default function DirectoryPage({ ...props }) {
               onChange={(ev) => setLocationFilter(ev.target.value)}
             >
               <option value="">Filter by Location</option>
-              {location.map((loc) => (
+              {location?.map((loc) => (
                 <option value={loc} key={loc}>
                   {loc}
                 </option>
@@ -97,7 +97,7 @@ export default function DirectoryPage({ ...props }) {
         {users.isLoading ? null : (
           <>
             <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3">
-              {filteredUsers.map((props,index) => (
+              {filteredUsers?.map((props,index) => (
                 <PersonCard key={index} img={UserImage} {...props} />
               ))}
             </div>
@@ -113,7 +113,7 @@ export default function DirectoryPage({ ...props }) {
                 </button>
 
                 <button
-                  disabled={users.data.next == null}
+                  disabled={users.data?.next == null}
                   className="ml-3 grid h-9 w-9 place-items-center rounded-[3px] border border-[#d5d5d5] disabled:text-gray-300"
                   onClick={() => setPage((p) => ++p)}
                 >
@@ -122,7 +122,7 @@ export default function DirectoryPage({ ...props }) {
               </div>
 
               <span>
-                Page {page} of {users.data.count}
+                Page {page} of {users.data?.count}
               </span>
             </div>
           </>

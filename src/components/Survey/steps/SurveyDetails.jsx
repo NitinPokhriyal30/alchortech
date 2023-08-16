@@ -1,9 +1,8 @@
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
-import { DatePicker } from '@mui/x-date-pickers'
+// import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { LocalizationProvider, DatePicker, TimePicker } from '@mui/x-date-pickers';
 import React, { useState } from 'react'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { TimePicker } from '@mui/x-date-pickers/TimePicker'
 import isBetweenPlugin from 'dayjs/plugin/isBetween'
 import Input from '@mui/joy/Input'
 import Checkbox from '@mui/joy/Checkbox'
@@ -21,22 +20,8 @@ const COLORS = {
 
 const SurveyDetails = ({ surveyDetails, setSurveyDetails, errors }) => {
   const today = dayjs()
-  const yesterday = dayjs().subtract(1, 'day')
+  const yesterday = dayjs()
   const todayStartOfTheDay = today.startOf('day')
-
-  // Initial questions state
-  // const [surveyDetails, setSurveyDetails] = useState(
-  //   {
-  //     title: '',
-  //     description: '',
-  //     dateAndTime: {
-  //       start: '',
-  //       end: ''
-  //     },
-  //     termsAndConditions: '',
-  //     isTimeBounded: false,
-  //   },
-  // );
 
   // Handler for updating the survey details
   const handleSurveyDetailsChange = (property, value) => {
@@ -162,7 +147,7 @@ const SurveyDetails = ({ surveyDetails, setSurveyDetails, errors }) => {
           <div className="dateTimeContainer-green flex items-center gap-4">
             <span className="min-w-[70px] text-18px font-bold">Start</span>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker className="input-container" defaultValue={yesterday} disablePast onChange={(date) => handleStartDateAndTimeChange('start', date)} />
+              <DatePicker className="input-container" defaultValue={today} disablePast onChange={(date) => handleStartDateAndTimeChange('start', date)} />
             </LocalizationProvider>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <TimePicker className="input-container" defaultValue={todayStartOfTheDay} disablePast onChange={(time) => handleStartDateAndTimeChange('start', time)} />
@@ -172,12 +157,18 @@ const SurveyDetails = ({ surveyDetails, setSurveyDetails, errors }) => {
           <div className="dateTimeContainer-red mt-2 flex items-center gap-4">
             <span className="min-w-[70px] text-18px font-bold">End</span>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker className="input-container" defaultValue={yesterday} disablePast onChange={(date) => handleEndDateAndTimeChange('end', date)} />
+              <DatePicker className="input-container" defaultValue={today} disablePast onChange={(date) => handleEndDateAndTimeChange('end', date)} />
             </LocalizationProvider>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <TimePicker className="input-container" defaultValue={todayStartOfTheDay} disablePast onChange={(time) => handleEndDateAndTimeChange('end', time)} />
             </LocalizationProvider>
           </div>
+          {getError('dateAndTime') && (
+            <p className='text-red-500 text-sm'>
+              <RiInformationLine className="inline align-text-bottom text-[1.1em] " />
+              {getError('dateAndTime')}
+            </p>
+          )}
         </div>
       </div>
 
@@ -231,7 +222,7 @@ const SurveyDetails = ({ surveyDetails, setSurveyDetails, errors }) => {
         {/* col 2 */}
         <div>
           <div>
-            <Checkbox label="Label" onChange={handleIsTimeBoundedChange} />
+            <Checkbox checked={surveyDetails.isTimeBounded} label="Label" onChange={handleIsTimeBoundedChange} />
           </div>
         </div>
       </div>
