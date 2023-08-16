@@ -114,7 +114,7 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
 
   return (
     <div className="rounded-lg bg-white px-5 py-10 shadow-[0px_2px_3px_#00000029]">
-      <pre>{JSON.stringify(questions.questions, null, 2)}</pre>
+      {/* <pre>{JSON.stringify(questions.questions, null, 2)}</pre> */}
       {questions.questions.map((question, index) => (
         <div className="items-top mb-5 grid grid-cols-[1fr_2fr] gap-8" key={index}>
           {/* Question Type Selector */}
