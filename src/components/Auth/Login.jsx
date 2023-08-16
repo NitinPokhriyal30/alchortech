@@ -22,9 +22,13 @@ const Login = () => {
     const password = event.target.password.value
     try {
       setIsLoading(true)
-      const { token, id } = await api.auth.login({ email, password })
-      Cookies.set('token', token)
+      const { access } = await api.auth.login({ email, password })
+      Cookies.set('token', access)
+
+      const {id} = await api.auth.user()
+      console.log(id)
       Cookies.set('user_id', id)
+     
       const user = await api.auth.me(id)
       await queryClient.setQueryData('me', user)
       window.location.replace('/')

@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import GoldBadge from '../../assets/images/analytics/gold.svg'
 import SilverBadge from '../../assets/images/analytics/silver.svg'
 import BronzeBadge from '../../assets/images/analytics/bronze.svg'
@@ -10,86 +10,38 @@ import AmazonLogo from '../../assets/images/analytics/Amazon.png'
 import DunkinLogo from '../../assets/images/analytics/Dunkin.png'
 import StarbucksLogo from '../../assets/images/analytics/Starbucks.png'
 import { AiFillCaretDown } from 'react-icons/ai';
+import { useQuery } from 'react-query';
+import { api } from '../../api'
 
 
 export const Analytics = () => {
 
+  const [filters, setFilters] = useState({});
   const [sortRegion, setSortRegion] = useState('');
   const [sortDepartment, setSortDepartment] = useState('');
   const [sortDate, setSortDate] = useState('60 Days');
+  const [leaderboard, setleaderboard] = useState([]);
+  const [data, setData] = useState([])
+  
 
-  const [leaderboard, setleaderboard] = useState([
-    {
-        name: "Sunita Gulia",
-        title: "Director",
-        department: "Product development",
-        hashtags: ["#One Team", "#Vision", "#Leadership"],
-        points: 17
-    },
-    {
-        name: "Lisa Clinton",
-        title: "Director",
-        department: "HR",
-        hashtags: ["#Culture", "Collaboration", "#Vision"],
-        points: 15
-    },
-    {
-        name: "Cassie Conley",
-        title: "HR Coordinator",
-        department: "HR",
-        hashtags: ["#Innovation", "#Vision", "#Leadership"],
-        points: 14
-    },
-    {
-        name: "Swarup Vuddagiri",
-        title: "Sr Consultant",
-        department: "Product development",
-        hashtags: ["#Customer-service", "#Vision", "#Inclusive"],
-        points: 12
-    },
-    {
-        name: "Semad Javed",
-        title: "Sr Manager",
-        department: "User Experience",
-        hashtags: ["#One Team", "#Vision", "#Quality"],
-        points: 10
-    },
-    {
-        name: "Pulkit Agrawal",
-        title: "Manager",
-        department: "Marketing",
-        hashtags: ["#Innovation", "Customer-service", "#Leadership"],
-        points: 9
-    },
-    {
-        name: "Swarup Vuddagai",
-        title: "Director",
-        department: "Product development",
-        hashtags: ["#Culture", "#Vision", "#Leadership"],
-        points: 8
-    },
-    {
-        name: "Lisa Clinton",
-        title: "HR Coordinator",
-        department: "HR",
-        hashtags: ["#innovation", "Customer-service"],
-        points: 5
-    },
-    {
-        name: "Swarup Vuddagiri",
-        title: "Consultant",
-        department: "Product development",
-        hashtags: ["#Innovation", "#Leadership"],
-        points: 3
-    },
-    {
-        name: "Rafael Merces",
-        title: "Consultant",
-        department: "Product development",
-        hashtags: ["#Customer-service"],
-        points: 1
-    }
-  ])
+  const getAll = async() => {
+    const response = await api.analytics.all()
+    setData(response)
+    setleaderboard(response.leaderboard)
+    console.log({leaderboard});
+  }
+
+  const getFilters = async() => {
+    const response = await api.analytics.filters()
+    setFilters(response)
+    console.log((filters));
+  }
+
+  useEffect(() => {
+    getAll()
+    getFilters()
+  }, [])
+  
 
   const barData = [
     { category: 'A', value: 30 },
@@ -129,7 +81,7 @@ export const Analytics = () => {
           </button> 
        </div>
        <div className='flex w-full'>
-        <div className='flex w-full justify-end border-b-2 border-[#c7c5c5]'>
+        <div className='flex w-full justify-end ml-4 border-b-[1px] border-[#c7c5c5]'>
             <div className="font-Lato text-[#7B7B7B] text-sm relative flex items-center mr-4">
               Region
               <button className="peer font-Lato flex items-center gap-1 text-sm font-semibold pl-1">
@@ -137,7 +89,15 @@ export const Analytics = () => {
               <span><AiFillCaretDown /></span>
               </button>
               <div className="hidden drop-shadow-[0px_2px_6px_#44444F1A] w-36 px-4 py-2 rounded-lg bg-white absolute z-10 top-[21px] right-[1px] peer-hover:flex hover:flex  flex-col child:cursor-pointer text-end">
-                <p className="text-sm font-Lato" onClick={() => setSortRegion("India")}>India</p>
+                {filters.region?.map((regionOption, index) => (
+                  <p
+                    key={index}
+                    className="text-sm font-Lato"
+                    onClick={() => setSortRegion(regionOption)}
+                  >
+                    {regionOption}
+                  </p>
+                ))}
               </div>
             </div>
             <div className="font-Lato text-[#7B7B7B] text-sm relative flex items-center mr-4">
@@ -147,7 +107,15 @@ export const Analytics = () => {
               <span><AiFillCaretDown /></span>
               </button>
               <div className="hidden drop-shadow-[0px_2px_6px_#44444F1A] w-36 px-4 py-2 rounded-lg bg-white absolute z-10 top-[21px] right-[1px] peer-hover:flex hover:flex  flex-col child:cursor-pointer text-end">
-                <p className="text-sm font-Lato" onClick={() => setSortDepartment("Product Development")}>Product Development</p>
+              {filters.departments?.map((departmentOption, index) => (
+                <p
+                  key={index}
+                  className="text-sm font-Lato"
+                  onClick={() => setSortDepartment(departmentOption)}
+                >
+                  {departmentOption}
+                </p>
+              ))}
               </div>
             </div>
             <div className="font-Lato text-[#7B7B7B] text-sm relative flex items-center">
@@ -157,7 +125,15 @@ export const Analytics = () => {
               <span><AiFillCaretDown /></span>
               </button>
               <div className="hidden drop-shadow-[0px_2px_6px_#44444F1A] w-36 px-4 py-2 rounded-lg bg-white absolute z-10 top-[21px] right-[1px] peer-hover:flex hover:flex  flex-col child:cursor-pointer text-end">
-                <p className="text-sm font-Lato" onClick={() => setSortDate("60 Days")}>60 Days</p>
+              {filters['Date Ranges']?.map((dateOption, index) => (
+                <p
+                  key={index}
+                  className="text-sm font-Lato"
+                  onClick={() => setSortDate(dateOption)}
+                >
+                  {dateOption}
+                </p>
+              ))}
               </div>
             </div>
           </div> 
@@ -169,13 +145,13 @@ export const Analytics = () => {
           <div className='flex items-center'>
             <div className='h-9 w-10 rounded-full bg-black'></div>
             <div className='bg-[#FCEAAE] rounded-l-lg py-[7px] pl-4 basis-1/2 ml-8 mr-[2px]'>
-              <span className='font-semibold font-Lato text-[17px] text-[#5486E3]'>{leaderboard[0].name}</span> | {leaderboard[0].title} - {leaderboard[0].department}
+              <span className='font-semibold font-Lato text-[17px] text-[#5486E3]'>{leaderboard[0]?.full_name}</span> | Developer - Product Development
             </div>
             <div className='bg-[#FCEAAE] basis-1/3 py-[7.8px] pl-3 mr-[2px]'>
-              {leaderboard[0].hashtags.join(' ')}
+              {leaderboard[0]?.top_hashtags.join(' ')}
             </div>
             <div className='flex justify-center items-center bg-[#FCEAAE] basis-1/6 py-[4.8px] pr-8 rounded-r-lg pl-10'>
-              <span className='text-[#B99107] font-bold font-Lato text-[20px]'>{leaderboard[0].points}</span> {
+              <span className='text-[#B99107] font-bold font-Lato text-[20px]'>{leaderboard[0]?.total_transaction_count}</span> {
               <img
                 className='h-6 w-6 ml-4 object-contain'
                 src={GoldBadge}
@@ -184,134 +160,87 @@ export const Analytics = () => {
             </div>
           </div>
           <div className='flex items-center'>
-            <div className='h-9 w-10 rounded-full bg-black'></div>
-            <div className='bg-[#D6D6D6] basis-1/2 rounded-l-lg py-[7px] pl-3 ml-8 mr-[2px]'>
-            <span className='font-semibold font-Lato text-[17px] text-[#5486E3]'>{leaderboard[1].name}</span> | {leaderboard[1].title} - {leaderboard[1].department}
-            </div>
-            <div className='bg-[#D6D6D6] basis-1/3 py-[7.8px] pl-3 mr-[2px]'>
-              {leaderboard[1].hashtags.join(' ')}
-            </div>
-            <div className='flex justify-center items-center bg-[#D6D6D6] basis-1/6 py-[4.8px] pr-8 rounded-r-lg pl-10'>
-              <span className='text-[#292929] font-bold font-Lato text-[20px]'>{leaderboard[1].points}</span> {
-                <img
-                  className='h-6 w-6 ml-4 object-contain'
-                  src={SilverBadge}
-                  alt='Gold Badge'
-                />}
-            </div>
-          </div>
-          <div className='flex items-center'>
           <div className='h-9 w-10 rounded-full bg-black'></div>
-          <div className='bg-[#FFC993] basis-1/2 rounded-l-lg py-[7px] pl-3 ml-8 mr-[2px]'>
-          <span className='font-semibold font-Lato text-[17px] text-[#5486E3]'>{leaderboard[2].name}</span> | {leaderboard[2].title} - {leaderboard[2].department}
+          <div className='bg-[#D6D6D6] basis-1/2 rounded-l-lg py-[7px] pl-3 ml-8 mr-[2px]'>
+          <span className='font-semibold font-Lato text-[17px] text-[#5486E3]'>{leaderboard[1]?.full_name}</span> | Developer - Product Development
           </div>
-          <div className='bg-[#FFC993] basis-1/3 py-[7.8px] pl-3 mr-[2px]'>
-            {leaderboard[2].hashtags.join(' ')}
+          <div className='bg-[#D6D6D6] basis-1/3 py-[7.8px] pl-3 mr-[2px]'>
+            {leaderboard[1]?.top_hashtags.join(' ')}
           </div>
-          <div className='flex justify-center items-center bg-[#FFC993] basis-1/6 py-[4.8px] pr-8 rounded-r-lg pl-10'>
-            <span className='text-[#954A00] font-bold font-Lato text-[20px]'>{leaderboard[2].points}</span> {
+          <div className='flex justify-center items-center bg-[#D6D6D6] basis-1/6 py-[4.8px] pr-8 rounded-r-lg pl-10'>
+            <span className='text-[#292929] font-bold font-Lato text-[20px]'>{leaderboard[1]?.total_transaction_count}</span> {
               <img
                 className='h-6 w-6 ml-4 object-contain'
-                src={BronzeBadge}
+                src={SilverBadge}
                 alt='Gold Badge'
               />}
           </div>
           </div>
           <div className='flex items-center'>
           <div className='h-9 w-10 rounded-full bg-black'></div>
+          <div className='bg-[#FFC993] basis-1/2 rounded-l-lg py-[7px] pl-3 ml-8 mr-[2px]'>
+          <span className='font-semibold font-Lato text-[17px] text-[#5486E3]'>{leaderboard[2]?.full_name}</span> | Developer - Product Development
+          </div>
+          <div className='bg-[#FFC993] basis-1/3 py-[7.8px] pl-3 mr-[2px]'>
+          {leaderboard[2]?.top_hashtags.join(' ')}
+          </div>
+          <div className='flex justify-center items-center bg-[#FFC993] basis-1/6 py-[4.8px] pr-8 rounded-r-lg pl-10'>
+          <span className='text-[#954A00] font-bold font-Lato text-[20px]'>{leaderboard[2]?.total_transaction_count}</span> {
+            <img
+              className='h-6 w-6 ml-4 object-contain'
+              src={BronzeBadge}
+              alt='Gold Badge'
+            />}
+          </div>
+          </div>
+          <div className='flex items-center'>
+          <div className='h-9 w-10 rounded-full bg-black'></div>
           <div className=' basis-1/2 py-2 pl-3 ml-8 mr-[2px] border-b-[1px] border-r-[1px]'>
-          <span className='font-semibold font-Lato text-[15px] text-[#5486E3]'>{leaderboard[3].name}</span> | {leaderboard[3].title} - {leaderboard[3].department}
+          <span className='font-semibold font-Lato text-[15px] text-[#5486E3]'>{leaderboard[3]?.full_name}</span> | Developer - Product Development
           </div>
           <div className='basis-1/3 py-2 pl-3 mr-[2px] border-r-[1px] border-b-[1px]'>
-            {leaderboard[3].hashtags.join(' ')}
+          {leaderboard[3]?.top_hashtags.join(' ')}
           </div>
           <div className='flex justify-center items-center basis-1/6 py-[5px] pr-8 border-b-[1px]'>
-          <span className='text-[#292929] font-medium font-Lato text-[20px]'>{leaderboard[3].points}</span>
+          <span className='text-[#292929] font-medium font-Lato text-[20px]'>{leaderboard[3]?.total_transaction_count}</span>
           </div>
           </div>
           <div className='flex items-center'>
           <div className='h-9 w-10 rounded-full bg-black'></div>
           <div className='basis-1/2 py-2 pl-3 ml-8 mr-[2px] border-r-[1px] border-b-[1px]'>
-          <span className='font-semibold font-Lato text-[15px] text-[#5486E3]'>{leaderboard[4].name}</span> | {leaderboard[4].title} - {leaderboard[4].department}
+          <span className='font-semibold font-Lato text-[15px] text-[#5486E3]'>{leaderboard[4]?.full_name}</span> | Developer - Product Development
           </div>
           <div className='basis-1/3 py-2 pl-3 mr-[2px] border-b-[1px] border-r-[1px]'>
-            {leaderboard[4].hashtags.join(' ')}
+          {leaderboard[4]?.top_hashtags.join(' ')}
           </div>
           <div className='flex justify-center items-center basis-1/6 py-[5px] pr-8 border-b-[1px]'>
-          <span className='text-[#292929] font-medium font-Lato text-[20px]'>{leaderboard[4].points}</span>
+          <span className='text-[#292929] font-medium font-Lato text-[20px]'>{leaderboard[4]?.total_transaction_count}</span>
           </div>
           </div>
           <div className='flex items-center'>
           <div className='h-9 w-10 rounded-full bg-black'></div>
           <div className='basis-1/2 py-2 pl-3 ml-8 mr-[2px] border-r-[1px] border-b-[1px]'>
-          <span className='font-semibold font-Lato text-[15px] text-[#5486E3]'>{leaderboard[5].name}</span> | {leaderboard[5].title} - {leaderboard[5].department}
+          <span className='font-semibold font-Lato text-[15px] text-[#5486E3]'>{leaderboard[5]?.full_name}</span> | Developer - Product Development
           </div>
           <div className='basis-1/3 py-2 pl-3 mr-[2px] border-b-[1px] border-r-[1px]'>
-            {leaderboard[5].hashtags.join(' ')}
+          {leaderboard[5]?.top_hashtags.join(' ')}
           </div>
           <div className='flex justify-center items-center basis-1/6 py-[5px] pr-8  border-b-[1px]'>
-          <span className='text-[#292929] font-medium font-Lato text-[20px]'>{leaderboard[5].points}</span>
+          <span className='text-[#292929] font-medium font-Lato text-[20px]'>{leaderboard[5]?.total_transaction_count}</span>
           </div>
           </div>
-          <div className='flex items-center'>
-          <div className='h-9 w-10 rounded-full bg-black'></div>
-          <div className='basis-1/2 py-2 pl-3 ml-8 mr-[2px] border-r-[1px] border-b-[1px]'>
-          <span className='font-semibold font-Lato text-[15px] text-[#5486E3]'>{leaderboard[6].name}</span> | {leaderboard[6].title} - {leaderboard[6].department}
-          </div>
-          <div className='basis-1/3 py-2 pl-3 mr-[2px] border-b-[1px] border-r-[1px]'>
-            {leaderboard[6].hashtags.join(' ')}
-          </div>
-          <div className='flex justify-center items-center basis-1/6 py-[5px] pr-8 border-b-[1px]'>
-          <span className='text-[#292929] font-medium font-Lato text-[20px]'>{leaderboard[6].points}</span>
-          </div>
-          </div>
-          <div className='flex items-center'>
-          <div className='h-9 w-10 rounded-full bg-black'></div>
-          <div className='basis-1/2 py-2 pl-3 ml-8 mr-[2px] border-r-[1px] border-b-[1px]'>
-          <span className='font-semibold font-Lato text-[15px] text-[#5486E3]'>{leaderboard[7].name}</span> | {leaderboard[7].title} - {leaderboard[7].department}
-          </div>
-          <div className='basis-1/3 py-2 pl-3 mr-[2px] border-b-[1px] border-r-[1px]'>
-            {leaderboard[7].hashtags.join(' ')}
-          </div>
-          <div className='flex justify-center items-center basis-1/6 py-[5px] pr-8 border-b-[1px]'>
-          <span className='text-[#292929] font-medium font-Lato text-[20px]'>{leaderboard[7].points}</span>
-          </div>
-          </div>
-          <div className='flex items-center'>
-          <div className='h-9 w-10 rounded-full bg-black'></div>
-          <div className='basis-1/2 py-2 pl-3 ml-8 mr-[2px] border-r-[1px] border-b-[1px]'>
-          <span className='font-semibold font-Lato text-[15px] text-[#5486E3]'>{leaderboard[8].name}</span> | {leaderboard[8].title} - {leaderboard[8].department}
-          </div>
-          <div className='basis-1/3 py-2 pl-3 mr-[2px] border-b-[1px] border-r-[1px]'>
-            {leaderboard[8].hashtags.join(' ')}
-          </div>
-          <div className='flex justify-center items-center basis-1/6 py-[5px] pr-8 border-b-[1px]'>
-          <span className='text-[#292929] font-medium font-Lato text-[20px]'>{leaderboard[8].points}</span>
-          </div>
-          </div>
-          <div className='flex items-center'>
-          <div className='h-9 w-10 rounded-full bg-black'></div>
-          <div className='basis-1/2 py-2 pl-3 ml-8 mr-[2px] border-r-[1px]'>
-          <span className='font-semibold font-Lato text-[15px] text-[#5486E3]'>{leaderboard[9].name}</span> | {leaderboard[9].title} - {leaderboard[9].department}
-          </div>
-          <div className='basis-1/3 py-2 pl-3 mr-[2px]  border-r-[1px]'>
-            {leaderboard[9].hashtags.join(' ')}
-          </div>
-          <div className='flex justify-center items-center basis-1/6 py-[5px] pr-8'>
-          <span className='text-[#292929] font-medium font-Lato text-[20px]'>{leaderboard[9].points}</span>
-          </div>
-          </div>   
+         
       </div>
 
       <div className='flex flex-col md:flex-row gap-2'>
         <div className="bg-white rounded-lg drop-shadow-md pt-1 my-1 sm:w-full md:w-1/2">
         <div className='flex bg-[#FCEAAE] rounded-lg m-4'>
           <div className='px-6 py-2'>
-            <span className='text-[46px] font-Lato font-bold pr-4'>520</span>
+            <span className='text-[46px] font-Lato font-bold pr-4'>{data?.total_recognitions}</span>
             <span className='text-[20px] font-Lato font-bold'>Recognition</span>
           </div>
           <div className='px-6 py-2'>
-            <span className='text-[46px] font-Lato font-bold pr-4'>4800</span>
+            <span className='text-[46px] font-Lato font-bold pr-4'>{data?.total_points}</span>
             <span className='text-[20px] font-Lato font-bold'>Points</span>
           </div>
         </div>
@@ -377,6 +306,11 @@ export const Analytics = () => {
 
       <div className='bg-white rounded-lg my-3 overflow-x-auto sm:w-[880px] md:w-full'>
         <div className='py-3 px-6 font-Lato font-bold text-[20px]'>Recognition Statistics</div>
+        <div className='flex gap-44 bg-[#5486E3] rounded-lg py-4 font-Lato text-white'>
+         <p className='pl-4'>Department</p>
+         <p className='pl-3'>Within Department</p>
+         <p className='pl-4'>Outside Department</p>
+        </div>
         <ColumnGroupingTable />
       </div>
 
@@ -395,3 +329,59 @@ export const Analytics = () => {
     </div>
   );
 }
+
+
+
+
+
+
+
+
+// <div className='flex items-center'>
+// <div className='h-9 w-10 rounded-full bg-black'></div>
+// <div className='basis-1/2 py-2 pl-3 ml-8 mr-[2px] border-r-[1px] border-b-[1px]'>
+// <span className='font-semibold font-Lato text-[15px] text-[#5486E3]'>{leaderboard[6].name}</span> | {leaderboard[6].title} - {leaderboard[6].department}
+// </div>
+// <div className='basis-1/3 py-2 pl-3 mr-[2px] border-b-[1px] border-r-[1px]'>
+// {leaderboard[6].hashtags.join(' ')}
+// </div>
+// <div className='flex justify-center items-center basis-1/6 py-[5px] pr-8 border-b-[1px]'>
+// <span className='text-[#292929] font-medium font-Lato text-[20px]'>{leaderboard[6].points}</span>
+// </div>
+// </div>
+// <div className='flex items-center'>
+// <div className='h-9 w-10 rounded-full bg-black'></div>
+// <div className='basis-1/2 py-2 pl-3 ml-8 mr-[2px] border-r-[1px] border-b-[1px]'>
+// <span className='font-semibold font-Lato text-[15px] text-[#5486E3]'>{leaderboard[7].name}</span> | {leaderboard[7].title} - {leaderboard[7].department}
+// </div>
+// <div className='basis-1/3 py-2 pl-3 mr-[2px] border-b-[1px] border-r-[1px]'>
+// {leaderboard[7].hashtags.join(' ')}
+// </div>
+// <div className='flex justify-center items-center basis-1/6 py-[5px] pr-8 border-b-[1px]'>
+// <span className='text-[#292929] font-medium font-Lato text-[20px]'>{leaderboard[7].points}</span>
+// </div>
+// </div>
+// <div className='flex items-center'>
+// <div className='h-9 w-10 rounded-full bg-black'></div>
+// <div className='basis-1/2 py-2 pl-3 ml-8 mr-[2px] border-r-[1px] border-b-[1px]'>
+// <span className='font-semibold font-Lato text-[15px] text-[#5486E3]'>{leaderboard[8].name}</span> | {leaderboard[8].title} - {leaderboard[8].department}
+// </div>
+// <div className='basis-1/3 py-2 pl-3 mr-[2px] border-b-[1px] border-r-[1px]'>
+// {leaderboard[8].hashtags.join(' ')}
+// </div>
+// <div className='flex justify-center items-center basis-1/6 py-[5px] pr-8 border-b-[1px]'>
+// <span className='text-[#292929] font-medium font-Lato text-[20px]'>{leaderboard[8].points}</span>
+// </div>
+// </div>
+// <div className='flex items-center'>
+// <div className='h-9 w-10 rounded-full bg-black'></div>
+// <div className='basis-1/2 py-2 pl-3 ml-8 mr-[2px] border-r-[1px]'>
+// <span className='font-semibold font-Lato text-[15px] text-[#5486E3]'>{leaderboard[9].name}</span> | {leaderboard[9].title} - {leaderboard[9].department}
+// </div>
+// <div className='basis-1/3 py-2 pl-3 mr-[2px]  border-r-[1px]'>
+// {leaderboard[9].hashtags.join(' ')}
+// </div>
+// <div className='flex justify-center items-center basis-1/6 py-[5px] pr-8'>
+// <span className='text-[#292929] font-medium font-Lato text-[20px]'>{leaderboard[9].points}</span>
+// </div>
+// </div>   

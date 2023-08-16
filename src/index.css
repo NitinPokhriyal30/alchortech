@@ -24,24 +24,37 @@
 
 :root {
   font-family: Lato, Roboto Slab, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  /* line-height: 1.5;
-  font-weight: 400;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%; */
 }
 
-/* * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* -----------------------------server page---------------------------- */
+
+/* Survey Details */
+
+.react-quill{
+  height: 180px;
+  margin-bottom: 20px;
 }
 
-a {
-  font-weight: 500;
-  color: inherit;
-  text-decoration: inherit;
-} */
+.input-container {
+  width: 100%;
+  background-color: #FFF;
+  border: 1px solid #E8E9EC;
+  color: #E8E9EC;
+}
+
+.dateTimeContainer-green{
+  padding: 10px;
+  background-color: #F2FDEF;
+  border: 1px solid #00BC9F;
+  border-radius: 4px;
+}
+
+.dateTimeContainer-red{
+  padding: 10px;
+  background-color: #FFF3F2;
+  border: 1px solid #F89D96;
+  border-radius: 4px;
+}
+
+/* Questions */
+

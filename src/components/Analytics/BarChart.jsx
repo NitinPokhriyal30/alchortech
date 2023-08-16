@@ -10,8 +10,8 @@ const BarChart = ({ data }) => {
     d3.select(chartRef.current).selectAll('*').remove();
 
     // Set up chart dimensions
-    const width = 600;
-    const height = 400;
+    const width = 574;
+    const height = 350;
     const margin = { top: 20, right: 20, bottom: 30, left: 50 };
     const chartWidth = width - margin.left - margin.right;
     const chartHeight = height - margin.top - margin.bottom;
@@ -52,6 +52,8 @@ const BarChart = ({ data }) => {
       .domain([0, 100])
       .range([chartHeight, 0]);
 
+    const customColors = ['#B3E2A8', '#FFE6C4', '#77A3F2', '#C5BEED', '#F7B3AE', '#A6D7FD', '#FFCBEF', '#77BEF2', '#A8FFFF', '#95E0D4'];
+
     // Draw bars
     svg.selectAll('.bar')
       .data(data)
@@ -64,7 +66,7 @@ const BarChart = ({ data }) => {
       .attr('height', d => chartHeight - yScale(d.value))
       .attr('rx', 10) // Set the horizontal radius of the rounded corners to 0 (no rounding)
       .attr('ry', 10) // Set the vertical radius for the rounded corners
-      .attr('fill', (d, i) => `hsl(${i * 50}, 70%, 50%)`); // Generate colors based on index
+      .attr('fill', (d, i) => customColors[i % customColors.length]); // Access colors based on index
 
     // Add Y axis
     const yAxis = d3.axisLeft(yScale).ticks(11);
@@ -72,6 +74,13 @@ const BarChart = ({ data }) => {
     const yAxisElement = svg.append('g')
       .attr('class', 'y-axis')
       .call(yAxis);
+
+      svg.append('g')
+      .call(yAxis)
+      .call(g => g.select('.domain').remove()) // Remove y-axis line
+      .selectAll('.tick line')
+      .attr('stroke', '#d9d9d9') // Set the color of the grid lines to gray
+      .attr('stroke-opacity', 0.4)
 
     // Hide the Y-axis line
     yAxisElement.select('.domain').style('display', 'none');
