@@ -1,6 +1,6 @@
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 // import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
-import { LocalizationProvider, DatePicker, TimePicker } from '@mui/x-date-pickers';
+import { LocalizationProvider, DatePicker, TimePicker } from '@mui/x-date-pickers'
 import React, { useState } from 'react'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import isBetweenPlugin from 'dayjs/plugin/isBetween'
@@ -64,6 +64,14 @@ const SurveyDetails = ({ surveyDetails, setSurveyDetails, errors }) => {
     const newValue = event.target.checked
     setSurveyDetails((prevSurveyDetails) => ({
       ...prevSurveyDetails,
+      questions: prevSurveyDetails.questions.map((question) => {
+        if (newValue === true) {
+          question.answer = ''
+        } else {
+          delete question.answer
+        }
+        return question
+      }),
       isTimeBounded: newValue,
     }))
   }
@@ -87,7 +95,7 @@ const SurveyDetails = ({ surveyDetails, setSurveyDetails, errors }) => {
           <p className={'text-right ' + COLORS.gray}>0/75</p>
 
           {getError('title') && (
-            <p className='text-red-500 text-sm'>
+            <p className="text-sm text-red-500">
               <RiInformationLine className="inline align-text-bottom text-[1.1em] " />
               {getError('title')}
             </p>
@@ -125,7 +133,7 @@ const SurveyDetails = ({ surveyDetails, setSurveyDetails, errors }) => {
           <p className={'text-right ' + COLORS.gray}>0/150 Words</p>
 
           {getError('description') && (
-            <p className='text-red-500 text-sm'>
+            <p className="text-sm text-red-500">
               <RiInformationLine className="inline align-text-bottom text-[1.1em] " />
               {getError('description')}
             </p>
@@ -164,7 +172,7 @@ const SurveyDetails = ({ surveyDetails, setSurveyDetails, errors }) => {
             </LocalizationProvider>
           </div>
           {getError('dateAndTime') && (
-            <p className='text-red-500 text-sm'>
+            <p className="text-sm text-red-500">
               <RiInformationLine className="inline align-text-bottom text-[1.1em] " />
               {getError('dateAndTime')}
             </p>
@@ -201,12 +209,11 @@ const SurveyDetails = ({ surveyDetails, setSurveyDetails, errors }) => {
           </div>
           <p className={'text-right ' + COLORS.gray}>0/150 words</p>
           {getError('termsAndConditions') && (
-            <p className='text-red-500 text-sm'>
+            <p className="text-sm text-red-500">
               <RiInformationLine className="inline align-text-bottom text-[1.1em] " />
               {getError('termsAndConditions')}
             </p>
           )}
-
         </div>
       </div>
 

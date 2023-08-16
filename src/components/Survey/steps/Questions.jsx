@@ -25,26 +25,25 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
   const handleOptionChange = (event, questionIndex) => {
     const updatedQuestions = { ...questions }
     updatedQuestions.questions[questionIndex].type = event.target.value
+    // preserve options;
     if (['radio', 'dropdown', 'check-box'].includes(event.target.value)) {
       updatedQuestions.questions[questionIndex].options = ['option 1']
+    } else if (['input', 'text-area'].includes(event.target.value)) {
+      updatedQuestions.questions[questionIndex].options = undefined
     }
     setQuestions(updatedQuestions)
   }
 
   // Handler for adding a new question
   const addNewQuestion = () => {
-    setQuestions((prevState) => ({
-      ...prevState,
-      questions: [
-        ...prevState.questions,
-        {
-          type: 'input',
-          options: undefined,
-          question: '',
-          answer: '',
-        },
-      ],
-    }))
+    const updatedQuestions = { ...questions }
+    updatedQuestions.questions.push({
+      type: 'radio',
+      options: ['option1'],
+      question: '',
+      answer: isTimeBounded ? '' : undefined,
+    })
+    setQuestions(updatedQuestions)
   }
 
   // Handler for adding a new radio option
@@ -70,14 +69,8 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
   }
 
   // Handler for changing the answer for Text Box type questions
-  const handleInputAnswerChange = (event, questionIndex) => {
-    const updatedQuestions = { ...questions }
-    updatedQuestions.questions[questionIndex].answer = event.target.value
-    setQuestions(updatedQuestions)
-  }
-
-  // Handler for changing the answer for Text Area type questions
-  const handleTextAreaAnswerChange = (event, questionIndex) => {
+  const handleAnswerChange = (event, questionIndex) => {
+    if (isTimeBounded === false) return
     const updatedQuestions = { ...questions }
     updatedQuestions.questions[questionIndex].answer = event.target.value
     setQuestions(updatedQuestions)
@@ -85,6 +78,7 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
 
   // Handler for changing the answer for Checkbox type questions
   const handleCheckboxAnswerChange = (questionIndex, optionIndex) => (event) => {
+    if (isTimeBounded === false) return
     const updatedQuestions = { ...questions }
     const value = encodeURIComponent(event.target.value)
     const answer = updatedQuestions.questions[questionIndex].answer.split(',').filter(Boolean)
@@ -120,23 +114,28 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
 
   return (
     <div className="rounded-lg bg-white px-5 py-10 shadow-[0px_2px_3px_#00000029]">
+      <pre>{JSON.stringify(questions.questions, null, 2)}</pre>
       {questions.questions.map((question, index) => (
         <div className="items-top mb-5 grid grid-cols-[1fr_2fr] gap-8" key={index}>
           {/* Question Type Selector */}
           <div>
             <p className="my-[25px] text-18px font-bold text-text-black">Question {index + 1}</p>
-            {isTimeBounded ? <Select id={`demo-simple-select-${index}`} value={question.type || selectedOption} onChange={(event) => handleOptionChange(event, index)} fullWidth>
-              <MenuItem value="radio">Radio Button</MenuItem>
-              <MenuItem value="check-box">Checkboxes</MenuItem>
-              <MenuItem value="dropdown">Dropdown</MenuItem>
-            </Select> : <Select id={`demo-simple-select-${index}`} value={question.type || selectedOption} onChange={(event) => handleOptionChange(event, index)} fullWidth>
-              <MenuItem value="input">Text Box</MenuItem>
-              <MenuItem value="text-area">Text Area</MenuItem>
-              <MenuItem value="radio">Radio Button</MenuItem>
-              <MenuItem value="check-box">Checkboxes</MenuItem>
-              <MenuItem value="dropdown">Dropdown</MenuItem>
-            </Select>}
-            
+            {isTimeBounded ? (
+              <Select id={`demo-simple-select-${index}`} value={question.type || selectedOption} onChange={(event) => handleOptionChange(event, index)} fullWidth>
+                <MenuItem value="radio">Radio Button</MenuItem>
+                <MenuItem value="check-box">Checkboxes</MenuItem>
+                <MenuItem value="dropdown">Dropdown</MenuItem>
+              </Select>
+            ) : (
+              <Select id={`demo-simple-select-${index}`} value={question.type || selectedOption} onChange={(event) => handleOptionChange(event, index)} fullWidth>
+                <MenuItem value="input">Text Box</MenuItem>
+                <MenuItem value="text-area">Text Area</MenuItem>
+                <MenuItem value="radio">Radio Button</MenuItem>
+                <MenuItem value="check-box">Checkboxes</MenuItem>
+                <MenuItem value="dropdown">Dropdown</MenuItem>
+              </Select>
+            )}
+
             <p className={'mt-2.5 ' + COLORS.gray}>
               <RiInformationLine className="inline align-text-bottom text-[1.1em]" /> Question Type
             </p>
@@ -145,18 +144,18 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
           {/* Question and Input Fields */}
           <div>
             <TextField fullWidth margin="normal" variant="standard" placeholder="Enter your question" value={question.question} onChange={(event) => handleQuestionChange(event, index)} />
-            {!isTimeBounded && question.type === 'input' && (
+            {question.type === 'input' && (
               <div>
-                <TextField margin="normal" fullWidth variant="outlined" placeholder="Answer" value={question.answer} onChange={(event) => handleInputAnswerChange(event, index)} />
+                {isTimeBounded === true && <TextField margin="normal" fullWidth variant="outlined" placeholder="Answer" value={question.answer} onChange={(event) => handleInputAnswerChange(event, index)} />}
                 {/* Delete Question Button */}
                 <Button variant="contained" onClick={() => handleDeleteQuestion(index)}>
                   Delete Question
                 </Button>
               </div>
             )}
-            {!isTimeBounded && question.type === 'text-area' && (
+            {question.type === 'text-area' && (
               <div>
-                <TextField fullWidth margin="normal" variant="outlined" multiline placeholder="Answer" rows={4} value={question.answer} onChange={(event) => handleTextAreaAnswerChange(event, index)} />
+                {isTimeBounded === true && <TextField fullWidth margin="normal" variant="outlined" multiline placeholder="Answer" rows={4} value={question.answer} onChange={(event) => handleAnswerChange(event, index)} />}
                 {/* Delete Question Button */}
                 <Button variant="contained" onClick={() => handleDeleteQuestion(index)}>
                   Delete Question
@@ -169,7 +168,7 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
                   {question.options.map((item, optionIndex) => (
                     <div key={optionIndex} style={{ display: 'flex', alignItems: 'center' }}>
                       {/* Checkbox Option */}
-                      <FormControlLabel value={item} control={<Radio />} label={item} checked={item === question.answer} onChange={(event) => handleInputAnswerChange(event, index)} />
+                      <FormControlLabel value={item} control={<Radio />} label={item} checked={item === question.answer} onChange={(event) => handleAnswerChange(event, index)} disabled={isTimeBounded === false} />
                       {/* Edit Radio Option */}
                       <IconButton
                         onClick={() => {
@@ -205,7 +204,7 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
                   {question.options.map((item, optionIndex) => (
                     <div key={optionIndex} style={{ display: 'flex', alignItems: 'center' }}>
                       {/* Checkbox Option */}
-                      <FormControlLabel value={item} control={<Checkbox checked={question.answer.split(',').includes(encodeURIComponent(item))} />} label={item} onChange={handleCheckboxAnswerChange(index, optionIndex)} />
+                      <FormControlLabel value={item} control={<Checkbox checked={isTimeBounded === true && question.answer.split(',').includes(encodeURIComponent(item))} />} label={item} onChange={handleCheckboxAnswerChange(index, optionIndex)} disabled={isTimeBounded === false} />
                       {/* Edit Checkbox Option */}
                       <IconButton
                         onClick={() => {
@@ -238,7 +237,7 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
             {question.type === 'dropdown' && (
               <div>
                 <FormControl fullWidth>
-                  <Select className='my-[15px]' labelId={`demo-simple-select-label-${index}`} id={`demo-simple-select-${index}`} value={question.answer} onChange={(event) => handleInputAnswerChange(event, index)}>
+                  <Select className="my-[15px]" labelId={`demo-simple-select-label-${index}`} id={`demo-simple-select-${index}`} value={question.answer} onChange={(event) => handleAnswerChange(event, index)} disabled={isTimeBounded === false}>
                     {question.options.map((item, optionIndex) => (
                       <MenuItem key={optionIndex} value={item}>
                         {item}
