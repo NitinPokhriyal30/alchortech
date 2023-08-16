@@ -70,7 +70,7 @@ export default function CelebrationWidget() {
                       <MdOutlineCake fontSize={22} />
                     </p>
                     <p className="text-primary text-sm  font-light">
-                      <strong>{birthDays[0]?.first_name}</strong>
+                      <strong>{birthDays[0]?.full_name}</strong>
                       <span>
                         {birthDays.length > 1
                           ? ' & ' + pluralize(birthDays.length - 1, 'other', 's') + ' '
@@ -85,7 +85,7 @@ export default function CelebrationWidget() {
                       <MdOutlineCelebration fontSize={22} />
                     </p>
                     <p className="text-primary text-sm  font-light">
-                      <strong>{workAniversaries[0]?.first_name}</strong>
+                      <strong>{workAniversaries[0]?.full_name}</strong>
                       <span>
                         {workAniversaries.length > 1
                           ? ` & ${pluralize(workAniversaries.length - 1, 'other', 's')} `

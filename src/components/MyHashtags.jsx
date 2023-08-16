@@ -45,7 +45,7 @@ const MyHashtags = ({ filterBy, userId }) => {
     <div>
       <div>
         <div className="border-[#CECECE] border-b-2 py-2 px-3">
-          <p className="text-[20px] font-Lato font-bold text-[#292929] text-center ">My Hashtags</p>
+          <p className="text-[20px]  font-bold text-[#292929] text-center ">My Hashtags</p>
         </div>
 
         {receivedTransactions.data &&
@@ -54,7 +54,7 @@ const MyHashtags = ({ filterBy, userId }) => {
             <div key={index}>
               <div className="px-6 py-3">
                 <div className="flex justify-between">
-                  <div className="text-[#00BC9F] text-[16px] font-Lato font-normal">{hashtag.name}</div>
+                  <div className="text-[#00BC9F] text-[16px]  font-normal">{hashtag.name}</div>
                   <div className="font-semibold text-[14px] text-[#000000]">{hashtag.count}</div>
                 </div>
               </div>

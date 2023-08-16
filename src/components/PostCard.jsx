@@ -11,7 +11,6 @@ import { useQuery } from 'react-query'
 import { queryClient } from '@/queryClient'
 import ChildNewPost from '@/components/ChildNewPost'
 import { toast } from 'react-toastify'
-import moment from 'moment'
 import PostComment from '@/components/PostComment'
 import * as HoverCard from '@radix-ui/react-hover-card'
 import smiley from '../assets/images/new-post/smiley.svg'
@@ -24,7 +23,7 @@ import { RiSendPlane2Fill } from 'react-icons/ri'
 import ReactComponent from './ReactComponent'
 import * as Dialog from '@radix-ui/react-dialog'
 import { pluralize } from '@/components/HomeRightSidebar/CelebrationWidget'
-import { getAvatarAttributes, processAvatarUrl } from '@/utils'
+import { formatTimeFromNow, getAvatarAttributes, processAvatarUrl } from '@/utils'
 
 export const reactionsUnicode = {
   '😊': 'U+1F60A',
@@ -80,8 +79,6 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
 
   const commentsAndTransactions = sortCommentsAndTransactions(post.comments, post.children)
 
-  console.log(me.data);
-
   return (
     <div className="mb-3">
       <div className="rounded-lg bg-white pb-6 pt-6 shadow-md xs:px-4 sm:px-6 md:px-6 lg:px-6 xl:px-6  xxl:px-6">
@@ -92,13 +89,13 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                 <img
                   key={post.sender.id}
                   className="h-8.5 w-8.5 rounded-full object-cover"
-                  src={getAvatarAttributes(`${post.sender.first_name} ${ post.sender.last_name }`, processAvatarUrl(post.sender.avtar)).src}
-                  alt={getAvatarAttributes(`${post.sender.first_name} ${post.sender.last_name}`, processAvatarUrl(post.sender.avtar)).alt}
-                  onError={(e) => { 
-                    // If the image fails to load, use the name initials instead
+                  src={getAvatarAttributes(`${post.sender?.full_name.split(' ')[0]} ${post.sender?.full_name.split(' ')[1]}`, processAvatarUrl(post.sender?.avtar)).src}
+                  alt={getAvatarAttributes(`${post.sender?.full_name.split(' ')[0]} ${post.sender?.full_name.split(' ')[1]}`, processAvatarUrl(post.sender?.avtar)).alt}
+                  onError={(e) => {
+                    // If the image fails to load, use the full_name initials instead
                     e.target.onerror = null;
                     e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                      post.sender.first_name.charAt(0) + post.sender.last_name.charAt(0)
+                      post.sender?.full_name.split(' ')[0].charAt(0) + post.sender?.full_name.split(' ')[1].charAt(0)
                     )}&color=${"#464646"}&background=${"FFFFFF"}`;
                   }}
                 />
@@ -121,8 +118,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                 <p className="ml-1  text-18px font-bold text-primary">
                   +{post.point + post.children.reduce((total, post) => total + post.point, 0)}
                 </p>
-
-                <p className="ml-5  font-normal text-[#00BC9F]">{moment(post.created).fromNow()}</p>
+                <p className="ml-5  font-normal text-[#00BC9F]">{formatTimeFromNow(post.created)}</p> 
               </div>
             </div>
           </div>
@@ -134,10 +130,10 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
         <div className="mt-4">
           <p className=" text-18px font-bold">
             <span className={`${PROFILE_USERNAME.text}`}>
-              {post.sender.first_name} {post.sender.last_name}:
+              {post.sender.full_name}:
             </span>{' '}
             <span className="text-primary">
-              {post.recipients.map((user) => `@${user.first_name} ${user.last_name}`).join(' ')}
+              {post.recipients.map((user) => `@${user.full_name}`).join(' ')}
             </span>{' '}
             <span className={`${HASHTAG.text}`}>
               {post.hashtags.map((hash) => '#' + hash.name).join(' ')}
@@ -597,7 +593,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                     <p className="flex justify-between text-18px">
                       <span className="font-bold">{commentOrTransaction.sender.first_name}</span>
                       <span className="text-[14px] leading-[17px] text-[#919191]">
-                        {moment(commentOrTransaction.created).fromNow()}
+                          {formatTimeFromNow(commentOrTransaction.created)}
                       </span>
                     </p>
                     <p>

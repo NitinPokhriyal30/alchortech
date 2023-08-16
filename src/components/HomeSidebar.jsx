@@ -74,23 +74,24 @@ export default function HomeSidebar({}) {
               className="mb-[11px] mt-[11px] flex items-center gap-3 rounded-[5px] px-3 hover:bg-white/[8%] xs:py-[11px] md:mb-[18px] [&.active]:bg-white/[8%]"
             >
               <div>
+              {console.log(me)}
                 <img
                   className="h-14 w-14 overflow-hidden rounded-full bg-gray-300"
-                  src={getAvatarAttributes(`${me.data.first_name} ${me.data.last_name}`, processAvatarUrl(me.data.avtar)).src}
-                  alt={getAvatarAttributes(`${me.data.first_name} ${me.data.last_name}`, processAvatarUrl(me.data.avtar)).alt}
+                  src={getAvatarAttributes(`${me?.data.full_name.split(' ')[0]} ${me?.data.full_name.split(' ')[1]}`, processAvatarUrl(me?.data?.avtar)).src}
+                  alt={getAvatarAttributes(`${me?.data.full_name.split(' ')[0]} ${me?.data.full_name.split(' ')[1]}`, processAvatarUrl(me.data?.avtar)).alt}
                   onError={(e) => {
-                    // If the image fails to load, use the name initials instead
+                    // If the image fails to load, use the full_name initials instead
                     e.target.onerror = null;
                     e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                      me.data.first_name.charAt(0) + me.data.last_name.charAt(0)
+                      me?.data.full_name.split(' ')[0].charAt(0) + me?.data.full_name.split(' ')[1].charAt(0)
                     )}&color=${"#464646"}&background=${"FFFFFF"}`;
                   }}
-                />
+                  />
               </div>
               <div>
                 <p className=" text-[16px] font-black text-white">Hi,</p>
                 <span className=" text-[16px] font-normal text-white">
-                  {me.data.first_name} {me.data.last_name}
+                  {me.data.full_name}
                 </span>
               </div>
             </MenuLink>

@@ -102,7 +102,7 @@ export default function ChildNewPost({ onClose, post, defaultPoint, sortBy, }) {
 
               .map((user) => (
                 <span className="text-[#464646]" key={user.id}>
-                  @{user.first_name} {user.last_name} { }
+                  @{user.first_name} { }
                 </span>
               ))}{' '}
             {form.hashtags.length == 0 ? (
@@ -218,9 +218,9 @@ export default function ChildNewPost({ onClose, post, defaultPoint, sortBy, }) {
                   const data = CreatePost(me.data.id, post.id, { ...form, recipients, hashtags: form.hashtags.map(item => item.name).join(',') })
                   const formData = toFormData(data)
                   const newTransaction = await api.transactions.new(formData)
-                  newTransaction.sender.avtar = newTransaction.sender.avtar.substring(
+                  newTransaction.sender.avtar = newTransaction.sender.avtar?.substring(
                     SERVER_URL.length
-                  )
+                  ) || ''
                   queryClient.setQueryData(['transaction', sortBy], (prev) => {
                     if (!prev) return
                     const targetPost = prev.find((_post) => _post.id === post.id)
