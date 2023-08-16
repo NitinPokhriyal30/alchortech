@@ -73,6 +73,11 @@ const api = {
   todayEvents: () => axios.get('api/v1/transactions/today-events/').then((r) => r.data),
 
   properties: () => axios.get('api/v1/common/properties/').then((r) => r.data),
+
+  analytics: {
+    all: () => axios.get('analytics/').then((r) => r.data),
+    filters: () => axios.get('analytics/filters/').then((r) => r.data),
+  }
 }
 
 axios.interceptors.request.use(

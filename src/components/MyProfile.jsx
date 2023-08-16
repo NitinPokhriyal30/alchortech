@@ -39,9 +39,14 @@ export default function MyProfile() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const userId = queryParams.get('userId');
+  const [page, setPage] = React.useState(1);
+  const [hasNextPage, setHasNextPage] = React.useState(true);
+  const pageSize = 5; // Number of posts per page
 
-  const meQuery = useQuery(['user', userId], () => api.users.userById(userId));
+
+  const meQuery = useQuery('me', () => api.auth.user(userId));
   const me = meQuery.data;
+  console.log(me)
 
   const formattedBirthDate = new Date(me?.birth_date).toLocaleDateString('en-US', {
     month: 'long',
@@ -52,6 +57,12 @@ export default function MyProfile() {
     month: 'long',
     day: '2-digit',
   });
+
+  const handleLoadMore = () => {
+    if (!transactionsQuery.isLoading && hasNextPage) {
+      setPage((prevPage) => prevPage + 1);
+    }
+  };
 
   const transactionsQuery = useQuery(
     ['transactions', appreciationType], // Added appreciationType as a dependency to trigger the query when it changes
@@ -69,10 +80,14 @@ export default function MyProfile() {
     (post) => !post.isChild || getChildTransactionsFor(post.id, allPosts).length > 0
   );
 
+
+
+
+
   useEffect(() => {
     // Refetch the transactions query when appreciationType changes
-    { transactionsQuery.isLoading && <Loader /> }
-    transactionsQuery.refetch();
+    { transactionsQuery.refetch(); }
+
     console.log(transactionsQuery)
     const fetchCounts = async () => {
       const receivedPromise = api.transactions.meAsRecipient(userId, filterBy);
@@ -137,26 +152,19 @@ export default function MyProfile() {
     }
   };
 
-  if (meQuery.isLoading) {
-    return (<div className='flex justify-center' >
-      <Loader />
-    </div>)
-  }
-
   return (
-
     <div className="drop-shadow-md">
       <div className="flex flex-col md:flex-row gap-3 mt-3">
         <div className="flex flex-col md:flex-row items-center md:w-[70%] bg-white rounded-lg border-t-8 md:border-t-0 border-l-0 md:border-l-8 border-[#27C4A0] mx-2 md:mx-0">
           <div className="h-32 md:h-36 w-32 md:w-36 rounded-full overflow-hidden relative ml-4 mr-8 my-8">
             <img className="w-full h-full object-cover"
-              src={getAvatarAttributes(`${me.first_name} ${me.last_name}`, processAvatarUrl(me.avtar)).src}
-              alt={getAvatarAttributes(`${me.first_name} ${me.last_name}`, processAvatarUrl(me.avtar)).alt}
+              src={getAvatarAttributes(`${me?.full_name.split(' ')[0]} ${me?.full_name.split(' ')[1]}`, processAvatarUrl(me?.avtar)).src}
+              alt={getAvatarAttributes(`${me?.full_name.split(' ')[0]} ${me?.full_name.split(' ')[1]}`, processAvatarUrl(me?.avtar)).alt}
               onError={(e) => {
-                // If the image fails to load, use the name initials instead
+                // If the image fails to load, use the full_name initials instead
                 e.target.onerror = null;
                 e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                  me.first_name.charAt(0) + me.last_name.charAt(0)
+                  me?.full_name.split(' ')[0].charAt(0) + me?.full_name.split(' ')[1].charAt(0)
                 )}&color=${"#464646"}&background=${"FFFFFF"}`;
               }}
             />
@@ -173,7 +181,8 @@ export default function MyProfile() {
                 <img className="" src={Flag} alt="flag" />
               </div>
             </div>
-            <p className="font-bold  text-[#292929] text-[25px]">{me.first_name} {me.last_name}</p>
+            <p className="font-bold  text-[#292929] text-[25px]">{me.full_name}</p>
+            {console.log(me)}
             <div className="md:flex mt-2 mb-4">
               <div className="pr-0 md:pr-4">
                 <p className="font-bold font-lato text-[#000000] text-[18px]">{me.title}</p>
@@ -181,7 +190,7 @@ export default function MyProfile() {
               </div>
               <div className="md:border-l-[1px] sm:border-l-0 pl-0 md:pl-4  border-[#27C4A0]">
                 <p className="font-normal  text-[#000000] text-[18px]">{me.email}</p>
-                <p className="font-normal  text-[#000000] text-[18px]">+91 {me.phone_number}</p>
+                <p className="font-normal  text-[#000000] text-[18px]">{me.phone_number ? `+91 ${me.phone_number}` : ''}</p>
               </div>
             </div>
           </div>
@@ -259,11 +268,23 @@ export default function MyProfile() {
                   {transactionsQuery.isLoading ? (
                     <div className='flex justify-center'><Loader /></div>
                   ) : transactionsQuery.data && transactionsQuery.data.length > 0 ? (
-                    parentPosts.slice(0, 5).map((post, i) => (
-                      <div className='px-4 mt-4' key={post.id}>
-                        <PostCard i={i} post={post} childrenTransactions={getChildTransactionsFor(post.id, allPosts)} />
-                      </div>
-                    ))
+                    <React.Fragment>
+                      {parentPosts.slice(0, page * pageSize).map((post, i) => (
+                        <div className='px-4 mt-4' key={post.id}>
+                          <PostCard i={i} post={post} childrenTransactions={getChildTransactionsFor(post.id, allPosts)} />
+                        </div>
+                      ))}
+                      {hasNextPage && (
+                        <div className="flex justify-center mt-4">
+                          <button
+                            className="bg-primary text-white hover:text-black py-2 px-8 rounded-md"
+                            onClick={handleLoadMore}
+                          >
+                            V
+                          </button>
+                        </div>
+                      )}
+                    </React.Fragment>
                   ) : (
                     <p className='text-md font-semibold text-center my-4'>No recent activities found.</p>
                   )}

@@ -37,11 +37,11 @@ import { ToastContainer } from 'react-toastify'
 import Cookies from 'js-cookie'
 import { api } from '@/api'
 import { Analytics } from './components/Analytics/Analytics'
-import CampaignsTable from './components/Campaigns/CampaignsTable'
 import Transactions from '@/pages/Transactions'
+import CampaignsTable from '@/components/Campaigns/CampaignsTable'
+import CampaignCreate from '@/components/Campaigns/CampaignCreate'
 import SurveyTable from '@/components/Survey/SurveryTable'
 import SurveyCreate from '@/components/Survey/SurveyCreate'
-import CampaignCreate from './components/Campaigns/CampaignCreate'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
