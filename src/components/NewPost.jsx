@@ -308,6 +308,7 @@ export default function NewPost({ ...props }) {
                     return [newTransaction, ...prev]
                   })
                   await queryClient.refetchQueries('me')
+                  await queryClient.refetchQueries('currentUserPoints')
 
                   setForm({
                     point: 0,

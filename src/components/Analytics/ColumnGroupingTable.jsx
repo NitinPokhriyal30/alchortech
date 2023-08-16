@@ -1,44 +1,60 @@
-import * as React from 'react';
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
+import React from 'react';
+import DataTable from 'react-data-table-component';
 
 const columns = [
-  { id: 'department', label: '', align: 'left', minWidth: 170 },
-  { id: 'withinDepartment', label: '', align: 'center', minWidth: 100, backgroundColor: '#EAEEF5'},
   {
-    id: 'received',
-    label: 'Received',
-    minWidth: 170,
-    align: 'center',
-    format: (value) => value.toLocaleString('en-US'),
+    selector: 'department',
+    sortable: true,
+    cell: (row) => <div style={{ fontWeight: '500', fontSize: '16px', color: '#050505' }}>{row.department}</div>,
   },
   {
-    id: 'given',
-    label: 'Given',
-    minWidth: 170,
-    align: 'center',
-    format: (value) => value.toLocaleString('en-US'),
+    selector: 'withinDepartment',
+    center: true,
+    style: {
+      backgroundColor: '#E5EDFB',
+      fontWeight: '400',
+      fontSize: '14px',
+      font: 'Lato'
+    },
+    ignoreRowClick: true,
   },
   {
-    id: 'total',
-    label: 'Total',
-    minWidth: 170,
-    align: 'center',
-    format: (value) => value.toFixed(2),
+    name: 'Received',
+    selector: 'received',
+    center: true,
+    sortable: true,
+    style: {
+      fontSize: '14px',
+      fontWeight: '400'
+    }
+  },
+  {
+    name: 'Given',
+    selector: 'given',
+    center: true,
+    sortable: true,
+    style: {
+      fontSize: '14px',
+      fontWeight: '400'
+    }
+  },
+  {
+    name: 'Total',
+    selector: 'total',
+    center: true,
+    sortable: true,
+    hide: 'sm', // Hide on small screens for better appearance
+    style: {
+      color: '#5486E3',
+      style: {
+        fontSize: '14px',
+        fontWeight: '400'
+      }
+    },
   },
 ];
 
-function createData(department, withinDepartment, received, given) {
-  const total =  (withinDepartment + received + given);
-  return { department, withinDepartment, received, given, total };
-}
-
-const rows = [
+const data = [
   createData('Automation', 3, 10, 9),
   createData('Cloud', 2, 2, 10),
   createData('Delivery', 16, 13, 19),
@@ -46,73 +62,15 @@ const rows = [
   createData('ITSM', 15, 15, 15),
 ];
 
-export default function ColumnGroupingTable() {
+function createData(department, withinDepartment, received, given) {
+  const total = withinDepartment + received + given;
+  return { department, withinDepartment, received, given, total };
+}
 
+export default function ColumnGroupingTable() {
   return (
-    <Paper sx={{ width: '100%' }}>
-      <TableContainer sx={{ maxHeight: 440 }}>
-        <Table stickyHeader aria-label="sticky table">
-          <TableHead >
-            <TableRow>
-              <TableCell  colSpan={1} style={{
-                backgroundColor: '#5486E3',
-                borderTopLeftRadius: '10px',
-                borderBottomLeftRadius: '10px',
-                color: 'white',
-                fontSize: '16px',
-                fontFamily: 'Lato',
-                fontWeight: 'regular'
-              }} >
-                Department
-              </TableCell>
-              <TableCell align="center" colSpan={1} class="bg-[#5486E3] text-white text-[16px] font-Lato font-medium">
-                Within Department
-              </TableCell>
-              <TableCell align="center" colSpan={2} class="bg-[#5486E3] text-white text-[16px] font-Lato font-medium">
-                Outside Department
-              </TableCell>
-              <TableCell align="center" colSpan={1} class="bg-[#5486E3] rounded-r-lg" ></TableCell>
-            </TableRow>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column.align}
-                  style={{ top: 57, minWidth: column.minWidth }}
-                  class='py-4'
-                >
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map((row, index) => (
-              <TableRow hover role="checkbox" key={index} class='px-1'>
-                <TableCell align="left" style={{
-                  paddingLeft: '16px'
-                }}  >
-                  {row.department}
-                </TableCell>
-                <TableCell
-                  align="center"
-                  className={row.withinDepartment ? 'bg-[#EAEEF5]' : ''}
-                >
-                  {row.withinDepartment}
-                </TableCell>
-                <TableCell align="center">{row.received}</TableCell>
-                <TableCell align="center">{row.given}</TableCell>
-                <TableCell
-                  align="center"
-                  className={row.total ? 'bg-[#EAEEF5]' : ''}
-                >
-                  <div>{row.total}</div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Paper>
+    <div style={{ width: '100%' }}>
+      <DataTable columns={columns} data={data} defaultSortField="total" />
+    </div>
   );
 }

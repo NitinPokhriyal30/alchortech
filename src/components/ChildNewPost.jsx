@@ -231,6 +231,7 @@ export default function ChildNewPost({ onClose, post, defaultPoint, sortBy, }) {
                     return [...prev]
                   })
                   await queryClient.refetchQueries('me')
+                  await queryClient.refetchQueries('currentUserPoints')
 
                   onClose()
                 } catch (e) {

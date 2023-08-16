@@ -75,8 +75,9 @@ const api = {
   properties: () => axios.get('api/v1/common/properties/').then((r) => r.data),
 
   analytics: {
-    all: () => axios.get('analytics/').then((r) => r.data),
-    filters: () => axios.get('analytics/filters/').then((r) => r.data),
+    all: () => axios.get('/api/v1/analytics/').then((r) => r.data),
+    filters: () => axios.get('/api/v1/analytics/filters/').then((r) => r.data),
+
   }
 }
 
