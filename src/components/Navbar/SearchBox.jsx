@@ -5,13 +5,7 @@ import { CiSearch } from 'react-icons/ci'
 import { useQuery } from 'react-query'
 import { toast } from 'react-toastify'
 import debounce from 'lodash.debounce'
-import {
-  RiArrowLeftLine,
-  RiArrowRightLine,
-  RiLoader2Line,
-  RiSearch2Line,
-  RiSearchLine,
-} from 'react-icons/ri'
+import { RiArrowLeftLine, RiArrowRightLine, RiLoader2Line, RiSearch2Line, RiSearchLine } from 'react-icons/ri'
 import { Link } from 'react-router-dom'
 import Loader from '../Loader'
 import { getAvatarAttributes, processAvatarUrl } from '@/utils'
@@ -40,13 +34,16 @@ export default function SearchBox({ ...props }) {
     }
 
     try {
-      const searchedUser = users.data.filter((user) =>
-        JSON.stringify(user || {}).includes(searchQuery.replace(' ', ''))
+      const searchedUser = users.data.filter(
+        (user) =>
+          console.log(user) ||
+          JSON.stringify(user || {})
+            .toLowerCase()
+            .replace(" ","")
+            .includes(searchQuery.toLowerCase())
       )
 
-      const transactions = await api.transactions.all(
-        new URLSearchParams({ pagination: 0, hashtags: searchQuery })
-      )
+      const transactions = await api.transactions.all(new URLSearchParams({ pagination: 0, hashtags: searchQuery }))
 
       setSearchData({ users: searchedUser, hashtags: transactions })
     } catch (e) {
@@ -59,9 +56,7 @@ export default function SearchBox({ ...props }) {
 
   return (
     <>
-      {show && (
-        <div className="absolute inset-0 h-screen w-screen" onClick={() => setShow(false)} />
-      )}
+      {show && <div className="absolute inset-0 h-screen w-screen" onClick={() => setShow(false)} />}
       <form onFocus={() => setShow(true)}>
         <div className="relative flex items-center rounded-[20px] pb-[9px] pt-2 text-[#acacac]">
           <CiSearch className="ml-[14px]" />
@@ -74,38 +69,25 @@ export default function SearchBox({ ...props }) {
           />
 
           {searchQuery !== '' ? (
-            <div
-              hidden={!show}
-              className="absolute top-full z-10 mt-1.5 h-screen max-h-[26rem] w-full overflow-y-auto rounded-lg bg-white p-6 shadow-[0px_3px_6px_#00000029]"
-            >
+            <div hidden={!show} className="absolute top-full z-10 mt-1.5 h-screen max-h-[26rem] w-full overflow-y-auto rounded-lg bg-white p-6 shadow-[0px_3px_6px_#00000029]">
               {!!selectedUser ? (
-                <SearchUserTransactions
-                  user={selectedUser}
-                  onBack={() => setSelectedUser(null)}
-                  onClick={() => setShow(false)}
-                />
+                <SearchUserTransactions user={selectedUser} onBack={() => setSelectedUser(null)} onClick={() => setShow(false)} />
               ) : isLoading ? (
                 <p className="mt-[50%] flex justify-center">
-                    {/* <RiLoader2Line className="animate-spin" /> */}
-                    <Loader />
-                </p> 
+                  {/* <RiLoader2Line className="animate-spin" /> */}
+                  <Loader />
+                </p>
               ) : !Array.isArray(searchData.users) ? (
                 <p className="mt-20 flex items-center justify-center gap-x-2 font-semibold">
                   <RiSearchLine /> Type anything in Search Box.
                 </p>
               ) : Array.isArray(searchData.hashtags) && searchData.hashtags.length > 0 ? (
                 <>
-                  <p className="flex items-center gap-3 text-18px font-semibold text-[#00bc9f]">
-                    Hashtags
-                  </p>
+                  <p className="flex items-center gap-3 text-18px font-semibold text-[#00bc9f]">Hashtags</p>
 
                   <div className="space-y-2.5 pt-2.5">
                     {searchData.hashtags.map((transaction) => (
-                      <Link
-                        to={`/transactions/${transaction.id}`}
-                        className="flex items-start gap-2.5 rounded-md text-16px hover:bg-paper"
-                        onClick={() => setShow(false)}
-                      >
+                      <Link to={`/transactions/${transaction.id}`} className="flex items-start gap-2.5 rounded-md text-16px hover:bg-paper" onClick={() => setShow(false)}>
                         <div>
                           <p className="text-black">
                             <span className="font-semibold">
@@ -113,18 +95,13 @@ export default function SearchBox({ ...props }) {
                             </span>{' '}
                             <span className="italic">Appreciated</span>{' '}
                             <span className="">
-                              @{transaction.recipients[0].first_name}{' '}
-                              {transaction.recipients[0].last_name}
+                              @{transaction.recipients[0].first_name} {transaction.recipients[0].last_name}
                             </span>
                           </p>
                           <p className="line-clamp-1 text-ellipsis pt-1">{transaction.message}</p>
                           <p className="line-clamp-1 text-ellipsis pt-1">
                             {transaction.hashtags.map((tag) => (
-                              <span
-                                className={tag.name.startsWith(searchQuery) ? 'bg-[#fff9c9]' : ''}
-                              >
-                                {tag.name}
-                              </span>
+                              <span className={tag.name.startsWith(searchQuery) ? 'bg-[#fff9c9]' : ''}>{tag.name}</span>
                             ))}
                           </p>
                         </div>
@@ -133,14 +110,10 @@ export default function SearchBox({ ...props }) {
                   </div>
                 </>
               ) : searchData.users.length === 0 ? (
-                <p className="mt-20 flex items-center justify-center gap-x-2 font-semibold">
-                  No Users for Found
-                </p>
+                <p className="mt-20 flex items-center justify-center gap-x-2 font-semibold">No Users for Found</p>
               ) : searchData.users.length > 0 ? (
                 <>
-                  <p className="flex items-center gap-3 text-18px font-semibold text-[#00bc9f]">
-                    Users
-                  </p>
+                  <p className="flex items-center gap-3 text-18px font-semibold text-[#00bc9f]">Users</p>
 
                   <div className="space-y-2.5 pt-2.5">
                     {searchData.users.map((user) => (
@@ -160,9 +133,7 @@ export default function SearchBox({ ...props }) {
 }
 
 function SearchUserTransactions({ user, onBack, onClick }) {
-  const userTransactionQuery = useQuery(['search', 'transaction', user.id], () =>
-    api.transactions.all(new URLSearchParams({ pagination: 0, recipients: user.id }))
-  )
+  const userTransactionQuery = useQuery(['search', 'transaction', user.id], () => api.transactions.all(new URLSearchParams({ pagination: 0, recipients: user.id })))
 
   return (
     <div>
@@ -182,7 +153,7 @@ function SearchUserTransactions({ user, onBack, onClick }) {
 
       <div className="space-y-2.5 pt-2.5">
         <Link to={`/myProfile?userId=${user.id}`}>
-          <SearchUserProfile user={user} onClick={onClick}/>
+          <SearchUserProfile user={user} onClick={onClick} />
         </Link>
       </div>
 
@@ -201,11 +172,7 @@ function SearchUserTransactions({ user, onBack, onClick }) {
           </p>
         ) : (
           userTransactionQuery.data.map((transaction) => (
-            <Link
-              to={`/transactions/${transaction.id}`}
-              className="flex items-start gap-2.5 rounded-md text-16px hover:bg-paper"
-              onClick={onClick}
-            >
+            <Link to={`/transactions/${transaction.id}`} className="flex items-start gap-2.5 rounded-md text-16px hover:bg-paper" onClick={onClick}>
               <div>
                 <p className="text-black">
                   <span className="font-semibold">
@@ -217,9 +184,7 @@ function SearchUserTransactions({ user, onBack, onClick }) {
                   </span>
                 </p>
                 <p className="line-clamp-1 text-ellipsis pt-1">{transaction.message}</p>
-                <p className="line-clamp-1 text-ellipsis pt-1">
-                  {transaction.hashtags.map((tag) => '#' + tag.name).join(' ')}
-                </p>
+                <p className="line-clamp-1 text-ellipsis pt-1">{transaction.hashtags.map((tag) => '#' + tag.name).join(' ')}</p>
               </div>
             </Link>
           ))
@@ -231,26 +196,19 @@ function SearchUserTransactions({ user, onBack, onClick }) {
 
 function SearchUserProfile({ user, onClick }) {
   return (
-    <div
-      className="flex cursor-pointer items-start gap-2.5 rounded-md text-16px hover:bg-paper"
-      onClick={onClick}
-    >
+    <div className="flex cursor-pointer items-start gap-2.5 rounded-md text-16px hover:bg-paper" onClick={onClick}>
       <img
         className="aspect-square w-[55px] rounded-full border border-[#707070]"
-        src={getAvatarAttributes(`${user.first_name} ${user.last_name}`, processAvatarUrl(user.avtar)).src}
-        alt={getAvatarAttributes(`${user.first_name} ${user.last_name}`, processAvatarUrl(user.avtar)).alt}
+        src={getAvatarAttributes(`${user.full_name}`, processAvatarUrl(user.avtar)).src}
+        alt={getAvatarAttributes(`${user.full_name}`, processAvatarUrl(user.avtar)).alt}
         onError={(e) => {
           // If the image fails to load, use the name initials instead
-          e.target.onerror = null;
-          e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-            user.first_name.charAt(0) + user.last_name.charAt(0)
-          )}&color=${"#464646"}&background=${"FFFFFF"}`;
+          e.target.onerror = null
+          e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.first_name.charAt(0) + user.last_name.charAt(0))}&color=${'#464646'}&background=${'FFFFFF'}`
         }}
       />
       <div>
-        <p className="font-semibold text-[#2F2F2F]">
-          {user.first_name} {user.last_name}
-        </p>
+        <p className="font-semibold text-[#2F2F2F]">{user.full_name}</p>
         <p className="mt-1 text-[#7B7B7B]">{user.department}</p>
       </div>
     </div>
