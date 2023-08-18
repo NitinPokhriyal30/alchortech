@@ -7,7 +7,7 @@ import UserImage from '../assets/images/user-profile/pp.png'
 import { useQuery } from 'react-query'
 import { api } from '@/api'
 import { toFormData } from '@/components/NewPost'
-import { Object_filter } from '@/utils'
+import { Object_filter, capitalizeWords } from '@/utils'
 
 let inputDelayRef = { current: 0 }
 const handleChange = (setQuery) => (ev) => {
@@ -22,12 +22,12 @@ const handleChange = (setQuery) => (ev) => {
 /**
  * get department from profiles api
  */
-const getDepartment = (profiles) => ['delivery', 'cloud', 'automation', 'service desk', 'hr', 'product management', 'product development'] //Array.from(new Set(profiles?.map(user => user.department)));
+const getDepartment = (profiles) => ['Delivery', 'Cloud', 'Automation', 'Service Desk', 'Hr', 'Product Management', 'Product Development'] //Array.from(new Set(profiles?.map(user => user.department)));
 
 /**
  * get department from profiles api
  */
-const getLocation = (profiles) => ['india', 'japan', 'usa'] // Array.from(new Set(profiles?.map((user) => user.location)))
+const getLocation = (profiles) => ['India', 'Japan', 'Usa'] // Array.from(new Set(profiles?.map((user) => user.location)))
 
 export default function DirectoryPage({ ...props }) {
   const profiles = useQuery('users', () => api.users.search(), {
