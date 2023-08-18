@@ -34,13 +34,13 @@ function handleValidateSurveyDetails(survey) {
   } else if (survey.title.length > 50) {
     errors.push(['title', 'Survey Title should be less than or 50 characters'])
   }
-  
+
   if (survey.description.length === 0) {
     errors.push(['description', 'Must have a Survey Description'])
   } else if (survey.description.split(" ").length > 150) {
     errors.push(['description', 'Survey Description should be less than or 150 words'])
   }
-  
+
   if (survey.dateAndTime.start >= survey.dateAndTime.end) {
     errors.push(['dateAndTime', 'Survey EndDate always greater than StartDate'])
   }
@@ -71,6 +71,11 @@ function handleValidateQuestions(questions) {
 const SurveyCreate = () => {
   const [step, setStep] = React.useState(STEPPER[0].value)
   const [errors, setErrors] = React.useState({})
+
+  const handleStepClick = (newValue) => {
+    console.log(newValue);
+    setStep(newValue);
+  };
 
   const [survey, setServey] = React.useState({
     title: '',
@@ -134,9 +139,15 @@ const SurveyCreate = () => {
         <section className="flex gap-2 pl-11">
           {STEPPER.map((stepOption, i) => (
             <div className="flex items-center gap-2" key={stepOption.value}>
-              <span className={'inline-block h-0.5 w-[max(100px,_2vw)] bg-text-black' + (i == 0 ? ' hidden' : '')}></span>
-              <span className={'inline-flex aspect-square w-[2em] items-center justify-center rounded-full border-2 font-bold  ' + (stepOption.value === step ? 'border-primary bg-primary text-white' : 'border-text-black text-text-black')}>{i + 1}</span>
-              <span className={'font-semibold ' + (stepOption.value === step ? 'text-primary' : 'text-text-black')}>{stepOption.label}</span>
+              <Link
+                to="#" // Replace "#" with the actual route for each step
+                onClick={() => handleStepClick(stepOption.value)}
+                className="flex items-center gap-2"
+              >
+                <span className={'inline-block h-0.5 w-[max(100px,_2vw)] bg-text-black' + (i == 0 ? ' hidden' : '')}></span>
+                <span className={'inline-flex aspect-square w-[2em] items-center justify-center rounded-full border-2 font-bold  ' + (stepOption.value === step ? 'border-primary bg-primary text-white' : 'border-text-black text-text-black')}>{i + 1}</span>
+                <span className={'font-semibold ' + (stepOption.value === step ? 'text-primary' : 'text-text-black')}>{stepOption.label}</span>
+              </Link>
             </div>
           ))}
         </section>
@@ -149,7 +160,7 @@ const SurveyCreate = () => {
           {step === 0 ? (
             <SurveyDetails surveyDetails={survey} setSurveyDetails={setServey} errors={errors.surveyDetails} />
           ) : step === 1 ? (
-              <Questions questions={survey} setQuestions={setServey} errors={errors.questions} isTimeBounded={survey.isTimeBounded} />
+            <Questions questions={survey} setQuestions={setServey} errors={errors.questions} isTimeBounded={survey.isTimeBounded} />
           ) : step === 2 ? (
             <SelectParticipants />
           ) : step === 3 ? (
