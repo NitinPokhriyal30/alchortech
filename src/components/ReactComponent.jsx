@@ -10,7 +10,7 @@ import Spinner from '@/components/Spinner'
 import { getAvatarAttributes, processAvatarUrl } from '@/utils'
 
 const getReactions = (reactions, emoji) => {
-  return reactions.filter((reaction) => reaction.reaction.includes(reactionsUnicode[emoji]))
+  return reactions?.filter((reaction) => reaction.reaction.includes(reactionsUnicode[emoji]))
 }
 
 const ReactComponent = ({ postId, post }) => {
@@ -44,14 +44,14 @@ const ReactComponent = ({ postId, post }) => {
                         : 'rounded-md  border-b-2 border-transparent font-semibold'
                     } font-Montserrat font-semibold text-[#292929] `}
                     onClick={() => handleTabClick('')}
-                  >
-                    <span className="text-[16px] font-normal">All {reactionQuery.data.length}</span>
+                    >
+                    <span className="text-[16px] font-normal">All {reactionQuery.data?.length}</span>
                   </button>
 
-                  {Object.keys(reactionsUnicode).map((emoji, i) => (
+                  {Object.keys(reactionsUnicode)?.map((emoji, i) => (
                     <button
                       className={`
-                      ${getReactions(reactionQuery.data, emoji).length === 0 ? 'hidden ' : ''}
+                      ${getReactions(reactionQuery.data, emoji)?.length === 0 ? 'hidden ' : ''}
                       ${
                         activeTab === emoji
                           ? 'rounded-tl-md rounded-tr-md border-b-2 border-[#292929] bg-white'
@@ -61,7 +61,7 @@ const ReactComponent = ({ postId, post }) => {
                     >
                       <span className="text-xl">{emoji}</span>{' '}
                       <span className="text-[16px] font-normal">
-                        {getReactions(reactionQuery.data, emoji).length}
+                        {getReactions(reactionQuery.data, emoji)?.length}
                       </span>
                     </button>
                   ))}
@@ -73,7 +73,7 @@ const ReactComponent = ({ postId, post }) => {
 
               <div className="h-screen max-h-[225px] overflow-auto rounded-bl-md rounded-br-md rounded-tr-md bg-white  px-6">
                 <div className={`${activeTab === '' ? 'block' : 'hidden'}`}>
-                  {reactionQuery.data.map((reaction) => (
+                  {reactionQuery.data?.map((reaction) => (
                     <>
                       <div className=" flex items-center justify-between border-b-[1px] py-2.5 last-of-type:border-b-0">
                         <div className="flex items-center gap-8.5">
@@ -106,17 +106,15 @@ const ReactComponent = ({ postId, post }) => {
                   ))}
                 </div>
 
-                {Object.keys(reactionsUnicode).map((emoji) => (
+                {Object.keys(reactionsUnicode)?.map((emoji) => (
                   <div
                     className={`${
-                      activeTab === emoji && getReactions(reactionQuery.data, emoji).length > 0
+                      activeTab === emoji && getReactions(reactionQuery.data, emoji)?.length > 0
                         ? 'block'
                         : 'hidden'
                     }`}
                   >
-                    {reactionQuery.data
-                      .filter((reaction) => reaction.reaction === reactionsUnicode[emoji])
-                      .map((reaction) => (
+                    {reactionQuery.data?.filter((reaction) => reaction.reaction === reactionsUnicode[emoji])?.map((reaction) => (
                         <>
                           <div className=" flex items-center justify-between border-b-[1px] py-2.5 last-of-type:border-b-0">
                             <div className="flex items-center gap-8.5">

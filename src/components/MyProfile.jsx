@@ -35,7 +35,7 @@ export default function MyProfile() {
   const [receivedCount, setReceivedCount] = useState(0);
   const [givenCount, setGivenCount] = useState(0);
   const [filterBy, setFilterBy] = useState('all');
-  
+
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const userId = queryParams.get('userId');
@@ -80,14 +80,14 @@ export default function MyProfile() {
     (post) => !post.isChild || getChildTransactionsFor(post.id, allPosts).length > 0
   );
 
-  
-  
-  
+
+
+
 
   useEffect(() => {
     // Refetch the transactions query when appreciationType changes
-    {   transactionsQuery.refetch();}
-    
+    { transactionsQuery.refetch(); }
+
     console.log(transactionsQuery)
     const fetchCounts = async () => {
       const receivedPromise = api.transactions.meAsRecipient(userId, filterBy);
@@ -190,7 +190,7 @@ export default function MyProfile() {
               </div>
               <div className="md:border-l-[1px] sm:border-l-0 pl-0 md:pl-4  border-[#27C4A0]">
                 <p className="font-normal  text-[#000000] text-[18px]">{me.email}</p>
-                <p className="font-normal  text-[#000000] text-[18px]">{me.phone_number? `+91 ${me.phone_number}`: ''}</p>
+                <p className="font-normal  text-[#000000] text-[18px]">{me.phone_number ? `+91 ${me.phone_number}` : ''}</p>
               </div>
             </div>
           </div>

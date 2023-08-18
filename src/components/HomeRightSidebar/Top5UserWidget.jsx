@@ -25,7 +25,7 @@ export default function Top5UserWidget() {
   }
 
   return (
-    <div>
+    top5.data && <div>
       <div className="right-sidebar-container !pt-0 !pb-4">
         <div className="border-b border-[#EDEDED] py-[8.5px] px-3 mb-4">
           <p className="leading-[24px]  font-bold text-[#464646] text-center">
@@ -83,5 +83,6 @@ export default function Top5UserWidget() {
         ))}
       </div>
     </div>
+    
   )
 }

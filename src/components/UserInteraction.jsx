@@ -146,20 +146,20 @@ const UserInteraction = ({ filterBy, userId }) => {
   }
 
   return (
-    
+
     <div className="h-auto flex flex-col md:flex-row items-center md:items-start md:justify-center">
-    <div className="my-4  block w-full md:w-[438px] lg:w-2/5 text-center ">
-    <span className="text-[18px] mb-4 text-[#000000] font-Lato font-bold">{`${me?.full_name.split(' ')[0]}'s Interaction`}</span> 
-        
+      <div className="my-4  block w-full md:w-[438px] lg:w-2/5 text-center ">
+        <span className="text-[18px] mb-4 text-[#000000] font-Lato font-bold">{`${me?.full_name.split(' ')[0]}'s Interaction`}</span>
+
         <div className='flex border-r-2'>
           <div className="w-[325px]">
-          <InteractionChart
-          interactionData={interactionData}
-          me={me}
-          hoveredRowIndex={hoveredRowIndex}
-          onRowHover={handleRowHover}
-          setHoveredImageIndex={setHoveredImageIndex}
-        />
+            <InteractionChart
+              interactionData={interactionData}
+              me={me}
+              hoveredRowIndex={hoveredRowIndex}
+              onRowHover={handleRowHover}
+              setHoveredImageIndex={setHoveredImageIndex}
+            />
           </div>
         </div>
       </div>
@@ -176,7 +176,7 @@ const UserInteraction = ({ filterBy, userId }) => {
                   </tr>
                 </thead>
                 <tbody>
-                {console.log(interactionData)}
+                  {console.log(interactionData)}
                   {interactionData.map((interaction, index) => (
                     <tr
                       key={index}

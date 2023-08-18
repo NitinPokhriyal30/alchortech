@@ -30,7 +30,7 @@ export default function SurveySidebar({ setShowSidebar, dispatch }) {
           <Typography variant="h6">Form Controls Toolbar</Typography>
         </ListItem>
 
-        {formInputs.map((formInputName) => (
+        {formInputs?.map((formInputName) => (
           <ListItem sx={{ padding: 1 }} key={formInputName}>
             <ListItemButton
               sx={{ padding: 1 }}

@@ -14,13 +14,13 @@ export default function PostComment({ modal, setModal, sortBy, postId, comment, 
     <div className="grid grid-cols-[auto_1fr] gap-4 pl-0 pt-[7px]">
       <img
         className="h-8.5 w-8.5 rounded-full object-cover"
-        src={getAvatarAttributes(`${user.first_name} ${user.last_name}`, processAvatarUrl(user.avtar)).src}
-        alt={getAvatarAttributes(`${user.first_name} ${user.last_name}`, processAvatarUrl(user.avtar)).alt}
+        src={getAvatarAttributes(`${user.full_name}`, processAvatarUrl(user.avtar)).src}
+        alt={getAvatarAttributes(`${user.full_name}`, processAvatarUrl(user.avtar)).alt}
         onError={(e) => {
           // If the image fails to load, use the name initials instead
           e.target.onerror = null;
           e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-            user.first_name.charAt(0) + user.last_name.charAt(0)
+            user.full_name.split(' ')[0].charAt(0) + user.full_name.split(' ')[1].charAt(0)
           )}&color=${"#464646"}&background=${"FFFFFF"}`;
         }}
       />
@@ -28,7 +28,7 @@ export default function PostComment({ modal, setModal, sortBy, postId, comment, 
       <div className="relative ">
         <div className="rounded-[15px] rounded-tl-none bg-paper p-[20px] text-[#464646]">
           <p className="flex justify-between text-18px">
-            <span className="font-bold">{user.first_name}</span>
+            <span className="font-bold">{user.full_name.split(' ')[0]}</span>
             <span className="text-[14px] leading-[17px] text-[#919191]">
               {moment(comment.created).fromNow()}
             </span>

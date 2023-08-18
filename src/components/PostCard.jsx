@@ -79,6 +79,8 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
 
   const commentsAndTransactions = sortCommentsAndTransactions(post.comments, post.children)
 
+  console.log(me.data);
+
   return (
     <div className="mb-3">
       <div className="rounded-lg bg-white pb-6 pt-6 shadow-md xs:px-4 sm:px-6 md:px-6 lg:px-6 xl:px-6  xxl:px-6">
@@ -86,34 +88,32 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
           <div className="flex-1">
             <div className="flex items-center justify-between gap-8">
               <div className="flex items-center gap-1">
-                <img
-                  key={post.sender.id}
+                  <img
                   className="h-8.5 w-8.5 rounded-full object-cover"
-                  src={getAvatarAttributes(`${post.sender?.full_name.split(' ')[0]} ${post.sender?.full_name.split(' ')[1]}`, processAvatarUrl(post.sender?.avtar)).src}
-                  alt={getAvatarAttributes(`${post.sender?.full_name.split(' ')[0]} ${post.sender?.full_name.split(' ')[1]}`, processAvatarUrl(post.sender?.avtar)).alt}
+                  src={getAvatarAttributes(`${post.sender.full_name}`, processAvatarUrl(post.sender.avtar)).src}
+                  alt={getAvatarAttributes(`${post.sender.full_name}`, processAvatarUrl(post.sender.avtar)).alt}
                   onError={(e) => {
-                    // If the image fails to load, use the full_name initials instead
+                    // If the image fails to load, use the name initials instead
                     e.target.onerror = null;
                     e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                      post.sender?.full_name.split(' ')[0].charAt(0) + post.sender?.full_name.split(' ')[1].charAt(0)
+                      post.sender.full_name.split(' ')[0].charAt(0) + post.sender.full_name.split(' ')[1].charAt(0)
                     )}&color=${"#464646"}&background=${"FFFFFF"}`;
                   }}
                 />
 
                 {post.children?.map((post) => (
                   <img
-                    key={post.sender.id}
-                    className="h-8.5 w-8.5 rounded-full object-cover"
-                    src={getAvatarAttributes(`${post.sender.first_name} ${post.sender.last_name}`, processAvatarUrl(post.sender.avtar)).src}
-                    alt={getAvatarAttributes(`${post.sender.first_name} ${post.sender.last_name}`, processAvatarUrl(post.sender.avtar)).alt}
-                    onError={(e) => {
-                      // If the image fails to load, use the name initials instead
-                      e.target.onerror = null;
-                      e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                        post.sender.first_name.charAt(0) + post.sender.last_name.charAt(0)
-                      )}&color=${"#464646"}&background=${"FFFFFF"}`;
-                    }}
-                  />
+                  className="h-8.5 w-8.5 rounded-full object-cover"
+                  src={getAvatarAttributes(`${post.sender.full_name}`, processAvatarUrl(post.sender.avtar)).src}
+                  alt={getAvatarAttributes(`${post.sender.full_name}`, processAvatarUrl(post.sender.avtar)).alt}
+                  onError={(e) => {
+                    // If the image fails to load, use the name initials instead
+                    e.target.onerror = null;
+                    e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                      post.sender.full_name.split(' ')[0].charAt(0) + post.sender.full_name.split(' ')[1].charAt(0)
+                    )}&color=${"#464646"}&background=${"FFFFFF"}`;
+                  }}
+                />
                 ))}
                 <p className="ml-1  text-18px font-bold text-primary">
                   +{post.point + post.children.reduce((total, post) => total + post.point, 0)}
@@ -130,7 +130,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
         <div className="mt-4">
           <p className=" text-18px font-bold">
             <span className={`${PROFILE_USERNAME.text}`}>
-              {post.sender.full_name}:
+              {post.sender.full_name}
             </span>{' '}
             <span className="text-primary">
               {post.recipients.map((user) => `@${user.full_name}`).join(' ')}
@@ -157,6 +157,8 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
               )}
 
               {post.image && (
+                <>
+                {console.log(post.image)}
                 <img
                   className="block max-w-full rounded-md object-contain"
                   src={
@@ -165,6 +167,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                       : URL.createObjectURL(post.image)
                   }
                 />
+                </>
               )}
             </div>
           )}
@@ -241,7 +244,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                               ),
                               total_reaction_counts: reactions.length,
                               latest_user_reaction_full_name:
-                                me.data.first_name + ' ' + me.data.last_name,
+                                me.data.full_name,
                               is_reacted: true,
                             }
                             console.log(
@@ -336,7 +339,6 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
             </p>
           </div>
         </div>
-
         <div className="border-t border-[#EDEDED] pt-2 empty:hidden">
           {showCommentsFor === post.comment.id ? (
             <div>
@@ -344,13 +346,13 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                 <div>
                   <img
                     className="h-[34px] w-[34px] rounded-full object-cover"
-                    src={getAvatarAttributes(`${me.data.first_name} ${ me.data.last_name }`, processAvatarUrl(me.data.avtar)).src}
-                    alt={me.data.first_name}
+                    src={getAvatarAttributes(`${me.data.full_name}`, processAvatarUrl(me.data.avtar)).src}
+                    alt={me.data.full_name}
                     onError={(e) => {
                       // If the image fails to load, use the name initials instead
                       e.target.onerror = null;
                       e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                        me.data.first_name.charAt(0) + me.data.last_name.charAt(0)
+                        me.data.full_name.split(' ')[0].charAt(0) + me.data.full_name.split(' ')[1].charAt(0)
                       )}&color=${"#464646"}&background=${"FFFFFF"}`;
                     }}
                   />
@@ -539,13 +541,13 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
             <div className="mb-2 mt-2 flex gap-4">
                 <img
                   className="h-[34px] w-[34px] rounded-full"
-                  src={getAvatarAttributes(`${me.data.first_name} ${me.data.last_name}`, processAvatarUrl(me.data.avtar)).src}
-                  alt={getAvatarAttributes(`${me.data.first_name} ${me.data.last_name}`, processAvatarUrl(me.data.avtar)).alt}
+                  src={getAvatarAttributes(`${me.data.full_name}`, processAvatarUrl(me.data.avtar)).src}
+                  alt={getAvatarAttributes(`${me.data.full_name}`, processAvatarUrl(me.data.avtar)).alt}
                   onError={(e) => {
                     // If the image fails to load, use the name initials instead
                     e.target.onerror = null;
                     e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                      me.data.first_name.charAt(0) + me.data.last_name.charAt(0)
+                      me.data.full_name.split(' ')[0].charAt(0) + me.data.full_name.split(' ')[1].charAt(0)
                     )}&color=${"#464646"}&background=${"FFFFFF"}`;
                   }}
                 />
@@ -577,13 +579,13 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
               >
                   <img
                     className="h-8.5 w-8.5 rounded-full object-cover"
-                    src={getAvatarAttributes(`${commentOrTransaction.sender.first_name} ${commentOrTransaction.sender.last_name}`, processAvatarUrl(commentOrTransaction.sender.avtar)).src}
-                    alt={getAvatarAttributes(`${commentOrTransaction.sender.first_name} ${commentOrTransaction.sender.last_name}`, processAvatarUrl(commentOrTransaction.sender.avtar)).alt}
+                    src={getAvatarAttributes(`${commentOrTransaction.sender.full_name}`, processAvatarUrl(commentOrTransaction.sender.avtar)).src}
+                    alt={getAvatarAttributes(`${commentOrTransaction.sender.full_name}`, processAvatarUrl(commentOrTransaction.sender.avtar)).alt}
                     onError={(e) => {
                       // If the image fails to load, use the name initials instead
                       e.target.onerror = null;
                       e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                        commentOrTransaction.sender.first_name.charAt(0) + commentOrTransaction.sender.last_name.charAt(0)
+                        commentOrTransaction.sender.full_name.split(' ')[0].charAt(0) + commentOrTransaction.sender.full_name.split(' ')[1].charAt(0)
                       )}&color=${"#464646"}&background=${"FFFFFF"}`;
                     }}
                   />
@@ -591,7 +593,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                 <div className="relative ">
                   <div className="rounded-[15px] rounded-tl-none bg-paper p-[20px] text-[#464646]">
                     <p className="flex justify-between text-18px">
-                      <span className="font-bold">{commentOrTransaction.sender.first_name}</span>
+                        <span className="font-bold">{commentOrTransaction.sender.full_name.split(' ')[0]}</span>
                       <span className="text-[14px] leading-[17px] text-[#919191]">
                           {formatTimeFromNow(commentOrTransaction.created)}
                       </span>
@@ -668,7 +670,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                                   queryClient.setQueryData(
                                     ['transaction', props.sortBy],
                                     (prev) => {
-                                      if (!prev) return prev
+                                      if (!prev) return prevx
 
                                       const targetPost = prev
                                         .find((_post) => _post.id === post.id)
@@ -683,7 +685,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                                           ),
                                           total_reaction_count: reactions.length,
                                           latest_user_reaction_full_name:
-                                            me.data.first_name + ' ' + me.data.last_name,
+                                            me.data.full_name,
                                           is_reacted: true,
                                         }
                                       }

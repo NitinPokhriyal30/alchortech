@@ -21,14 +21,21 @@ import AnalyticsIcon from '@/assets/svg/home-sidebar/noun-analytics-5506185.svg'
 import PowerOffIcon from '@/assets/svg/home-sidebar/power-off (1).svg'
 import HelpIcon from '@/assets/svg/home-sidebar/HelpIcon'
 import { getAvatarAttributes, processAvatarUrl } from '@/utils'
+import Loader from './Loader'
 
-export default function HomeSidebar({}) {
-  const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
+export default function HomeSidebar({ }) {
+
+  const userId = Cookies.get('user_id');
+  const me = useQuery('me', () => api.auth.me(userId)) 
   const showSidebar = useSelector((store) => store.sidebar)
   const dispatch = useDispatch()
   const setShowSidebar = (show) => dispatch({ type: 'sidebar', show })
 
-  const userId = Cookies.get('user_id');
+  if (me.isLoading) {
+    return (<div className='flex justify-center' >
+      <Loader />
+    </div>)
+  }
 
   return (
     <>
@@ -74,19 +81,18 @@ export default function HomeSidebar({}) {
               className="mb-[11px] mt-[11px] flex items-center gap-3 rounded-[5px] px-3 hover:bg-white/[8%] xs:py-[11px] md:mb-[18px] [&.active]:bg-white/[8%]"
             >
               <div>
-              {console.log(me)}
                 <img
                   className="h-14 w-14 overflow-hidden rounded-full bg-gray-300"
-                  src={getAvatarAttributes(`${me?.data.full_name.split(' ')[0]} ${me?.data.full_name.split(' ')[1]}`, processAvatarUrl(me?.data?.avtar)).src}
-                  alt={getAvatarAttributes(`${me?.data.full_name.split(' ')[0]} ${me?.data.full_name.split(' ')[1]}`, processAvatarUrl(me.data?.avtar)).alt}
+                  src={getAvatarAttributes(`${me.data.full_name}`, processAvatarUrl(me.data.avtar)).src}
+                  alt={getAvatarAttributes(`${me.data.full_name}`, processAvatarUrl(me.data.avtar)).alt}
                   onError={(e) => {
-                    // If the image fails to load, use the full_name initials instead
+                    // If the image fails to load, use the name initials instead
                     e.target.onerror = null;
                     e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                      me?.data.full_name.split(' ')[0].charAt(0) + me?.data.full_name.split(' ')[1].charAt(0)
+                      me.data.full_name.split(' ')[0].charAt(0) + me.data.full_name.split(' ')[1].charAt(0)
                     )}&color=${"#464646"}&background=${"FFFFFF"}`;
                   }}
-                  />
+                />
               </div>
               <div>
                 <p className=" text-[16px] font-black text-white">Hi,</p>

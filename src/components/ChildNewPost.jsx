@@ -102,7 +102,7 @@ export default function ChildNewPost({ onClose, post, defaultPoint, sortBy, }) {
 
               .map((user) => (
                 <span className="text-[#464646]" key={user.id}>
-                  @{user.first_name} { }
+                  @{user.full_name} { }
                 </span>
               ))}{' '}
             {form.hashtags.length == 0 ? (
@@ -216,8 +216,10 @@ export default function ChildNewPost({ onClose, post, defaultPoint, sortBy, }) {
                   if (!validateNewPostForm(form, me.data)) return
 
                   const data = CreatePost(me.data.id, post.id, { ...form, recipients, hashtags: form.hashtags.map(item => item.name).join(',') })
+                  console.log(data);
                   const formData = toFormData(data)
                   const newTransaction = await api.transactions.new(formData)
+                  console.log(newTransaction);
                   newTransaction.sender.avtar = newTransaction.sender.avtar?.substring(
                     SERVER_URL.length
                   ) || ''
@@ -229,11 +231,12 @@ export default function ChildNewPost({ onClose, post, defaultPoint, sortBy, }) {
                     return [...prev]
                   })
                   await queryClient.refetchQueries('me')
+                  await queryClient.refetchQueries('currentUserPoints')
 
                   onClose()
                 } catch (e) {
-                  console.log('child-new-post', e)
-                  toast.error('Transaction failed. Server error')
+                  console.log('child-new-post', e.response)
+                  toast.error(e.response.data.message)
                 } finally {
                   setLoading(false)
                 }

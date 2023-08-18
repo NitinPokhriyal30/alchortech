@@ -1,4 +1,5 @@
 import axios from 'axios'
+import {toast} from "react-toastify"
 import Cookies from 'js-cookie'
 
 const wait = (ms) => (resolveWith) =>
@@ -6,14 +7,109 @@ const wait = (ms) => (resolveWith) =>
     setTimeout(() => res(resolveWith), ms)
   })
 
-axios.defaults.baseURL = 'http://staging.letshigh5.com/api/v1/'
+axios.defaults.baseURL = 'http://staging.letshigh5.com/'
 axios.defaults.headers.post['Content-Type'] = 'application/json'
 
+const api = {
+  users: {
+    all: () => axios.get('getUsers/').then((r) => r.data),
+    profiles: () => axios.get('api/v1/accounts/').then((r) => r.data),
+    userById: (id) => axios.get(`api/v1/accounts/userprofile/${id}/`).then((r) => r.data),
+    search: (params) => axios.get('employees/', { params }).then((r) => r.data),
+  },
+
+  auth: {
+    login: (data) => axios.post('api/v1/auth/jwt/create/', data).then((r) => r.data),
+
+    // useQuery(me) always has user bcoz its called during Login
+    // and other routes are Protected Routes
+    forgotPassword: (email) => axios.post('/request/password/', email).then((r) => r.data),
+    resetPassword: (password, token, uidb64) => axios.patch('passwordreset/complete', { password, token, uidb64 }).then((r) => r.data),
+    changeAvatar: (id, formData) => axios.put(`updateUserAvtar/${id}/`, formData).then((r) => r.data),
+    me: (id) => axios.get(`api/v1/accounts/userprofile/${id}/`).then((r) => r.data),
+    currentUser: () => axios.get(`api/v1/accounts/current-user/`).then((r) => r.data),
+    verifyToken: (token) =>
+      axios
+        .post('api/v1/auth/jwt/verify/', { token })
+        .then(() => true)
+        .catch((err) => {
+          console.log(err)
+          return false
+        }),
+    refreshToken: (refresh) => axios.post('api/v1/auth/jwt/refresh/', { refresh }).then((r) => r.data),
+  },
+
+  topStars: {
+    all: () => axios.get('api/v1/transactions/top-employees').then((r) => r.data),
+  },
+
+  transactions: {
+    new: (data) =>
+      axios
+        .post('api/v1/transactions/', data, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        })
+        .then((r) => r.data),
+    all: (filters) => axios.get(`api/v1/transactions?${filters.toString()}`).then((r) => r.data),
+    // meAsRecipient: (id) => axios.get(`api/posts/?recipients=${id}`).then((r) => r.data),
+    // meAsSender: (id) => axios.get(`api/posts/?sender=${id}`).then((r) => r.data),
+    meAsRecipient: (id, filterBy) => axios.get(`api/v1/transactions?recipients=${id}&date_range=${filterBy}`).then((r) => r.data),
+    meAsSender: (id, filterBy) => axios.get(`api/v1/transactions?sender=${id}&date_range=${filterBy}`).then((r) => r.data),
+    react: (data) => axios.post('api/v1/transactions/add-reaction/', data).then((r) => r.data),
+    allReactions: (data) => axios.get(`api/v1/transactions/transaction-reactions/${data.post_id}/`).then((r) => r.data),
+    updateReaction: (data) => axios.patch(`api/v1/transactions/update-user-reaction/${data.post_id}/`, data).then((r) => r.data),
+  },
+  comment: {
+    new: (data) =>
+      axios
+        .post(`api/v1/transactions/comments/${data.post_id}/`, data, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        })
+        .then((r) => r.data),
+    all: () => axios.get('api/v1/transactions/comments/').then((r) => r.data),
+    react: (data) => axios.post('api/v1/transactions/add-reaction/', data).then((r) => r.data),
+    by_id: (data) => axios.get(`api/v1/transactions/comments/${data.post_id}/`).then((r) => r.data),
+  },
+  todayEvents: () => axios.get('api/v1/transactions/today-events/').then((r) => r.data),
+
+  properties: () => axios.get('api/v1/common/properties/').then((r) => r.data),
+
+  analytics: {
+    all: () => axios.get('/api/v1/analytics/').then((r) => r.data),
+    filters: () => axios.get('/api/v1/analytics/filters/').then((r) => r.data),
+
+  }
+}
+
 axios.interceptors.request.use(
-  (request) => {
+  async (request) => {
     const token = Cookies.get('token')
-    if (token) request.headers.Authorization = 'Bearer ' + token
-    // console.log(request)
+    console.log(!request.url.includes('jwt') ? 'verifying token' : ' ', request.url)
+
+    if (token && !request.url.includes('jwt')) {
+      // verify access token
+      const isValid = await api.auth.verifyToken(token)
+
+      if (!isValid) {
+        try {
+          // get new access token from /refresh-token
+          console.info('refreshing token')
+          const refreshToken = Cookies.get('refresh')
+          const { access: newToken } = await api.auth.refreshToken(refreshToken)
+          request.headers.Authorization = 'Bearer ' + newToken
+          Cookies.set('token', newToken)
+          console.info('refreshed token ✔️')
+        } catch (err) {
+          toast.warn("Session has expired.")
+          console.log(err)
+          Cookies.remove('refresh')
+          Cookies.remove('token')
+          Cookies.remove('user_id')
+        }
+      } else {
+        request.headers.Authorization = 'Bearer ' + token
+      }
+    }
     return request
   },
   (error) => {
@@ -24,7 +120,6 @@ axios.interceptors.request.use(
 
 axios.interceptors.response.use(
   (response) => {
-    // console.log(response)
     return response
   },
   (error) => {
@@ -32,76 +127,5 @@ axios.interceptors.response.use(
     return Promise.reject(error)
   }
 )
-
-const api = {
-  users: {
-    all: () => axios.get('accounts/').then((r) => r.data),
-    profiles: () => axios.get('accounts/').then((r) => r.data),
-    userById: (id) => axios.get(`accounts/userprofile/${id}/`).then((r) => r.data),
-    search: (params) => axios.get('employees/', { params }).then((r) => r.data),
-  },
-  
-  auth: {
-    login: (data) => axios.post('auth/jwt/create/', data).then((r) => r.data),
-    user: () => axios.get('accounts/current-user/').then((r) => r.data),
-
-    // useQuery(me) always has user bcoz its called during Login
-    // and other routes are Protected Routes
-    forgotPassword: (email) => axios.post('/request/password/', email).then((r) => r.data),
-    resetPassword: (password, token, uidb64) =>
-      axios.patch('passwordreset/complete', { password, token, uidb64 }).then((r) => r.data),
-    changeAvatar: (id, formData) =>
-      axios.put(`updateUserAvtar/${id}/`, formData).then((r) => r.data),
-    me: (id) => axios.get(`accounts/userprofile/${id}/`).then((r) => r.data),
-  },
-
-  topStars: {
-    all: () => axios.get('transactions/top-employees/').then((r) => r.data),
-  },
-
-  transactions: {
-    new: (data) =>
-      axios
-        .post('transactions/', data, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        })
-        .then((r) => r.data),
-    all: (filters) => axios.get(`transactions/?${filters.toString()}`).then((r) => r.data),
-    // meAsRecipient: (id) => axios.get(`api/posts/?recipients=${id}`).then((r) => r.data),
-    // meAsSender: (id) => axios.get(`api/posts/?sender=${id}`).then((r) => r.data),
-    meAsRecipient: (id, filterBy) =>
-      axios
-        .get(`transactions/?recipients=${id}&date_range=${filterBy}`)
-        .then((r) => r.data),
-    meAsSender: (id, filterBy) =>
-      axios
-        .get(`transactions/?sender=${id}&date_range=${filterBy}`)
-        .then((r) => r.data),
-    react: (data) => axios.post('transactions/add-reaction/', data).then((r) => r.data),
-    allReactions: (data) => axios.get(`transactions/transaction-reactions/${data.post_id}/`).then((r) => r.data),
-    updateReaction: (data) =>
-      axios.patch(`transactions/update-user-reaction/${data.post_id}/`, data).then((r) => r.data),
-  },
-  comment: {
-    new: (data) =>
-      axios
-        .post(`transactions/comments/${data.post_id}/`, data, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        })
-        .then((r) => r.data),
-    all: () => axios.get('transactions/comments/').then((r) => r.data),
-    react: (data) => axios.post('add-reaction/', data).then((r) => r.data),
-    by_id: (data) => axios.get(`transactions/comments/${data.post_id}/`).then(r=> r.data)
-  },
-  todayEvents: () => axios.get('transactions/today-events/').then((r) => r.data),
-
-  properties: () => axios.get('common/properties/').then((r) => r.data),
-
-  analytics: {
-    all: () => axios.get('analytics/').then((r) => r.data),
-    filters: () => axios.get('analytics/filters/').then((r) => r.data),
-    
-  }
-}
 
 export { api }

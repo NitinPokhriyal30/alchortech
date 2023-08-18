@@ -63,20 +63,20 @@ const InteractionChart = ({ interactionData, me, hoveredRowIndex, onRowHover, se
       </div>
 
       <div className="mx-32 fixed">
-      {console.log(me)}
+        {console.log(me)}
 
         <img
           className={`rounded-full h-16 w-16 border-2 ${isCenterImageHovered ? 'border-[#5486E3]' : 'hover:border-[#5486E3]'} z-10`}
           onMouseEnter={() => setIsCenterImageHovered(true)} onMouseLeave={handleMouseLeave}
           src={getAvatarAttributes(`${me?.full_name.split(' ')[0]} ${me?.full_name.split(' ')[1]}`, processAvatarUrl(me?.avtar)).src}
-              alt={getAvatarAttributes(`${me?.full_name.split(' ')[0]} ${me?.full_name.split(' ')[1]}`, processAvatarUrl(me?.avtar)).alt}
-              onError={(e) => {
-                // If the image fails to load, use the full_name initials instead
-                e.target.onerror = null;
-                e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                  me?.full_name.split(' ')[0].charAt(0) + me?.full_name.split(' ')[1].charAt(0)
-                )}&color=${"#464646"}&background=${"FFFFFF"}`;
-              }}
+          alt={getAvatarAttributes(`${me?.full_name.split(' ')[0]} ${me?.full_name.split(' ')[1]}`, processAvatarUrl(me?.avtar)).alt}
+          onError={(e) => {
+            // If the image fails to load, use the full_name initials instead
+            e.target.onerror = null;
+            e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+              me?.full_name.split(' ')[0].charAt(0) + me?.full_name.split(' ')[1].charAt(0)
+            )}&color=${"#464646"}&background=${"FFFFFF"}`;
+          }}
         />
       </div>
 
@@ -151,7 +151,7 @@ const InteractionChart = ({ interactionData, me, hoveredRowIndex, onRowHover, se
         {/* 1st Pic Line */}
         {interactionData[0] && (
           <path
-            d = "M 78 118 a 50 50 0 0 1 54 76"
+            d="M 100 117 a 50 50 0 0 1 40 46"
             stroke={'#ACACAC'}
             strokeWidth={(hoveredIndex === 0 || hoveredRowIndex === 0 || isCenterImageHovered) ? 3 : 1}
             fill="none"
@@ -161,55 +161,55 @@ const InteractionChart = ({ interactionData, me, hoveredRowIndex, onRowHover, se
         {/* 2nd Pic Line */}
         {interactionData[1] && (
           <path
-            d = "M 220 112 a 50 50 0 0 0 -40 56"
+            d="M 220 112 a 50 50 0 0 0 -40 56"
             stroke={'#ACACAC'}
             strokeWidth={(hoveredIndex === 1 || hoveredRowIndex === 1 || isCenterImageHovered) ? 3 : 1}
             fill="none"
-            />
-            
+          />
+
         )}
 
-        
+
 
         {/* 3rd Pic Line */}
         {interactionData[2] && (
-        <path
-          d = "M 70 210 a 50 50 0 0 1 66 -18"
-          stroke={'#ACACAC'}
-          strokeWidth={(hoveredIndex === 2 || hoveredRowIndex === 2 || isCenterImageHovered) ? 3 : 1}
-          fill="none"
-        />
+          <path
+            d="M 70 210 a 50 50 0 0 1 66 -18"
+            stroke={'#ACACAC'}
+            strokeWidth={(hoveredIndex === 2 || hoveredRowIndex === 2 || isCenterImageHovered) ? 3 : 1}
+            fill="none"
+          />
         )}
 
         {/* 4th Pic Line */}
         {interactionData[3] && (
           <path
-            d = "M 260 212 a 50 50 0 0 0 -80 -14"
+            d="M 260 212 a 50 50 0 0 0 -80 -14"
             stroke={'#ACACAC'}
             strokeWidth={(hoveredIndex === 3 || hoveredRowIndex === 3 || isCenterImageHovered) ? 3 : 1}
             fill="none"
-            />  
+          />
         )}
 
         {/* 5th Pic Line */}
         {interactionData[4] && (
           <path
-          d = "M 160 218 a 50 50 0 0 0 0 58"
-          stroke={'#ACACAC'}
-          strokeWidth={(hoveredIndex === 4 || hoveredRowIndex === 4 || isCenterImageHovered) ? 3 : 1}
-          fill="none"
-          />  
+            d="M 160 218 a 50 50 0 0 0 0 58"
+            stroke={'#ACACAC'}
+            strokeWidth={(hoveredIndex === 4 || hoveredRowIndex === 4 || isCenterImageHovered) ? 3 : 1}
+            fill="none"
+          />
         )}
         <svg className="absolute top-0 left-0 h-full w-full z-[20]">
-        <circle cx="108" cy="118" r="4" fill="#27C4A0" />
-        <circle cx="214" cy="112" r="4" fill="#FFD398" />
-        <circle cx="73" cy="206" r="4" fill="#F89D96" />
-        <circle cx="256" cy="203" r="4" fill="#5486E3" />
-        <circle cx="158" cy="272" r="4" fill="#F89D96" />
+          <circle cx="107" cy="119" r="4" fill="#27C4A0" />
+          <circle cx="213" cy="114" r="4" fill="#FFD398" />
+          <circle cx="73" cy="207" r="4" fill="#F89D96" />
+          <circle cx="254" cy="203" r="4" fill="#5486E3" />
+          <circle cx="158" cy="272" r="4" fill="#F89D96" />
         </svg>
       </svg>
 
-     
+
     </div>
   );
 };
