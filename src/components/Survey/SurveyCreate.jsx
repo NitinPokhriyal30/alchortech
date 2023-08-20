@@ -90,6 +90,8 @@ const SurveyCreate = () => {
   })
 
   function handleGoNext() {
+
+    return setStep((p) => ++p)
     if (step === 0) {
       // clear prev errors
       setErrors((prev) => {

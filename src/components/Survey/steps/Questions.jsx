@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
-import { Radio, RadioGroup, FormControl, FormControlLabel, TextField, InputLabel, Select, MenuItem, Checkbox, FormGroup, Button, IconButton } from '@mui/material'
+import React, { useEffect, useRef, useState } from 'react'
+import { Radio, RadioGroup, Select, FormControl, FormControlLabel, TextField, InputLabel, MenuItem, Checkbox, FormGroup, Button, IconButton } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
-import { RiInformationLine } from 'react-icons/ri'
+import { RiAddLine, RiAttachmentLine, RiDeleteBin2Line, RiDeleteBin3Line, RiDeleteBin4Line, RiDeleteBin5Line, RiDeleteBin6Line, RiDeleteBin7Line, RiInformationLine } from 'react-icons/ri'
 
 /**
  * @param {{
@@ -12,13 +12,14 @@ import { RiInformationLine } from 'react-icons/ri'
  *      options?: string[];
  *      answer: string;
  *      question: string;
+ *      img?: File
  *    }[]
  *  }
  * }} param0
  */
 const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
-  // State for selected question type and radio options
   const [selectedOption, setSelectedOption] = useState('input')
+  const questionImgRefs = useRef([])
   // const [isTimeBounded, setIsTimeBounded] = useState(true)
 
   // Handler for changing the question type
@@ -58,6 +59,21 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
   const handleQuestionChange = (event, questionIndex) => {
     const updatedQuestions = { ...questions }
     updatedQuestions.questions[questionIndex].question = event.target.value
+    setQuestions(updatedQuestions)
+  }
+
+  const handleQuestionImageChange = (/** @type {import('react').ChangeEvent<HTMLInputElement>} */ event, questionIndex) => {
+    const updatedQuestions = { ...questions }
+
+    updatedQuestions.questions[questionIndex].img = event.target.files[0]
+
+    setQuestions(updatedQuestions)
+  }
+
+  const handleQuestionImageRemove = (index) => {
+    const updatedQuestions = { ...questions }
+    updatedQuestions.questions[index].img = undefined
+
     setQuestions(updatedQuestions)
   }
 
@@ -113,131 +129,127 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
   }
 
   return (
-    <div className="rounded-lg bg-white px-5 py-10 shadow-[0px_2px_3px_#00000029]">
-      {/* <pre>{JSON.stringify(questions.questions, null, 2)}</pre> */}
+    <div className="space-y-5">
       {questions.questions.map((question, index) => (
-        <div className="items-top mb-5 grid grid-cols-[1fr_2fr] gap-8" key={index}>
-          {/* Question Type Selector */}
-          <div>
-            <p className="my-[25px] text-18px font-bold text-text-black">Question {index + 1}</p>
-            {isTimeBounded ? (
-              <Select id={`demo-simple-select-${index}`} value={question.type || selectedOption} onChange={(event) => handleOptionChange(event, index)} fullWidth>
-                <MenuItem value="radio">Radio Button</MenuItem>
-                <MenuItem value="check-box">Checkboxes</MenuItem>
-                <MenuItem value="dropdown">Dropdown</MenuItem>
-              </Select>
-            ) : (
-              <Select id={`demo-simple-select-${index}`} value={question.type || selectedOption} onChange={(event) => handleOptionChange(event, index)} fullWidth>
-                <MenuItem value="input">Text Box</MenuItem>
-                <MenuItem value="text-area">Text Area</MenuItem>
-                <MenuItem value="radio">Radio Button</MenuItem>
-                <MenuItem value="check-box">Checkboxes</MenuItem>
-                <MenuItem value="dropdown">Dropdown</MenuItem>
-              </Select>
-            )}
+        <div className="rounded-lg bg-white px-5 py-10 shadow-[0px_2px_3px_#00000029]">
+          <div className="items-top mb-5 grid grid-cols-[1fr_2fr] gap-8" key={index}>
+            {/* Question Type Selector */}
+            <div>
+              <p className="mb-2.5 mt-[25px] text-18px font-black text-text-black">Question {index + 1}</p>
+              <select className="w-full rounded-[4px] border border-[#d1d1d1] p-2.5 text-16px" value={question.type || selectedOption} onChange={(event) => handleOptionChange(event, index)} fullWidth>
+                {isTimeBounded ? (
+                  <>
+                    <option value="radio">Radio Button</option>
+                    <option value="check-box">Checkboxes</option>
+                    <option value="dropdown">Dropdown</option>
+                  </>
+                ) : (
+                  <>
+                    <option value="input">Text Box</option>
+                    <option value="text-area">Text Area</option>
+                    <option value="radio">Radio Button</option>
+                    <option value="check-box">Checkboxes</option>
+                    <option value="dropdown">Dropdown</option>
+                  </>
+                )}
+              </select>
 
-            <p className={'mt-2.5 ' + COLORS.gray}>
-              <RiInformationLine className="inline align-text-bottom text-[1.1em]" /> Question Type
-            </p>
-          </div>
+              <p className={'mt-1 ' + COLORS.gray}>
+                <RiInformationLine className="inline align-text-bottom text-[1.1em]" /> Question Type
+              </p>
+            </div>
 
-          {/* Question and Input Fields */}
-          <div>
-            <TextField fullWidth margin="normal" variant="standard" placeholder="Enter your question" value={question.question} onChange={(event) => handleQuestionChange(event, index)} />
-            {question.type === 'input' && (
-              <div>
-                {isTimeBounded === true && <TextField margin="normal" fullWidth variant="outlined" placeholder="Answer" value={question.answer} onChange={(event) => handleInputAnswerChange(event, index)} />}
-                {/* Delete Question Button */}
-                <Button variant="contained" onClick={() => handleDeleteQuestion(index)}>
-                  Delete Question
-                </Button>
-              </div>
-            )}
-            {question.type === 'text-area' && (
-              <div>
-                {isTimeBounded === true && <TextField fullWidth margin="normal" variant="outlined" multiline placeholder="Answer" rows={4} value={question.answer} onChange={(event) => handleAnswerChange(event, index)} />}
-                {/* Delete Question Button */}
-                <Button variant="contained" onClick={() => handleDeleteQuestion(index)}>
-                  Delete Question
-                </Button>
-              </div>
-            )}
-            {question.type === 'radio' && (
-              <div>
-                <RadioGroup>
-                  {question.options.map((item, optionIndex) => (
-                    <div key={optionIndex} style={{ display: 'flex', alignItems: 'center' }}>
-                      {/* Checkbox Option */}
-                      <FormControlLabel value={item} control={<Radio />} label={item} checked={item === question.answer} onChange={(event) => handleAnswerChange(event, index)} disabled={isTimeBounded === false} />
-                      {/* Edit Radio Option */}
-                      <IconButton
-                        onClick={() => {
-                          const newText = window.prompt('Enter new text:', item)
-                          if (newText !== null && newText !== '') {
-                            handleEditOption(index, optionIndex, newText)
-                          }
-                        }}
-                        size="small"
-                      >
-                        <EditIcon />
-                      </IconButton>
-                      {/* Delete Radio Option */}
-                      <IconButton onClick={() => handleDeleteOption(index, optionIndex)} size="small">
-                        <DeleteIcon />
-                      </IconButton>
-                    </div>
-                  ))}
-                </RadioGroup>
-                {/* Add New Radio Option Button */}
-                <Button variant="contained" onClick={() => handleAddOption(index)}>
-                  Add New Option
-                </Button>
-                {/* Delete Question Button */}
-                <Button variant="contained" onClick={() => handleDeleteQuestion(index)}>
-                  Delete Question
-                </Button>
-              </div>
-            )}
-            {question.type === 'check-box' && (
-              <div>
-                <FormGroup>
-                  {question.options.map((item, optionIndex) => (
-                    <div key={optionIndex} style={{ display: 'flex', alignItems: 'center' }}>
-                      {/* Checkbox Option */}
-                      <FormControlLabel value={item} control={<Checkbox checked={isTimeBounded === true && question.answer.split(',').includes(encodeURIComponent(item))} />} label={item} onChange={handleCheckboxAnswerChange(index, optionIndex)} disabled={isTimeBounded === false} />
-                      {/* Edit Checkbox Option */}
-                      <IconButton
-                        onClick={() => {
-                          const newText = window.prompt('Enter new text:', item)
-                          if (newText !== null && newText !== '') {
-                            handleEditOption(index, optionIndex, newText)
-                          }
-                        }}
-                        size="small"
-                      >
-                        <EditIcon />
-                      </IconButton>
-                      {/* Delete Dropdown Option */}
-                      <IconButton onClick={() => handleDeleteOption(index, optionIndex)} size="small">
-                        <DeleteIcon />
-                      </IconButton>
-                    </div>
-                  ))}
-                </FormGroup>
-                {/* Add New Option Button */}
-                <Button variant="contained" onClick={() => handleAddOption(index)}>
-                  Add New Option
-                </Button>
-                {/* Delete Question Button */}
-                <Button variant="contained" onClick={() => handleDeleteQuestion(index)}>
-                  Delete Question
-                </Button>
-              </div>
-            )}
-            {question.type === 'dropdown' && (
-              <div>
-                <FormControl fullWidth>
-                  <Select className="my-[15px]" labelId={`demo-simple-select-label-${index}`} id={`demo-simple-select-${index}`} value={question.answer} onChange={(event) => handleAnswerChange(event, index)} disabled={isTimeBounded === false}>
+            {/* Question and Input Fields */}
+            <div>
+              <QuestionInput
+                question={question}
+                placeholder="Enter your question"
+                value={question.question}
+                onChange={(event) => handleQuestionChange(event, index)}
+                endSlot={
+                  question.img ? (
+                    <button type="button" onClick={() => handleQuestionImageRemove(index)}>
+                      <RiDeleteBin7Line fontSize={'1.2em'} color="inherit" />
+                    </button>
+                  ) : (
+                    <label className="flex" onChange={(event) => handleQuestionImageChange(event, index)}>
+                      <RiAttachmentLine fontSize={'1.2em'} color="inherit" />
+                      <input hidden type="file" accept="image/*" />
+                    </label>
+                  )
+                }
+              />
+
+              {question.type === 'input' && <div>{isTimeBounded === true && <TextField margin="normal" fullWidth variant="outlined" placeholder="Answer" value={question.answer} onChange={(event) => handleInputAnswerChange(event, index)} />}</div>}
+
+              {question.type === 'text-area' && <div>{isTimeBounded === true && <TextField fullWidth margin="normal" variant="outlined" multiline placeholder="Answer" rows={4} value={question.answer} onChange={(event) => handleAnswerChange(event, index)} />}</div>}
+
+              {question.type === 'radio' && (
+                <div className="pt-2">
+                  <RadioGroup>
+                    {question.options.map((item, optionIndex) => (
+                      <div key={optionIndex} className="flex items-center">
+                        {/* Checkbox Option */}
+                        <FormControlLabel value={item} control={<Radio />} label={item} checked={item === question.answer} onChange={(event) => handleAnswerChange(event, index)} disabled={isTimeBounded === false} />
+                        {/* Edit Radio Option */}
+                        <IconButton
+                          onClick={() => {
+                            const newText = window.prompt('Enter new text:', item)
+                            if (newText !== null && newText !== '') {
+                              handleEditOption(index, optionIndex, newText)
+                            }
+                          }}
+                          size="small"
+                        >
+                          <EditIcon />
+                        </IconButton>
+                        {/* Delete Radio Option */}
+                        <IconButton onClick={() => handleDeleteOption(index, optionIndex)} size="small">
+                          <DeleteIcon />
+                        </IconButton>
+                      </div>
+                    ))}
+                  </RadioGroup>
+                </div>
+              )}
+              {question.type === 'check-box' && (
+                <div>
+                  <FormGroup>
+                    {question.options.map((item, optionIndex) => (
+                      <div key={optionIndex} style={{ display: 'flex', alignItems: 'center' }}>
+                        {/* Checkbox Option */}
+                        <FormControlLabel value={item} control={<Checkbox checked={isTimeBounded === true && question.answer.split(',').includes(encodeURIComponent(item))} />} label={item} onChange={handleCheckboxAnswerChange(index, optionIndex)} disabled={isTimeBounded === false} />
+                        {/* Edit Checkbox Option */}
+                        <IconButton
+                          onClick={() => {
+                            const newText = window.prompt('Enter new text:', item)
+                            if (newText !== null && newText !== '') {
+                              handleEditOption(index, optionIndex, newText)
+                            }
+                          }}
+                          size="small"
+                        >
+                          <EditIcon />
+                        </IconButton>
+                        {/* Delete Dropdown Option */}
+                        <IconButton onClick={() => handleDeleteOption(index, optionIndex)} size="small">
+                          <DeleteIcon />
+                        </IconButton>
+                      </div>
+                    ))}
+                  </FormGroup>
+                </div>
+              )}
+              {question.type === 'dropdown' && (
+                <div className="pt-1">
+                  <Select
+                    className={'my-[15px] w-full ' + (!isTimeBounded && '!hidden')}
+                    labelId={`demo-simple-select-label-${index}`}
+                    id={`demo-simple-select-${index}`}
+                    value={isTimeBounded === false ? question.options[0] : question.answer}
+                    onChange={(event) => handleAnswerChange(event, index)}
+                    disabled={isTimeBounded === false}
+                  >
                     {question.options.map((item, optionIndex) => (
                       <MenuItem key={optionIndex} value={item}>
                         {item}
@@ -267,33 +279,74 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
                       </IconButton>
                     </div>
                   ))}
-                </FormControl>
-                {/* Add New Select Option Button */}
-                <Button variant="contained" onClick={() => handleAddOption(index)}>
-                  Add New Option
-                </Button>
-                {/* Delete Question Button */}
-                <Button variant="contained" onClick={() => handleDeleteQuestion(index)}>
-                  Delete Question
-                </Button>
-              </div>
-            )}
+                </div>
+              )}
 
-            {errors?.find(([_index]) => _index === index)?.[1] && (
-              <p className="text-small mt-2 text-red-500">
-                <RiInformationLine className="inline align-text-bottom text-[1.1em]" />
-                {errors.find(([_index]) => _index === index)[1]}
-              </p>
-            )}
+              {errors?.find(([_index]) => _index === index)?.[1] && (
+                <p className="text-small mt-2 text-red-500">
+                  <RiInformationLine className="inline align-text-bottom text-[1.1em]" />
+                  {errors.find(([_index]) => _index === index)[1]}
+                </p>
+              )}
+
+              {['radio', 'check-box', 'dropdown'].includes(question.type) && (
+                <div className="-ml-3 flex cursor-pointer items-center rounded-md pl-3 hover:bg-paper">
+                  {/* Checkbox Option */}
+                  <FormControlLabel className="!cursor-pointer" value={'add new option'} control={question.type === 'radio' ? <Radio /> : <Checkbox />} label={<span className="text-primary">Add new option</span>} onClick={() => handleAddOption(index)} disabled />
+                </div>
+              )}
+
+              <div className="mt-5 flex">
+                {/* Add New Question Button */}
+                <button hidden={index !== questions.questions.length - 1} className={'text-primary ' + ''} onClick={addNewQuestion}>
+                  <RiAddLine className="text- inline" /> Add New Question
+                </button>
+
+                {/* Delete Question Button */}
+                <button className="ml-auto text-[1.2em]" variant="contained" onClick={() => handleDeleteQuestion(index)}>
+                  <RiDeleteBin7Line />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       ))}
 
-      {/* Add New Question Button */}
-      <Button variant="contained" onClick={addNewQuestion}>
-        Add New Question
-      </Button>
+      <div hidden={questions.questions.length} className="rounded-lg bg-white px-5 py-10 shadow-[0px_2px_3px_#00000029]">
+        <button className={'text-primary '} onClick={addNewQuestion}>
+          <RiAddLine className="text- inline" /> Add New Question
+        </button>
+      </div>
     </div>
+  )
+}
+
+function QuestionInput({ endSlot, question: { img }, ...props }) {
+  const [objectUrl, setObjectURL] = React.useState('')
+  useEffect(() => {
+    if (!img) {
+      setObjectURL('')
+      return
+    }
+    const url = URL.createObjectURL(img)
+    setObjectURL(url)
+
+    return () => URL.revokeObjectURL(url)
+  }, [img])
+
+  return (
+    <>
+      <div className="flex items-center border-b border-[#d1d1d1] focus-within:border-primary ">
+        <input className="w-full px-0.5 py-2.5 text-16px outline-none " {...props} />
+        {endSlot}
+      </div>
+
+      {objectUrl && (
+        <div className="border-b border-[#d1d1d1] pb-2.5">
+          <img className="mt-2.5 w-full rounded-md" src={objectUrl} alt="question img" />
+        </div>
+      )}
+    </>
   )
 }
 
