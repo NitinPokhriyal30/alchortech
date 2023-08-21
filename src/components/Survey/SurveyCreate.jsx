@@ -64,6 +64,10 @@ function handleValidateQuestions(questions) {
     if (['radio', 'check-box', 'dropdown'].includes(question.type) && question.options.length === 0) {
       errors.push([i, 'Must have at least one options'])
     }
+
+    if (['radio', 'check-box', 'dropdown'].includes(question.type) && question.answer.length === 0) {
+      errors.push([i, 'Must have answer filled'])
+    }
   })
   return errors
 }
@@ -73,7 +77,37 @@ const SurveyCreate = () => {
   const [errors, setErrors] = React.useState({})
 
   const handleStepClick = (newValue) => {
-    console.log(newValue);
+    if (step === 0) {
+      // clear prev errors
+      setErrors((prev) => {
+        delete prev.surveyDetails
+        return { ...prev }
+      })
+
+      const errors = handleValidateSurveyDetails(survey)
+      if (errors.length > 0) {
+        toast.error('Your details have some errors')
+        setErrors((prev) => ({ ...prev, surveyDetails: errors }))
+        return
+      }
+    } else if (step === 1) {
+      if (survey.questions.length === 0) {
+        toast.error('Your survey must have questions')
+        return
+      }
+
+      // clear prev errors
+      setErrors((prev) => {
+        delete prev.questions
+        return { ...prev }
+      })
+      const errors = handleValidateQuestions(survey.questions)
+      if (errors.length > 0) {
+        toast.error('Your question have some errors')
+        setErrors((prev) => ({ ...prev, questions: errors }))
+        return
+      }
+    }
     setStep(newValue);
   };
 
@@ -90,8 +124,6 @@ const SurveyCreate = () => {
   })
 
   function handleGoNext() {
-
-    return setStep((p) => ++p)
     if (step === 0) {
       // clear prev errors
       setErrors((prev) => {

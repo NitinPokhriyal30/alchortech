@@ -76,23 +76,23 @@ const SurveyTable = () => {
       </div>
 
       <div className="my-1 px-4">
-        <div className="h-[1px] w-full bg-[#7B7B7B]"></div>
+        <div className="h-[1px] w-full bg-[#cecece]"></div>
       </div>
 
       <div className="mx-4 mt-2 rounded-lg bg-white drop-shadow-md">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-[#7B7B7B] ">
-              <th className="w-auto py-4 pl-8 md:pl-14 text-start font-Lato text-[16px] font-semibold text-[#292929]">
+            <tr className="border-b border-[#cecece] ">
+              <th className="w-auto py-4 pl-8 md:pl-14 text-start font-Lato text-[16px] font-medium text-[#292929]">
                 Name
               </th>
-              <th className="w-1/4 py-4 font-Lato text-[16px] font-semibold text-[#292929]">
+              <th className="w-1/4 py-4 font-Lato text-[16px] font-medium text-[#292929]">
                 Start date
               </th>
-              <th className="w-1/4 py-4 font-Lato text-[16px] font-semibold text-[#292929]">
+              <th className="w-1/4 py-4 font-Lato text-[16px] font-medium text-[#292929]">
                 End date
               </th>
-              <th className="w-1/4 py-4 font-Lato text-[16px] font-semibold text-[#292929]">
+              <th className="w-1/4 py-4 font-Lato text-[16px] font-medium text-[#292929]">
                 Type
               </th>
             </tr>
@@ -101,13 +101,13 @@ const SurveyTable = () => {
             {Array.from({ length: 5 }).map(() => (
               <tr className="group rounded-xl border-b border-[#7B7B7B] hover:bg-[#ececec]" onClick={() => navigate("/survey/preview")}>
                 <td className="py-3 pl-8 md:pl-14 text-[16px] font-semibold text-[#5486E3]">Survey 1</td>
-                <td className="py-3 text-center font-Lato text-[16px] font-normal text-[#000000]">
+                <td className="py-3 text-center font-Lato text-[16px] font-normal text-[#292929]">
                   Feb 13, 2023
                 </td>
-                <td className="py-3 text-center font-Lato text-[16px] font-normal text-[#000000]">
+                <td className="py-3 text-center font-Lato text-[16px] font-normal text-[#292929]">
                   Feb 18, 2023
                 </td>
-                <td className="py-3 text-center font-Lato text-[16px] font-normal text-[#000000]">
+                <td className="py-3 text-center font-Lato text-[16px] font-normal text-[#292929]">
                   Automatic
                 </td>
                 <td className="py-3 text-center opacity-0 transition-opacity duration-200 group-hover:opacity-100">
