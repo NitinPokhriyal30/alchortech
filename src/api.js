@@ -15,7 +15,8 @@ const api = {
     all: () => axios.get('getUsers/').then((r) => r.data),
     profiles: () => axios.get('api/v1/accounts/').then((r) => r.data),
     userById: (id) => axios.get(`api/v1/accounts/userprofile/${id}/`).then((r) => r.data),
-    search: (params) => axios.post('api/v1/accounts/search-user/', params, {headers: {"Content-Type": "multipart/form-data"}}).then((r) => r.data),
+    // search: (params) => axios.post('api/v1/accounts/search-user/', params, {headers: {"Content-Type": "multipart/form-data"}}).then((r) => r.data),
+    search: (params) => axios.get(`api/v1/accounts/search-user?${params.toString()}`).then((r) => r.data),
   },
 
   auth: {

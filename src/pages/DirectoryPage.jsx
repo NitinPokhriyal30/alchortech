@@ -37,20 +37,29 @@ export default function DirectoryPage({ ...props }) {
   const [departmentFilter, setDepartmentFilter] = React.useState('')
   const [locationFilter, setLocationFilter] = React.useState('')
   const [page, setPage] = React.useState(1)
-  const users = useQuery({
-    queryKey: ['users', locationFilter, departmentFilter, query],
-    queryFn: () =>
+  // const users = useQuery({
+  //   queryKey: ['users', locationFilter, departmentFilter, query],
+  //   queryFn: () =>
+  //     api.users.search(
+  //       toFormData({
+  //         params: query,
+  //         ...Object_filter(([, value]) => value, {
+  //           location: locationFilter,
+  //           department: departmentFilter,
+  //           // page,
+  //         }),
+  //       })
+  //     ),
+  // })
+
+  const users = useQuery(
+    ['users', query, departmentFilter, locationFilter, page],
+    () =>
       api.users.search(
-        toFormData({
-          params: query,
-          ...Object_filter(([, value]) => value, {
-            location: locationFilter,
-            department: departmentFilter,
-            // page,
-          }),
-        })
-      ),
-  })
+        new URLSearchParams({ params: query, location: locationFilter, department: departmentFilter, page: page, pagination: 1, page_size: 6 })
+      )
+  )
+
 
   const filteredUsers = users.data
   const department = profiles.data ? getDepartment(profiles.data) : []
@@ -102,7 +111,7 @@ export default function DirectoryPage({ ...props }) {
                   <SlArrowLeft className="text-xl" />
                 </button>
 
-                <button disabled={users.data?.next == null} className="ml-3 grid h-9 w-9 place-items-center rounded-[3px] border border-[#d5d5d5] disabled:text-gray-300" onClick={() => setPage((p) => ++p)}>
+                <button disabled={users.data?.detail == 'Invalid page.'} className="ml-3 grid h-9 w-9 place-items-center rounded-[3px] border border-[#d5d5d5] disabled:text-gray-300" onClick={() => setPage((p) => ++p)}>
                   <SlArrowRight className="text-xl" />
                 </button>
               </div>
