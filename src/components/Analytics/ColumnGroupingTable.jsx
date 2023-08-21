@@ -1,5 +1,7 @@
 import React from 'react';
 import DataTable from 'react-data-table-component';
+import growUp from '../../assets/images/analytics/growUp.svg'
+import shrinkDown from '../../assets/images/analytics/shrinkDown.svg'
 
 
 
@@ -26,8 +28,11 @@ export default function ColumnGroupingTable({departmentData}) {
             >
               {row.department}
             </div>
-            <div className='px-2 py-[4px] text-[9px] text-[#285C55] rounded-md bg-[#D6FBF0]'>
-              {`${percentage}% from last month`}
+            <div className='text-[9px] rounded-md bg-[#D6FBF0] text-[#285C55]'>
+              <div className='flex py-1 px-1 items-center' >
+                <img className='mr-[1px]' src={growUp} alt='grow-up'/>  
+                {`${percentage}% from last month`}
+              </div>
             </div>
           </div>
         );

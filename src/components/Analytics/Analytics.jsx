@@ -3,8 +3,10 @@ import GoldBadge from '../../assets/images/analytics/gold.svg'
 import SilverBadge from '../../assets/images/analytics/silver.svg'
 import BronzeBadge from '../../assets/images/analytics/bronze.svg'
 import filterSymbol from '../../assets/images/analytics/filterSymbol.svg'
+import growUp from '../../assets/images/analytics/growUp.svg'
+import shrinkDown from '../../assets/images/analytics/shrinkDown.svg'
 import ColumnGroupingTable from './ColumnGroupingTable'
-import WordCloudComponent from './WordCloudComponent'
+import WordCloud from './WordCloud'
 import BarChart from './BarChart'
 import AreaChart from './AreaChart'
 import AmazonLogo from '../../assets/images/analytics/Amazon.png'
@@ -18,51 +20,75 @@ import { api } from '../../api'
 
 export const Analytics = () => {
 
-  const [filters, setFilters] = useState({});
+
   const [sortRegion, setSortRegion] = useState('');
   const [sortDepartment, setSortDepartment] = useState('');
-  const [sortDate, setSortDate] = useState('60 Days');
-  const [leaderboard, setleaderboard] = useState([]);
-  const [weeklyIntervals, setWeeklyIntervals] = useState([]);
-  const [departmentData, setDepartmentData] = useState([]);
-  const [data, setData] = useState([])
+  const [sortDate, setSortDate] = useState('');
 
-  const getAll = async () => {
-    const response = await api.analytics.all()
-    setData(response)
-    setleaderboard(response.leaderboard)
-    setWeeklyIntervals(response.team_engagement_data)
-    setDepartmentData(response.department_data)
-  }
 
-  const getFilters = async () => {
-    const response = await api.analytics.filters()
-    setFilters(response)
-  }
 
-  useEffect(() => {
-    getAll()
-    getFilters()
-  }, [])
+  const { data: response, isLoading, isError } = useQuery(
+    ['analyticsData', sortRegion, sortDepartment, sortDate],
+    () => api.analytics.all(sortDepartment, sortRegion, sortDate)
+  );
 
-  const barData = data.hashtags
-  ? data.hashtags.map(hashtag => ({
+  const { data: filterData, isLoading: isLoadingFilters, isError: isErrorFilters } = useQuery('filterData', api.analytics.filters);
+  
+  const filters = filterData
+
+ if (isLoading || isLoadingFilters) {
+  return <div>Loading...</div>;
+}
+
+if (isError || isErrorFilters) {
+  return <div>Error fetching data</div>;
+}
+
+const {
+  leaderboard,
+  team_engagement_data: weeklyIntervals,
+  department_data: departmentData,
+  hashtags,
+  total_recognitions,
+  total_points,
+  percentage,
+} = response;
+
+
+  const barData = hashtags
+  ? hashtags.map(hashtag => ({
       category: hashtag.hashtags__name ? `#${hashtag.hashtags__name}` : "#Unknown",
       value: hashtag.hashtag_count
     }))
   : [];
+  
+  
 
   return (
     <div>
 
       <div className='mt-3 flex'>
         <div className='flex'>
-          <button className='bg-[#5486E3] text-white text-md font-Lato px-10 py-1 rounded-l-md border border-r-0 border-[#5486E3] min-w-[100px]'>
-            Overall
-          </button>
-          <button className='bg-white text-md font-Lato rounded-r-md border border-l-0 border-[#5486E3] min-w-[130px]'>
-            My Team
-          </button>
+        <button
+        onClick={() => setSortDepartment("")}
+        className={
+          sortDepartment != "Product Development"
+            ? 'bg-[#5486E3] text-white text-md font-Lato px-10 py-1 rounded-l-md border border-r-0 border-[#5486E3] min-w-[100px]'
+            : 'bg-white text-black text-md font-Lato px-10 py-1 rounded-l-md border border-r-0 border-[#5486E3] min-w-[100px]'
+        }
+      >
+        Overall
+      </button>
+      <button
+        onClick={() => setSortDepartment("Product Development")}
+        className={
+          sortDepartment === "Product Development"
+            ? 'bg-[#5486E3] text-white text-md font-Lato rounded-r-md border border-l-0 border-[#5486E3] min-w-[130px]'
+            : 'bg-white text-md font-Lato rounded-r-md border border-l-0 border-[#5486E3] min-w-[130px]'
+        }
+      >
+       My Team
+      </button>
         </div>
         <div className='flex w-full'>
           <div className='flex w-full justify-end ml-4 border-b-[1px] border-[#c7c5c5]'>
@@ -304,15 +330,16 @@ export const Analytics = () => {
         <div className="bg-white rounded-lg drop-shadow-md pt-1 my-1 sm:w-full md:w-1/2">
           <div className='flex bg-[#FCEAAE] rounded-lg m-4 py-1 items-center'>
             <div className='px-6'>
-              <span className='text-[46px] font-Lato font-bold pr-2'>{data?.total_recognitions}</span>
+              <span className='text-[46px] font-Lato font-bold pr-2'>{total_recognitions}</span>
               <span className='text-[20px] font-Lato font-bold'>Recognitions</span>
             </div>
             <div className='px-2'>
-              <span className='text-[46px] font-Lato font-bold pr-2'>{data?.total_points}</span>
+              <span className='text-[46px] font-Lato font-bold pr-2'>{total_points}</span>
               <span className='text-[20px] font-Lato font-bold'>Points</span>
             </div>
-            <div className='px-2 py-[1px] ml-4 mt-5 text-[9px] rounded-md bg-white text-[#285C55]'>
-              {`${data.percentage}% from last month`}
+            <div className='flex px-2 py-[1px] ml-2 mt-5 text-[9px] rounded-md bg-white text-[#285C55]'>
+              <img className='mr-[1px]' src={growUp} alt='grow-up'/>
+              {`${percentage}% from last month`}
             </div>
           </div>
           <BarChart data={barData} />
@@ -327,8 +354,9 @@ export const Analytics = () => {
               <span className='text-[46px] font-Lato font-bold pr-2'>4100</span>
               <span className='text-[20px] font-Lato font-bold'>Points</span>
             </div>
-            <div className='px-2 py-[1px] ml-2 mt-5 text-[9px] rounded-md bg-white text-[#285C55]'>
-              {`${data.percentage}% from last month`}
+            <div className='flex px-2 py-[1px] ml-2 mt-5 text-[9px] rounded-md bg-white text-[#285C55]'>
+              <img className='mr-[1px]' src={growUp} alt='grow-up'/>  
+              {`${percentage}% from last month`}
             </div>
           </div>
           <div className='flex-col p-6'>
@@ -337,35 +365,68 @@ export const Analytics = () => {
                 <span className='text-[#5486E3] font-Lato font-bold text-[16px] pr-2'>Apparel</span>
                 <span className='font-Lato font-semibold'>23</span>
               </div>
-              <div className='text-[18px] font-Lato font-bold'>1250 Pts.</div>
+              <div className='flex items-center'>
+                <div className='flex mr-2 px-2 py-[1px] text-[9px] rounded-md bg-[#D6FBF0] text-[#285C55]'>
+                  <img className='mr-[1px]' src={growUp} alt='grow-up'/>  
+                  {`${percentage}% from last month`}
+                </div>  
+                <div className='text-[18px] font-Lato font-bold'>1250 Pts.</div>
+              </div>
+             
             </div>
             <div className='flex justify-between pb-1 mb-4 border-b-[1px]'>
               <div>
                 <span className='text-[#5486E3] font-Lato font-bold text-[16px] pr-2'>Entertainment</span>
                 <span className='font-Lato font-semibold'>12</span>
               </div>
-              <div className='text-[18px] font-Lato font-bold'>950 Pts.</div>
+              <div className='flex items-center'>  
+              <div className='flex mr-4 px-2 py-[1px] text-[9px] rounded-md bg-[#FBE5E6] text-[#C74056]'>
+                <img className='mr-[1px]' src={shrinkDown} alt='shrink-down'/>  
+                {`${percentage}% from last month`}
+              </div>   
+              <div className='text-[18px] font-Lato font-bold'>950 Pts.</div>     
             </div>
+              </div>
             <div className='flex justify-between pb-1 mb-4 border-b-[1px]'>
               <div>
                 <span className='text-[#5486E3] font-Lato font-bold text-[16px] pr-2'>Food</span>
                 <span className='font-Lato font-semibold'>09</span>
               </div>
+              <div className='flex items-center'>
+              <div className='flex mr-4 px-2 py-[1px] text-[9px] rounded-md bg-[#D6FBF0] text-[#285C55]'>
+                <img className='mr-[1px]' src={growUp} alt='grow-up'/>  
+                {`${percentage}% from last month`}
+              </div>  
               <div className='text-[18px] font-Lato font-bold'>700 Pts.</div>
+            </div>
             </div>
             <div className='flex justify-between pb-1 mb-4 border-b-[1px]'>
               <div>
                 <span className='text-[#5486E3] font-Lato font-bold text-[16px] pr-2'>Donations</span>
                 <span className='font-Lato font-semibold'>08</span>
               </div>
-              <div className='text-[18px] font-Lato font-bold'>550 Pts.</div>
+              <div className='flex items-center'>
+                <div className='flex mr-4 px-2 py-[1px] text-[9px] rounded-md bg-[#FBE5E6] text-[#C74056]'>
+                  <img className='mr-[1px]' src={shrinkDown} alt='shrink-down'/>  
+                  {`${percentage}% from last month`}
+                </div>  
+                <div className='text-[18px] font-Lato font-bold'>550 Pts.</div>
+              </div>
+             
             </div>
             <div className='flex justify-between pb-1 border-b-[1px]'>
               <div>
                 <span className='text-[#5486E3] font-Lato font-bold text-[16px] pr-2'>Electronics</span>
                 <span className='font-Lato font-semibold'>07</span>
               </div>
-              <span className='text-[18px] font-Lato font-bold'>300 Pts.</span>
+              <div className='flex items-center'>
+                <div className='flex mr-4 px-2 py-[1px] text-[9px] rounded-md bg-[#FBE5E6] text-[#C74056]'>
+                  <img className='mr-[1px]' src={shrinkDown} alt='shrink-down'/>  
+                  {`${percentage}% from last month`}
+                </div>  
+                <span className='text-[18px] font-Lato font-bold'>300 Pts.</span>
+              </div>
+              
             </div>
           </div>
           <p className='pl-6 pb-4 font-Lato text-[16px] text-[#292929] font-medium'>Most Redeemed</p>
@@ -380,10 +441,10 @@ export const Analytics = () => {
 
       <div className='bg-white rounded-lg my-3 overflow-x-auto sm:w-[880px] md:w-full'>
         <div className='py-3 px-6 font-Lato font-bold text-[20px]'>Recognition Statistics</div>
-        <div className='flex gap-44 bg-[#5486E3] rounded-lg py-4 font-Lato text-white'>
-          <p className='pl-4'>Department</p>
-          <p className='pl-3'>Within Department</p>
-          <p className='pl-4'>Outside Department</p>
+        <div className='flex gap-36 bg-[#5486E3] rounded-lg py-4 font-Lato text-white'>
+          <p className='pl-11'>Department</p>
+          <p className='pl-[125px]'>Within Department</p>
+          <p className='pr-4'>Outside Department</p>
         </div>
         <ColumnGroupingTable departmentData={departmentData} />
       </div>
@@ -397,7 +458,7 @@ export const Analytics = () => {
 
         <div className='w-1/2 flex-col justify-center items-center bg-white rounded-lg drop-shadow-md mb-4'>
           <div className='text-left border-b-2 mb-4 py-2 px-4 text-[18px] font-Lato font-semibold'>Word Cloud</div>
-          <div className='flex justify-center items-center'><WordCloudComponent /></div>
+          <div className='flex justify-center items-center'><WordCloud /></div>
         </div>
       </div>
     </div>

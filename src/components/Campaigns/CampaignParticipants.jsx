@@ -8,7 +8,7 @@ const COLORS = {
     gray: 'text-[#A5A5A5]',
 };
 
-export default function CampaignParticipants() {
+export default function CampaignParticipants({participants, setParticipants, errors}) {
     const [participantType, setParticipantType] = useState('');
     const [form, setForm] = React.useState({
         recipients: [],
@@ -194,7 +194,7 @@ export function RecipientsDropdown({ form, setForm }) {
                                     {user ? (
                                         <span className=''>
                                             {console.log(user)}
-                                            {user.first_name} {user.last_name}{' '}
+                                            {user.full_name}{' '}
                                             <button
                                                 className="ml-1 text-black cursor-pointer"
                                                 onClick={() => {
@@ -252,18 +252,18 @@ export function RecipientsDropdown({ form, setForm }) {
                                             <div className='flex items-center'>
                                                 <span>
                                                     <img className="h-6 w-6 rounded-full mr-2"
-                                                        src={getAvatarAttributes(`${user.first_name} ${user.last_name}`, processAvatarUrl(user.avtar)).src}
-                                                        alt={getAvatarAttributes(`${user.first_name} ${user.last_name}`, processAvatarUrl(user.avtar)).alt}
+                                                        src={getAvatarAttributes(`${user?.full_name.split(' ')[0]} ${user?.full_name.split(' ')[1]}`, processAvatarUrl(user?.avtar)).src}
+                                                        alt={getAvatarAttributes(`${user?.full_name.split(' ')[0]} ${user?.full_name.split(' ')[1]}`, processAvatarUrl(user?.avtar)).alt}
                                                         onError={(e) => {
-                                                            // If the image fails to load, use the name initials instead
-                                                            e.target.onerror = null;
-                                                            e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                                                                user.first_name.charAt(0) + user.last_name.charAt(0)
-                                                            )}&color=${"#464646"}&background=${"FFFFFF"}`;
+                                                          // If the image fails to load, use the name initials instead
+                                                          e.target.onerror = null;
+                                                          e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                                                            user?.full_name.split(' ')[0].charAt(0) + user?.full_name.split(' ')[1].charAt(0)
+                                                          )}&color=${"#464646"}&background=${"FFFFFF"}`;
                                                         }}
                                                     />
                                                 </span>
-                                                <span className='font-bold'>{`${user.first_name} ${user.last_name}`}</span>
+                                                <span className='font-bold'>{`${user.full_name}`}</span>
                                                 {` | ${user.title} - ${user.department}`}
                                             </div>
                                         </button>

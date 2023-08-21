@@ -155,7 +155,7 @@ const SurveyDetails = ({ surveyDetails, setSurveyDetails, errors }) => {
           <div className="dateTimeContainer-green flex items-center gap-4">
             <span className="min-w-[70px] text-18px font-bold">Start</span>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker className="input-container" defaultValue={today} disablePast onChange={(date) => handleStartDateAndTimeChange('start', date)} />
+              <DatePicker className="input-container" value={eventDateTime} defaultValue={today} disablePast onChange={(date) => handleStartDateAndTimeChange('start', date)} />
             </LocalizationProvider>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <TimePicker className="input-container" defaultValue={todayStartOfTheDay} disablePast onChange={(time) => handleStartDateAndTimeChange('start', time)} />

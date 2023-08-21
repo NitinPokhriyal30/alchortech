@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { css } from '@emotion/react';
 import * as d3 from 'd3';
+import './AreaStyle.css';
 
 const BarChart = ({ data }) => {
   const chartRef = useRef(null);
@@ -36,8 +37,11 @@ const BarChart = ({ data }) => {
       .attr('class', 'grid')
       .call(yGrid);
 
+
     // Hide the Y-axis line by selecting the specific path element with class "domain"
     gridGroup.select('path.domain').style('display', 'none');
+
+    
 
     gridGroup.selectAll('.grid line')
       .attr('stroke', 'lightgray');

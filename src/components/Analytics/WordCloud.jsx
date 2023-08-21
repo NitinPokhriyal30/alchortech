@@ -3,23 +3,23 @@ import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import cloud from 'd3-cloud';
 
+
 const wordData = [
-  {  text: 'share',  size: 50 }, // 'text' is the word, 'size' is the frequency/weight of the word
-  { text: 'reflection', size: 30 },
-  { text: 'quality', size: 25 },
-  { text: 'leader', size: 20 },
-  { text: 'one team', size: 40, vertical: true },
+  {  text: 'share',  size: 45 },
+  { text: 'reflection', size: 35 },
+  { text: 'quality', size: 40 },
+  { text: 'leader', size: 35 },
+  { text: 'one team', size: 45,},
   { text: 'brainstorm', size: 60 },
-  { text: 'vision', size: 100 },
-  { text: 'culture', size: 50 },
-  { text: 'ideas', size: 80 },
-  { text: 'collaboration', size: 70 },
-  // Add more words and their sizes as needed
+  { text: 'vision', size: 55 },
+  { text: 'culture', size: 45 },
+  { text: 'ideas', size: 55 },
+  { text: 'collaboration', size: 60 },
 ];
 
-const colors = ['steelblue', 'orange', 'green', 'red', 'purple', 'blue', 'brown', 'teal', 'magenta', 'navy'];
+const colors = ['#747474', '#F89D96', '#00BC9F', '#FFD398', '#5486E3', '#77BEF2'];
 
-const WordCloudComponent = () => {
+const WordCloud = () => {
   const wordCloudRef = useRef(null);
 
   useEffect(() => {
@@ -27,7 +27,7 @@ const WordCloudComponent = () => {
   }, []);
 
   const drawWordCloud = () => {
-    const width = 500;
+    const width = 600;
     const height = 400;
 
     // Set up D3 cloud layout
@@ -35,9 +35,10 @@ const WordCloudComponent = () => {
       .size([width, height])
       .words(wordData.map((d) => ({ text: d.text, size: d.size })))
       .padding(5)
-      .rotate(() => 0) // Set rotation to 0 to avoid random rotations
-      .font('Arial')
+      .rotate(d => ~~(Math.random() * 2) * 90)
+      .font('Lato')
       .fontSize((d) => d.size)
+      .random(() => 0.5)
       .on('end', draw);
 
     layout.start();
@@ -48,7 +49,7 @@ const WordCloudComponent = () => {
         .attr('width', width)
         .attr('height', height)
         .append('g')
-        .attr('transform', `translate(${width / 2},${height / 2})`)
+        .attr('transform', `translate(${width /2},${height / 2})`)
         .selectAll('text')
         .data(words)
         .enter()
@@ -57,7 +58,9 @@ const WordCloudComponent = () => {
         .style('fill', (d, i) => colors[i % colors.length]) // Assign colors based on the index
         .attr('text-anchor', 'middle')
         .style('font-family', 'Arial')
-        .attr('transform', (d) => `translate(${d.x},${d.y})rotate(${d.rotate})`)
+        .attr('transform', (d) => {
+          return `translate(${d.x},${d.y})rotate(${d.rotate})`;
+        })
         .text((d) => d.text);
     }
   };
@@ -65,5 +68,5 @@ const WordCloudComponent = () => {
   return <div ref={wordCloudRef} />;
 };
 
-export default WordCloudComponent;
+export default WordCloud;
 

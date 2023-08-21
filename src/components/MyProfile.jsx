@@ -196,7 +196,7 @@ export default function MyProfile() {
           </div>
         </div>
 
-        <div className="md:w-[28%] drop-shadow-md h-auto flex flex-col items-center bg-[#5486E3] bg-center rounded-lg" style={{ backgroundImage: `url(${AnniversaryBg})`, backgroundRepeat: 'no-repeat' }}>
+        <div className="md:w-[28%] mx-2 drop-shadow-md h-auto flex flex-col items-center bg-[#5486E3] bg-center rounded-lg" style={{ backgroundImage: `url(${AnniversaryBg})`, backgroundRepeat: 'no-repeat' }}>
           <div className="font-bold font-Lato text-[#fdfbfb] text-[20px] pb-6 pt-4">Anniversaries</div>
           <div className="font-normal font-lato text-[#fbfbfb] text-[16px]">Birthday</div>
           <div className="font-semibold font-lato text-[#8DFFFF] text-[30px]">{formattedBirthDate}</div>

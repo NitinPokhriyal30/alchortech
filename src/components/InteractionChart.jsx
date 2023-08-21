@@ -147,7 +147,7 @@ const InteractionChart = ({ interactionData, me, hoveredRowIndex, onRowHover, se
         )}
       </div>
 
-      <svg className="absolute sm:px-[118px] md:px-0 top-0 left-0 h-full w-full z-[-10]">
+      <svg className="absolute sm:px-[118px] md:px-0 top-0 h-full w-full z-[-10]">
         {/* 1st Pic Line */}
         {interactionData[0] && (
           <path
@@ -156,6 +156,7 @@ const InteractionChart = ({ interactionData, me, hoveredRowIndex, onRowHover, se
             strokeWidth={(hoveredIndex === 0 || hoveredRowIndex === 0 || isCenterImageHovered) ? 3 : 1}
             fill="none"
           />
+          
         )}
 
         {/* 2nd Pic Line */}
@@ -200,13 +201,24 @@ const InteractionChart = ({ interactionData, me, hoveredRowIndex, onRowHover, se
             fill="none"
           />
         )}
-        <svg className="absolute top-0 left-0 h-full w-full z-[20]">
-          <circle cx="107" cy="119" r="4" fill="#27C4A0" />
+       
+         {interactionData[0] && (
+          <circle cx="106.7" cy="119.2" r="4" fill="#27C4A0" />
+         )}
+         {interactionData[1] && (
           <circle cx="213" cy="114" r="4" fill="#FFD398" />
+         )}
+         {interactionData[2] && (
           <circle cx="73" cy="207" r="4" fill="#F89D96" />
+         )}
+         {interactionData[3] && (
           <circle cx="254" cy="203" r="4" fill="#5486E3" />
+         )}
+         {interactionData[4] && (
           <circle cx="158" cy="272" r="4" fill="#F89D96" />
-        </svg>
+         )}
+         
+        
       </svg>
 
 

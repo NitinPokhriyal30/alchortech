@@ -3,6 +3,7 @@ import { api } from '@/api';
 import { useQuery } from 'react-query';
 import InteractionChart from './InteractionChart'
 import Loader from '@/components/Loader';
+import './UserInteraction.css';
 
 const UserInteraction = ({ filterBy, userId }) => {
   const [sortedSenders, setSortedSenders] = useState([]);
@@ -148,10 +149,10 @@ const UserInteraction = ({ filterBy, userId }) => {
   return (
 
     <div className="h-auto flex flex-col md:flex-row items-center md:items-start md:justify-center">
-      <div className="my-4  block w-full md:w-[438px] lg:w-2/5 text-center ">
+      <div className="my-4 block w-full md:w-[438px] text-center ">
         <span className="text-[18px] mb-4 text-[#000000] font-Lato font-bold">{`${me?.full_name.split(' ')[0]}'s Interaction`}</span>
 
-        <div className='flex border-r-2'>
+        <div className='flex border-r-2 justify-center items-center'>
           <div className="w-[325px]">
             <InteractionChart
               interactionData={interactionData}
@@ -178,9 +179,8 @@ const UserInteraction = ({ filterBy, userId }) => {
                 <tbody>
                   {console.log(interactionData)}
                   {interactionData.map((interaction, index) => (
-                    <tr
+                    <tr id='table-row'
                       key={index}
-                      style={{ borderRadius: '0.5rem' }}
                       className={`group ${(hoveredImageIndex === index || (hoveredImageIndex === 0 && index === 0)) ? 'bg-gray-200' : 'hover:bg-gray-200 hover:bg-rounded-lg'
                         }`}
                       onMouseEnter={() => handleRowHover(index)} // Call handleRowHover with the index on mouse enter 

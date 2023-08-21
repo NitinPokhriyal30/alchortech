@@ -75,7 +75,10 @@ const api = {
   properties: () => axios.get('api/v1/common/properties/').then((r) => r.data),
 
   analytics: {
-    all: () => axios.get('/api/v1/analytics/').then((r) => r.data),
+    all: (department, region, date) => 
+    axios
+    .get(`/api/v1/analytics/?department=${department}&region=${region}&Date_Ranges=${date}`)
+    .then((r) => r.data),
     filters: () => axios.get('/api/v1/analytics/filters/').then((r) => r.data),
 
   }
