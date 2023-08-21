@@ -9,6 +9,7 @@ import {
 import { BsPencilFill } from 'react-icons/bs'
 import { RxCross1 } from 'react-icons/rx'
 import { Link } from 'react-router-dom'
+import {useNavigate} from "react-router-dom"
 
 const SORT_OPTIONS = [
   { label: 'Last 60 days', value: '1' },
@@ -21,6 +22,7 @@ const SORT_OPTIONS = [
 
 const SurveyTable = () => {
   const [sortBy, setSortBy] = useState(SORT_OPTIONS[0])
+  const navigate = useNavigate()
 
   return (
     <div className='h-screen'>
@@ -97,7 +99,7 @@ const SurveyTable = () => {
           </thead>
           <tbody className="">
             {Array.from({ length: 5 }).map(() => (
-              <tr className="group rounded-xl border-b border-[#7B7B7B] hover:bg-[#ececec]">
+              <tr className="group rounded-xl border-b border-[#7B7B7B] hover:bg-[#ececec]" onClick={() => navigate("/survey/preview")}>
                 <td className="py-3 pl-8 md:pl-14 text-[16px] font-semibold text-[#5486E3]">Survey 1</td>
                 <td className="py-3 text-center font-Lato text-[16px] font-normal text-[#000000]">
                   Feb 13, 2023

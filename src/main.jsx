@@ -3,17 +3,7 @@ import ReactDOM from 'react-dom/client'
 import './index.css'
 
 import { Provider } from 'react-redux'
-import {
-  BrowserRouter,
-  createBrowserRouter,
-  createRoutesFromElements,
-  Navigate,
-  Outlet,
-  Route,
-  Router,
-  RouterProvider,
-  Routes,
-} from 'react-router-dom'
+import { BrowserRouter, createBrowserRouter, createRoutesFromElements, Navigate, Outlet, Route, Router, RouterProvider, Routes } from 'react-router-dom'
 import AdminNavbar from './components/AdminNavbar'
 import HomePage from './pages/HomePage'
 import SurveryCreatePage from './pages/SurveryCreatePage'
@@ -42,6 +32,7 @@ import CampaignsTable from '@/components/Campaigns/CampaignsTable'
 import CampaignCreate from '@/components/Campaigns/CampaignCreate'
 import SurveyTable from '@/components/Survey/SurveryTable'
 import SurveyCreate from '@/components/Survey/SurveyCreate'
+import SurveyPreview from '@/components/Survey/SurveyPreview'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -78,15 +69,27 @@ const router = createBrowserRouter(
       <Route path="/reset/password/passwordreset/:uidb64/:token" element={<ResetPassword />} />
 
       <Route
-        path="/survey"
+        path="/survey/preview"
         element={
-          <ProtectedRoute>
           <main className="bg-[#ededed]">
             <MainNavbar />
             <div className="mx-auto grid w-full max-w-[1536px] grid-cols-[1fr] pl-0 pt-nav md:grid-cols-smallDevice md:px-[40px] lg:grid-cols-mediumDevice">
-              <Outlet />
+              <HomeSidebar />
+              <SurveyPreview />
             </div>
           </main>
+        }
+      />
+      <Route
+        path="/survey"
+        element={
+          <ProtectedRoute>
+            <main className="bg-[#ededed]">
+              <MainNavbar />
+              <div className="mx-auto grid w-full max-w-[1536px] grid-cols-[1fr] pl-0 pt-nav md:grid-cols-smallDevice md:px-[40px] lg:grid-cols-mediumDevice">
+                <Outlet />
+              </div>
+            </main>
           </ProtectedRoute>
         }
       >
