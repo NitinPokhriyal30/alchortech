@@ -6,8 +6,7 @@ import PersonCard from '../components/Directory/PersonCard'
 import UserImage from '../assets/images/user-profile/pp.png'
 import { useQuery } from 'react-query'
 import { api } from '@/api'
-import { toFormData } from '@/components/NewPost'
-import { Object_filter, capitalizeWords } from '@/utils'
+import Loader from '@/components/Loader'
 
 let inputDelayRef = { current: 0 }
 const handleChange = (setQuery) => (ev) => {
@@ -19,38 +18,11 @@ const handleChange = (setQuery) => (ev) => {
   }, 500)
 }
 
-/**
- * get department from profiles api
- */
-const getDepartment = (profiles) => ['Delivery', 'Cloud', 'Automation', 'Service Desk', 'Hr', 'Product Management', 'Product Development'] //Array.from(new Set(profiles?.map(user => user.department)));
-
-/**
- * get department from profiles api
- */
-const getLocation = (profiles) => ['India', 'Japan', 'Usa'] // Array.from(new Set(profiles?.map((user) => user.location)))
-
 export default function DirectoryPage({ ...props }) {
-  const profiles = useQuery('users', () => api.users.search(), {
-    initialData: [],
-  })
   const [query, setQuery] = React.useState('')
   const [departmentFilter, setDepartmentFilter] = React.useState('')
   const [locationFilter, setLocationFilter] = React.useState('')
   const [page, setPage] = React.useState(1)
-  // const users = useQuery({
-  //   queryKey: ['users', locationFilter, departmentFilter, query],
-  //   queryFn: () =>
-  //     api.users.search(
-  //       toFormData({
-  //         params: query,
-  //         ...Object_filter(([, value]) => value, {
-  //           location: locationFilter,
-  //           department: departmentFilter,
-  //           // page,
-  //         }),
-  //       })
-  //     ),
-  // })
 
   const users = useQuery(
     ['users', query, departmentFilter, locationFilter, page],
@@ -62,8 +34,7 @@ export default function DirectoryPage({ ...props }) {
 
 
   const filteredUsers = users.data
-  const department = profiles.data ? getDepartment(profiles.data) : []
-  const location = profiles.data ? getLocation(profiles.data) : []
+  const response = useQuery("response", () => api.analytics.filters()) || []
 
   return (
     <div className="col-span-2 pl-3 pr-3 xs:pt-0 sm:pt-3 lg:pl-0">
@@ -76,28 +47,39 @@ export default function DirectoryPage({ ...props }) {
 
           <div className="flex items-center rounded border border-400 px-3 text-[#acacac] outline-1 outline-primary-400 focus-within:outline">
             <select className="flex-1 border-none bg-transparent pb-2 pt-1.5 font-semibold leading-none outline-none placeholder:text-inherit" onChange={(ev) => setDepartmentFilter(ev.target.value)}>
-              <option value="">Filter by Department</option>
-              {department?.map((depart) => (
-                <option value={depart} key={depart}>
-                  {depart}
-                </option>
-              ))}
+              {response.isLoading ? <div className='flex justify-center' >
+                <Loader />
+              </div> : <>
+                <option value="">Filter by Department</option>
+                {response.data.departments?.map((depart) => (
+                  <option value={depart} key={depart}>
+                    {depart}
+                  </option>
+                ))}
+              </>}
+
             </select>
           </div>
 
           <div className="flex items-center rounded border border-400 px-3 text-[#acacac] outline-1 outline-primary-400 focus-within:outline">
             <select className="flex-1 border-none bg-transparent pb-2 pt-1.5 font-semibold leading-none outline-none placeholder:text-inherit" value={locationFilter} onChange={(ev) => setLocationFilter(ev.target.value)}>
-              <option value="">Filter by Location</option>
-              {location?.map((loc) => (
-                <option value={loc} key={loc}>
-                  {loc}
-                </option>
-              ))}
+              {response.isLoading ? <div className='flex justify-center' >
+                <Loader />
+              </div> : <>
+                <option value="">Filter by Location</option>
+                {response.data.region?.map((loc) => (
+                  <option value={loc} key={loc}>
+                    {loc}
+                  </option>
+                ))}
+              </>}
             </select>
           </div>
         </div>
 
-        {users.isLoading ? null : (
+        {users.isLoading ? <div className='flex justify-center my-20' >
+          <Loader />
+        </div> : (
           <>
             <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3">
               {filteredUsers?.map((props, index) => (
