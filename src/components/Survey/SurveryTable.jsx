@@ -1,3 +1,4 @@
+import { Padding } from '@mui/icons-material'
 import React, { useState } from 'react'
 import { AiOutlinePlus, AiFillClockCircle, AiFillCloseCircle, AiFillRightCircle, AiFillCaretDown } from 'react-icons/ai'
 import { BsPencilFill } from 'react-icons/bs'
@@ -72,6 +73,7 @@ const SurveyTable = () => {
       </div>
 
       <div className="mx-4 mt-2 rounded-lg bg-white drop-shadow-md">
+        <div className="table-container">
         <table className="w-full">
           <thead>
             <tr className="border-b border-[#cecece] child:text-16px ">
@@ -81,9 +83,9 @@ const SurveyTable = () => {
               <th className="w-1/4 py-4 font-Lato font-medium text-[#292929]">Type</th>
             </tr>
           </thead>
-          <tbody className="">
+            <tbody className="table-body" style={{ padding: '20px' }}>
             {Array.from({ length: rows }).map(() => (
-              <tr className="group rounded-xl border-b border-[#7B7B7B] hover:bg-[#ececec]" onClick={() => navigate('/survey/preview')}>
+              <tr className="group rounded-xl border-b border-[#cecece] hover:bg-[#ececec] " onClick={() => navigate('/survey/preview')}>
                 <td className="py-3 pl-8 text-[16px] font-semibold text-[#5486E3] md:pl-14">Survey 1</td>
                 <td className="py-3 text-center font-Lato text-[16px] font-normal text-[#292929]">Feb 13, 2023</td>
                 <td className="py-3 text-center font-Lato text-[16px] font-normal text-[#292929]">Feb 18, 2023</td>
@@ -94,7 +96,8 @@ const SurveyTable = () => {
               </tr>
             ))}
           </tbody>
-        </table>
+          </table>
+        </div>
       </div>
     </div>
   )

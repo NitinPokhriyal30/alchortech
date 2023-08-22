@@ -16,14 +16,6 @@ export default function Top5UserWidget() {
     initialData: [],
   });
 
-  if (top5.isLoading) {
-    return (
-      <div className='flex justify-center' ref={infiniteLoaderDivRef} >
-        <Loader />
-      </div>
-    )
-  }
-
   return (
     top5.data && <div>
       <div className="right-sidebar-container !pt-0 !pb-4">
@@ -33,7 +25,10 @@ export default function Top5UserWidget() {
           </p>
         </div>
 
-        {top5.data?.map((user, index) => (
+        {top5.isLoading ? <div className="space-y-2">
+          <p className="animate-pulse w-full bg-gray-300 rounded">&nbsp;</p>
+          <p className="animate-pulse w-full bg-gray-300 rounded">&nbsp;</p>
+        </div> : top5.data?.map((user, index) => (
           <>
             <div key={user.id}>
               <div className=" px-4">
@@ -83,6 +78,6 @@ export default function Top5UserWidget() {
         ))}
       </div>
     </div>
-    
+
   )
 }

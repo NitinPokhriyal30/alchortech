@@ -28,17 +28,19 @@ export default function DirectoryPage({ ...props }) {
     ['users', query, departmentFilter, locationFilter, page],
     () =>
       api.users.search(
-        new URLSearchParams({ params: query, location: locationFilter, department: departmentFilter, page: page, pagination: 1, page_size: 6 })
+        new URLSearchParams({ params: query, location: locationFilter, department: departmentFilter, page: page, pagination: 1, page_size: 3 })
       )
   )
 
-
   const filteredUsers = users.data
+
+  console.log(filteredUsers);
+
   const response = useQuery("response", () => api.analytics.filters()) || []
 
   return (
     <div className="col-span-2 pl-3 pr-3 xs:pt-0 sm:pt-3 lg:pl-0">
-      <div className="rounded-lg bg-white px-5 py-6">
+       <div className="rounded-lg bg-white px-5 py-6">
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3">
           <div className="flex items-center rounded border border-400 px-3 text-[#acacac] outline-1 outline-primary-400 focus-within:outline">
             <BsSearch />
@@ -76,13 +78,12 @@ export default function DirectoryPage({ ...props }) {
             </select>
           </div>
         </div>
-
-        {users.isLoading ? <div className='flex justify-center my-20' >
+        {users.isLoading  ? <div className='flex justify-center my-20' >
           <Loader />
         </div> : (
           <>
             <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3">
-              {filteredUsers?.map((props, index) => (
+              {filteredUsers.data?.map((props, index) => (
                 <PersonCard key={index} img={UserImage} {...props} />
               ))}
             </div>
@@ -93,19 +94,20 @@ export default function DirectoryPage({ ...props }) {
                   <SlArrowLeft className="text-xl" />
                 </button>
 
-                <button disabled={users.data?.detail == 'Invalid page.'} className="ml-3 grid h-9 w-9 place-items-center rounded-[3px] border border-[#d5d5d5] disabled:text-gray-300" onClick={() => setPage((p) => ++p)}>
+                  <button disabled={filteredUsers.next == null} className="ml-3 grid h-9 w-9 place-items-center rounded-[3px] border border-[#d5d5d5] disabled:text-gray-300" onClick={() => setPage((p) => ++p)}>
                   <SlArrowRight className="text-xl" />
                 </button>
               </div>
 
               <span>
-                Page {page} of -
+                  Page {page} of - {filteredUsers.total_pages}
                 {/* {users.data?.count} */}
               </span>
             </div>
           </>
         )}
       </div>
+
     </div>
   )
 }
