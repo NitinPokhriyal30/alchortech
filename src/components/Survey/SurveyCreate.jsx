@@ -158,7 +158,7 @@ const SurveyCreate = () => {
   return (
     <>
       <div>
-        <section className="mt-4 flex justify-between pl-11">
+        <section className="mt-4 flex justify-between px-4 md:pl-11">
           <p className="text-[20px] font-bold text-text-black">Create Survey</p>
 
           <Link to="#" className="rounded-md bg-[#5486E3] px-6 py-2 font-Lato text-white">
@@ -166,7 +166,7 @@ const SurveyCreate = () => {
           </Link>
         </section>
 
-        <section className="flex gap-2 pl-11">
+        <section className="hidden md:flex gap-2 pl-11">
           {STEPPER.map((stepOption, i) => (
             <div className="flex items-center gap-2" key={stepOption.value}>
               <Link

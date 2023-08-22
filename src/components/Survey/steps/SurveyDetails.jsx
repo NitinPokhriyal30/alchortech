@@ -80,7 +80,7 @@ const SurveyDetails = ({ surveyDetails, setSurveyDetails, errors }) => {
 
   return (
     <div className="rounded-lg bg-white px-5 py-10 shadow-[0px_2px_3px_#00000029]">
-      <div className="grid grid-cols-[1fr_2fr] items-center gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] items-center gap-8">
         {/* col 1 */}
         <div>
           <p className="text-18px font-bold text-text-black">Title*</p>
@@ -105,7 +105,7 @@ const SurveyDetails = ({ surveyDetails, setSurveyDetails, errors }) => {
 
       <hr className="border-px my-6 border-400" />
 
-      <div className="grid grid-cols-[1fr_2fr] items-center gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] items-center gap-8">
         {/* col 1 */}
         <div>
           <p className="text-18px font-bold text-text-black">Description*</p>
@@ -143,7 +143,7 @@ const SurveyDetails = ({ surveyDetails, setSurveyDetails, errors }) => {
 
       <hr className="border-px my-6 border-400" />
 
-      <div className="grid grid-cols-[1fr_2fr] items-center gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] items-center gap-8">
         {/* col 1 */}
         <div>
           <p className="text-18px font-bold text-text-black">Date*</p>
@@ -182,7 +182,7 @@ const SurveyDetails = ({ surveyDetails, setSurveyDetails, errors }) => {
 
       <hr className="border-px my-6 border-400" />
 
-      <div className="grid grid-cols-[1fr_2fr] items-center gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] items-center gap-8">
         {/* col 1 */}
         <div>
           <p className="text-18px font-bold text-text-black">Terms & Conditions</p>

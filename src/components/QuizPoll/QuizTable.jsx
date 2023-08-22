@@ -69,7 +69,7 @@ const QuizTable = () => {
         <div className="h-[1px] w-full bg-[#cecece]"></div>
       </div>
 
-      <div className="mx-4 mt-2 rounded-[9px] bg-white drop-shadow-md">
+      <div className="mx-4 mt-2 rounded-[9px] bg-white drop-shadow-md w-[calc(100vw_-_32px)] md:w-full">
         <table className="w-full">
           <thead>
             <tr className="border-b border-[#cecece] child:!py-[15.5px] child:!text-16px ">

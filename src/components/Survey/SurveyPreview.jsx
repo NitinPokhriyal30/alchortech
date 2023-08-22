@@ -8,11 +8,11 @@ export default function SurveyPreview({ ...props }) {
 
   return (
     <div className="mb-10 rounded-[7px] bg-white">
-      <div className="flex border-b border-[#d1d1d1] px-[52px] pb-3 pt-6 text-[24px] font-bold leading-[29px] text-[#292929]">
+      <div className="flex-col md:flex-row flex border-b border-[#d1d1d1] px-[52px] pb-3 pt-6 text-[24px] font-bold leading-[29px] text-[#292929]">
         <h1>{title}</h1>
 
-        <span className="ml-auto text-[12px] text-[#00BC9F]">Time remaining: </span>
-        <span className="ml-5">{timeRemaining}</span>
+        <span className="md:ml-auto text-[12px] text-[#00BC9F]">Time remaining: </span>
+        <span className="md:ml-5 text-[12px] md:[font-size:inherit]">{timeRemaining}</span>
       </div>
 
       <div className="px-[52px]">
@@ -52,13 +52,13 @@ export default function SurveyPreview({ ...props }) {
           <p className="pb-6 text-18px font-bold">How do you feel about the work from home arrangement so far?</p>
 
           <RadioGroup className={'!flex-row !items-end'}>
-            <span className="mr-10 leading-[44px]">Bad</span>
+            <span className="hidden md:inline-block mr-10 leading-[44px]">Bad</span>
             {Array(10)
               .fill(0)
               .map((_, i) => (
                 <FormControlLabel className="!mx-0 !inline-flex !w-fit" key={i} control={<Radio />} checked={answer >= i + 1} onClick={() => setAnswer(i + 1)} label={'' + (i + 1)} labelPlacement="top" value={String(i + 1)} />
               ))}
-            <span className="ml-10 leading-[44px]">Awesome</span>
+            <span className="ml-10 leading-[44px] hidden md:inline-block">Awesome</span>
           </RadioGroup>
         </div>
 

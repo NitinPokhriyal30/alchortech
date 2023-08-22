@@ -8,7 +8,7 @@ export default function SurveyPreview({ ...props }) {
 
   return (
     <div className="mb-10 rounded-[7px] bg-white">
-      <div className="flex border-b border-[#d1d1d1] px-[52px] pb-3 pt-6 text-[24px] font-bold leading-[29px] text-[#292929]">
+      <div className="flex-col md:flex-row flex border-b border-[#d1d1d1] px-[52px] pb-3 pt-6 text-[24px] font-bold leading-[29px] text-[#292929]">
         <h1>{title}</h1>
 
         <span className="ml-auto text-[12px] text-[#00BC9F]">Time remaining: </span>

@@ -19,7 +19,7 @@ const SurveyTable = () => {
   const [sortBy, setSortBy] = useState(SORT_OPTIONS[0])
   const navigate = useNavigate()
   const [tab, setTab] = React.useState('draft')
-  const rows = tab === 'draft' ? 5 : tab === "running" ? 1 : tab === "closed" ? 8 : 7
+  const rows = tab === 'draft' ? 5 : tab === 'running' ? 1 : tab === 'closed' ? 8 : 7
 
   return (
     <div className="h-screen">
@@ -72,30 +72,30 @@ const SurveyTable = () => {
         <div className="h-[1px] w-full bg-[#cecece]"></div>
       </div>
 
-      <div className="mx-4 mt-2 rounded-lg bg-white drop-shadow-md">
+      <div className="mx-4 mt-2 w-[calc(100vw_-_32px)] !overflow-x-auto rounded-lg bg-white drop-shadow-md md:w-full">
         <div className="table-container">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b border-[#cecece] child:text-16px ">
-              <th className="w-auto py-4 pl-8 text-start font-Lato font-medium text-[#292929] md:pl-14">Name</th>
-              <th className="w-1/4 py-4 font-Lato font-medium text-[#292929]">Start date</th>
-              <th className="w-1/4 py-4 font-Lato font-medium text-[#292929]">End date</th>
-              <th className="w-1/4 py-4 font-Lato font-medium text-[#292929]">Type</th>
-            </tr>
-          </thead>
-            <tbody className="table-body" style={{ padding: '20px' }}>
-            {Array.from({ length: rows }).map(() => (
-              <tr className="group rounded-xl border-b border-[#cecece] hover:bg-[#ececec] " onClick={() => navigate('/survey/preview')}>
-                <td className="py-3 pl-8 text-[16px] font-semibold text-[#5486E3] md:pl-14">Survey 1</td>
-                <td className="py-3 text-center font-Lato text-[16px] font-normal text-[#292929]">Feb 13, 2023</td>
-                <td className="py-3 text-center font-Lato text-[16px] font-normal text-[#292929]">Feb 18, 2023</td>
-                <td className="py-3 text-center font-Lato text-[16px] font-normal text-[#292929]">Automatic</td>
-                <td className="py-3 text-center opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-                  <RxCross1 className="cursor-pointer text-[#292929]" />
-                </td>
+          <table className="w-[550px] md:w-full  whitespace-nowrap">
+            <thead>
+              <tr className="border-b border-[#cecece] child:text-16px ">
+                <th className="w-auto py-4 pl-8 text-start font-Lato font-medium text-[#292929] md:pl-14">Name</th>
+                <th className="w-1/4 py-4 font-Lato font-medium text-[#292929]">Start date</th>
+                <th className="w-1/4 py-4 font-Lato font-medium text-[#292929]">End date</th>
+                <th className="w-1/4 py-4 font-Lato font-medium text-[#292929]">Type</th>
               </tr>
-            ))}
-          </tbody>
+            </thead>
+            <tbody className="table-body" style={{ padding: '20px' }}>
+              {Array.from({ length: rows }).map(() => (
+                <tr className="group rounded-xl border-b border-[#cecece] hover:bg-[#ececec] " onClick={() => navigate('/survey/preview')}>
+                  <td className="py-3 pl-8 text-[16px] font-semibold text-[#5486E3] md:pl-14">Survey 1</td>
+                  <td className="py-3 text-center font-Lato text-[16px] font-normal text-[#292929]">Feb 13, 2023</td>
+                  <td className="py-3 text-center font-Lato text-[16px] font-normal text-[#292929]">Feb 18, 2023</td>
+                  <td className="py-3 text-center font-Lato text-[16px] font-normal text-[#292929]">Automatic</td>
+                  <td className="py-3 text-center opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                    <RxCross1 className="cursor-pointer text-[#292929]" />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
           </table>
         </div>
       </div>
