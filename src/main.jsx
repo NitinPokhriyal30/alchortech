@@ -33,6 +33,10 @@ import CampaignCreate from '@/components/Campaigns/CampaignCreate'
 import SurveyTable from '@/components/Survey/SurveryTable'
 import SurveyCreate from '@/components/Survey/SurveyCreate'
 import SurveyPreview from '@/components/Survey/SurveyPreview'
+import QuizTable from '@/components/QuizPoll/QuizTable'
+import Loader from '@/components/Loader'
+
+const QuizCreate = React.lazy(() => import('@/components/QuizPoll/QuizCreate'))
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -67,6 +71,47 @@ const router = createBrowserRouter(
         <Route path="campaign/create" element={<CampaignCreate />} />
       </Route>
       <Route path="/reset/password/passwordreset/:uidb64/:token" element={<ResetPassword />} />
+
+      <Route
+        path="/quiz"
+        element={
+          <ProtectedRoute>
+            <main className="bg-[#ededed]">
+              <MainNavbar />
+              <div className="mx-auto grid w-full max-w-[1536px] grid-cols-[1fr] pl-0 pt-nav md:grid-cols-smallDevice md:px-[40px] lg:grid-cols-mediumDevice">
+                <Outlet />
+              </div>
+            </main>
+          </ProtectedRoute>
+        }
+      >
+        <Route
+          index
+          element={
+            <>
+              <HomeSidebar />
+              <QuizTable />
+            </>
+          }
+        />
+        <Route
+          path="create"
+          element={
+            <>
+              <HomeSidebar />
+              <React.Suspense
+                fallback={
+                  <div className='pl-11 mt-[10vh] mx-auto'>
+                    <Loader />
+                  </div>
+                }
+              >
+                <QuizCreate />
+              </React.Suspense>
+            </>
+          }
+        />
+      </Route>
 
       <Route
         path="/survey/preview"

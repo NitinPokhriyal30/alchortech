@@ -160,6 +160,15 @@ export default function HomeSidebar({ }) {
               <span>Surveys</span>
             </MenuLink>
             <MenuLink
+              to="/quiz"
+              className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px]  text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
+            >
+              <div className="w-[23px]">
+                <img src={Icon4} />
+              </div>
+              <span>Quiz & Poll</span>
+            </MenuLink>
+            <MenuLink
               to="/voice-out"
               className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px]  text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
             >
