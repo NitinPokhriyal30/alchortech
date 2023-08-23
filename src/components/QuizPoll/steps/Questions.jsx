@@ -151,7 +151,7 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
     <div className="space-y-5">
       {questions.questions.map((question, index) => (
         <div className="rounded-lg bg-white px-5 py-10 shadow-[0px_2px_3px_#00000029]">
-          <div className="items-top mb-5 grid grid-cols-[1fr_2fr] gap-8" key={index}>
+          <div className="items-top mb-5 grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-8" key={index}>
             {/* Question Type Selector */}
             <div>
               <p className="mb-2.5 mt-[25px] text-18px font-black text-text-black">Question {index + 1}</p>
