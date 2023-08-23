@@ -44,7 +44,7 @@ export default function MyProfile() {
   const pageSize = 5; // Number of posts per page
 
 
-  const meQuery = useQuery('me', () => api.auth.user(userId));
+  const meQuery = useQuery(['me', userId], () => api.users.userById(userId));
   const me = meQuery.data;
   console.log(me)
 
@@ -151,6 +151,10 @@ export default function MyProfile() {
         return filterBy;
     }
   };
+
+  if (meQuery.isLoading === true) {
+    return "..."
+  }
 
   return (
     <div className="drop-shadow-md">

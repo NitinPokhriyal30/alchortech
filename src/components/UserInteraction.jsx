@@ -21,7 +21,7 @@ const UserInteraction = ({ filterBy, userId }) => {
     setHoveredRowIndex(index); // Update hoveredRowIndex state
   };
 
-  const meQuery = useQuery('me', () => api.auth.user(userId));
+  const meQuery = useQuery(['me', userId], () => api.users.userById(userId));
   const me = meQuery.data;
 
   const receivedTransactions = useQuery(
