@@ -146,14 +146,17 @@ export default function MyProfile() {
       case 'last_month':
         return 'Last Month';
       case 'this_month':
-        return 'This Month';
+        return 'This Month'; 
       default:
         return filterBy;
     }
   };
 
   if (meQuery.isLoading === true) {
-    return "..."
+    return <div className="space-y-2">
+      <p className="animate-pulse w-full bg-gray-300 rounded">&nbsp;</p>
+      <p className="animate-pulse w-full bg-gray-300 rounded">&nbsp;</p>
+    </div>
   }
 
   return (
