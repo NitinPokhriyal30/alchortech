@@ -19,7 +19,7 @@ const QuizTable = () => {
   const navigate = useNavigate()
 
   return (
-    <div className="h-screen">
+    <div className="h-screen w-screen md:w-full">
       <div className="mt-4 flex justify-between px-[25px]">
         <div className="font-Lato text-[20px] font-bold text-[#464646]">Quiz</div>
         <div className="rounded-md bg-[#5486E3] p-2 font-Lato text-white">
@@ -69,8 +69,8 @@ const QuizTable = () => {
         <div className="h-[1px] w-full bg-[#cecece]"></div>
       </div>
 
-      <div className="mx-4 mt-2 rounded-[9px] bg-white drop-shadow-md w-[calc(100vw_-_32px)] md:w-full">
-        <table className="w-full">
+      <div className="mx-4 mt-2 rounded-[9px] bg-white drop-shadow-md flex overflow-auto md:w-full">
+        <table className="w-full min-w-[550px] whitespace-nowrap">
           <thead>
             <tr className="border-b border-[#cecece] child:!py-[15.5px] child:!text-16px ">
               <th className="w-auto py-[15.5px] pl-8 text-start font-Lato text-16px font-medium text-[#292929] md:pl-[45px]">Name</th>
