@@ -39,7 +39,14 @@ const CampaignCreate = () => {
           end: '',
         },
         termsAndConditions: '',
-        attachedDocument: ''
+        attachedDocument: '',
+        participants: [],
+        groups: [
+            {
+                label: '',
+                participants: []
+            }
+        ],
       })
 
     const handleStepClick = (newValue) => {
@@ -110,7 +117,7 @@ const CampaignCreate = () => {
                     <CampaignDetails  campaignDetails={campaigns} setCampaignDetails={setCampaigns} errors={errors.campaignDetails}
                 /> : null}
                 {step === 1 ? 
-                    <CampaignParticipants participants={campaigns} setParticipants={setCampaigns} errors={errors.participants}
+                    <CampaignParticipants campaigns={campaigns} setCampaigns={setCampaigns} errors={errors.participants}
                     /> : null}
                 {step === 2 ? <RulesnRewards /> : null}
             </section>

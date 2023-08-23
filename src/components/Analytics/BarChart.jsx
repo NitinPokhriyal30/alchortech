@@ -4,14 +4,15 @@ import * as d3 from 'd3';
 import './AreaStyle.css';
 
 const BarChart = ({ data }) => {
-  const chartRef = useRef(null);
+  const chartRef = useRef();
 
   useEffect(() => {
     // Clear any existing chart before creating a new one
     d3.select(chartRef.current).selectAll('*').remove();
 
     // Set up chart dimensions
-    const width = 574;
+    const parentWidth = chartRef.current.clientWidth;
+    const width = parentWidth;
     const height = 400;
     const margin = { top: 20, right: 20, bottom: 30, left: 50 };
     const chartWidth = width - margin.left - margin.right;

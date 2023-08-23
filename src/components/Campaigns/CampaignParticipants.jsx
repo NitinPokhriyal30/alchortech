@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { api } from '@/api';
 import { useQuery } from 'react-query';
 import Cookies from 'js-cookie';
@@ -8,16 +8,14 @@ const COLORS = {
     gray: 'text-[#A5A5A5]',
 };
 
-export default function CampaignParticipants({participants, setParticipants, errors}) {
+export default function CampaignParticipants({campaigns, setCampaigns, errors}) {
     const [participantType, setParticipantType] = useState('');
-    const [form, setForm] = React.useState({
-        recipients: [],
-    });
+    
 
     const [groups, setGroups] = useState([
         {
             groupName: 'Group 1',
-            recipients: [],
+            participants: [],
         },
     ]);
 
@@ -27,10 +25,18 @@ export default function CampaignParticipants({participants, setParticipants, err
             ...prevGroups,
             {
                 groupName: newGroupName,
-                recipients: [],
+                participants: [],
             },
         ]);
     };
+
+  
+   
+  useEffect(() => {
+    console.log('participant:', campaigns.participantType);
+  
+    }, [campaigns])
+    
 
     return (
         <div>
@@ -104,7 +110,7 @@ export default function CampaignParticipants({participants, setParticipants, err
                                 }
                             >
                                 <ul className="group p-2">
-                                    <RecipientsDropdown {...{ form, setForm }} />
+                                    <RecipientsDropdown {...{campaigns, setCampaigns}} />
                                 </ul>
                             </div>
                         </div>
@@ -142,7 +148,7 @@ export default function CampaignParticipants({participants, setParticipants, err
 
                                     <div className={'rounded border-[2px] ring-primary focus-within:ring-1'}>
                                         <ul className="group p-2">
-                                            <RecipientsDropdown {...{ form, setForm }} />
+                                            <RecipientsDropdown {...{campaigns, setCampaigns }} />
                                         </ul>
                                     </div>
                                 </div>
@@ -160,7 +166,7 @@ export default function CampaignParticipants({participants, setParticipants, err
     );
 }
 
-export function RecipientsDropdown({ form, setForm }) {
+export function RecipientsDropdown({campaigns, setCampaigns }) {
 
     const [showDropdown, setShowDropdown] = useState(false)
 
@@ -177,7 +183,7 @@ export function RecipientsDropdown({ form, setForm }) {
     );
 
     const USER_BTN_HEIGHT = 28;
-    const isSelected = (user) => form.recipients.includes(user.id);
+    const isSelected = (user) => campaigns.participants.includes(user.id);
 
     return (
         <>
@@ -186,22 +192,27 @@ export function RecipientsDropdown({ form, setForm }) {
                 onClick={() => setShowDropdown(!showDropdown)}
             >
                 <span className="flex flex-wrap recipients-grid gap-2">
-                    {form.recipients.length > 0 ? (
-                        form.recipients.map((userId) => {
+                    {campaigns.participants.length > 0 ? (
+                        campaigns.participants.map((userId) => {
                             const user = usersWithoutMe.find((u) => u.id === userId);
                             return (
                                 <span key={userId} className="border-[2px] px-2 py-1 rounded-lg mx-1">
                                     {user ? (
                                         <span className=''>
-                                            {console.log(user)}
                                             {user.full_name}{' '}
                                             <button
                                                 className="ml-1 text-black cursor-pointer"
                                                 onClick={() => {
-                                                    setForm((prev) => ({
-                                                        ...prev,
-                                                        recipients: prev.recipients.filter((id) => id !== user.id),
-                                                    }));
+                                                    setCampaigns((prev) => {
+                                                        if (isSelected(user)) {
+                                                            // Remove the user ID from the participants array
+                                                            prev.participants = prev.participants.filter((id) => id !== user.id);
+                                                        } else {
+                                                            // Add the user ID to the participants array
+                                                            prev.participants.push(user.id);
+                                                        }
+                                                        return { ...prev };
+                                                    });
                                                 }}
                                             >
                                                 &#x2715; {/* Unicode cross symbol */}
@@ -232,18 +243,20 @@ export function RecipientsDropdown({ form, setForm }) {
                             <div>
                                 {searchedUser?.map((user) => {
                                     return (
+                                        
                                         <button
                                             key={user.id}
                                             style={{ height: USER_BTN_HEIGHT }}
                                             className={`block w-full  px-4 py-1 text-left ${isSelected(user) ? 'border-b border-primary/80 bg-primary/30' : ''
                                                 }`}
                                             type="button"
+                                           
                                             onClick={() => {
-                                                setForm((prev) => {
+                                                setCampaigns((prev) => {
                                                     if (isSelected(user)) {
-                                                        prev.recipients = prev.recipients.filter((id) => id !== user.id);
+                                                        prev.participants = prev.participants.filter((id) => id !== user.id);
                                                     } else {
-                                                        prev.recipients.push(user.id);
+                                                        prev.participants.push(user.id);
                                                     }
                                                     return { ...prev };
                                                 });

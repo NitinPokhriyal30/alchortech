@@ -8,8 +8,10 @@ const AreaChart = ({ data }) => {
   useEffect(() => {
     const svg = d3.select(svgRef.current);
     const margin = { top: 20, right: 30, bottom: 30, left: 40 };
-    const width = 600;
-    const height = 340;
+    const parentWidth = svgRef.current.clientWidth; // Get the width of the container
+    const parentHeight = 340;
+    const width = parentWidth;
+    const height = parentHeight;
 
     const parseDate = d3.utcParse('%Y-%b-%d'); // Parse the date string
     const formatDate = d3.timeFormat('%b %d'); 
@@ -21,6 +23,7 @@ const AreaChart = ({ data }) => {
 
     const xData = modifiedData.map(d => formatDate(parseDate(d.date_range.split(' - ')[0])) + ' - ' + formatDate(parseDate(d.date_range.split(' - ')[1])));
 
+    {console.log(xData);}
     const x = d3
       .scaleBand()
       .domain(xData)
@@ -28,7 +31,7 @@ const AreaChart = ({ data }) => {
 
     const y = d3
       .scaleLinear()
-      .domain([0, 35])
+      .domain([0, 25])
       .nice()
       .range([height - margin.bottom, margin.top]);
 
@@ -51,9 +54,10 @@ const AreaChart = ({ data }) => {
       .attr('transform', `translate(0,${height - margin.bottom})`)
       .call(
         d3.axisBottom(x)
-          .tickSize(0)
-          .tickPadding(10) // Adjust padding to avoid overlapping labels
-           .tickFormat((d, i) => i === 0 ? '' : d)
+          .tickSize(0) // Adjust padding to avoid overlapping labels
+          .tickPadding(0)
+          
+          .tickFormat((d, i) => i === 0 ? '' : d)
       )
       .selectAll('text') // Select all tick labels
       .style('text-anchor', 'end') // Align the labels to the end of ticks
@@ -65,25 +69,32 @@ const AreaChart = ({ data }) => {
       .call(
         d3
           .axisLeft(y)
-          .tickValues([0, 5, 10, 15, 20, 25, 30, 35]) // Set your desired tick values here
+          .tickValues([0, 5, 10, 15, 20, 25]) // Set your desired tick values here
           .tickSize(0) // Remove tick lines
       );
 
     // Add vertical grid lines
     svg.append('g')
-      .selectAll('line')
-      .data(modifiedData) // Skip the last data point
-      .enter()
-      .append('line')
-      .attr('x1', d => x(formatDate(parseDate(d.date_range.split(' - ')[0])) + ' - ' + formatDate(parseDate(d.date_range.split(' - ')[1]))) + x.bandwidth())
-      .attr('x2', d => x(formatDate(parseDate(d.date_range.split(' - ')[0])) + ' - ' + formatDate(parseDate(d.date_range.split(' - ')[1]))) + x.bandwidth())
-      .attr('y1', margin.top)
-      .attr('y2', height - margin.bottom)
-      .attr('stroke', '#D3D3D3'); // Set grid line color
+    .selectAll('line')
+    .data(modifiedData) // Skip the last data point
+    .enter()
+    .append('line')
+    .attr('x1', d => x(formatDate(parseDate(d.date_range.split(' - ')[0])) + ' - ' + formatDate(parseDate(d.date_range.split(' - ')[1]))))
+    .attr('x2', d => x(formatDate(parseDate(d.date_range.split(' - ')[0])) + ' - ' + formatDate(parseDate(d.date_range.split(' - ')[1]))))
+    .attr('y1', margin.top)
+    .attr('y2', height - margin.bottom)
+    .attr('stroke', '#D3D3D3'); // Set grid line color
 
-  }, [data]);
+     // Add horizontal reference line
+     svg.append('line')
+     .attr('x1', margin.left)
+     .attr('x2', width - margin.right - (width / modifiedData.length+ 52 ))
+     .attr('y1', y(0)) // Set the desired value for the reference line
+     .attr('y2', y(0))
+     .attr('stroke', '#D3D3D3');
+    }, [data]);
 
-  return <svg ref={svgRef} width={530} height={410} />;
+  return <svg ref={svgRef} width={500} height={400} />;
 };
 
 export default AreaChart;

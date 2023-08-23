@@ -1,0 +1,9 @@
+<svg id="time" xmlns="http://www.w3.org/2000/svg" width="18.943" height="18.943" viewBox="0 0 18.943 18.943">
+  <g id="Group_3997" data-name="Group 3997" transform="translate(198.943 -607) rotate(90)">
+    <g id="Rectangle_661" data-name="Rectangle 661" transform="translate(607 180)" fill="none" stroke="#464646" stroke-width="2">
+      <rect width="18.943" height="18.943" rx="9.471" stroke="none"/>
+      <rect x="1" y="1" width="16.943" height="16.943" rx="8.471" fill="none"/>
+    </g>
+    <path id="Path_207" data-name="Path 207" d="M4.011,6.218,0,2.207,1.3.911,4.011,3.565,6.866.771l1.3,1.3Z" transform="translate(611.59 189.841) rotate(-45)" fill="#464646"/>
+  </g>
+</svg>

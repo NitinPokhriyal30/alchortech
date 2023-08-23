@@ -1,6 +1,8 @@
 .domain {
     color: gray;
     opacity: 0.7;
+    display: none;
+   
 }
 
 .tick text {
@@ -8,6 +10,7 @@
     font-size: 12px;
     color: gray;
     opacity: 0.7;
+    
 }
 
 .tick line {
@@ -49,3 +52,4 @@
     font-size: 16px;
     padding-left: 6px;
 }
+
