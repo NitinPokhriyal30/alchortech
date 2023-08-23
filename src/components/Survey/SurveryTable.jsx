@@ -25,8 +25,8 @@ const SurveyTable = () => {
     <div className="h-screen w-screen md:w-full">
       <div className="mt-4 flex justify-between px-[25px]">
         <div className="font-Lato text-[20px] font-bold text-[#464646]">Survey</div>
-        <div className="rounded-md bg-[#5486E3] p-2 font-Lato text-white">
-          <Link to="/survey/create" className="flex items-center gap-1">
+        <div className="rounded-md bg-[#5486E3]  font-Lato text-white">
+          <Link to="/survey/create" className="flex items-center px-5 py-2 gap-1">
             <span>{<AiOutlinePlus />}</span>
             Create Survey
           </Link>
@@ -72,26 +72,31 @@ const SurveyTable = () => {
         <div className="h-[1px] w-full bg-[#cecece]"></div>
       </div>
 
-      <div className="mx-4 mt-2 flex overflow-auto rounded-lg bg-white drop-shadow-md">
+      <div className="mx-[25px] mt-2 flex overflow-auto rounded-lg bg-white drop-shadow-md">
         <table className="w-full  min-w-[550px] whitespace-nowrap">
           <thead>
-            <tr className="border-b border-[#cecece] child:text-16px ">
-              <th className="w-auto py-4 pl-8 text-start font-Lato font-medium text-[#292929] md:pl-14">Name</th>
-              <th className="w-1/4 py-4 font-Lato font-medium text-[#292929]">Start date</th>
-              <th className="w-1/4 py-4 font-Lato font-medium text-[#292929]">End date</th>
-              <th className="w-1/4 py-4 font-Lato font-medium text-[#292929]">Type</th>
+            <tr className="border-b border-[#cecece] child:!py-[15.5px] child:!text-16px ">
+              <th className="text-left py-[15.5px] pl-8 text-start font-Lato text-16px font-medium text-[#292929] md:pl-[45px]"></th>
+              <th className="md:w-1/3 text-left py-[15.5px] text-start font-Lato text-16px font-medium text-[#292929]">Name</th>
+              <th className="md:w-1/5 text-left py-4 font-Lato text-[16px] font-medium text-[#292929]">Start date</th>
+              <th className="md:w-1/5 text-left py-4 font-Lato text-[16px] font-medium text-[#292929]">End date</th>
+              <th className="md:w-1/6 text-left py-4 font-Lato text-[16px] font-medium text-[#292929]">Type</th>
+              <th className="md:w-1/1 py-4 text-right font-Lato text-[16px] font-medium text-[#292929]"></th>
+              <th className="py-4 text-right font-Lato text-[16px] font-medium text-[#292929] pl-[20px] md:pl-[45px]"></th>
             </tr>
           </thead>
           <tbody className="table-body" style={{ padding: '20px' }}>
             {Array.from({ length: rows }).map(() => (
               <tr className="group rounded-xl border-b border-[#cecece] hover:bg-[#ececec] " onClick={() => navigate('/survey/preview')}>
-                <td className="py-3 pl-8 text-[16px] font-semibold text-[#5486E3] md:pl-14">Survey 1</td>
-                <td className="py-3 text-center font-Lato text-[16px] font-normal text-[#292929]">Feb 13, 2023</td>
-                <td className="py-3 text-center font-Lato text-[16px] font-normal text-[#292929]">Feb 18, 2023</td>
-                <td className="py-3 text-center font-Lato text-[16px] font-normal text-[#292929]">Automatic</td>
-                <td className="py-3 text-center opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                <td className="py-3 text-[16px] font-semibold text-[#5486E3] md:pl-[45px] "></td>
+                <td className="py-3 text-left text-[16px] font-semibold text-[#5486E3] ">Survey 1</td>
+                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">Feb 13, 2023</td>
+                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">Feb 18, 2023</td>
+                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">Automatic</td>
+                <td className="py-3 text-right md:opacity-0 transition-opacity duration-200 group-hover:opacity-100 md:pl-[45px]">
                   <RxCross1 className="cursor-pointer text-[#292929]" />
                 </td>
+                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]"></td>
               </tr>
             ))}
           </tbody>

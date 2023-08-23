@@ -17,13 +17,15 @@ const SORT_OPTIONS = [
 const QuizTable = () => {
   const [sortBy, setSortBy] = useState(SORT_OPTIONS[0])
   const navigate = useNavigate()
+  const [tab, setTab] = React.useState('draft')
+  const rows = tab === 'draft' ? 5 : tab === 'running' ? 1 : tab === 'closed' ? 8 : 7
 
   return (
     <div className="h-screen w-screen md:w-full">
       <div className="mt-4 flex justify-between px-[25px]">
         <div className="font-Lato text-[20px] font-bold text-[#464646]">Quiz</div>
-        <div className="rounded-md bg-[#5486E3] p-2 font-Lato text-white">
-          <Link to="/quiz/create" className="flex items-center gap-1">
+        <div className="rounded-md bg-[#5486E3] font-Lato text-white">
+          <Link to="/quiz/create" className="flex items-center px-5 py-2 gap-1">
             <span>{<AiOutlinePlus />}</span>
             Create Quiz
           </Link>
@@ -31,8 +33,8 @@ const QuizTable = () => {
       </div>
 
       <div className="mt-4 flex flex-wrap gap-y-4 px-[25px] md:justify-start">
-        <div className="flex flex-1 justify-around md:justify-start md:gap-6">
-          <button className="flex items-center gap-2 text-[14px] text-[#8D8D8D]">
+        {/* <div className="flex flex-1 justify-around md:justify-start md:gap-6">
+          <button className={'flex items-center gap-2 border-b-2 border-b-transparent text-[14px] text-[#8D8D8D] ' + (tab === 'draft' && '!border-primary  text-primary')} onClick={() => setTab('draft')}>
             <span>{<BsPencilFill />}</span>Draft
           </button>
           <button className="flex items-center gap-2 text-[14px] text-[#8D8D8D]">
@@ -42,6 +44,20 @@ const QuizTable = () => {
             <span>{<AiFillRightCircle />}</span>Running
           </button>
           <button className="flex items-center gap-2 text-[14px] text-[#8D8D8D]">
+            <span>{<AiFillCloseCircle />}</span>Closed
+          </button>
+        </div> */}
+        <div className="flex flex-1 justify-around md:justify-start md:gap-6">
+          <button className={'flex items-center gap-2 border-b-2 border-b-transparent text-[14px] text-[#8D8D8D] ' + (tab === 'draft' && '!border-primary  text-primary')} onClick={() => setTab('draft')}>
+            <span>{<BsPencilFill />}</span>Draft
+          </button>
+          <button className={'flex items-center gap-2 border-b-2 border-b-transparent text-[14px] text-[#8D8D8D] ' + (tab === 'scheduled' && '!border-primary  text-primary')} onClick={() => setTab('scheduled')}>
+            <span>{<AiFillClockCircle />}</span> Scheduled
+          </button>
+          <button className={'flex items-center gap-2 border-b-2 border-b-transparent text-[14px] text-[#8D8D8D] ' + (tab === 'running' && '!border-primary  text-primary')} onClick={() => setTab('running')}>
+            <span>{<AiFillRightCircle />}</span>Running
+          </button>
+          <button className={'flex items-center gap-2 border-b-2 border-b-transparent text-[14px] text-[#8D8D8D] ' + (tab === 'closed' && '!border-primary  text-primary')} onClick={() => setTab('closed')}>
             <span>{<AiFillCloseCircle />}</span>Closed
           </button>
         </div>
@@ -65,35 +81,35 @@ const QuizTable = () => {
         </div>
       </div>
 
-      <div className="my-1 px-[25px]">
+      <div className="mb-1 px-[25px]">
         <div className="h-[1px] w-full bg-[#cecece]"></div>
       </div>
 
-      <div className="mx-4 mt-2 rounded-[9px] bg-white drop-shadow-md flex overflow-auto md:w-full">
+      <div className="mx-[25px] mt-2 flex overflow-auto rounded-lg bg-white drop-shadow-md">
         <table className="w-full min-w-[550px] whitespace-nowrap">
           <thead>
             <tr className="border-b border-[#cecece] child:!py-[15.5px] child:!text-16px ">
-              <th className="w-auto py-[15.5px] pl-8 text-start font-Lato text-16px font-medium text-[#292929] md:pl-[45px]">Name</th>
-              <th className="w-1/4 py-4 font-Lato text-[16px] font-medium text-[#292929]">Start date</th>
-              <th className="w-1/4 py-4 font-Lato text-[16px] font-medium text-[#292929]">End date</th>
-              <th className="w-1/4 py-4 font-Lato text-[16px] font-medium text-[#292929]">Type</th>
-              <th className="w-fit py-4 text-right font-Lato text-[16px] font-medium text-[#292929]"></th>
+              <th className="text-left py-[15.5px] pl-8 text-start font-Lato text-16px font-medium text-[#292929] md:pl-[45px]"></th>
+              <th className="md:w-1/3 text-left py-[15.5px] text-start font-Lato text-16px font-medium text-[#292929]">Name</th>
+              <th className="md:w-1/5 text-left py-4 font-Lato text-[16px] font-medium text-[#292929]">Start date</th>
+              <th className="md:w-1/5 text-left py-4 font-Lato text-[16px] font-medium text-[#292929]">End date</th>
+              <th className="md:w-1/6 text-left py-4 font-Lato text-[16px] font-medium text-[#292929]">Type</th>
+              <th className="md:w-1/1 py-4 text-right font-Lato text-[16px] font-medium text-[#292929]"></th>
+              <th className="py-4 text-right font-Lato text-[16px] font-medium text-[#292929] pl-[20px] md:pl-[45px]"></th>
             </tr>
           </thead>
-          <tbody className="">
-            {Array.from({ length: 5 }).map(() => (
-              <tr className="group rounded-xl hover:bg-[#ececec] child:border-b child:border-[#d1d1d1] child:py-[15px] child:text-16px" onClick={() => navigate('/survey/preview')}>
-                <td className="!border-0 !py-0 pl-8 pr-0 font-semibold text-[#5486E3] md:pl-[45px]">
-                  <span className="-mb-px inline-block w-full border-b border-inherit py-[15px]">Quiz 1</span>
+          <tbody className="table-body" style={{ padding: '20px' }}>
+            {Array.from({ length: rows }).map(() => (
+              <tr className="group rounded-xl border-b border-[#cecece] hover:bg-[#ececec] " onClick={() => navigate('/survey/preview')}>
+                <td className="py-3 text-[16px] font-semibold text-[#5486E3] md:pl-[45px] "></td>
+                <td className="py-3 text-left text-[16px] font-semibold text-[#5486E3] ">Survey 1</td>
+                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">Feb 13, 2023</td>
+                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">Feb 18, 2023</td>
+                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">Automatic</td>
+                <td className="py-3 text-right md:opacity-0 transition-opacity duration-200 group-hover:opacity-100 md:pl-[45px]">
+                  <RxCross1 className="cursor-pointer text-[#292929]" />
                 </td>
-                <td className="text-center font-Lato font-normal text-[#292929]">Feb 13, 2023</td>
-                <td className="text-center font-Lato font-normal text-[#292929]">Feb 18, 2023</td>
-                <td className="text-center font-Lato font-normal text-[#292929]">Automatic</td>
-                <td className=" block !border-0 !py-0 pl-0 pr-8 font-semibold text-[#5486E3] md:pr-[45px]">
-                  <span className="-mb-px block w-full border-b border-inherit py-[15px] pr-4 ">
-                    <RxCross1 className="ml-auto h-[19px] cursor-pointer text-[#292929] opacity-0 group-hover:opacity-100" />
-                  </span>
-                </td>
+                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]"></td>
               </tr>
             ))}
           </tbody>

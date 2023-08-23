@@ -199,12 +199,12 @@ function SearchUserProfile({ user, onClick }) {
     <div className="flex cursor-pointer items-start gap-2.5 rounded-md text-16px hover:bg-paper" onClick={onClick}>
       <img
         className="aspect-square w-[55px] rounded-full border border-[#707070]"
-        src={getAvatarAttributes(`${user.full_name}`, processAvatarUrl(user.avtar)).src}
-        alt={getAvatarAttributes(`${user.full_name}`, processAvatarUrl(user.avtar)).alt}
+        src={getAvatarAttributes(user.full_name, processAvatarUrl(user.avtar)).src}
+        alt={getAvatarAttributes(user.full_name, processAvatarUrl(user.avtar)).alt}
         onError={(e) => {
           // If the image fails to load, use the name initials instead
           e.target.onerror = null
-          e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.first_name.charAt(0) + user.last_name.charAt(0))}&color=${'#464646'}&background=${'FFFFFF'}`
+          e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name.split(' ')[0].charAt(0) + user.full_name.split(' ')[1].charAt(0))}&color=${'#464646'}&background=${'FFFFFF'}`
         }}
       />
       <div>
