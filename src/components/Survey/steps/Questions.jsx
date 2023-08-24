@@ -130,7 +130,7 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
 
   return (
     <div className="space-y-5">
-      {questions.questions.map((question, index) => (
+      {questions.questions?.map((question, index) => (
         <div className="rounded-lg bg-white px-5 py-10 shadow-[0px_2px_3px_#00000029]">
           <div className="items-top mb-5 grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-8" key={index}>
             {/* Question Type Selector */}
@@ -187,7 +187,7 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
               {question.type === 'radio' && (
                 <div className="pt-2">
                   <RadioGroup>
-                    {question.options.map((item, optionIndex) => (
+                    {question.options?.map((item, optionIndex) => (
                       <div key={optionIndex} className="flex items-center">
                         {/* Checkbox Option */}
                         <FormControlLabel value={item} control={<Radio />} label={item} checked={item === question.answer} onChange={(event) => handleAnswerChange(event, index)} disabled={isTimeBounded === false} />
@@ -215,7 +215,7 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
               {question.type === 'check-box' && (
                 <div>
                   <FormGroup>
-                    {question.options.map((item, optionIndex) => (
+                    {question.options?.map((item, optionIndex) => (
                       <div key={optionIndex} style={{ display: 'flex', alignItems: 'center' }}>
                         {/* Checkbox Option */}
                         <FormControlLabel value={item} control={<Checkbox checked={isTimeBounded === true && question.answer.split(',').includes(encodeURIComponent(item))} />} label={item} onChange={handleCheckboxAnswerChange(index, optionIndex)} disabled={isTimeBounded === false} />
@@ -250,14 +250,14 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
                     onChange={(event) => handleAnswerChange(event, index)}
                     disabled={isTimeBounded === false}
                   >
-                    {question.options.map((item, optionIndex) => (
+                    {question.options?.map((item, optionIndex) => (
                       <MenuItem key={optionIndex} value={item}>
                         {item}
                       </MenuItem>
                     ))}
                   </Select>
                   {/* Edit Dropdown Options */}
-                  {question.options.map((item, optionIndex) => (
+                  {question.options?.map((item, optionIndex) => (
                     <div key={optionIndex} style={{ display: 'flex', alignItems: 'center' }}>
                       {/* Dropdown Option */}
                       <span>{item}</span>

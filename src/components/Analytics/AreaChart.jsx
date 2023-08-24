@@ -21,7 +21,7 @@ const AreaChart = ({ data }) => {
     const zeroDataPoint = { date_range: `${formatDate(d3.timeDay.offset(startDate, -1))} - ${formatDate(startDate)}`, transaction_count: 0 };
     const modifiedData = [zeroDataPoint, ...data];
 
-    const xData = modifiedData.map(d => formatDate(parseDate(d.date_range.split(' - ')[0])) + ' - ' + formatDate(parseDate(d.date_range.split(' - ')[1])));
+    const xData = modifiedData?.map(d => formatDate(parseDate(d.date_range.split(' - ')[0])) + ' - ' + formatDate(parseDate(d.date_range.split(' - ')[1])));
 
     { console.log(xData); }
     const x = d3

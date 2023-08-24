@@ -64,7 +64,7 @@ const SurveyDetails = ({ surveyDetails, setSurveyDetails, errors }) => {
     const newValue = event.target.checked
     setSurveyDetails((prevSurveyDetails) => ({
       ...prevSurveyDetails,
-      questions: prevSurveyDetails.questions.map((question) => {
+      questions: prevSurveyDetails.questions?.map((question) => {
         if (newValue === true) {
           question.answer = ''
         } else {

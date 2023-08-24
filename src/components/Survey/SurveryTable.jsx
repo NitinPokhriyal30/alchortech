@@ -58,7 +58,7 @@ const SurveyTable = () => {
               </span>
             </button>
             <div className="absolute right-[1px] top-full z-10 hidden w-36 flex-col rounded-lg bg-white py-2 text-end drop-shadow-[0px_2px_6px_#44444F1A]  hover:flex peer-hover:flex child:cursor-pointer">
-              {SORT_OPTIONS.map((option) => (
+              {SORT_OPTIONS?.map((option) => (
                 <p key={option.value} className=" px-4 py-1 font-Lato text-sm hover:bg-translucent-black" onClick={() => setSortBy(option)}>
                   {option.label}
                 </p>

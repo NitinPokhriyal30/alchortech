@@ -18,7 +18,7 @@ const OrganizationChart = () => {
       <image x="150" y="150" width="100" height="100" xlinkHref={images[0]} />
 
       {/* Other Images */}
-      {images.slice(1).map((image, index) => {
+      {images.slice(1)?.map((image, index) => {
         const angle = (index * 2 * Math.PI) / 5;
         const cx = 200 + 100 * Math.cos(angle) - 25;
         const cy = 200 + 100 * Math.sin(angle) - 25;

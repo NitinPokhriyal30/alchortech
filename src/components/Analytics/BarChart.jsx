@@ -44,7 +44,7 @@ const BarChart = ({ data }) => {
 
     // Set up scales
     const xScale = d3.scaleBand()
-      .domain(data.map(d => d.category))
+      .domain(data?.map(d => d.category))
       .range([0, chartWidth])
       .padding(0.5);
 

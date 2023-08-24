@@ -37,7 +37,7 @@ const CampaignCreate = () => {
             </section>
 
             <section className="flex gap-2 mx-6">
-                {STEPPER.map((stepOption, i) => (
+                {STEPPER?.map((stepOption, i) => (
                     <div className="flex items-center gap-2" key={stepOption.value}>
                         <Link
                             to="#" // Replace "#" with the actual route for each step

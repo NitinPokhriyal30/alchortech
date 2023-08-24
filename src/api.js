@@ -85,7 +85,6 @@ const api = {
 axios.interceptors.request.use(
   async (request) => {
     const token = Cookies.get('token')
-    console.log(!request.url.includes('jwt') ? 'verifying token' : ' ', request.url)
 
     if (token && !request.url.includes('jwt')) {
       // verify access token

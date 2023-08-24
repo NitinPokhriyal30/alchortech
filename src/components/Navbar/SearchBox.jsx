@@ -86,8 +86,8 @@ export default function SearchBox({ ...props }) {
                   <p className="flex items-center gap-3 text-18px font-semibold text-[#00bc9f]">Hashtags</p>
 
                   <div className="space-y-2.5 pt-2.5">
-                    {searchData.hashtags.map((transaction) => (
-                      <Link to={`/transactions/${transaction.id}`} className="flex items-start gap-2.5 rounded-md text-16px hover:bg-paper" onClick={() => setShow(false)}>
+                    {searchData.hashtags?.map((transaction, index) => (
+                      <Link key={index} to={`/transactions/${transaction.id}`} className="flex items-start gap-2.5 rounded-md text-16px hover:bg-paper" onClick={() => setShow(false)}>
                         <div>
                           <p className="text-black">
                             <span className="font-semibold">
@@ -100,7 +100,7 @@ export default function SearchBox({ ...props }) {
                           </p>
                           <p className="line-clamp-1 text-ellipsis pt-1">{transaction.message}</p>
                           <p className="line-clamp-1 text-ellipsis pt-1">
-                            {transaction.hashtags.map((tag) => (
+                            {transaction.hashtags?.map((tag) => (
                               <span className={tag.name.startsWith(searchQuery) ? 'bg-[#fff9c9]' : ''}>{tag.name}</span>
                             ))}
                           </p>
@@ -116,7 +116,7 @@ export default function SearchBox({ ...props }) {
                   <p className="flex items-center gap-3 text-18px font-semibold text-[#00bc9f]">Users</p>
 
                   <div className="space-y-2.5 pt-2.5">
-                    {searchData.users.map((user) => (
+                    {searchData.users?.map((user) => (
                       <SearchUserProfile user={user} onClick={() => setSelectedUser(user)} />
                     ))}
                   </div>
@@ -171,7 +171,7 @@ function SearchUserTransactions({ user, onBack, onClick }) {
             No transactions for "{user.first_name} {user.last_name}"
           </p>
         ) : (
-          userTransactionQuery.data.map((transaction) => (
+          userTransactionQuery.data?.map((transaction) => (
             <Link to={`/transactions/${transaction.id}`} className="flex items-start gap-2.5 rounded-md text-16px hover:bg-paper" onClick={onClick}>
               <div>
                 <p className="text-black">
@@ -184,7 +184,7 @@ function SearchUserTransactions({ user, onBack, onClick }) {
                   </span>
                 </p>
                 <p className="line-clamp-1 text-ellipsis pt-1">{transaction.message}</p>
-                <p className="line-clamp-1 text-ellipsis pt-1">{transaction.hashtags.map((tag) => '#' + tag.name).join(' ')}</p>
+                <p className="line-clamp-1 text-ellipsis pt-1">{transaction.hashtags?.map((tag) => '#' + tag.name).join(' ')}</p>
               </div>
             </Link>
           ))

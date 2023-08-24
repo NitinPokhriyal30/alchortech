@@ -20,7 +20,7 @@ const getChildTransactionsFor = (parentId, allTransactions) => {
 };
 
 const withIsChild = (allTransactions) => {
-  return allTransactions.map((post) => {
+  return allTransactions?.map((post) => {
     const hasParent = allTransactions.some((parentPost) => post.parent_id === parentPost.id);
     // if a transaction has a parent transaction then it's a child transaction
     post.isChild = hasParent;
@@ -276,7 +276,7 @@ export default function MyProfile() {
                     <div className='flex justify-center'><Loader /></div>
                   ) : transactionsQuery.data && transactionsQuery.data.length > 0 ? (
                     <React.Fragment>
-                      {parentPosts.slice(0, page * pageSize).map((post, i) => (
+                      {parentPosts.slice(0, page * pageSize)?.map((post, i) => (
                         <div className='px-4 mt-4' key={post.id}>
                           <PostCard i={i} post={post} childrenTransactions={getChildTransactionsFor(post.id, allPosts)} />
                         </div>

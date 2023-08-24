@@ -177,7 +177,7 @@ const UserInteraction = ({ filterBy, userId }) => {
                 </thead>
                 <tbody>
                   {console.log(interactionData)}
-                  {interactionData.map((interaction, index) => (
+                  {interactionData?.map((interaction, index) => (
                     <tr
                       key={index}
                       style={{ borderRadius: '0.5rem' }}

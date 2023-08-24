@@ -33,7 +33,7 @@ const WordCloudComponent = () => {
     // Set up D3 cloud layout
     const layout = cloud()
       .size([width, height])
-      .words(wordData.map((d) => ({ text: d.text, size: d.size })))
+      .words(wordData?.map((d) => ({ text: d.text, size: d.size })))
       .padding(5)
       .rotate(() => 0) // Set rotation to 0 to avoid random rotations
       .font('Arial')

@@ -239,7 +239,7 @@ export default function SurveyListPage({ ...props }) {
                   </TableHead>
 
                   <TableBody>
-                    {visibleRows.map((survey, i) => (
+                    {visibleRows?.map((survey, i) => (
                       <TableRow key={survey.id}>
                         <TableCell>
                           <XStack alignItems="center" gap={2}>

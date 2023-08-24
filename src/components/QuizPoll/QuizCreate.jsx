@@ -181,7 +181,7 @@ const QuizCreate = () => {
         </section>
 
         <section className="hidden md:flex gap-2 pl-11">
-          {STEPPER.map((stepOption, i) => (
+          {STEPPER?.map((stepOption, i) => (
             <div className="flex items-center gap-2" key={stepOption.value}>
               <Link
                 to="#" // Replace "#" with the actual route for each step

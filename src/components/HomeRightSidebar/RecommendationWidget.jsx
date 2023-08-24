@@ -28,7 +28,7 @@ export default function RecommendationWidget() {
         </div>
         <div>
           <div className="flex px-4 py-2 justify-between items-center">
-            {recommendation.map(({ imageUrl }) => (
+            {recommendation?.map(({ imageUrl }) => (
               <div key={imageUrl} className="border-r last:border-none border-[#EDEDED] py-4 px-2">
                 <img src={imageUrl} alt="Amazon Logo" />
               </div>

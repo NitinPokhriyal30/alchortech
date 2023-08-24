@@ -115,7 +115,7 @@ export default function SelectParticipants () {
           )}
 
           {participantType == 'Group' &&
-              groups.map((group, index) => (
+              groups?.map((group, index) => (
                   <div key={index} className="relative">
 
                       <div className="rounded-lg bg-white px-5 py-6 drop-shadow-md mt-2">
@@ -190,7 +190,7 @@ export function RecipientsDropdown({ form, setForm }) {
             >
                 <span className="flex flex-wrap recipients-grid gap-2">
                     {form.recipients.length > 0 ? (
-                        form.recipients.map((userId) => {
+                        form.recipients?.map((userId) => {
                             const user = usersWithoutMe.find((u) => u.id === userId);
                             return (
                                 <span key={userId} className="border-[2px] px-2 py-1 rounded-lg mx-1">
