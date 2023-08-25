@@ -35,6 +35,7 @@ import SurveyCreate from '@/components/Survey/SurveyCreate'
 import SurveyPreview from '@/components/Survey/SurveyPreview'
 import QuizTable from '@/components/QuizPoll/QuizTable'
 import Loader from '@/components/Loader'
+import VoiceOutPage from '@/pages/VoiceOutPage'
 
 const QuizCreate = React.lazy(() => import('@/components/QuizPoll/QuizCreate'))
 
@@ -69,6 +70,7 @@ const router = createBrowserRouter(
         <Route path="transactions/:id" element={<Transactions />} />
         <Route path="campaigns" element={<CampaignsTable />} />
         <Route path="campaign/create" element={<CampaignCreate />} />
+        <Route path="voice-out" element={<VoiceOutPage />} />
       </Route>
       <Route path="/reset/password/passwordreset/:uidb64/:token" element={<ResetPassword />} />
 
