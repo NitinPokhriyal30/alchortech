@@ -167,7 +167,7 @@ const UserInteraction = ({ filterBy, userId }) => {
       <div className="w-3/5 py-4 flex justify-center">
         <div>
           {interactionData.length > 0 ? (
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto px-2">
               <table className="border-collapse">
                 <thead>
                   <tr>

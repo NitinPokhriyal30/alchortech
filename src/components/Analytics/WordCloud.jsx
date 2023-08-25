@@ -3,32 +3,24 @@ import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import cloud from 'd3-cloud';
 
-
-const wordData = [
-  {  text: 'share',  size: 45 },
-  { text: 'reflection', size: 35 },
-  { text: 'quality', size: 40 },
-  { text: 'leader', size: 35 },
-  { text: 'one team', size: 45,},
-  { text: 'brainstorm', size: 60 },
-  { text: 'vision', size: 55 },
-  { text: 'culture', size: 45 },
-  { text: 'ideas', size: 55 },
-  { text: 'collaboration', size: 60 },
-];
-
 const colors = ['#747474', '#F89D96', '#00BC9F', '#FFD398', '#5486E3', '#77BEF2'];
 
-const WordCloud = () => {
+const WordCloud = ({data}) => {
   const wordCloudRef = useRef(null);
+
+
+  const wordData = data.map((word, index) => ({
+    text: word,
+    size: 20 + index * 5,
+  }));
 
   useEffect(() => {
     drawWordCloud();
   }, []);
 
   const drawWordCloud = () => {
-    const width = 600;
-    const height = 400;
+    const width = 400;
+    const height = 300;
 
     // Set up D3 cloud layout
     const layout = cloud()

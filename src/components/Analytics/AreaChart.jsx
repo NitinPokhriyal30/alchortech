@@ -6,10 +6,11 @@ const AreaChart = ({ data }) => {
   const svgRef = useRef();
 
   useEffect(() => {
+    console.log(data);
     const svg = d3.select(svgRef.current);
-    const margin = { top: 20, right: 30, bottom: 30, left: 40 };
+    const margin = { top: 20, right: 0, bottom: 30, left: 60 };
     const parentWidth = svgRef.current.clientWidth; // Get the width of the container
-    const parentHeight = 340;
+    const parentHeight = 300;
     const width = parentWidth;
     const height = parentHeight;
 
@@ -55,13 +56,13 @@ const AreaChart = ({ data }) => {
       .call(
         d3.axisBottom(x)
           .tickSize(0) // Adjust padding to avoid overlapping labels
-          .tickPadding(0)
+          .tickPadding(-10)
           
           .tickFormat((d, i) => i === 0 ? '' : d)
       )
       .selectAll('text') // Select all tick labels
       .style('text-anchor', 'end') // Align the labels to the end of ticks
-      .attr('transform', 'rotate(-45) translate(-10, -10)'); // Rotate labels at -45 degrees
+      .attr('transform', 'rotate(-45) translate(-15, 0)'); // Rotate labels at -45 degrees
 
     // Customize y-axis tick values
     svg.append('g')
@@ -85,16 +86,9 @@ const AreaChart = ({ data }) => {
     .attr('y2', height - margin.bottom)
     .attr('stroke', '#D3D3D3'); // Set grid line color
 
-     // Add horizontal reference line
-     svg.append('line')
-     .attr('x1', margin.left)
-     .attr('x2', width - margin.right - (width / modifiedData.length+ 52 ))
-     .attr('y1', y(0)) // Set the desired value for the reference line
-     .attr('y2', y(0))
-     .attr('stroke', '#D3D3D3');
     }, [data]);
 
-  return <svg ref={svgRef} width={500} height={400} />;
+  return <svg ref={svgRef} width={500} height={350} />;
 };
 
 export default AreaChart;
