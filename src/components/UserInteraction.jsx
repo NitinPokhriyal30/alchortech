@@ -3,7 +3,6 @@ import { api } from '@/api';
 import { useQuery } from 'react-query';
 import InteractionChart from './InteractionChart'
 import Loader from '@/components/Loader';
-import './UserInteraction.css';
 
 const UserInteraction = ({ filterBy, userId }) => {
   const [sortedSenders, setSortedSenders] = useState([]);
@@ -167,7 +166,7 @@ const UserInteraction = ({ filterBy, userId }) => {
       <div className="w-3/5 py-4 flex justify-center">
         <div>
           {interactionData.length > 0 ? (
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto px-2">
               <table className="border-collapse">
                 <thead>
                   <tr>

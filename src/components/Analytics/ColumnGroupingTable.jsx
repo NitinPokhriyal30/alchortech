@@ -1,107 +1,140 @@
-import React from 'react';
-import DataTable from 'react-data-table-component';
-import growUp from '../../assets/images/analytics/growUp.svg'
-import shrinkDown from '../../assets/images/analytics/shrinkDown.svg'
-
-
-
-export default function ColumnGroupingTable({departmentData}) {
-
-
-  const columns = [
-    {
-      selector: row => row.department,
-      sortable: true,
-      minWidth: '350px', 
-      cell: (row, rowIndex) => {
-        const data = departmentData[rowIndex]; // Get data for the current row
-        const percentage = data?.percentage_difference;
-
-        return (
-          <div className='grid grid-cols-3'>
-            <div className='col-span-2'
-              style={{
-                fontWeight: '500',
-                fontSize: '16px',
-                color: '#050505',
-              }}
-            >
-              {row.department}
-            </div>
-            <div className='text-[9px] rounded-md bg-[#D6FBF0] text-[#285C55]'>
-              <div className='flex py-1 px-1 items-center' >
-                <img className='mr-[1px]' src={growUp} alt='grow-up'/>  
-                {`${percentage}% from last month`}
-              </div>
-            </div>
-          </div>
-        );
-      },
-      
-    },
-    {
-      selector: row => row.withinDepartment,
-      center: true,
-      style: {
-        backgroundColor: '#E5EDFB',
-        fontWeight: '400',
-        fontSize: '14px',
-        font: 'Lato'
-      },
-      ignoreRowClick: true,
-    },
-    {
-      name: 'Received',
-      selector: row => row.received,
-      center: true,
-      sortable: true,
-      style: {
-        fontSize: '14px',
-        fontWeight: '400'
-      }
-    },
-    {
-      name: 'Given',
-      selector: row => row.given,
-      center: true,
-      sortable: true,
-      style: {
-        fontSize: '14px',
-        fontWeight: '400'
-      }
-    },
-    {
-      name: 'Total',
-      selector: row => row.total,
-      center: true,
-      sortable: true,
-      style: {
-        color: '#5486E3',
-        style: {
-          fontSize: '14px',
-          fontWeight: '900'
-        }
-      },
-    },
-  ];
-
-  const transformedData = departmentData.map(item => {
-    return createData(
-      item.name || 'Unknown Department',
-      item.within_department,
-      item.recipient_outside_department,
-      item.sender_outside_department
-    );
+import React, {useState, useEffect} from 'react';
+import growUp from '../../assets/images/analytics/growUp.svg';
+import { AiFillCaretDown, AiFillCaretUp } from 'react-icons/ai';
+import './Analytics.css'
+export default function ColumnGroupingTable({ departmentData }) {
+  const [sortConfig, setSortConfig] = useState({
+    key: 'total',
+    direction: 'desc'
   });
-  
-  function createData(department, withinDepartment, received, given) {
-    const total = withinDepartment + received + given;
-    return { department, withinDepartment, received, given, total };
+
+  const data = departmentData.map(item => ({
+    departmentName: item.name || 'Unknown Department',
+    departmentPercentage: item.percentage_difference,
+    withinDepartment: item.within_department,
+    received: item.recipient_outside_department,
+    given: item.sender_outside_department,
+    total: item.within_department + item.recipient_outside_department + item.sender_outside_department
+  }));
+
+  const sortedData = [...data];
+
+  if (sortConfig.key) {
+    sortedData.sort((a, b) => {
+      const valueA = a[sortConfig.key];
+      const valueB = b[sortConfig.key];
+      
+      if (typeof valueA === 'number' && typeof valueB === 'number') {
+        if (valueA < valueB) {
+          return sortConfig.direction === 'asc' ? -1 : 1;
+        }
+        if (valueA > valueB) {
+          return sortConfig.direction === 'asc' ? 1 : -1;
+        }
+        return 0;
+      }
+
+      if (valueA < valueB) {
+        return sortConfig.direction === 'asc' ? -1 : 1;
+      }
+      if (valueA > valueB) {
+        return sortConfig.direction === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
   }
 
+  const requestSort = (key) => {
+    let direction = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+
+  
+  
+  
   return (
-    <div style={{ width: '100%', paddingLeft: '30px', paddingRight: '30px'}}>
-      <DataTable columns={columns} data={transformedData} defaultSortField="total" />
+    <div className='w-full'>
+     <table className='w-full'> 
+        <thead>
+          <tr className='text-white text-[16px]'>
+            <th className='bg-[#5486E3] text-start pl-10 py-5 rounded-l-xl font-[500]' colSpan="2">Department</th> 
+            <th className='bg-[#5486E3] font-[500]' colSpan="1">Within Department</th> 
+            <th className='bg-[#5486E3] font-[500]' colSpan="2">Outside Department</th>
+            <th className='bg-[#5486E3] font-[500] rounded-r-xl'></th> 
+          </tr>
+          <tr>
+            <th></th>
+            <th></th> 
+            <th className='bg-[#EAEEF5]'></th> 
+            <th 
+              className='py-4 cursor-pointer'
+              onClick={() => requestSort('received')}
+            >
+           <div className='flex justify-center items-center'>
+            Received{' '}
+            {sortConfig.key === 'received' && (
+              <span>{sortConfig.direction === 'asc' ? <AiFillCaretUp /> : <AiFillCaretDown />}</span>
+            )}
+           </div>
+            </th> 
+            <th
+              className='cursor-pointer'
+              onClick={() => requestSort('given')}
+            >
+              <div className='flex justify-center items-center'>
+                Given{' '}
+                {sortConfig.key === 'given' && (
+                  <span>{sortConfig.direction === 'asc' ? <AiFillCaretUp /> : <AiFillCaretDown />}</span>
+                )}
+              </div>
+            </th> 
+            <th
+              className='bg-[#EAEEF5] text-[#5486E3] cursor-pointer'
+              onClick={() => requestSort('total')}
+            >
+              <div className='flex justify-center items-center'>
+                Total{' '}
+                {sortConfig.key === 'total' && (
+                  <span>{sortConfig.direction === 'asc' ? <AiFillCaretUp /> : <AiFillCaretDown />}</span>
+                )}
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody className='p-4'>
+            {sortedData?.map((rowData, rowIndex) => (
+              <tr key={rowIndex} >
+                <td className='w-[25%] pl-10 '>
+                  <div className='border-b-[1px] py-3'>{rowData.departmentName}</div>
+                </td>
+                <td >
+                  <div className='pr-4 border-b-[1px] py-[14px]'>
+                  <div className='w-28 flex rounded-md justify-evenly text-[12px] md:text-[8px] bg-[#D6FBF0] text-[#285C55] font-semibold py-1'>
+                    <img src={growUp} alt='grow-up'/>
+                    {`${rowData.departmentPercentage}% from last month`}
+                  </div>
+                  </div>
+                </td>
+                <td className='text-center w-[20%] bg-[#EAEEF5]'>
+                 <div className='py-3 border-b-[1px] '>{rowData.withinDepartment}</div>
+                </td>
+                <td className='text-center w-[18%]'>
+                <div className=' py-3 border-b-[1px]'>{rowData.received}</div>
+                </td>
+                <td className='text-center w-[18%]'>
+                <div className='py-3 border-b-[1px]'>{rowData.given}</div>
+                </td>
+                <td className='text-center w-[20%] px-10 bg-[#EAEEF5]'>
+                  <div className='border-b-[1px] py-3 text-[#5486E3]'>{rowData.total}</div>
+                </td>
+              </tr>
+            ))}
+      </tbody>
+     </table>
     </div>
   );
 }

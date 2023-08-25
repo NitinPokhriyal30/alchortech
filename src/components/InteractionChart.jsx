@@ -217,11 +217,7 @@ const InteractionChart = ({ interactionData, me, hoveredRowIndex, onRowHover, se
          {interactionData[4] && (
           <circle cx="158" cy="272" r="4" fill="#F89D96" />
          )}
-         
-        
       </svg>
-
-
     </div>
   );
 };

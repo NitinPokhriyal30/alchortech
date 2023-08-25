@@ -36,7 +36,7 @@ export default function SurveyOngoingWidget({ ...props }) {
       </div>
 
       <div className=" px-4 pt-2 ">
-        {survey.map((survey) => (
+        {survey?.map((survey) => (
           <div key={survey.id} className="flex items-top pb-2 justify-between">
             <div>
               <p className="text-[14px] text-[#5486E3]  font-normal">{survey.title}</p>

@@ -81,10 +81,10 @@ const BarChart = ({ data }) => {
       .attr('class', 'bar-label')
       .attr('x', d => xScale(d.category) + xScale.bandwidth() / 2) // Position the label at the center of each bar
       .attr('y', chartHeight + 40) // Position the label just below the bars
-      .attr('dy', '0.5em') // Adjust the value as needed
+      .attr('dy', '0') // Adjust the value as needed
       .attr('text-anchor', 'middle') // Center-align the text
       .attr('fill', '#292929') // Text color
-      .attr('transform', d => `rotate(-55 ${xScale(d.category) + xScale.bandwidth() / 2}, ${chartHeight + 80})`) // Rotate around a point below the bar
+      .attr('transform', d => `rotate(-55 ${xScale(d.category) + xScale.bandwidth() / 2}, ${chartHeight + 70})`) // Rotate around a point below the bar
       .text(d => d.category); // Use the category value as the label text
   
       

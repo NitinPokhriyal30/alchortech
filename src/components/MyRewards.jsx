@@ -42,7 +42,7 @@ const MyRewards = () => {
           </div>
           <div className="rounded-b-lg bg-white px-6 py-4 drop-shadow-normal">
             <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(227px,1fr))]">
-              {recommendedCoupon.map((coupon, index) => (
+              {recommendedCoupon?.map((coupon, index) => (
                 <RewardCard key={index} coupon={coupon} />
               ))}
             </div>
@@ -55,7 +55,7 @@ const MyRewards = () => {
           </div>
           <div className="rounded-b-lg bg-white px-6 py-4 drop-shadow-normal">
             <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(227px,1fr))]">
-              {recommendedCoupon.map((coupon, index) => (
+              {recommendedCoupon?.map((coupon, index) => (
                 <RewardCard key={index} coupon={coupon} />
               ))}
             </div>
@@ -68,7 +68,7 @@ const MyRewards = () => {
           </div>
           <div className="rounded-b-lg bg-white px-6 py-4 drop-shadow-normal">
             <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(227px,1fr))]">
-              {recommendedCoupon.map((coupon, index) => (
+              {recommendedCoupon?.map((coupon, index) => (
                 <RewardCard key={index} coupon={coupon} />
               ))}
             </div>

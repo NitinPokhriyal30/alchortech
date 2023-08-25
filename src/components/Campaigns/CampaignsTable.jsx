@@ -1,97 +1,108 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 import { AiOutlinePlus, AiFillClockCircle, AiFillCloseCircle, AiFillRightCircle, AiFillCaretDown } from 'react-icons/ai'
 import { BsPencilFill } from 'react-icons/bs'
 import { RxCross1 } from 'react-icons/rx'
 import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
-const CampaignsTable = () => {
+const SORT_OPTIONS = [
+  { label: 'Last 60 days', value: '1' },
+  { label: 'Last 6 months', value: '2' },
+  { label: 'Last quarter', value: '3' },
+  { label: 'This quarter', value: '4' },
+  { label: 'Last month', value: '5' },
+  { label: 'This month', value: '6' },
+]
 
-    const [sortBy, setSortBy] = useState('Last 30 Days');
+const CampaignTable = () => {
+  const [sortBy, setSortBy] = useState(SORT_OPTIONS[0])
+  const navigate = useNavigate()
+  const [tab, setTab] = React.useState('draft')
+  const rows = tab === 'draft' ? 5 : tab === 'running' ? 1 : tab === 'closed' ? 8 : 7
 
-    return (
-        <div>
-
-            <div className='flex justify-between mt-4 mx-4'>
-                <div className='text-[20px] font-Lato text-[#464646] font-bold'>Campaigns</div>
-                <div className='bg-[#5486E3] rounded-md p-2 text-white font-Lato'>
-                    <Link to="/campaign/create" className="flex items-center gap-1">
-                        <span>{<AiOutlinePlus />}</span>
-                        Create Campaign
-                    </Link>
-                </div>
-            </div>
-
-            <div className='flex justify-between mt-4 px-4'>
-                <div className='flex gap-6'>
-                    <button className='flex items-center gap-2 text-[#8D8D8D] text-[14px]'><span>{<BsPencilFill />}</span>Draft</button>
-                    <button className='flex items-center gap-2 text-[#8D8D8D] text-[14px]' ><span>{<AiFillClockCircle />}</span> Scheduled</button>
-                    <button className='flex items-center gap-2 text-[#8D8D8D] text-[14px]'><span>{<AiFillRightCircle />}</span>Running</button>
-                    <button className='flex items-center gap-2 text-[#8D8D8D] text-[14px]'><span>{<AiFillCloseCircle />}</span>Closed</button>
-                </div>
-                <div>
-                    <div className=" text-[#7B7B7B] text-sm relative flex items-center ml-20">
-                        Sort By:
-                        <button className="peer font-Lato flex items-center gap-1 text-sm font-semibold pl-1">
-                            {sortBy}
-                            <span><AiFillCaretDown /></span>
-                        </button>
-                        <div className="hidden drop-shadow-[0px_2px_6px_#44444F1A] w-36 px-4 py-2 rounded-lg bg-white absolute z-10 top-[21px] right-[1px] peer-hover:flex hover:flex  flex-col child:cursor-pointer text-end">
-                            <p className="text-sm font-Lato" onClick={() => setFilterBy("all")}>Last 60 days</p>
-                            <p className="text-sm font-Lato" onClick={() => setFilterBy("last_six_months")}>Last 6 months</p>
-                            <p className="text-sm font-Lato" onClick={() => setFilterBy("last_quarter")}>Last quarter</p>
-                            <p className="text-sm font-Lato" onClick={() => setFilterBy("this_quarter")}>This quarter</p>
-                            <p className="text-sm font-Lato" onClick={() => setFilterBy("last_month")}>Last month</p>
-                            <p className="text-sm font-Lato" onClick={() => setFilterBy("this_month")}>This month</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div className='w-[97%] h-[1px] bg-[#7B7B7B] mt-1 mx-4'></div>
-
-            <div className='bg-white rounded-lg drop-shadow-md mt-2 mx-4'>
-                <table className='w-full'>
-                    <thead>
-                        <tr className='border-b border-[#7B7B7B] '>
-                            <th className="py-4 text-start pl-14 text-[16px] text-[#292929] font-Lato font-semibold w-auto">Name</th>
-                            <th className="py-4 text-[16px] text-[#292929] font-Lato font-semibold w-1/4">Start date</th>
-                            <th className="py-4 text-[16px] text-[#292929] font-Lato font-semibold w-1/4">End date</th>
-                            <th className="py-4 text-[16px] text-[#292929] font-Lato font-semibold w-1/4">Type</th>
-                        </tr>
-                    </thead>
-                    <tbody className='group'>
-                        <tr className="hover:bg-[#ececec] rounded-xl border-b border-[#7B7B7B] group" onMouseEnter={(e) => e.currentTarget.lastChild.style.opacity = 1} onMouseLeave={(e) => e.currentTarget.lastChild.style.opacity = 0}>
-                            <td className="py-3 pl-14 text-[#5486E3] font-semibold text-[16px]">Gold Plan Sales Challenge</td>
-                            <td className="py-3 text-center text-[16px] text-[#000000] font-Lato font-normal">Feb 13, 2023</td>
-                            <td className="py-3 text-center text-[16px] text-[#000000] font-Lato font-normal">Feb 18, 2023</td>
-                            <td className="py-3 text-center text-[16px] text-[#000000] font-Lato font-normal">Automatic</td>
-                            <td className="py-3 text-center opacity-0 transition-opacity duration-200"><RxCross1 className="text-[#292929] cursor-pointer" /></td>
-                        </tr>
-                        <tr className="hover:bg-[#ececec] rounded-xl border-b border-[#7B7B7B] group" onMouseEnter={(e) => e.currentTarget.lastChild.style.opacity = 1} onMouseLeave={(e) => e.currentTarget.lastChild.style.opacity = 0}>
-                            <td className="py-3 pl-14 text-[#5486E3] font-semibold text-[16px]">Gold Plan Sales Challenge</td>
-                            <td className="py-3 text-center text-[16px] text-[#000000] font-Lato font-normal">Feb 13, 2023</td>
-                            <td className="py-3 text-center text-[16px] text-[#000000] font-Lato font-normal">Feb 18, 2023</td>
-                            <td className="py-3 text-center text-[16px] text-[#000000] font-Lato font-normal">Automatic</td>
-                            <td className="py-3 text-center opacity-0 transition-opacity duration-200"><RxCross1 className="text-[#292929] cursor-pointer" /></td>
-                        </tr>
-                        <tr className="hover:bg-[#ececec] rounded-xl border-b border-[#7B7B7B] group" onMouseEnter={(e) => e.currentTarget.lastChild.style.opacity = 1} onMouseLeave={(e) => e.currentTarget.lastChild.style.opacity = 0}>
-                            <td className="py-3 pl-14 text-[#5486E3] font-semibold text-[16px]">Gold Plan Sales Challenge</td>
-                            <td className="py-3 text-center text-[16px] text-[#000000] font-Lato font-normal">Feb 13, 2023</td>
-                            <td className="py-3 text-center text-[16px] text-[#000000] font-Lato font-normal">Feb 18, 2023</td>
-                            <td className="py-3 text-center text-[16px] text-[#000000] font-Lato font-normal">Automatic</td>
-                            <td className="py-3 text-center opacity-0 transition-opacity duration-200"><RxCross1 className="text-[#292929] cursor-pointer" /></td>
-                        </tr>
-                        <tr className="hover:bg-[#ececec] rounded-xl border-b border-[#7B7B7B] group" onMouseEnter={(e) => e.currentTarget.lastChild.style.opacity = 1} onMouseLeave={(e) => e.currentTarget.lastChild.style.opacity = 0}>
-                            <td className="py-3 pl-14 text-[#5486E3] font-semibold text-[16px]">Gold Plan Sales Challenge</td>
-                            <td className="py-3 text-center text-[16px] text-[#000000] font-Lato font-normal">Feb 13, 2023</td>
-                            <td className="py-3 text-center text-[16px] text-[#000000] font-Lato font-normal">Feb 18, 2023</td>
-                            <td className="py-3 text-center text-[16px] text-[#000000] font-Lato font-normal">Automatic</td>
-                            <td className="py-3 text-center opacity-0 transition-opacity duration-200"><RxCross1 className="text-[#292929] cursor-pointer" /></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+  return (
+    <div className="h-screen w-screen md:w-full">
+      <div className="mt-4 flex justify-between px-[25px]">
+        <div className="font-Lato text-[20px] font-bold text-[#464646]">Campaigns</div>
+        <div className="rounded-md bg-[#5486E3]  font-Lato text-white">
+          <Link to="/campaign/create" className="flex items-center px-5 py-2 gap-1">
+            <span>{<AiOutlinePlus />}</span>
+            Create Campaign
+          </Link>
         </div>
-    )
+      </div>
+
+      <div className="mt-4 flex flex-wrap gap-y-4 px-[25px] md:justify-start">
+        <div className="flex flex-1 justify-around md:justify-start md:gap-6">
+          <button className={'flex items-center gap-2 border-b-2 border-b-transparent text-[14px] text-[#8D8D8D] ' + (tab === 'draft' && '!border-primary  text-primary')} onClick={() => setTab('draft')}>
+            <span>{<BsPencilFill />}</span>Draft
+          </button>
+          <button className={'flex items-center gap-2 border-b-2 border-b-transparent text-[14px] text-[#8D8D8D] ' + (tab === 'scheduled' && '!border-primary  text-primary')} onClick={() => setTab('scheduled')}>
+            <span>{<AiFillClockCircle />}</span> Scheduled
+          </button>
+          <button className={'flex items-center gap-2 border-b-2 border-b-transparent text-[14px] text-[#8D8D8D] ' + (tab === 'running' && '!border-primary  text-primary')} onClick={() => setTab('running')}>
+            <span>{<AiFillRightCircle />}</span>Running
+          </button>
+          <button className={'flex items-center gap-2 border-b-2 border-b-transparent text-[14px] text-[#8D8D8D] ' + (tab === 'closed' && '!border-primary  text-primary')} onClick={() => setTab('closed')}>
+            <span>{<AiFillCloseCircle />}</span>Closed
+          </button>
+        </div>
+        <div className="md:ml-auto">
+          <div className="relative flex items-center text-sm text-[#7B7B7B]">
+            Sort By:
+            <button className="peer flex items-center gap-1 pl-1 font-Lato text-sm font-semibold">
+              {sortBy.label}
+              <span>
+                <AiFillCaretDown />
+              </span>
+            </button>
+            <div className="absolute right-[1px] top-full z-10 hidden w-36 flex-col rounded-lg bg-white py-2 text-end drop-shadow-[0px_2px_6px_#44444F1A]  hover:flex peer-hover:flex child:cursor-pointer">
+              {SORT_OPTIONS?.map((option) => (
+                <p key={option.value} className=" px-4 py-1 font-Lato text-sm hover:bg-translucent-black" onClick={() => setSortBy(option)}>
+                  {option.label}
+                </p>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="mb-1 px-[25px]">
+        <div className="h-[1px] w-full bg-[#cecece]"></div>
+      </div>
+
+      <div className="mx-[25px] mt-2 flex overflow-auto rounded-lg bg-white drop-shadow-md">
+        <table className="w-full  min-w-[550px] whitespace-nowrap">
+          <thead>
+            <tr className="border-b border-[#cecece] child:!py-[15.5px] child:!text-16px ">
+              <th className="py-[15.5px] text-left pl-8  font-Lato text-16px font-medium text-[#292929] md:pl-[45px]"></th>
+              <th className="md:w-1/3 text-left py-[15.5px] font-Lato text-16px font-medium text-[#292929]">Name</th>
+              <th className="md:w-1/5 text-left py-4 font-Lato text-[16px] font-medium text-[#292929]">Start date</th>
+              <th className="md:w-1/5 text-left py-4 font-Lato text-[16px] font-medium text-[#292929]">End date</th>
+              <th className="md:w-1/6 text-left py-4 font-Lato text-[16px] font-medium text-[#292929]">Type</th>
+              <th className="md:w-1/1 py-4 text-right font-Lato text-[16px] font-medium text-[#292929]"></th>
+              <th className="py-4 text-right font-Lato text-[16px] font-medium text-[#292929] pl-[20px] md:pl-[45px]"></th>
+            </tr>
+          </thead>
+          <tbody style={{ padding: '20px' }}>
+            {Array.from({ length: rows }).map(() => (
+              <tr className="group rounded-xl border-b border-[#cecece] hover:bg-[#ececec] " onClick={() => navigate('/campaign/preview')}>
+                <td className="py-3 text-[16px] font-semibold text-[#5486E3] md:pl-[45px] "></td>
+                <td className="py-3 text-left text-[16px] font-semibold text-[#5486E3] ">Gold Plan Sales Challenge</td>
+                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">Feb 13, 2023</td>
+                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">Feb 18, 2023</td>
+                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">Automatic</td>
+                <td className="py-3 text-right md:opacity-0 transition-opacity duration-200 group-hover:opacity-100 md:pl-[45px]">
+                  <RxCross1 className="cursor-pointer text-[#292929]" />
+                </td>
+                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]"></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
 }
 
-export default CampaignsTable
+export default CampaignTable

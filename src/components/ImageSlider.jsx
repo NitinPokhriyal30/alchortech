@@ -52,7 +52,7 @@ const ImageSlider = () => {
       </div>
 
       <div className="absolute inset-x-0 bottom-5 z-10 flex justify-center gap-1.5">
-        {Array.from({ length: 3 }).map((_, i) => (
+        {Array.from({ length: 3 })?.map((_, i) => (
           <div
             key={i}
             className="h-[7px] w-[7px] rounded-full transition-colors"

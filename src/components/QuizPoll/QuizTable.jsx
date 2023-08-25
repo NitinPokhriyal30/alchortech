@@ -1,4 +1,3 @@
-import { Padding } from '@mui/icons-material'
 import React, { useState } from 'react'
 import { AiOutlinePlus, AiFillClockCircle, AiFillCloseCircle, AiFillRightCircle, AiFillCaretDown } from 'react-icons/ai'
 import { BsPencilFill } from 'react-icons/bs'
@@ -15,7 +14,7 @@ const SORT_OPTIONS = [
   { label: 'This month', value: '6' },
 ]
 
-const SurveyTable = () => {
+const QuizTable = () => {
   const [sortBy, setSortBy] = useState(SORT_OPTIONS[0])
   const navigate = useNavigate()
   const [tab, setTab] = React.useState('draft')
@@ -24,16 +23,30 @@ const SurveyTable = () => {
   return (
     <div className="h-screen w-screen md:w-full">
       <div className="mt-4 flex justify-between px-[25px]">
-        <div className="font-Lato text-[20px] font-bold text-[#464646]">Survey</div>
-        <div className="rounded-md bg-[#5486E3]  font-Lato text-white">
-          <Link to="/survey/create" className="flex items-center px-5 py-2 gap-1">
+        <div className="font-Lato text-[20px] font-bold text-[#464646]">Quiz</div>
+        <div className="rounded-md bg-[#5486E3] font-Lato text-white">
+          <Link to="/quiz/create" className="flex items-center px-5 py-2 gap-1">
             <span>{<AiOutlinePlus />}</span>
-            Create Survey
+            Create Quiz
           </Link>
         </div>
       </div>
 
       <div className="mt-4 flex flex-wrap gap-y-4 px-[25px] md:justify-start">
+        {/* <div className="flex flex-1 justify-around md:justify-start md:gap-6">
+          <button className={'flex items-center gap-2 border-b-2 border-b-transparent text-[14px] text-[#8D8D8D] ' + (tab === 'draft' && '!border-primary  text-primary')} onClick={() => setTab('draft')}>
+            <span>{<BsPencilFill />}</span>Draft
+          </button>
+          <button className="flex items-center gap-2 text-[14px] text-[#8D8D8D]">
+            <span>{<AiFillClockCircle />}</span> Scheduled
+          </button>
+          <button className="flex items-center gap-2 text-[14px] text-[#8D8D8D]">
+            <span>{<AiFillRightCircle />}</span>Running
+          </button>
+          <button className="flex items-center gap-2 text-[14px] text-[#8D8D8D]">
+            <span>{<AiFillCloseCircle />}</span>Closed
+          </button>
+        </div> */}
         <div className="flex flex-1 justify-around md:justify-start md:gap-6">
           <button className={'flex items-center gap-2 border-b-2 border-b-transparent text-[14px] text-[#8D8D8D] ' + (tab === 'draft' && '!border-primary  text-primary')} onClick={() => setTab('draft')}>
             <span>{<BsPencilFill />}</span>Draft
@@ -58,7 +71,7 @@ const SurveyTable = () => {
               </span>
             </button>
             <div className="absolute right-[1px] top-full z-10 hidden w-36 flex-col rounded-lg bg-white py-2 text-end drop-shadow-[0px_2px_6px_#44444F1A]  hover:flex peer-hover:flex child:cursor-pointer">
-              {SORT_OPTIONS?.map((option) => (
+              {SORT_OPTIONS.map((option) => (
                 <p key={option.value} className=" px-4 py-1 font-Lato text-sm hover:bg-translucent-black" onClick={() => setSortBy(option)}>
                   {option.label}
                 </p>
@@ -73,7 +86,7 @@ const SurveyTable = () => {
       </div>
 
       <div className="mx-[25px] mt-2 flex overflow-auto rounded-lg bg-white drop-shadow-md">
-        <table className="w-full  min-w-[550px] whitespace-nowrap">
+        <table className="w-full min-w-[550px] whitespace-nowrap">
           <thead>
             <tr className="border-b border-[#cecece] child:!py-[15.5px] child:!text-16px ">
               <th className="text-left py-[15.5px] pl-8 text-start font-Lato text-16px font-medium text-[#292929] md:pl-[45px]"></th>
@@ -106,4 +119,4 @@ const SurveyTable = () => {
   )
 }
 
-export default SurveyTable
+export default QuizTable

@@ -42,12 +42,12 @@ const points_colors = [
 ]
 
 const sortCommentsAndTransactions = (comments, childrenTransactions) => {
-  const _childrenTransactions = childrenTransactions.map((transaction) => ({
+  const _childrenTransactions = childrenTransactions?.map((transaction) => ({
     type: 'transaction',
     commentOrTransaction: transaction,
   }))
 
-  const _comments = comments.map((comment) => ({
+  const _comments = comments?.map((comment) => ({
     type: 'comment',
     commentOrTransaction: comment,
   }))
@@ -79,8 +79,6 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
 
   const commentsAndTransactions = sortCommentsAndTransactions(post.comments, post.children)
 
-  console.log(me.data);
-
   return (
     <div className="mb-3">
       <div className="rounded-lg bg-white pb-6 pt-6 shadow-md xs:px-4 sm:px-6 md:px-6 lg:px-6 xl:px-6  xxl:px-6">
@@ -101,8 +99,9 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                   }}
                 />
 
-                {post.children?.map((post) => (
+                {post.children?.map((post,index) => (
                   <img
+                    key={index}
                   className="h-8.5 w-8.5 rounded-full object-cover"
                   src={getAvatarAttributes(`${post.sender.full_name}`, processAvatarUrl(post.sender.avtar)).src}
                   alt={getAvatarAttributes(`${post.sender.full_name}`, processAvatarUrl(post.sender.avtar)).alt}
@@ -133,10 +132,10 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
               {post.sender.full_name}
             </span>{' '}
             <span className="text-primary">
-              {post.recipients.map((user) => `@${user.full_name}`).join(' ')}
+              {post.recipients?.map((user) => `@${user.full_name}`).join(' ')}
             </span>{' '}
             <span className={`${HASHTAG.text}`}>
-              {post.hashtags.map((hash) => '#' + hash.name).join(' ')}
+              {post.hashtags?.map((hash) => '#' + hash.name).join(' ')}
             </span>
           </p>
 
@@ -240,7 +239,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                           if (targetPost) {
                             targetPost.user_reaction_info = {
                               reaction_hashes: Array.from(
-                                new Set(reactions.map(({ reaction }) => reaction))
+                                new Set(reactions?.map(({ reaction }) => reaction))
                               ),
                               total_reaction_counts: reactions.length,
                               latest_user_reaction_full_name:
@@ -302,7 +301,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                     <>
                       <span>
                         <span className='text-lg'>
-                        {post.user_reaction_info.reaction_hashes.map((hash) =>
+                        {post.user_reaction_info.reaction_hashes?.map((hash) =>
                           unicodeToEmoji(hash)
                           )}
                         </span>
@@ -564,7 +563,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
           ) : null}
 
           {/* <PostCommentList postId={post.id} /> */}
-          {commentsAndTransactions.map(({ type, commentOrTransaction }) =>
+          {commentsAndTransactions?.map(({ type, commentOrTransaction }) =>
             type === 'comment' ? (
               <PostComment
                 key={commentOrTransaction.id}
@@ -681,7 +680,7 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                                       if (targetPost) {
                                         targetPost.user_reaction_info = {
                                           reaction_hashes: Array.from(
-                                            new Set(reactions.map(({ reaction }) => reaction))
+                                            new Set(reactions?.map(({ reaction }) => reaction))
                                           ),
                                           total_reaction_count: reactions.length,
                                           latest_user_reaction_full_name:
@@ -722,7 +721,7 @@ function Comment(commentData, user, reactions = [], ...replies) {
   return {
     id: Math.random().toString(),
     user: Object.assign(user, { img: PostUser, id: Math.random().toString() }),
-    reactions: reactions.map((emoji) => ({
+    reactions: reactions?.map((emoji) => ({
       user: { id: Math.random().toString() },
       emoji,
     })),

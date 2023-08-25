@@ -1,4 +1,3 @@
-import SurveyDetails from '@/components/Survey/steps/SurveyDetails'
 import * as React from 'react'
 import { Link } from 'react-router-dom'
 import Questions from './steps/Questions'
@@ -6,10 +5,11 @@ import SelectParticipants from './steps/SelectParticipants'
 import RuleAndRewards from './steps/RuleAndRewards'
 import { toast } from 'react-toastify'
 import dayjs from 'dayjs'
+import QuizDetails from '@/components/QuizPoll/steps/QuizDetails'
 
 const STEPPER = [
   {
-    label: 'Survey Details',
+    label: 'Quiz Details',
     value: 0,
   },
   {
@@ -26,29 +26,35 @@ const STEPPER = [
   },
 ]
 
-function handleValidateSurveyDetails(survey) {
+function handleValidateDetails(quiz) {
   const errors = []
 
-  if (survey.title.length === 0) {
-    errors.push(['title', 'Must have a Survey Title'])
-  } else if (survey.title.length > 50) {
-    errors.push(['title', 'Survey Title should be less than or 50 characters'])
+  if (quiz.title.length === 0) {
+    errors.push(['title', 'Must have a Quiz Title'])
+  } else if (quiz.title.length > 50) {
+    errors.push(['title', 'Quiz Title should be less than or 50 characters'])
   }
 
-  if (survey.description.length === 0) {
-    errors.push(['description', 'Must have a Survey Description'])
-  } else if (survey.description.split(" ").length > 150) {
-    errors.push(['description', 'Survey Description should be less than or 150 words'])
+  if (quiz.description.length === 0) {
+    errors.push(['description', 'Must have a Quiz Description'])
+  } else if (quiz.description.split(' ').length > 150) {
+    errors.push(['description', 'Quiz Description should be less than or 150 words'])
   }
 
-  if (survey.dateAndTime.start >= survey.dateAndTime.end) {
-    errors.push(['dateAndTime', 'Survey EndDate always greater than StartDate'])
+  if (quiz.dateAndTime.start >= quiz.dateAndTime.end) {
+    errors.push(['dateAndTime', 'Quiz EndDate always greater than StartDate'])
   }
 
-  if (survey.termsAndConditions.length === 0) {
-    errors.push(['termsAndConditions', 'Must have a Survey Terms and Conditions'])
-  } else if (survey.termsAndConditions.split(" ").length > 150) {
-    errors.push(['description', 'Survey Term & Conditions should be less than or 150 words'])
+  if (quiz.termsAndConditions.length === 0) {
+    errors.push(['termsAndConditions', 'Must have a Quiz Terms and Conditions'])
+  } else if (quiz.termsAndConditions.split(' ').length > 150) {
+    errors.push(['description', 'Quiz Term & Conditions should be less than or 150 words'])
+  }
+
+  if (quiz.timing.duration == '' || +quiz.timing.duration <= 0) {
+    errors.push(['duration', 'Must have a Quiz Duration'])
+  } else if (+quiz.timing.duration > 1000) {
+    errors.push(['duration', 'Quiz Duration should be less than or 900 minutes'])
   }
 
   return errors
@@ -64,11 +70,15 @@ function handleValidateQuestions(questions) {
     if (['radio', 'check-box', 'dropdown'].includes(question.type) && question.options.length === 0) {
       errors.push([i, 'Must have at least one options'])
     }
+
+    if (['radio', 'check-box', 'dropdown'].includes(question.type) && question.answer.length === 0) {
+      errors.push([i, 'Must have answer filled'])
+    }
   })
   return errors
 }
 
-const SurveyCreate = () => {
+const QuizCreate = () => {
   const [step, setStep] = React.useState(STEPPER[0].value)
   const [errors, setErrors] = React.useState({})
 
@@ -76,14 +86,14 @@ const SurveyCreate = () => {
     if (step === 0) {
       // clear prev errors
       setErrors((prev) => {
-        delete prev.surveyDetails
+        delete prev.details
         return { ...prev }
       })
 
-      const errors = handleValidateSurveyDetails(survey)
+      const errors = handleValidateDetails(survey)
       if (errors.length > 0) {
         toast.error('Your details have some errors')
-        setErrors((prev) => ({ ...prev, surveyDetails: errors }))
+        setErrors((prev) => ({ ...prev, details: errors }))
         return
       }
     } else if (step === 1) {
@@ -104,8 +114,8 @@ const SurveyCreate = () => {
         return
       }
     }
-    setStep(newValue);
-  };
+    setStep(newValue)
+  }
 
   const [survey, setServey] = React.useState({
     title: '',
@@ -115,7 +125,11 @@ const SurveyCreate = () => {
       end: '',
     },
     termsAndConditions: '',
-    isTimeBounded: false,
+    isTimeBounded: true,
+    timing: {
+      duration: '5',
+      forceSubmit: 'yes',
+    },
     questions: [],
   })
 
@@ -123,14 +137,14 @@ const SurveyCreate = () => {
     if (step === 0) {
       // clear prev errors
       setErrors((prev) => {
-        delete prev.surveyDetails
+        delete prev.details
         return { ...prev }
       })
 
-      const errors = handleValidateSurveyDetails(survey)
+      const errors = handleValidateDetails(survey)
       if (errors.length > 0) {
         toast.error('Your details have some errors')
-        setErrors((prev) => ({ ...prev, surveyDetails: errors }))
+        setErrors((prev) => ({ ...prev, details: errors }))
         return
       }
     } else if (step === 1) {
@@ -159,7 +173,7 @@ const SurveyCreate = () => {
     <>
       <div>
         <section className="mt-4 flex justify-between px-4 md:pl-11">
-          <p className="text-[20px] font-bold text-text-black">Create Survey</p>
+          <p className="text-[20px] font-bold text-text-black">Create Quiz</p>
 
           <Link to="#" className="rounded-md bg-[#5486E3] px-6 py-2 font-Lato text-white">
             Preview
@@ -188,7 +202,7 @@ const SurveyCreate = () => {
 
         <section className="px-6">
           {step === 0 ? (
-            <SurveyDetails surveyDetails={survey} setSurveyDetails={setServey} errors={errors.surveyDetails} />
+            <QuizDetails details={survey} setDetails={setServey} errors={errors.details} />
           ) : step === 1 ? (
             <Questions questions={survey} setQuestions={setServey} errors={errors.questions} isTimeBounded={survey.isTimeBounded} />
           ) : step === 2 ? (
@@ -219,4 +233,4 @@ const SurveyCreate = () => {
   )
 }
 
-export default SurveyCreate
+export default QuizCreate
