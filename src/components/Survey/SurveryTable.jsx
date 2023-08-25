@@ -76,8 +76,8 @@ const SurveyTable = () => {
         <table className="w-full  min-w-[550px] whitespace-nowrap">
           <thead>
             <tr className="border-b border-[#cecece] child:!py-[15.5px] child:!text-16px ">
-              <th className="text-left py-[15.5px] pl-8 text-start font-Lato text-16px font-medium text-[#292929] md:pl-[45px]"></th>
-              <th className="md:w-1/3 text-left py-[15.5px] text-start font-Lato text-16px font-medium text-[#292929]">Name</th>
+              <th className="text-left py-[15.5px] pl-8  font-Lato text-16px font-medium text-[#292929] md:pl-[45px]"></th>
+              <th className="md:w-1/3 text-left py-[15.5px]  font-Lato text-16px font-medium text-[#292929]">Name</th>
               <th className="md:w-1/5 text-left py-4 font-Lato text-[16px] font-medium text-[#292929]">Start date</th>
               <th className="md:w-1/5 text-left py-4 font-Lato text-[16px] font-medium text-[#292929]">End date</th>
               <th className="md:w-1/6 text-left py-4 font-Lato text-[16px] font-medium text-[#292929]">Type</th>
