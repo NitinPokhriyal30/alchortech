@@ -22,7 +22,7 @@ const QuizTable = () => {
 
   return (
     <div className="h-screen w-screen md:w-full">
-      <div className="mt-4 flex justify-between px-[25px]">
+      <div className="mt-2 flex justify-between px-3 md:px-0 ">
         <div className="font-Lato text-[20px] font-bold text-[#464646]">Quiz</div>
         <div className="rounded-md bg-[#5486E3] font-Lato text-white">
           <Link to="/quiz/create" className="flex items-center px-5 py-2 gap-1">
@@ -32,21 +32,7 @@ const QuizTable = () => {
         </div>
       </div>
 
-      <div className="mt-4 flex flex-wrap gap-y-4 px-[25px] md:justify-start">
-        {/* <div className="flex flex-1 justify-around md:justify-start md:gap-6">
-          <button className={'flex items-center gap-2 border-b-2 border-b-transparent text-[14px] text-[#8D8D8D] ' + (tab === 'draft' && '!border-primary  text-primary')} onClick={() => setTab('draft')}>
-            <span>{<BsPencilFill />}</span>Draft
-          </button>
-          <button className="flex items-center gap-2 text-[14px] text-[#8D8D8D]">
-            <span>{<AiFillClockCircle />}</span> Scheduled
-          </button>
-          <button className="flex items-center gap-2 text-[14px] text-[#8D8D8D]">
-            <span>{<AiFillRightCircle />}</span>Running
-          </button>
-          <button className="flex items-center gap-2 text-[14px] text-[#8D8D8D]">
-            <span>{<AiFillCloseCircle />}</span>Closed
-          </button>
-        </div> */}
+      <div className="mt-4 flex flex-wrap gap-y-4 px-3 md:pl-2 md:justify-start">
         <div className="flex flex-1 justify-around md:justify-start md:gap-6">
           <button className={'flex items-center gap-2 border-b-2 border-b-transparent text-[14px] text-[#8D8D8D] ' + (tab === 'draft' && '!border-primary  text-primary')} onClick={() => setTab('draft')}>
             <span>{<BsPencilFill />}</span>Draft
@@ -81,11 +67,11 @@ const QuizTable = () => {
         </div>
       </div>
 
-      <div className="mb-1 px-[25px]">
+      <div className="mb-1 px-3 md:pl-2">
         <div className="h-[1px] w-full bg-[#cecece]"></div>
       </div>
 
-      <div className="mx-[25px] mt-2 flex overflow-auto rounded-lg bg-white drop-shadow-md">
+      <div className="mx-3 md:mx-0 mt-2 flex overflow-auto rounded-lg bg-white drop-shadow-md">
         <table className="w-full min-w-[550px] whitespace-nowrap">
           <thead>
             <tr className="border-b border-[#cecece] child:!py-[15.5px] child:!text-16px ">

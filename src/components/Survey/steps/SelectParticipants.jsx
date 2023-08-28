@@ -197,7 +197,7 @@ export function RecipientsDropdown({ form, setForm }) {
                                     {user ? (
                                         <span className=''>
                                             {console.log(user)}
-                                            {user.first_name} {user.last_name}{' '}
+                                            {user.full_name}{' '}
                                             <button
                                                 className="ml-1 text-black cursor-pointer"
                                                 onClick={() => {
@@ -255,8 +255,8 @@ export function RecipientsDropdown({ form, setForm }) {
                                             <div className='flex items-center'>
                                                 <span>
                                                     <img className="h-6 w-6 rounded-full mr-2"
-                                                        src={getAvatarAttributes(`${user.first_name} ${user.last_name}`, processAvatarUrl(user.avtar)).src}
-                                                        alt={getAvatarAttributes(`${user.first_name} ${user.last_name}`, processAvatarUrl(user.avtar)).alt}
+                                                        src={getAvatarAttributes(`${user.full_name}`, processAvatarUrl(user.avtar)).src}
+                                                        alt={getAvatarAttributes(`${user.full_name}`, processAvatarUrl(user.avtar)).alt}
                                                         onError={(e) => {
                                                             // If the image fails to load, use the name initials instead
                                                             e.target.onerror = null;
@@ -266,7 +266,7 @@ export function RecipientsDropdown({ form, setForm }) {
                                                         }}
                                                     />
                                                 </span>
-                                                <span className='font-bold'>{`${user.first_name} ${user.last_name}`}</span>
+                                                <span className='font-bold'>{`${user.full_name}`}</span>
                                                 {` | ${user.title} - ${user.department}`}
                                             </div>
                                         </button>

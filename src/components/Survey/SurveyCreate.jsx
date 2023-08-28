@@ -158,7 +158,7 @@ const SurveyCreate = () => {
   return (
     <>
       <div>
-        <section className="mt-4 flex justify-between px-4 md:pl-11">
+        <section className="md:mt-2 flex justify-between p-3 md:px-0">
           <p className="text-[20px] font-bold text-text-black">Create Survey</p>
 
           <Link to="#" className="rounded-md bg-[#5486E3] px-6 py-2 font-Lato text-white">
@@ -166,7 +166,7 @@ const SurveyCreate = () => {
           </Link>
         </section>
 
-        <section className="hidden md:flex gap-2 pl-11">
+        <section className="hidden md:flex gap-2 px-3 py-5 md:px-0">
           {STEPPER?.map((stepOption, i) => (
             <div className="flex items-center gap-2" key={stepOption.value}>
               <Link
@@ -182,11 +182,11 @@ const SurveyCreate = () => {
           ))}
         </section>
 
-        <div className="px-11 py-6">
+        <div className="px-3 pb-2 md:px-0">
           <div className="h-px w-full bg-400" />
         </div>
 
-        <section className="px-6">
+        <section className="px-3 md:px-0">
           {step === 0 ? (
             <SurveyDetails surveyDetails={survey} setSurveyDetails={setServey} errors={errors.surveyDetails} />
           ) : step === 1 ? (
@@ -200,7 +200,7 @@ const SurveyCreate = () => {
           )}
         </section>
 
-        <section className="flex justify-between p-11">
+        <section className="flex justify-between py-5 px-3 md:py-10 md:px-0">
           <button type="button" className="btn-ghost" onClick={() => setStep((p) => --p)}>
             back
           </button>

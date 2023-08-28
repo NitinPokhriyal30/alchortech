@@ -39,7 +39,7 @@ export default function DirectoryPage({ ...props }) {
   const response = useQuery("response", () => api.analytics.filters()) || []
 
   return (
-    <div className="col-span-2 pl-3 pr-3 xs:pt-0 sm:pt-3 lg:pl-0">
+    <div className="col-span-2 px-3 md:px-0 md:pt-3 xs:pt-0 sm: lg:pl-0">
        <div className="rounded-lg bg-white px-5 py-6">
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3">
           <div className="flex items-center rounded border border-400 px-3 text-[#acacac] outline-1 outline-primary-400 focus-within:outline">

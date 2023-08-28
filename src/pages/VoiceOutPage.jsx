@@ -17,11 +17,11 @@ export default function VoiceOutPage({ ...props }) {
   })
   return (
     <section className="min-h-screen text-text-black">
-      <h1 className="mt-[7px] text-[20px] font-bold">Voice Out</h1>
+      <h1 className="md:mt-[7px] text-[20px] font-bold px-3 md:px-0">Voice Out</h1>
 
-      <div className="box mt-[18px] rounded-lg bg-white p-7 shadow-[0px_2px_3px_#00000029]">
+      <div className="box mt-[18px] mx-3 md:mx-0 rounded-lg bg-white p-7 shadow-[0px_2px_3px_#00000029]">
         <p className="text-18px font-bold">Select Category</p>
-        <div className="mt-6 flex flex-col gap-12 md:flex-row">
+        <div className="mt-6 flex flex-row gap-12 md:flex-row">
           <IconBtn icon={GrievanceIcon} className={data.category === 'grievance' ? 'border-[#FF9157] bg-[#FF9157] fill-white' : ''} label="Grievance" onClick={() => setData({ ...data, category: 'grievance' })} />
           <IconBtn icon={SuggestionIcon} className={data.category === 'suggestion' ? 'border-[#00BC9F] bg-[#00BC9F] fill-white' : ''} label="Suggestion" onClick={() => setData({ ...data, category: 'suggestion' })} />
           <IconBtn icon={VoiceOutIcon} className={data.category === 'voice-out' ? 'border-[#00BC9F] bg-[#00BC9F] fill-white' : ''} label="Voice-Out" onClick={() => setData({ ...data, category: 'voice-out' })} />
@@ -38,7 +38,7 @@ export default function VoiceOutPage({ ...props }) {
 
         {data.image == null ? (
           <label
-            className="mt-2 flex w-2/3 flex-col items-center gap-2.5 rounded-lg border border-dashed border-[#d1d1d1] fill-[#d1d1d1] p-4"
+            className="mt-2 flex md:w-2/3 flex-col items-center gap-2.5 rounded-lg border border-dashed border-[#d1d1d1] fill-[#d1d1d1] p-4"
             onDragOver={(e) => {
               e.preventDefault()
               e.stopPropagation()

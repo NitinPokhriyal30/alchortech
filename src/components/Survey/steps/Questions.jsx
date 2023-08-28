@@ -135,7 +135,7 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
           <div className="items-top mb-5 grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-8" key={index}>
             {/* Question Type Selector */}
             <div>
-              <p className="mb-2.5 mt-[25px] text-18px font-black text-text-black">Question {index + 1}</p>
+              <p className="mb-2.5 mt-3 text-18px font-black text-text-black">Question {index + 1}</p>
               <select className="w-full rounded-[4px] border border-[#d1d1d1] p-2.5 text-16px" value={question.type || selectedOption} onChange={(event) => handleOptionChange(event, index)} fullWidth>
                 {isTimeBounded ? (
                   <>
