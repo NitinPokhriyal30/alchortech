@@ -10,6 +10,7 @@ import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import dayjs from 'dayjs'
 import { RiInformationLine } from 'react-icons/ri'
+import { FormControlLabel, Radio, RadioGroup } from '@mui/material'
 
 // Register the plugin
 dayjs.extend(isBetweenPlugin)
@@ -18,14 +19,14 @@ const COLORS = {
   gray: 'text-[#A5A5A5]',
 }
 
-const SurveyDetails = ({ surveyDetails, setSurveyDetails, errors }) => {
+const QuizDetails = ({ details, setDetails, errors }) => {
   const today = dayjs()
   const yesterday = dayjs()
   const todayStartOfTheDay = today.startOf('day')
 
   // Handler for updating the survey details
   const handleSurveyDetailsChange = (property, value) => {
-    setSurveyDetails((prevSurveyDetails) => ({
+    setDetails((prevSurveyDetails) => ({
       ...prevSurveyDetails,
       [property]: value,
     }))
@@ -36,7 +37,7 @@ const SurveyDetails = ({ surveyDetails, setSurveyDetails, errors }) => {
     // Combine date and time and format it as needed
     const combinedDateTime = dayjs(value).format('YYYY-MM-DD HH:mm:ss')
 
-    setSurveyDetails((prevSurveyDetails) => ({
+    setDetails((prevSurveyDetails) => ({
       ...prevSurveyDetails,
       dateAndTime: {
         ...prevSurveyDetails.dateAndTime,
@@ -50,7 +51,7 @@ const SurveyDetails = ({ surveyDetails, setSurveyDetails, errors }) => {
     // Combine date and time and format it as needed
     const combinedDateTime = dayjs(value).format('YYYY-MM-DD HH:mm:ss')
 
-    setSurveyDetails((prevSurveyDetails) => ({
+    setDetails((prevSurveyDetails) => ({
       ...prevSurveyDetails,
       dateAndTime: {
         ...prevSurveyDetails.dateAndTime,
@@ -62,7 +63,7 @@ const SurveyDetails = ({ surveyDetails, setSurveyDetails, errors }) => {
   // Handler for updating the isTimeBounded value
   const handleIsTimeBoundedChange = (event) => {
     const newValue = event.target.checked
-    setSurveyDetails((prevSurveyDetails) => ({
+    setDetails((prevSurveyDetails) => ({
       ...prevSurveyDetails,
       questions: prevSurveyDetails.questions?.map((question) => {
         if (newValue === true) {
@@ -80,7 +81,7 @@ const SurveyDetails = ({ surveyDetails, setSurveyDetails, errors }) => {
 
   return (
     <div className="rounded-lg bg-white px-5 py-10 shadow-[0px_2px_3px_#00000029]">
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] items-center gap-8">
+      <div className="grid md:grid-cols-[1fr_2fr] grid-cols-1 items-center gap-8">
         {/* col 1 */}
         <div>
           <p className="text-18px font-bold text-text-black">Title*</p>
@@ -90,7 +91,7 @@ const SurveyDetails = ({ surveyDetails, setSurveyDetails, errors }) => {
         {/* col 2 */}
         <div>
           <div>
-            <Input size="lg" placeholder="Ex: Go Green, Plant Trees" value={surveyDetails.title} onChange={(event) => handleSurveyDetailsChange('title', event.target.value)} />
+            <Input size="lg" placeholder="Ex: Go Green, Plant Trees" value={details.title} onChange={(event) => handleSurveyDetailsChange('title', event.target.value)} />
           </div>
           <p className={'text-right ' + COLORS.gray}>0/75</p>
 
@@ -105,7 +106,7 @@ const SurveyDetails = ({ surveyDetails, setSurveyDetails, errors }) => {
 
       <hr className="border-px my-6 border-400" />
 
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] items-center gap-8">
+      <div className="grid md:grid-cols-[1fr_2fr] grid-cols-1 items-center gap-8">
         {/* col 1 */}
         <div>
           <p className="text-18px font-bold text-text-black">Description*</p>
@@ -116,10 +117,10 @@ const SurveyDetails = ({ surveyDetails, setSurveyDetails, errors }) => {
         <div>
           <div>
             <ReactQuill
-              value={surveyDetails.description} // Pass your description state value here
+              value={details.description} // Pass your description state value here
               className="react-quill"
               onChange={(value) => {
-                setSurveyDetails((prevSurveyDetails) => ({
+                setDetails((prevSurveyDetails) => ({
                   ...prevSurveyDetails,
                   description: value,
                 }))
@@ -143,7 +144,7 @@ const SurveyDetails = ({ surveyDetails, setSurveyDetails, errors }) => {
 
       <hr className="border-px my-6 border-400" />
 
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] items-center gap-8">
+      <div className="grid md:grid-cols-[1fr_2fr] grid-cols-1 items-center gap-8">
         {/* col 1 */}
         <div>
           <p className="text-18px font-bold text-text-black">Date*</p>
@@ -182,7 +183,7 @@ const SurveyDetails = ({ surveyDetails, setSurveyDetails, errors }) => {
 
       <hr className="border-px my-6 border-400" />
 
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] items-center gap-8">
+      <div className="grid md:grid-cols-[1fr_2fr] grid-cols-1 items-center gap-8">
         {/* col 1 */}
         <div>
           <p className="text-18px font-bold text-text-black">Terms & Conditions</p>
@@ -193,10 +194,10 @@ const SurveyDetails = ({ surveyDetails, setSurveyDetails, errors }) => {
         <div>
           <div>
             <ReactQuill
-              value={surveyDetails.termsAndConditions} // Pass your description state value here
+              value={details.termsAndConditions} // Pass your description state value here
               className="react-quill"
               onChange={(value) => {
-                setSurveyDetails((prevSurveyDetails) => ({
+                setDetails((prevSurveyDetails) => ({
                   ...prevSurveyDetails,
                   termsAndConditions: value,
                 }))
@@ -216,8 +217,42 @@ const SurveyDetails = ({ surveyDetails, setSurveyDetails, errors }) => {
           )}
         </div>
       </div>
+
+      <hr className="border-px my-6 border-400" />
+
+      <div className="grid md:grid-cols-[1fr_2fr] grid-cols-1 items-center gap-8">
+        {/* col 1 */}
+        <div>
+          <p className="text-18px font-bold text-text-black">Is it Time Bounded Survey</p>
+          <p className={'mt-2.5 ' + COLORS.gray}>Set time limit in minutes</p>
+        </div>
+
+        {/* col 2 */}
+        <div>
+          <label className="flex items-center gap-3">
+            <input type="number" className="w-0 min-w-[6ch] rounded-[4px] border border-[#d1d1d1] px-1 py-2" value={details.timing.duration} onChange={(e) => setDetails((prev) => ({ ...prev, timing: { ...prev.timing, duration: e.target.value } }))} />
+            Minute(s)
+          </label>
+          {getError('duration') && (
+            <p className="text-sm text-red-500">
+              <RiInformationLine className="inline align-text-bottom text-[1.1em] " />
+              {getError('duration')}
+            </p>
+          )}
+
+          <hr className="border-px my-6 border-400" />
+
+          <div>
+            <p className="text-18px font-bold text-text-black">Force submit after timer expiry</p>
+            <RadioGroup defaultValue="yes" className="!mt-2" onChange={(e) => setDetails((prev) => ({ ...prev, timing: { ...prev.timing, forceSubmit: e.target.value } }))}>
+              <FormControlLabel label="Yes" value="yes" control={<Radio />} labelPlacement="right" />
+              <FormControlLabel label="No" value="no" control={<Radio />} labelPlacement="right" />
+            </RadioGroup>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
 
-export default SurveyDetails
+export default QuizDetails

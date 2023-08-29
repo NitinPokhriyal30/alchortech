@@ -6,7 +6,6 @@ const AreaChart = ({ data }) => {
   const svgRef = useRef();
 
   useEffect(() => {
-    console.log(data);
     const svg = d3.select(svgRef.current);
     const margin = { top: 20, right: 0, bottom: 30, left: 60 };
     const parentWidth = svgRef.current.clientWidth; // Get the width of the container
@@ -22,9 +21,11 @@ const AreaChart = ({ data }) => {
     const zeroDataPoint = { date_range: `${formatDate(d3.timeDay.offset(startDate, -1))} - ${formatDate(startDate)}`, transaction_count: 0 };
     const modifiedData = [zeroDataPoint, ...data];
 
+   
+
     const xData = modifiedData.map(d => formatDate(parseDate(d.date_range.split(' - ')[0])) + ' - ' + formatDate(parseDate(d.date_range.split(' - ')[1])));
 
-    {console.log(xData);}
+    
     const x = d3
       .scaleBand()
       .domain(xData)

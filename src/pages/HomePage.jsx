@@ -17,7 +17,6 @@ import GifPicker from '@/components/GifPickerPopover'
 import { useQuery } from 'react-query'
 import { api } from '@/api'
 import { useIntersectionObserver } from 'usehooks-ts'
-import { queryClient } from '@/queryClient'
 import Loader from '@/components/Loader'
 // import { getChildTransactionsFor, withIsChild } from '@/utils'
 
@@ -28,6 +27,7 @@ const stickBottomAlign = {
 }
 export default function HomePage() {
   const infiniteLoaderDivRef = React.useRef()
+  
   const [infiniteLoading, setInfiniteLoading] = React.useState(false)
   const [hasNextPage, setHasNextPage] = React.useState(true)
   const entry = useIntersectionObserver(infiniteLoaderDivRef, {})
@@ -69,7 +69,7 @@ export default function HomePage() {
       window.addEventListener('resize', handleResize)
       return () => window.removeEventListener('resize', handleResize)
     }
-  }, [])
+  }, [window.innerWidth])
 
   React.useEffect(() => {
     if (entry?.isIntersecting === true && infiniteLoading === false) {
@@ -161,7 +161,7 @@ export default function HomePage() {
 
       {/* right sidebar */}
       <div
-        ref={rightSidebarRef}
+        ref = { rightSidebarRef }
         style={stickyStyles}
         className="flex w-full flex-col gap-3 overflow-y-auto pb-5 pl-3 pr-3 pt-3 md:w-[260px] md:pl-[0px] lg:w-[235px] lg:pr-0 xl:w-[319px]"
       >

@@ -15,6 +15,7 @@ import PhoneIcon from '@/assets/svg/home-sidebar/phonebook.svg'
 import Icon2 from '@/assets/svg/home-sidebar/Group 950.svg'
 import Icon3 from '@/assets/svg/home-sidebar/Group 947'
 import Icon4 from '@/assets/svg/home-sidebar/Path 266.svg'
+import Icon6 from '@/assets/svg/home-sidebar/noun-quiz-4075470.svg'
 import Icon5 from '@/assets/svg/home-sidebar/Group3'
 
 import AnalyticsIcon from '@/assets/svg/home-sidebar/noun-analytics-5506185.svg'
@@ -158,6 +159,15 @@ export default function HomeSidebar({ }) {
                 <img src={Icon4} />
               </div>
               <span>Surveys</span>
+            </MenuLink>
+            <MenuLink
+              to="/quiz"
+              className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px]  text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
+            >
+              <div className="w-[23px]">
+                <img className='text-teal-500 fill-current'  src={Icon6} />
+              </div>
+              <span>Quiz & Poll</span>
             </MenuLink>
             <MenuLink
               to="/voice-out"

@@ -80,6 +80,15 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
   // Handler for editing a radio option text
   const handleEditOption = (questionIndex, optionIndex, newText) => {
     const updatedQuestions = { ...questions }
+    const answer = updatedQuestions.questions[questionIndex].answer
+    const type = updatedQuestions.questions[questionIndex].type
+    const options = updatedQuestions.questions[questionIndex].options
+
+    if (type === 'check-box') {
+      handleCheckboxAnswerChange(questionIndex)({ target: { value: options[optionIndex] } })
+    } else if (updatedQuestions.questions[questionIndex].options[optionIndex] === answer) {
+      updatedQuestions.questions[questionIndex].answer = ''
+    }
     updatedQuestions.questions[questionIndex].options[optionIndex] = newText
     setQuestions(updatedQuestions)
   }
@@ -93,13 +102,13 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
   }
 
   // Handler for changing the answer for Checkbox type questions
-  const handleCheckboxAnswerChange = (questionIndex, optionIndex) => (event) => {
+  const handleCheckboxAnswerChange = (questionIndex, checked) => (event) => {
     if (isTimeBounded === false) return
     const updatedQuestions = { ...questions }
     const value = encodeURIComponent(event.target.value)
     const answer = updatedQuestions.questions[questionIndex].answer.split(',').filter(Boolean)
 
-    if (answer.includes(value)) {
+    if (checked ?? answer.includes(value)) {
       answer.splice(answer.indexOf(value), 1)
     } else {
       answer.push(value)
@@ -110,9 +119,18 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
     setQuestions(updatedQuestions)
   }
 
-  // Handler for deleting a radio option
+  // Handler for deleting a option
   const handleDeleteOption = (questionIndex, optionIndex) => {
     const updatedQuestions = { ...questions }
+    const options = updatedQuestions.questions[questionIndex].options
+    const answer = updatedQuestions.questions[questionIndex].answer
+    const type = updatedQuestions.questions[questionIndex].type
+
+    if (type === 'check-box') {
+      handleCheckboxAnswerChange(questionIndex, true)({ target: { value: options[optionIndex] } })
+    } else if (updatedQuestions.questions[questionIndex].options[optionIndex] === answer) {
+      updatedQuestions.questions[questionIndex].answer = ''
+    }
     updatedQuestions.questions[questionIndex].options.splice(optionIndex, 1)
     setQuestions(updatedQuestions)
   }
@@ -218,7 +236,7 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
                     {question.options?.map((item, optionIndex) => (
                       <div key={optionIndex} style={{ display: 'flex', alignItems: 'center' }}>
                         {/* Checkbox Option */}
-                        <FormControlLabel value={item} control={<Checkbox checked={isTimeBounded === true && question.answer.split(',').includes(encodeURIComponent(item))} />} label={item} onChange={handleCheckboxAnswerChange(index, optionIndex)} disabled={isTimeBounded === false} />
+                        <FormControlLabel value={item} control={<Checkbox checked={isTimeBounded === true && question.answer.split(',').includes(encodeURIComponent(item))} />} label={item} onChange={handleCheckboxAnswerChange(index)} disabled={isTimeBounded === false} />
                         {/* Edit Checkbox Option */}
                         <IconButton
                           onClick={() => {
@@ -246,10 +264,13 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
                     className={'my-[15px] w-full ' + (!isTimeBounded && '!hidden')}
                     labelId={`demo-simple-select-label-${index}`}
                     id={`demo-simple-select-${index}`}
-                    value={isTimeBounded === false ? question.options[0] : question.answer}
+                    value={isTimeBounded === false ? question.options[0] : question.answer || "nil"}
                     onChange={(event) => handleAnswerChange(event, index)}
                     disabled={isTimeBounded === false}
                   >
+                    <MenuItem value="nil" disabled>
+                      Select Answer
+                    </MenuItem>
                     {question.options?.map((item, optionIndex) => (
                       <MenuItem key={optionIndex} value={item}>
                         {item}

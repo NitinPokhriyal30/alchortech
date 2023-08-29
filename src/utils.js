@@ -38,12 +38,7 @@ export function dateDiff(second, first) {
 
 export function getTodayDate() {
   const todayDate = new Date()
-  const today =
-    todayDate.getFullYear() +
-    '-' +
-    (todayDate.getMonth() + 1).toString().padStart(2, '0') +
-    '-' +
-    todayDate.getDate().toString().padStart(2, '0')
+  const today = todayDate.getFullYear() + '-' + (todayDate.getMonth() + 1).toString().padStart(2, '0') + '-' + todayDate.getDate().toString().padStart(2, '0')
   return today
 }
 
@@ -165,38 +160,60 @@ export const withIsChild = (allTransactions) => {
 }
 
 export const processAvatarUrl = (Url) => {
-  const targetString = "http://staging.letshigh5.com/";
+  const targetString = 'http://staging.letshigh5.com/'
 
-    if (Url && !Url.includes(targetString)) {
-      return targetString + Url;
-    } else {
-      return Url;
-    }
+  if (Url && !Url.includes(targetString)) {
+    return targetString + Url
+  } else {
+    return Url
+  }
 }
 
-export const getAvatarAttributes = (fullName , avatar) => {
-
+export const getAvatarAttributes = (fullName, avatar) => {
   // URL to the default placeholder avatar image
-  const defaultAvatarUrl = "URL_TO_DEFAULT_AVATAR_IMAGE"; // Replace this with the URL of your default avatar image
+  const defaultAvatarUrl = 'URL_TO_DEFAULT_AVATAR_IMAGE' // Replace this with the URL of your default avatar image
 
-  const avatarUrl = avatar ? avatar : defaultAvatarUrl;
-  const avatarAltText = avatar ? fullName : "Default Avatar";
+  const avatarUrl = avatar ? avatar : defaultAvatarUrl
+  const avatarAltText = avatar ? fullName : 'Default Avatar'
 
   return {
     src: avatarUrl,
     alt: avatarAltText,
-  };
+    onError: (e) => {
+      // If the image fails to load, use the name initials instead
+      e.target.onerror = null
+      e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&color=${'#464646'}&background=${'#FFFFFF'}`
+    },
+  }
 }
 
-
 export const formatTimeFromNow = (timestamp) => {
-  const now = moment();
-  const timeDifference = now.diff(timestamp, 'seconds');
+  const now = moment()
+  const timeDifference = now.diff(timestamp, 'seconds')
 
   if (timeDifference < 60) {
-    return 'Just now';
+    return 'Just now'
   } else {
-    const formattedTime = moment(timestamp).fromNow();
-    return formattedTime.replace('a minute ago', '1 minute ago').replace('an hour ago', '1 hour ago');
+    const formattedTime = moment(timestamp).fromNow()
+    return formattedTime.replace('a minute ago', '1 minute ago').replace('an hour ago', '1 hour ago')
   }
+}
+
+export const Object_filter = (fn, obj) => {
+  let newObj = {}
+  Object.entries(obj).forEach(([key, value], i) => {
+    const shouldFilter = fn([key, value], i)
+    console.log(shouldFilter)
+    if (shouldFilter) {
+      newObj[key] = value
+    }
+  })
+  return newObj
+}
+
+export const capitalizeWords = (str) => {
+  return str
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
 }

@@ -12,7 +12,7 @@ const RulesnRewards = () => {
     return (
         <div>
             <div className="rounded-lg bg-white px-5 py-6 drop-shadow-md">
-                <div className="grid grid-cols-[1fr_2fr] items-center gap-40">
+                <div className="grid md:grid-cols-[1fr_2fr] items-center gap-40">
                     {/* col 1 */}
                     <div>
                         <p className="text-18px font-bold text-text-black">Select Award Payout Format</p>
@@ -45,7 +45,7 @@ const RulesnRewards = () => {
                 </div>
                 <hr className="border-px my-6 border-400" />
 
-                <div className="grid grid-cols-[1fr_2fr] items-center gap-40">
+                <div className="grid md:grid-cols-[1fr_2fr] items-center gap-40">
                     {/* col 1 */}
                     <div>
                         <p className="text-18px font-bold text-text-black">Select Points</p>
@@ -67,7 +67,7 @@ const RulesnRewards = () => {
                 </div>
                 <hr className="border-px my-6 border-400" />
 
-                <div className="grid grid-cols-[1fr_2fr] items-center gap-40">
+                <div className="grid md:grid-cols-[1fr_2fr] items-center gap-40">
                     {/* col 1 */}
                     <div>
                         <p className="w-44 text-18px font-bold text-text-black">Define the campaign award rules 1 or more</p>
@@ -76,7 +76,7 @@ const RulesnRewards = () => {
                     {/* col 2 */}
                     <div>
                         <div className="flex flex-col space-y-4">
-                            <label className="flex gap-8 items-center">
+                            <label className="flex flex-col md:flex-row justify-start gap-8 items-center">
                                 <input type="checkbox" className="form-checkbox h-10 w-20" />
                                 <div className='w-44'>
                                     <span>Ongoing Earn</span>
@@ -93,7 +93,7 @@ const RulesnRewards = () => {
                                     </div>
                                 </div>
                             </label>
-                            <label className="flex gap-8 items-center">
+                            <label className="flex flex-col md:flex-row gap-8 items-center">
                                 <input type="checkbox" className="form-checkbox h-10 w-20" />
                                 <div className='w-44'>
                                     <span>Threshold bonus</span>
@@ -110,7 +110,7 @@ const RulesnRewards = () => {
                                     </div>
                                 </div>
                             </label>
-                            <label className="flex gap-8 items-center">
+                            <label className="flex flex-col md:flex-row gap-8 items-center">
                                 <input type="checkbox" className="form-checkbox h-10 w-20" />
                                 <div className='w-44'>
                                     <span>Winner takes all</span>
@@ -132,14 +132,14 @@ const RulesnRewards = () => {
                 </div>
                 <hr className="border-px my-6 border-400" />
 
-                <div className="grid grid-cols-[1fr_2fr] items-center mb-10 gap-40">
+                <div className="grid md:grid-cols-[1fr_2fr] items-center mb-10 gap-40">
                     {/* col 1 */}
                     <div>
                         <p className="text-18px font-bold text-text-black">Select how results will be entered into the campaign</p>
                     </div>
 
                     {/* col 2 */}
-                    <div className='flex justify-evenly'>
+                    <div className='flex flex-col md:flex-row justify-evenly'>
                         <div>
                             <input className="mr-2 h-4 w-4" type="radio" id="option1" name="entryOption" value="option1" />
                             <label htmlFor="option1">By participating employees</label>

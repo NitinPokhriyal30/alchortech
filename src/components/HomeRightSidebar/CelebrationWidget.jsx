@@ -69,28 +69,30 @@ export default function CelebrationWidget() {
                     <p className="text-primary">
                       <MdOutlineCake fontSize={22} />
                     </p>
-                    <p className="text-primary text-sm  font-light">
-                      <strong>{birthDays[0]?.first_name}</strong>
+                    <p className="text-primary text-sm font-light pt-1">
+                      <strong>{birthDays[0]?.full_name}
                       <span>
                         {birthDays.length > 1
                           ? ' & ' + pluralize(birthDays.length - 1, 'other', 's') + ' '
                           : ' '}
-                      </span>
+                        </span>
+                      </strong>
                       <span>has birthday today</span>
                     </p>
                   </div> : ''}
                 
-                  {workAniversaries ? <div className="flex pb-2 gap-3">
+                  {workAniversaries && workAniversaries[0] ? <div className="flex pb-2 gap-3">
                     <p className="text-primary">
                       <MdOutlineCelebration fontSize={22} />
                     </p>
                     <p className="text-primary text-sm  font-light">
-                      <strong>{workAniversaries[0]?.first_name}</strong>
+                      <strong>{workAniversaries[0]?.full_name}
                       <span>
                         {workAniversaries.length > 1
                           ? ` & ${pluralize(workAniversaries.length - 1, 'other', 's')} `
                           : ' '}
-                      </span>
+                        </span>
+                      </strong>
                       <span>has work anniversary today</span>
                     </p>
                   </div> : ''}

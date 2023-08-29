@@ -24,11 +24,13 @@ export const RedeemPointsWidget = () => {
 
   if (isLoading) {
     return (
-      <div className="bg-[#E0EBFF] text-center px-5 pt-3 pb-1 rounded-[9px] drop-shadow-[0px_2px_3px_#00000029]">
-        <div className='flex justify-center' >
-          <Loader />
+      <div className="bg-[#fff] text-center px-5 py-3 rounded-[9px] drop-shadow-[0px_2px_3px_#00000029]">
+        <div className="space-y-2">
+          <p className="animate-pulse w-full bg-gray-300 rounded">&nbsp;</p>
+          <p className="animate-pulse w-full bg-gray-300 rounded">&nbsp;</p>
         </div>
       </div>
+      
     )
   }
 

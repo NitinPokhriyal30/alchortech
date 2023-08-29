@@ -73,7 +73,7 @@ const Table = ({headers, data, renderCell, showEditButton, showDeleteButton, sho
     <table style={tableStyle}>
         <thead>
           <tr>
-            {headers.map((header) => (
+            {headers?.map((header) => (
               <th key={header.key} style={thStyle}>
                 {header}
               </th>
@@ -82,9 +82,9 @@ const Table = ({headers, data, renderCell, showEditButton, showDeleteButton, sho
           </tr>
         </thead>
         <tbody>
-          {data.map((user) => (
+          {data?.map((user) => (
             <tr key={user.id}>
-               {headers.map((header) => (
+               {headers?.map((header) => (
                 <td key={header.key} style={tdStyle}>{renderCell(header, user)}</td>
                ))}
                <td style={tdStyle}>{renderActionButton(user)}</td>

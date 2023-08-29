@@ -50,7 +50,7 @@ const MyHashtags = ({ filterBy, userId }) => {
 
         {receivedTransactions.data &&
           receivedTransactions.data.length > 0 ?
-          sortedHashtags.map((hashtag, index) => (
+          sortedHashtags?.map((hashtag, index) => (
             <div key={index}>
               <div className="px-6 py-3">
                 <div className="flex justify-between">

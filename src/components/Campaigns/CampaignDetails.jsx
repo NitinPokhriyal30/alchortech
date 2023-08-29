@@ -111,7 +111,7 @@ const CampaignDetails = ({ campaignDetails, setCampaignDetails, errors }) => {
 
     return (
         <div className="rounded-lg bg-white px-5 py-6 shadow-[0px_2px_3px_#00000029]">
-            <div className="grid grid-cols-[1fr_2fr] items-center gap-8">
+            <div className="grid md:grid-cols-[1fr_2fr] items-center gap-8">
                 {/* col 1 */}
                 <div>
                     <p className="text-18px font-bold text-text-black">Campaign Name*</p>
@@ -141,7 +141,7 @@ const CampaignDetails = ({ campaignDetails, setCampaignDetails, errors }) => {
 
             <hr className="border-px my-6 border-400" />
 
-            <div className="grid grid-cols-[1fr_2fr] items-center gap-8">
+            <div className="grid md:grid-cols-[1fr_2fr] items-center gap-8">
                 {/* col 1 */}
                 <div>
                     <p className="text-18px font-bold text-text-black">Cover Image*</p>
@@ -180,7 +180,7 @@ const CampaignDetails = ({ campaignDetails, setCampaignDetails, errors }) => {
 
             <hr className="border-px my-6 border-400" />
 
-            <div className="grid grid-cols-[1fr_2fr] items-center gap-8">
+            <div className="grid md:grid-cols-[1fr_2fr] items-center gap-8">
                 {/* col 1 */}
                 <div>
                     <p className="text-18px font-bold text-text-black">Banner Image*</p>
@@ -217,7 +217,7 @@ const CampaignDetails = ({ campaignDetails, setCampaignDetails, errors }) => {
 
             <hr className="border-px my-6 border-400" />
 
-            <div className="grid grid-cols-[1fr_2fr] items-center gap-8">
+            <div className="grid md:grid-cols-[1fr_2fr] items-center gap-8">
                 {/* col 1 */}
                 <div>
                     <p className="text-18px font-bold text-text-black">Description*</p>
@@ -254,7 +254,7 @@ const CampaignDetails = ({ campaignDetails, setCampaignDetails, errors }) => {
 
             <hr className="border-px my-6 border-400" />
 
-            <div className="grid grid-cols-[1fr_2fr] items-center gap-8">
+            <div className="grid md:grid-cols-[1fr_2fr] items-center gap-8">
                 {/* col 1 */}
                 <div>
                     <p className="text-18px font-bold text-text-black">Date*</p>
@@ -301,7 +301,7 @@ const CampaignDetails = ({ campaignDetails, setCampaignDetails, errors }) => {
 
             <hr className="border-px my-6 border-400" />
 
-            <div className="grid grid-cols-[1fr_2fr] items-center gap-8">
+            <div className="grid md:grid-cols-[1fr_2fr] items-center gap-8">
                 {/* col 1 */}
                 <div>
                     <p className="text-18px font-bold text-text-black">Is this an Event?</p>
@@ -338,7 +338,7 @@ const CampaignDetails = ({ campaignDetails, setCampaignDetails, errors }) => {
 
             <hr className="border-px my-6 border-400" />
 
-            <div className="grid grid-cols-[1fr_2fr] items-center gap-8">
+            <div className="grid md:grid-cols-[1fr_2fr] items-center gap-8">
                 {/* col 1 */}
                 <div>
                     <p className="text-18px font-bold text-text-black">Terms & Conditions*</p>
@@ -373,7 +373,7 @@ const CampaignDetails = ({ campaignDetails, setCampaignDetails, errors }) => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-[1fr_2fr] items-center gap-8">
+            <div className="grid md:grid-cols-[1fr_2fr] items-center gap-8">
                 {/* col 1 */}
                 <div>
                     <p className="text-18px font-bold text-text-black">Attach a Document</p>

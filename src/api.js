@@ -15,7 +15,8 @@ const api = {
     all: () => axios.get('getUsers/').then((r) => r.data),
     profiles: () => axios.get('api/v1/accounts/').then((r) => r.data),
     userById: (id) => axios.get(`api/v1/accounts/userprofile/${id}/`).then((r) => r.data),
-    search: (params) => axios.get('employees/', { params }).then((r) => r.data),
+    // search: (params) => axios.post('api/v1/accounts/search-user/', params, {headers: {"Content-Type": "multipart/form-data"}}).then((r) => r.data),
+    search: (params) => axios.get(`api/v1/accounts/search-user?${params.toString()}`).then((r) => r.data),
   },
 
   auth: {
@@ -53,8 +54,8 @@ const api = {
     all: (filters) => axios.get(`api/v1/transactions?${filters.toString()}`).then((r) => r.data),
     // meAsRecipient: (id) => axios.get(`api/posts/?recipients=${id}`).then((r) => r.data),
     // meAsSender: (id) => axios.get(`api/posts/?sender=${id}`).then((r) => r.data),
-    meAsRecipient: (id, filterBy) => axios.get(`api/v1/transactions?recipients=${id}&date_range=${filterBy}`).then((r) => r.data),
-    meAsSender: (id, filterBy) => axios.get(`api/v1/transactions?sender=${id}&date_range=${filterBy}`).then((r) => r.data),
+    meAsRecipient: (id, filterBy, page, pageSize) => axios.get(`api/v1/transactions?recipients=${id}&date_range=${filterBy}`).then((r) => r.data),
+    meAsSender: (id, filterBy, page, pageSize) => axios.get(`api/v1/transactions?sender=${id}&date_range=${filterBy}`).then((r) => r.data),
     react: (data) => axios.post('api/v1/transactions/add-reaction/', data).then((r) => r.data),
     allReactions: (data) => axios.get(`api/v1/transactions/transaction-reactions/${data.post_id}/`).then((r) => r.data),
     updateReaction: (data) => axios.patch(`api/v1/transactions/update-user-reaction/${data.post_id}/`, data).then((r) => r.data),
@@ -80,14 +81,12 @@ const api = {
     .get(`/api/v1/analytics/?department=${department}&region=${region}&Date_Ranges=${date}`)
     .then((r) => r.data),
     filters: () => axios.get('/api/v1/analytics/filters/').then((r) => r.data),
-
   }
 }
 
 axios.interceptors.request.use(
   async (request) => {
     const token = Cookies.get('token')
-    console.log(!request.url.includes('jwt') ? 'verifying token' : ' ', request.url)
 
     if (token && !request.url.includes('jwt')) {
       // verify access token

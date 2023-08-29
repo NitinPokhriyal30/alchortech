@@ -3,7 +3,6 @@ import CampaignParticipants from '@/components/Campaigns/CampaignParticipants'
 import RulesnRewards from '@/components/Campaigns/RulesnRewards'
 import * as React from 'react'
 import { Link, useNavigate } from 'react-router-dom';
-import CampaignPreview from './CampaignPreview'
 
 const STEPPER = [
     {
@@ -47,6 +46,7 @@ const CampaignCreate = () => {
                 participants: []
             }
         ],
+        owner: '',
       })
 
     const handleStepClick = (newValue) => {
@@ -55,11 +55,12 @@ const CampaignCreate = () => {
 
     React.useEffect(() => {
         console.log(campaigns);
+
     }, )
     
 
     return (
-        <div>
+        <div className='w-full'>
             <section className="mt-4 flex justify-between mx-6">
                 <p className="text-[20px] font-bold text-text-black">Create Campaign</p>
 
@@ -74,7 +75,7 @@ const CampaignCreate = () => {
 
             <section className="flex gap-2 mx-6">
                 {STEPPER.map((stepOption, i) => (
-                    <div className="flex items-center gap-2" key={stepOption.value}>
+                    <div className="md:flex items-center gap-2 hidden" key={stepOption.value}>
                         <Link
                             to="#" // Replace "#" with the actual route for each step
                             onClick={() => handleStepClick(stepOption.value)}
