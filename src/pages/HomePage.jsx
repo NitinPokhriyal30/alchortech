@@ -17,7 +17,6 @@ import GifPicker from '@/components/GifPickerPopover'
 import { useQuery } from 'react-query'
 import { api } from '@/api'
 import { useIntersectionObserver } from 'usehooks-ts'
-import { queryClient } from '@/queryClient'
 import Loader from '@/components/Loader'
 // import { getChildTransactionsFor, withIsChild } from '@/utils'
 
@@ -28,6 +27,7 @@ const stickBottomAlign = {
 }
 export default function HomePage() {
   const infiniteLoaderDivRef = React.useRef()
+  
   const [infiniteLoading, setInfiniteLoading] = React.useState(false)
   const [hasNextPage, setHasNextPage] = React.useState(true)
   const entry = useIntersectionObserver(infiniteLoaderDivRef, {})

@@ -32,7 +32,7 @@ const CampaignTable = () => {
         </div>
       </div>
 
-      <div className="mt-4 flex flex-wrap gap-y-4 px-[25px] md:justify-start">
+      <div className="mt-4 flex flex-col md:flex-row flex-wrap gap-y-4 px-[25px] md:justify-start">
         <div className="flex flex-1 justify-around md:justify-start md:gap-6">
           <button className={'flex items-center gap-2 border-b-2 border-b-transparent text-[14px] text-[#8D8D8D] ' + (tab === 'draft' && '!border-primary  text-primary')} onClick={() => setTab('draft')}>
             <span>{<BsPencilFill />}</span>Draft
@@ -47,7 +47,7 @@ const CampaignTable = () => {
             <span>{<AiFillCloseCircle />}</span>Closed
           </button>
         </div>
-        <div className="md:ml-auto">
+        <div className="flex justify-center">
           <div className="relative flex items-center text-sm text-[#7B7B7B]">
             Sort By:
             <button className="peer flex items-center gap-1 pl-1 font-Lato text-sm font-semibold">

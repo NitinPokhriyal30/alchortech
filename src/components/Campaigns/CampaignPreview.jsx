@@ -5,10 +5,18 @@ import calenderIcon from '../../assets/images/campaigns/calenderIcon.svg'
 import goBack from '../../assets/images/campaigns/goBack.svg'
 import participant from '../../assets/images/campaigns/participant.png'
 import time from '../../assets/images/campaigns/time.svg'
+import { api } from '@/api';
+import { useQuery } from 'react-query';
+import Cookies from 'js-cookie';
+import { getAvatarAttributes, processAvatarUrl } from '@/utils';
+
 
 const CampaignPreview = () => {
     const location = useLocation();
     const { campaignData } = location.state;
+
+    const meQuery = useQuery('me', () => api.users.userById('user_id'));
+    const me = meQuery.data;
 
     React.useEffect(() => {
       
@@ -79,11 +87,21 @@ const CampaignPreview = () => {
                 <div className='bg-white rounded-lg drop-shadow-md'>
                     <p className='text-center py-2 border-b-[1px]'>Campaign Owner</p>
                     <div className='flex gap-4 p-4'>
-                    <img className='h-20 rounded-full' src={participant} />
+                    <img className="w-[74px] h-[74px] rounded-full object-cover"
+                        src={getAvatarAttributes(`${me?.full_name.split(' ')[0]} ${me?.full_name.split(' ')[1]}`, processAvatarUrl(me?.avtar)).src}
+                        alt={getAvatarAttributes(`${me?.full_name.split(' ')[0]} ${me?.full_name.split(' ')[1]}`, processAvatarUrl(me?.avtar)).alt}
+                        onError={(e) => {
+                            // If the image fails to load, use the full_name initials instead
+                            e.target.onerror = null;
+                            e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                            me?.full_name.split(' ')[0].charAt(0) + me?.full_name.split(' ')[1].charAt(0)
+                            )}&color=${"#464646"}&background=${"FFFFFF"}`;
+                        }}
+                    />
                     <div>
-                        <p className='font-bold font-Lato text-[16px] text-[#5486E3]'>Cassie Conley</p>
-                        <p className='text-[#292929]'>HR Cooridnator</p>
-                        <p className='text-[#292929]'>Shared Services</p>
+                        <p className='font-bold font-Lato text-[16px] text-[#5486E3]'>{me.full_name}</p>
+                        <p className='text-[#292929]'>{me.title}</p>
+                        <p className='text-[#292929]'>{me.department}</p>
 
                         <p className='text-[#5486E3] text-[12px] underline pt-4'>Ask a Question</p>
                     </div>

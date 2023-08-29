@@ -4,17 +4,13 @@ import { useQuery } from 'react-query';
 import InteractionChart from './InteractionChart'
 import Loader from '@/components/Loader';
 
-const UserInteraction = ({ filterBy, userId }) => {
+const UserInteraction = ({ filterBy, userId, page, pageSize }) => {
   const [sortedSenders, setSortedSenders] = useState([]);
   const [sortedRecipients, setSortedRecipients] = useState([]);
   const [interactionData, setInteractionData] = useState([]);
   const [hoveredRowIndex, setHoveredRowIndex] = useState(null);
   const [hoveredImageIndex, setHoveredImageIndex] = useState(null);
 
-  useEffect(() => {
-    console.log(hoveredImageIndex)
-
-  }, [hoveredImageIndex])
 
   const handleRowHover = (index) => {
     setHoveredRowIndex(index); // Update hoveredRowIndex state
@@ -25,13 +21,13 @@ const UserInteraction = ({ filterBy, userId }) => {
 
   const receivedTransactions = useQuery(
     'receivedTransactions',
-    () => api.transactions.meAsRecipient(userId, filterBy),
+    () => api.transactions.meAsRecipient(userId, filterBy, page, pageSize),
     { enabled: false } // Disable the query by default and enable it manually
   );
 
   const givenTransactions = useQuery(
     'givenTransactions',
-    () => api.transactions.meAsSender(userId, filterBy),
+    () => api.transactions.meAsSender(userId, filterBy, page, pageSize),
     { enabled: false } // Disable the query by default and enable it manually
   );
 
@@ -176,7 +172,6 @@ const UserInteraction = ({ filterBy, userId }) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {console.log(interactionData)}
                   {interactionData.map((interaction, index) => (
                     <tr id='table-row'
                       key={index}

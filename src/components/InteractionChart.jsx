@@ -63,7 +63,6 @@ const InteractionChart = ({ interactionData, me, hoveredRowIndex, onRowHover, se
       </div>
 
       <div className="mx-32 fixed">
-        {console.log(me)}
 
         <img
           className={`rounded-full h-16 w-16 border-2 ${isCenterImageHovered ? 'border-[#5486E3]' : 'hover:border-[#5486E3]'} z-10`}
@@ -153,7 +152,7 @@ const InteractionChart = ({ interactionData, me, hoveredRowIndex, onRowHover, se
           <path
             d="M 100 117 a 50 50 0 0 1 40 46"
             stroke={'#ACACAC'}
-            strokeWidth={(hoveredIndex === 0 || hoveredRowIndex === 0 || isCenterImageHovered) ? 3 : 1}
+            strokeWidth={(hoveredIndex === 0 || hoveredRowIndex === 0 || isCenterImageHovered) ? 2 : 1}
             fill="none"
           />
           
@@ -164,7 +163,7 @@ const InteractionChart = ({ interactionData, me, hoveredRowIndex, onRowHover, se
           <path
             d="M 220 112 a 50 50 0 0 0 -40 56"
             stroke={'#ACACAC'}
-            strokeWidth={(hoveredIndex === 1 || hoveredRowIndex === 1 || isCenterImageHovered) ? 3 : 1}
+            strokeWidth={(hoveredIndex === 1 || hoveredRowIndex === 1 || isCenterImageHovered) ? 2 : 1}
             fill="none"
           />
 
@@ -177,7 +176,7 @@ const InteractionChart = ({ interactionData, me, hoveredRowIndex, onRowHover, se
           <path
             d="M 70 210 a 50 50 0 0 1 66 -18"
             stroke={'#ACACAC'}
-            strokeWidth={(hoveredIndex === 2 || hoveredRowIndex === 2 || isCenterImageHovered) ? 3 : 1}
+            strokeWidth={(hoveredIndex === 2 || hoveredRowIndex === 2 || isCenterImageHovered) ? 2 : 1}
             fill="none"
           />
         )}
@@ -187,7 +186,7 @@ const InteractionChart = ({ interactionData, me, hoveredRowIndex, onRowHover, se
           <path
             d="M 260 212 a 50 50 0 0 0 -80 -14"
             stroke={'#ACACAC'}
-            strokeWidth={(hoveredIndex === 3 || hoveredRowIndex === 3 || isCenterImageHovered) ? 3 : 1}
+            strokeWidth={(hoveredIndex === 3 || hoveredRowIndex === 3 || isCenterImageHovered) ? 2 : 1}
             fill="none"
           />
         )}
@@ -197,7 +196,7 @@ const InteractionChart = ({ interactionData, me, hoveredRowIndex, onRowHover, se
           <path
             d="M 160 218 a 50 50 0 0 0 0 58"
             stroke={'#ACACAC'}
-            strokeWidth={(hoveredIndex === 4 || hoveredRowIndex === 4 || isCenterImageHovered) ? 3 : 1}
+            strokeWidth={(hoveredIndex === 4 || hoveredRowIndex === 4 || isCenterImageHovered) ? 2 : 1}
             fill="none"
           />
         )}

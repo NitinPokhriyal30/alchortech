@@ -47,6 +47,7 @@ if (isError || isErrorFilters) {
   return <div>Error fetching data</div>;
 }
 
+
 const {
   leaderboard,
   team_engagement_data: weeklyIntervals,
@@ -86,9 +87,10 @@ const handleMyTeamClick  = () => {
 }
 
 
+
 return (
     <div>
-    <div className="h-full w-screen lg:w-full mx-auto">
+    <div className="h-full w-screen max-w-[1536px] md:w-full">
 
     <div className='mx-3'>
       <div className='mt-3 flex flex-col md:flex-row'>
@@ -129,15 +131,18 @@ return (
                 <span><AiFillCaretDown /></span>
               </button>
               <div className="absolute right-[1px] top-full z-10 hidden w-auto flex-col rounded-lg bg-white py-2 text-end drop-shadow-[0px_2px_6px_#44444F1A] hover:flex peer-hover:flex child:cursor-pointer mt-[-2px]">
-                {filters.region?.map((regionOption, index) => (
-                  <p
-                    key={index}
-                    className="px-2 py-1 font-Lato text-sm hover:bg-translucent-black"
-                    onClick={() => setSortRegion(regionOption)}
-                  >
-                    {regionOption}
-                  </p>
-                ))}
+              {[
+                ...filters.region?.map((regionOption) => ({ value: regionOption, label: regionOption })),
+                { value: '', label: 'Clear'}
+              ].map((option, index) => (
+                <p
+                  key={index}
+                  className={option.label === 'Clear' ? "text-[#d48989] text-center px-2 border-t-[1px]": `py-1 px-2 font-Lato text-sm hover:bg-translucent-black`}
+                  onClick={() => setSortRegion(option.value === '' ? '' : option.value)}
+                >
+                  {option.label}
+                </p>
+              ))}
               </div>
             </div>
             <div className={isOverall ? "font-Lato font-bold text-[#747474] text-sm relative flex items-center" : "hidden"}>
@@ -147,15 +152,18 @@ return (
                 <span><AiFillCaretDown /></span>
               </button>
               <div className="absolute right-[1px] top-full z-10 hidden w-40 flex-col rounded-lg bg-white py-2 text-end drop-shadow-[0px_2px_6px_#44444F1A] hover:flex peer-hover:flex child:cursor-pointer mt-[-2px]">
-                {filters.departments?.map((departmentOption, index) => (
-                  <p
-                    key={index}
-                    className="py-1 px-2 font-Lato text-sm hover:bg-translucent-black"
-                    onClick={() => setSortDepartment(departmentOption)}
-                  >
-                    {departmentOption}
-                  </p>
-                ))}
+              {[
+                ...filters.departments?.map((departmentOption) => ({ value: departmentOption, label: departmentOption })),
+                { value: '', label: 'Clear'}
+              ].map((option, index) => (
+                <p
+                  key={index}
+                  className={option.label === 'Clear' ? "text-[#d48989] px-2 text-center border-t-[1px]": `py-1 px-2 font-Lato text-sm hover:bg-translucent-black`}
+                  onClick={() => setSortDepartment(option.value === '' ? '' : option.value)}
+                >
+                  {option.label}
+                </p>
+              ))}
               </div>
             </div>
             <div className="font-Lato font-bold text-[#747474] text-sm relative flex items-center">
@@ -165,15 +173,18 @@ return (
                 <span><AiFillCaretDown /></span>
               </button>
               <div className="absolute right-[1px] top-full z-10 hidden w-40 flex-col rounded-lg bg-white py-2 text-end drop-shadow-[0px_2px_6px_#44444F1A] hover:flex peer-hover:flex child:cursor-pointer mt-[-2px]">
-                {filters['Date Ranges']?.map((dateOption, index) => (
-                  <p
-                    key={index}
-                    className="py-1 px-2 font-Lato text-sm hover:bg-translucent-black"
-                    onClick={() => setSortDate(dateOption)}
-                  >
-                  {dateOptionLabels[dateOption]}
-                  </p>
-                ))}
+              {[
+                ...filters['Date Ranges']?.map((dateOption) => ({ value: dateOption, label: dateOptionLabels[dateOption] })),
+                { value: '', label: 'Clear'}
+              ].map((option, index) => (
+                <p
+                  key={index}
+                  className={option.label === 'Clear' ? "text-[#d48989] px-2 text-center border-t-[1px]": `py-1 px-2 font-Lato text-sm hover:bg-translucent-black`}
+                  onClick={() => setSortDate(option.value === '' ? '' : option.value)}
+                >
+                  {option.label}
+                </p>
+              ))}
               </div>
             </div>
           </div>
@@ -476,7 +487,7 @@ return (
         </div>
       </div>
      
-      <div className="w-full my-3 gap-3 flex flex-col md:flex-row">
+      <div className="w-full max-w-[1536px] my-3 gap-3 flex flex-col md:flex-col lg:flex-row">
 
         <div className="flex-col w-full md:w-[50%] rounded-lg  mx-auto bg-white">
          {total_recognitions && total_points ? 
@@ -501,7 +512,7 @@ return (
           </div>
         </div> 
         
-        <div className=" flex-col w-full md:w-[50%] rounded-lg  mx-auto bg-white">
+        <div className=" flex-col w-full min-w-[250px] md:w-full lg:w-[50%] rounded-lg   mx-auto bg-white">
           <div className='flex flex-col md:flex-row justify-evenly gap-6 mx-3 my-4 px-2 py-2 md:py-0 bg-[#B3E2A8] rounded-xl items-center'>
             <div>
               <span className='text-[36px] mx-1 md:text-[48px] font-Lato font-bold'>69</span>
@@ -600,21 +611,21 @@ return (
       
       <div className="flex-col mb-3 overflow-auto rounded-lg bg-white drop-shadow-md">
         <p className="text-[20px] font-bold text-[#464646] pl-10 py-4">Recognition Statistics</p>
-        <div className="w-full min-w-[950px]">
+        <div className="w-full min-w-[550px]">
         <ColumnGroupingTable departmentData={departmentData} />
         </div>
       </div>
     
 
-      <div className="w-full mb-5 gap-3 flex flex-col md:flex-row">
-        <div className="flex-col w-full md:w-[50%] rounded-lg mx-auto bg-white">
+      <div className="w-full max-w-[1536px] mb-5 gap-3 flex flex-col md:flex-col lg:flex-row">
+        <div className="flex-col w-full md:w-full lg:w-[50%] min-w-[250px] rounded-lg mx-auto bg-white">
           <div className='text-start border-b-2 py-2 px-4 text-[18px] font-semibold'>Team Engagement</div>
           {weeklyIntervals ? <div className='flex justify-center items-center py-2'><AreaChart data={weeklyIntervals} /></div> : 
           <div className='text-center text-[#c3406e] font-bold py-20 '>No data found for this filter !</div>
         }
         </div>
 
-        <div className="flex-col w-full md:w-[50%] rounded-lg mx-auto bg-white">
+        <div className="flex-col w-full md:w-full lg:w-[50%] min-w-[250px] rounded-lg mx-auto bg-white">
           <div className='text-start border-b-2 py-2 px-4 text-[18px] font-semibold'>Word Cloud</div>
           <div className='flex justify-center items-center py-2'><WordCloud data={wordData}/></div>
         </div>

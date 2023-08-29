@@ -10,38 +10,30 @@ const COLORS = {
 
 export default function CampaignParticipants({campaigns, setCampaigns, errors}) {
     const [participantType, setParticipantType] = useState('');
-    
-
-    const [groups, setGroups] = useState([
-        {
-            groupName: 'Group 1',
-            participants: [],
-        },
-    ]);
 
     const addNewGroup = () => {
-        const newGroupName = `Group ${groups.length + 1}`;
-        setGroups((prevGroups) => [
-            ...prevGroups,
-            {
-                groupName: newGroupName,
-                participants: [],
-            },
-        ]);
+        const newGroup = {
+            label: "",
+            participants: [],
+        };
+        setCampaigns((prev) => ({
+            ...prev,
+            groups: [...prev.groups, newGroup],
+        }));
+        setNewGroupName('');
     };
-
-  
+    
    
   useEffect(() => {
-    console.log('participant:', campaigns.participantType);
-  
-    }, [campaigns])
+    console.log('particpantType', participantType);
+    console.log("user");
+        }, [participantType])
     
 
     return (
         <div>
             <div className="rounded-lg bg-white px-5 py-6 drop-shadow-md">
-                <div className="grid grid-cols-[1fr_2fr] items-center gap-8">
+                <div className="grid md:grid-cols-[1fr_2fr] items-center gap-8">
                     {/* col 1 */}
                     <div>
                         <p className="text-18px font-bold text-text-black">Select Participant Type</p>
@@ -49,7 +41,7 @@ export default function CampaignParticipants({campaigns, setCampaigns, errors}) 
                     </div>
 
                     {/* col 2 */}
-                    <div className="flex gap-4">
+                    <div className="flex flex-col md:flex-row gap-4">
                         <button
                             onClick={() => setParticipantType('All')}
                             className={
@@ -110,7 +102,7 @@ export default function CampaignParticipants({campaigns, setCampaigns, errors}) 
                                 }
                             >
                                 <ul className="group p-2">
-                                    <RecipientsDropdown {...{campaigns, setCampaigns}} />
+                                    <RecipientsDropdown {...{campaigns, setCampaigns}} participantType={participantType} />
                                 </ul>
                             </div>
                         </div>
@@ -119,15 +111,18 @@ export default function CampaignParticipants({campaigns, setCampaigns, errors}) 
             )}
 
             {participantType == 'Group' &&
-                groups.map((group, index) => (
+                campaigns.groups.map((group, index) => (
                     <div key={index} className="relative">
 
                         <div className="rounded-lg bg-white px-5 py-6 drop-shadow-md mt-2">
                             <button
                                 className="absolute top-0 right-0 p-2 text-gray-500"
                                 onClick={() => {
-                                    const updatedGroups = groups.filter((_, i) => i !== index);
-                                    setGroups(updatedGroups);
+                                    const updatedGroups = campaigns.groups.filter((_, i) => i !== index);
+                                    setCampaigns((prev) => ({
+                                        ...prev,
+                                        groups: updatedGroups,
+                                    }));
                                 }}
                             >
                                 &#x2715; {/* Unicode cross symbol */}
@@ -135,7 +130,7 @@ export default function CampaignParticipants({campaigns, setCampaigns, errors}) 
                             <div className="grid grid-cols-[1fr_2fr] items-center gap-8">
                                 {/* col 1 */}
                                 <div>
-                                    <p className="text-18px font-bold text-text-black">{group.groupName}</p>
+                                    <p className="text-18px font-bold text-text-black">{`Group ${index+1}`}</p>
                                 </div>
 
                                 {/* col 2 */}
@@ -143,12 +138,23 @@ export default function CampaignParticipants({campaigns, setCampaigns, errors}) 
                                     <input
                                         className="w-full py-2 px-2 my-4 rounded border-[2px]"
                                         type="text"
+                                   
+                                        onChange={(e) => {
+                                            const updatedGroups = [...campaigns.groups]; // Clone the groups array
+                                            updatedGroups[index].label = e.target.value; // Update the label based on the index
+                                    
+                                            // Update the campaigns state with the modified groups array
+                                            setCampaigns((prev) => ({
+                                                ...prev,
+                                                groups: updatedGroups,
+                                            }));
+                                        }}
                                         placeholder="Name the Group"
                                     />
-
+                    
                                     <div className={'rounded border-[2px] ring-primary focus-within:ring-1'}>
                                         <ul className="group p-2">
-                                            <RecipientsDropdown {...{campaigns, setCampaigns }} />
+                                            <RecipientsDropdown {...{campaigns, setCampaigns }} participantType={participantType} groupIndex={index}/>
                                         </ul>
                                     </div>
                                 </div>
@@ -159,14 +165,14 @@ export default function CampaignParticipants({campaigns, setCampaigns, errors}) 
                 ))}
             {participantType === 'Group' && (
                 <button className="text-primary mt-2 mx-4" onClick={addNewGroup}>
-                    + Add new group
-                </button>
+                + Add new group
+            </button>
             )}
         </div>
     );
 }
 
-export function RecipientsDropdown({campaigns, setCampaigns }) {
+export function RecipientsDropdown({campaigns, setCampaigns, participantType, groupIndex }) {
 
     const [showDropdown, setShowDropdown] = useState(false)
 
@@ -178,57 +184,119 @@ export function RecipientsDropdown({campaigns, setCampaigns }) {
     const usersWithoutMe = users.isLoading ? [] : users.data.filter((x) => x.id !== me.data.id);
 
     const [searchUserQuery, setSearchUserQuery] = React.useState('');
-    let searchedUser = usersWithoutMe.filter((user) =>
-        JSON.stringify(user).toLocaleLowerCase().includes(searchUserQuery)
+    const searchedUser = usersWithoutMe.filter((user) =>
+    JSON.stringify(user).toLocaleLowerCase().includes(searchUserQuery)
     );
 
-    const USER_BTN_HEIGHT = 28;
-    const isSelected = (user) => campaigns.participants.includes(user.id);
+    const isSelectedIndividual = (user) => campaigns.participants.includes(user.id);
+    const isSelectedGroupParticipant = (user) => {
+        const group = campaigns.groups?.[groupIndex];
+        return group?.participants?.includes(user.id);
+    };
 
+    const excludedUsers = participantType === 'Individual'
+    ? campaigns.participants
+    : campaigns.groups.reduce((acc, group, idx) => {
+        if (idx !== groupIndex) {
+            return acc.concat(group.participants);
+        }
+        return acc;
+    }, []);
+
+      
+      const filteredSearchedUser = searchedUser.filter((user) => {
+        return (
+            !excludedUsers.includes(user.id) &&
+            (participantType === 'Individual'
+                ? !isSelectedGroupParticipant(user)
+                : !isSelectedIndividual(user))
+        );
+    });
+    
+
+    const USER_BTN_HEIGHT = 28;
+    
     return (
         <>
             {/* dropdown trigger */}
-            <p className="flex cursor-pointer gap-[2px] hover:font-bold"
+            <span className="flex cursor-pointer gap-[2px] hover:font-bold"
                 onClick={() => setShowDropdown(!showDropdown)}
             >
-                <span className="flex flex-wrap recipients-grid gap-2">
-                    {campaigns.participants.length > 0 ? (
-                        campaigns.participants.map((userId) => {
-                            const user = usersWithoutMe.find((u) => u.id === userId);
-                            return (
-                                <span key={userId} className="border-[2px] px-2 py-1 rounded-lg mx-1">
-                                    {user ? (
-                                        <span className=''>
-                                            {user.full_name}{' '}
-                                            <button
-                                                className="ml-1 text-black cursor-pointer"
-                                                onClick={() => {
-                                                    setCampaigns((prev) => {
-                                                        if (isSelected(user)) {
-                                                            // Remove the user ID from the participants array
-                                                            prev.participants = prev.participants.filter((id) => id !== user.id);
-                                                        } else {
-                                                            // Add the user ID to the participants array
-                                                            prev.participants.push(user.id);
-                                                        }
-                                                        return { ...prev };
-                                                    });
-                                                }}
-                                            >
-                                                &#x2715; {/* Unicode cross symbol */}
-                                            </button>
-                                        </span>
-                                    ) : (
-                                        ''
-                                    )}
+            {participantType === "Individual" && 
+            <span className="flex flex-wrap recipients-grid gap-2">
+             {campaigns.participants.length > 0 ? (
+                 campaigns.participants.map((userId) => {
+                     const user = usersWithoutMe.find((u) => u.id === userId);
+                     return (
+                         <span key={userId} className="border-[2px] px-2 py-1 rounded-lg mx-1">
+                             {user ? (
+                                 <span className=''>
+                                     {user.full_name}{' '}
+                                     <button
+                                         className="ml-1 text-black cursor-pointer"
+                                         onClick={() => {
+                                             setCampaigns((prev) => {
+                                                 if (isSelectedIndividual(user)) {
+                                                     // Remove the user ID from the participants array
+                                                     prev.participants = prev.participants.filter((id) => id !== user.id);
+                                                 } else {
+                                                     // Add the user ID to the participants array
+                                                     prev.participants.push(user.id);
+                                                 }
+                                                 return { ...prev };
+                                             });
+                                         }}
+                                     >
+                                         &#x2715; {/* Unicode cross symbol */}
+                                     </button>
+                                 </span>
+                             ) : (
+                                 ''
+                             )}
+                         </span>
+                     );
+                 })
+             ) : (
+                 <p className='text-[#ACACAC]'>Add member by Name or Email Id</p>
+             )}
+            </span> }
+            {participantType === "Group" &&
+            <span className="flex flex-wrap recipients-grid gap-2">   
+            {campaigns.groups[groupIndex].participants.length > 0 ? (
+                campaigns.groups[groupIndex].participants.map((userId) => {
+                    const user = usersWithoutMe.find((u) => u.id === userId);
+                    return (
+                        <span key={userId} className="border-[2px] px-2 py-1 rounded-lg mx-1">
+                            {user ? (
+                                <span className="">
+                                    {user.full_name}{" "}
+                                    <button
+                                        className="ml-1 text-black cursor-pointer"
+                                        onClick={() => {
+                                            setCampaigns((prev) => {
+                                                const updatedGroups = [...prev.groups];
+                                                const group = updatedGroups[groupIndex];
+                                                group.participants = group.participants.filter((id) => id !== user.id);
+                                                return { ...prev, groups: updatedGroups };
+                                            });
+                                        }}
+                                    >
+                                        &#x2715; {/* Unicode cross symbol */}
+                                    </button>
                                 </span>
-                            );
-                        })
-                    ) : (
-                        <p className='text-[#ACACAC]'>Add member by Name or Email Id</p>
-                    )}
-                </span>
-            </p>
+                            ) : (
+                                ""
+                            )}
+                        </span>
+                    );
+                })
+            ) : (
+                <p className="text-[#ACACAC]">Add members by Name or Email Id</p>
+            )}
+             
+            </span> 
+            }
+            </span>
 
             {/* container */}
             {showDropdown && (
@@ -241,25 +309,46 @@ export function RecipientsDropdown({campaigns, setCampaigns }) {
                             </p>
                         ) : (
                             <div>
-                                {searchedUser?.map((user) => {
+                                {filteredSearchedUser?.map((user) => {
                                     return (
                                         
                                         <button
                                             key={user.id}
                                             style={{ height: USER_BTN_HEIGHT }}
-                                            className={`block w-full  px-4 py-1 text-left ${isSelected(user) ? 'border-b border-primary/80 bg-primary/30' : ''
+                                            className={`block w-full  px-4 py-1 text-left ${isSelectedIndividual(user) || isSelectedGroupParticipant(user) ? 'border-b border-primary/80 bg-primary/30' : ''
                                                 }`}
                                             type="button"
                                            
                                             onClick={() => {
-                                                setCampaigns((prev) => {
-                                                    if (isSelected(user)) {
-                                                        prev.participants = prev.participants.filter((id) => id !== user.id);
-                                                    } else {
-                                                        prev.participants.push(user.id);
-                                                    }
-                                                    return { ...prev };
-                                                });
+                                                if (participantType === 'Individual') {                                                    setCampaigns((prev) => {
+                                                        if (isSelectedIndividual(user)) {
+                                                            prev.participants = prev.participants.filter((id) => id !== user.id);
+                                                        } else {
+                                                            prev.participants.push(user.id);
+                                                        }
+                                                        return { ...prev };
+                                                    });
+                                                   } else if (participantType === 'Group') {
+                                                    setCampaigns((prev) => {
+                                                        const updatedGroups = [...prev.groups];
+                                                        const group = updatedGroups[groupIndex];
+                                            
+                                                        if (!isSelectedGroupParticipant(user)) {
+                                                            group.participants.push(user.id);
+                                            
+                                                            // Remove the user from other groups' participants if applicable
+                                                            updatedGroups.forEach((otherGroup, idx) => {
+                                                                if (idx !== groupIndex) {
+                                                                    otherGroup.participants = otherGroup.participants.filter((id) => id !== user.id);
+                                                                }
+                                                            });
+                                                        } else {
+                                                            group.participants = group.participants.filter((id) => id !== user.id);
+                                                        }
+                                            
+                                                        return { ...prev, groups: updatedGroups };
+                                                    });
+                                                }
                                             }}
                                         >
                                             <div className='flex items-center'>
@@ -298,3 +387,33 @@ export function RecipientsDropdown({campaigns, setCampaigns }) {
         </>
     );
 }
+
+
+// {campaigns.groups.length > 0 ? (
+                
+//     campaigns.groups[groupIndex].participants.map((userId) => {
+        
+//         const user = usersWithoutMe.find((u) => u.id === userId);
+        
+//         return (
+//             <span key={userId} className="border-[2px] px-2 py-1 rounded-lg mx-1">
+//             {user ? ( 
+//                 <span className=''>
+//                     {user.full_name}{' '}
+//                     <button
+//                         className="ml-1 text-black cursor-pointer">
+//                         &#x2715; {/* Unicode cross symbol */}
+//                     </button>
+//                 </span>
+//             ) : (
+//                 ''
+//             )}
+//             </span>
+//         )
+        
+//     })
+    
+
+//  ) : (
+//     <p className='text-[#ACACAC]'>Add member by Name or Email</p>
+//  )}
