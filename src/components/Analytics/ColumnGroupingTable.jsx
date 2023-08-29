@@ -128,9 +128,9 @@ export default function ColumnGroupingTable({ departmentData }) {
                 <td className='text-center w-[18%]'>
                 <div className='py-3 border-b-[1px]'>{rowData.given}</div>
                 </td>
-                <td className='text-center w-[25%] pr-10 bg-[#EAEEF5]'>
-                  <div className='border-b-[1px] py-3 text-[#5486E3]'>
-                  <div className='pl-10'>{rowData.total}</div>
+                <td className='text-center w-[25%] bg-[#EAEEF5]'>
+                  <div className='border-b-[1px] py-3 mr-10 text-[#5486E3]'>
+                   <div className='ml-10'>{rowData.total}</div>
                   </div>
                 </td>
               </tr>

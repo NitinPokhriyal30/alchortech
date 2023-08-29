@@ -15,7 +15,8 @@ const api = {
     all: () => axios.get('getUsers/').then((r) => r.data),
     profiles: () => axios.get('api/v1/accounts/').then((r) => r.data),
     userById: (id) => axios.get(`api/v1/accounts/userprofile/${id}/`).then((r) => r.data),
-    search: (params) => axios.get('employees/', { params }).then((r) => r.data),
+    // search: (params) => axios.post('api/v1/accounts/search-user/', params, {headers: {"Content-Type": "multipart/form-data"}}).then((r) => r.data),
+    search: (params) => axios.get(`api/v1/accounts/search-user?${params.toString()}`).then((r) => r.data),
   },
 
   auth: {
@@ -80,14 +81,12 @@ const api = {
     .get(`/api/v1/analytics/?department=${department}&region=${region}&Date_Ranges=${date}`)
     .then((r) => r.data),
     filters: () => axios.get('/api/v1/analytics/filters/').then((r) => r.data),
-
   }
 }
 
 axios.interceptors.request.use(
   async (request) => {
     const token = Cookies.get('token')
-    console.log(!request.url.includes('jwt') ? 'verifying token' : ' ', request.url)
 
     if (token && !request.url.includes('jwt')) {
       // verify access token

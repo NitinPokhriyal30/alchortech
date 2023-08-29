@@ -5,7 +5,7 @@ function Comment(commentData, user, reactions = [], ...replies) {
   return {
     id: Math.random().toString(),
     user: Object.assign(user, { img: PostUser, id: Math.random().toString() }),
-    reactions: reactions.map((emoji) => ({
+    reactions: reactions?.map((emoji) => ({
       user: { id: Math.random().toString() },
       emoji,
     })),

@@ -108,7 +108,7 @@ const InteractionChart = ({ interactionData, me, hoveredRowIndex, onRowHover, se
             onMouseLeave={handleMouseLeave}
           >
             <img
-              className={`rounded-full h-12 w-12 ${(hoveredIndex === 3 || hoveredRowIndex === 3) ? 'border-2 border-[#5486E3]' : 'hover:border-[#5486E3]'}`}
+              className={`rounded-full h-12 w-12 ${(hoveredIndex === 3 || hoveredRowIndex === 3 || isCenterImageHovered) ? 'border-2 border-[#5486E3]' : 'hover:border-[#5486E3]'}`}
               src={getAvatarAttributes(`${interactionData[3]?.name.split(' ')[0]} ${interactionData[3]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[3]?.avtar)).src}
               alt={getAvatarAttributes(`${interactionData[3]?.name.split(' ')[0]} ${interactionData[3]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[3]?.avtar)).alt}
               onError={(e) => {
@@ -132,7 +132,7 @@ const InteractionChart = ({ interactionData, me, hoveredRowIndex, onRowHover, se
             onMouseLeave={handleMouseLeave}
           >
             <img
-              className={`rounded-full h-12 w-12 ${(hoveredIndex === 4 || hoveredRowIndex === 4) ? 'border-2 border-[#5486E3]' : 'hover:border-[#5486E3]'}`}
+              className={`rounded-full h-12 w-12 ${(hoveredIndex === 4 || hoveredRowIndex === 4 || isCenterImageHovered) ? 'border-2 border-[#5486E3]' : 'hover:border-[#5486E3]'}`}
               src={getAvatarAttributes(`${interactionData[4]?.name.split(' ')[0]} ${interactionData[4]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[4]?.avtar)).src}
               alt={getAvatarAttributes(`${interactionData[4]?.name.split(' ')[0]} ${interactionData[4]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[4]?.avtar)).alt}
               onError={(e) => {
@@ -217,11 +217,7 @@ const InteractionChart = ({ interactionData, me, hoveredRowIndex, onRowHover, se
          {interactionData[4] && (
           <circle cx="158" cy="272" r="4" fill="#F89D96" />
          )}
-         
-        
       </svg>
-
-
     </div>
   );
 };

@@ -248,7 +248,7 @@ function SurveryCreatePage() {
                   <Droppable droppableId="form-builder-1">
                     {(provided) => (
                       <div {...provided.droppableProps} ref={provided.innerRef}>
-                        {form.map(({ question, children, id, ...rest }, i) => (
+                        {form?.map(({ question, children, id, ...rest }, i) => (
                           <DraggableFormControl
                             dispatch={dispatch}
                             key={id}

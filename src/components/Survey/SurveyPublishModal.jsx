@@ -56,7 +56,7 @@ export default function SurveyPublishModal({ open, onClose, handleChange, ...pro
     const isAllSelected = value.find((x) => Array.isArray(x))
     if (isAllSelected) {
       setVisibleTo((prev) => {
-        const newValue = prev.length === users.length ? [] : users.map((user) => user.id)
+        const newValue = prev.length === users.length ? [] : users?.map((user) => user.id)
         return newValue
       })
       return
@@ -132,7 +132,7 @@ export default function SurveyPublishModal({ open, onClose, handleChange, ...pro
                 <Checkbox checked={visibleTo.length === users.length} />
                 <ListItemText primary={<em>All Users</em>} />
               </MenuItem>
-              {users.map((user) => (
+              {users?.map((user) => (
                 <MenuItem key={user.id} value={user.id}>
                   <Checkbox checked={visibleTo.indexOf(user.id) > -1} />
                   <ListItemText primary={user.name} />

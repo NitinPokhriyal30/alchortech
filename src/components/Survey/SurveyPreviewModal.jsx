@@ -58,7 +58,7 @@ const formInputTypeMap = {
         <option hidden value="">
           Choose one below:
         </option>
-        {options.map((optionValue) => (
+        {options?.map((optionValue) => (
           <option value={optionValue} key={optionValue}>
             {optionValue}
           </option>
@@ -70,7 +70,7 @@ const formInputTypeMap = {
 
 export default function SurveyPreview({ style, surveyForm, open, onClose, ...props }) {
   const [formSubmission, setFormSubmission] = React.useState(() =>
-    Array.from(surveyForm).map((input) => ({
+    Array.from(surveyForm)?.map((input) => ({
       question: input.question,
       id: input.id,
       value: input.formInputName === 'checkBox' ? [] : '',
@@ -101,14 +101,14 @@ export default function SurveyPreview({ style, surveyForm, open, onClose, ...pro
           </IconButton>
         </XStack>
 
-        {surveyForm.map((formInput, i) => (
+        {surveyForm?.map((formInput, i) => (
           <Box key={formInput.id} sx={{ marginBottom: 5 }}>
             <Typography variant="h6" sx={{ marginBottom: 2 }}>
               {i + 1}. {formInput.question}
               {formInput.required && ' *'}
             </Typography>
 
-            {formInput.children.map((child, child_i) => {
+            {formInput.children?.map((child, child_i) => {
               const InputControl = formInputTypeMap[child.type]
 
               return (
@@ -173,7 +173,7 @@ export default function SurveyPreview({ style, surveyForm, open, onClose, ...pro
     return (ev) => {
       ev.preventDefault()
       setFormSubmission((prev) => {
-        return prev.map(({ error, ...rest }) => rest)
+        return prev?.map(({ error, ...rest }) => rest)
       })
       try {
         formSubmission.forEach((inputControl, i) => {

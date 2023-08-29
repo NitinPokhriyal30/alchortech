@@ -69,7 +69,7 @@ export default function HomePage() {
       window.addEventListener('resize', handleResize)
       return () => window.removeEventListener('resize', handleResize)
     }
-  }, [])
+  }, [window.innerWidth])
 
   React.useEffect(() => {
     if (entry?.isIntersecting === true && infiniteLoading === false) {
@@ -161,7 +161,7 @@ export default function HomePage() {
 
       {/* right sidebar */}
       <div
-        ref={rightSidebarRef}
+        ref = { rightSidebarRef }
         style={stickyStyles}
         className="flex w-full flex-col gap-3 overflow-y-auto pb-5 pl-3 pr-3 pt-3 md:w-[260px] md:pl-[0px] lg:w-[235px] lg:pr-0 xl:w-[319px]"
       >
