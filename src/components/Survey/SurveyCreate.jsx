@@ -200,6 +200,10 @@ const SurveyCreate = () => {
           )}
         </section>
 
+        {/* <section className="px-3 md:px-0">
+          testing
+        </section> */}
+
         <section className="flex justify-between py-5 px-3 md:py-10 md:px-0">
           <button type="button" className="btn-ghost" onClick={() => setStep((p) => --p)}>
             back

@@ -79,7 +79,13 @@ const api = {
     all: () => axios.get('/api/v1/analytics/').then((r) => r.data),
     filters: () => axios.get('/api/v1/analytics/filters/').then((r) => r.data),
 
+  },
+
+  faqs: {
+    all: () => axios.get('api/v1/support/faqs/').then((r) => r.data),
+    categories: () => axios.get('api/v1/suport/categories/').then((r) => r.data),
   }
+
 }
 
 axios.interceptors.request.use(

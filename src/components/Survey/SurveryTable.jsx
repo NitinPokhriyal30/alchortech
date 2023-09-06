@@ -5,6 +5,7 @@ import { BsPencilFill } from 'react-icons/bs'
 import { RxCross1 } from 'react-icons/rx'
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
+import { SlArrowLeft, SlArrowRight } from 'react-icons/sl'
 
 const SORT_OPTIONS = [
   { label: 'Last 60 days', value: '1' },
@@ -101,6 +102,23 @@ const SurveyTable = () => {
             ))}
           </tbody>
         </table>
+       
+      </div>
+      <div className="mx-auto mt-5 flex max-w-[14rem] items-center justify-between ">
+        <div className="flex">
+          <button disabled='' className="grid h-9 w-9 text-[#8d8d8d] place-items-center rounded-[3px] border border-[#d5d5d5] disabled:text-gray-300">
+            <SlArrowLeft className="text-xl" />
+          </button>
+
+          <button disabled='' className="ml-3 grid h-9 w-9 text-[#8d8d8d] place-items-center rounded-[3px] border border-[#d5d5d5] disabled:text-gray-300" >
+            <SlArrowRight className="text-xl" />
+          </button>
+        </div>
+
+        <span className='text-[#8d8d8d]'>
+          Page 1 of - 2
+          {/* {users.data?.count} */}
+        </span>
       </div>
     </div>
   )

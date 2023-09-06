@@ -158,7 +158,7 @@ export default function HomeSidebar({ }) {
               <div className="w-[23px]">
                 <img src={Icon4} />
               </div>
-              <span>Surveys</span>
+              <span>Polls/Surveys</span>
             </MenuLink>
             <MenuLink
               to="/quiz"
@@ -167,7 +167,7 @@ export default function HomeSidebar({ }) {
               <div className="w-[23px]">
                 <img className='text-teal-500 fill-current'  src={Icon6} />
               </div>
-              <span>Quiz & Poll</span>
+              <span>Quiz</span>
             </MenuLink>
             <MenuLink
               to="/voice-out"

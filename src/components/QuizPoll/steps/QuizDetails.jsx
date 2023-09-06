@@ -93,7 +93,7 @@ const QuizDetails = ({ details, setDetails, errors }) => {
           <div>
             <Input size="lg" placeholder="Ex: Go Green, Plant Trees" value={details.title} onChange={(event) => handleSurveyDetailsChange('title', event.target.value)} />
           </div>
-          <p className={'text-right ' + COLORS.gray}>0/75</p>
+          <p className={'text-right ' + COLORS.gray}>{details.title.length}/75</p>
 
           {getError('title') && (
             <p className="text-sm text-red-500">
@@ -131,7 +131,7 @@ const QuizDetails = ({ details, setDetails, errors }) => {
               }}
             />
           </div>
-          <p className={'text-right ' + COLORS.gray}>0/150 Words</p>
+          <p className={'text-right ' + COLORS.gray}>{details.description.length}/150 Words</p>
 
           {getError('description') && (
             <p className="text-sm text-red-500">
@@ -159,7 +159,7 @@ const QuizDetails = ({ details, setDetails, errors }) => {
               <DatePicker className="input-container" defaultValue={today} disablePast onChange={(date) => handleStartDateAndTimeChange('start', date)} />
             </LocalizationProvider>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <TimePicker className="input-container" defaultValue={todayStartOfTheDay} disablePast onChange={(time) => handleStartDateAndTimeChange('start', time)} />
+              <TimePicker className="input-container" defaultValue={todayStartOfTheDay} onChange={(time) => handleStartDateAndTimeChange('start', time)} />
             </LocalizationProvider>
           </div>
 
@@ -208,7 +208,7 @@ const QuizDetails = ({ details, setDetails, errors }) => {
               }}
             />
           </div>
-          <p className={'text-right ' + COLORS.gray}>0/150 words</p>
+          <p className={'text-right ' + COLORS.gray}>{details.termsAndConditions.length}/150 words</p>
           {getError('termsAndConditions') && (
             <p className="text-sm text-red-500">
               <RiInformationLine className="inline align-text-bottom text-[1.1em] " />

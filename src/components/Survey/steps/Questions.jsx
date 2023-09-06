@@ -131,7 +131,7 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
   return (
     <div className="space-y-5">
       {questions.questions?.map((question, index) => (
-        <div className="rounded-lg bg-white px-5 py-10 shadow-[0px_2px_3px_#00000029]">
+        <div className="rounded-lg bg-white px-5 py-5 shadow-[0px_2px_3px_#00000029]">
           <div className="items-top mb-5 grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-8" key={index}>
             {/* Question Type Selector */}
             <div>
@@ -297,10 +297,6 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
               )}
 
               <div className="mt-5 flex">
-                {/* Add New Question Button */}
-                <button hidden={index !== questions.questions.length - 1} className={'text-primary ' + ''} onClick={addNewQuestion}>
-                  <RiAddLine className="text- inline" /> Add New Question
-                </button>
 
                 {/* Delete Question Button */}
                 <button className="ml-auto text-[1.2em]" variant="contained" onClick={() => handleDeleteQuestion(index)}>
@@ -312,7 +308,7 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
         </div>
       ))}
 
-      <div hidden={questions.questions.length} className="rounded-lg bg-white px-5 py-10 shadow-[0px_2px_3px_#00000029]">
+      <div className="rounded-lg text-center bg-white px-5 py-5 shadow-[0px_2px_3px_#00000029]">
         <button className={'text-primary '} onClick={addNewQuestion}>
           <RiAddLine className="text- inline" /> Add New Question
         </button>

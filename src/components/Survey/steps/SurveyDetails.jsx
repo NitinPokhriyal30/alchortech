@@ -11,14 +11,12 @@ import 'react-quill/dist/quill.snow.css'
 import dayjs from 'dayjs'
 import { RiInformationLine } from 'react-icons/ri'
 
-// Register the plugin
-dayjs.extend(isBetweenPlugin)
-
 const COLORS = {
   gray: 'text-[#A5A5A5]',
 }
 
 const SurveyDetails = ({ surveyDetails, setSurveyDetails, errors }) => {
+
   const today = dayjs()
   const yesterday = dayjs()
   const todayStartOfTheDay = today.startOf('day')
@@ -92,7 +90,7 @@ const SurveyDetails = ({ surveyDetails, setSurveyDetails, errors }) => {
           <div>
             <Input size="lg" placeholder="Ex: Go Green, Plant Trees" value={surveyDetails.title} onChange={(event) => handleSurveyDetailsChange('title', event.target.value)} />
           </div>
-          <p className={'text-right ' + COLORS.gray}>0/75</p>
+          <p className={'text-right ' + COLORS.gray}>{surveyDetails.title.length}/75</p>
 
           {getError('title') && (
             <p className="text-sm text-red-500">
@@ -130,7 +128,7 @@ const SurveyDetails = ({ surveyDetails, setSurveyDetails, errors }) => {
               }}
             />
           </div>
-          <p className={'text-right ' + COLORS.gray}>0/150 Words</p>
+          <p className={'text-right ' + COLORS.gray}>{surveyDetails.description.length}/150 Words</p>
 
           {getError('description') && (
             <p className="text-sm text-red-500">
@@ -207,7 +205,7 @@ const SurveyDetails = ({ surveyDetails, setSurveyDetails, errors }) => {
               }}
             />
           </div>
-          <p className={'text-right ' + COLORS.gray}>0/150 words</p>
+          <p className={'text-right ' + COLORS.gray}>{surveyDetails.termsAndConditions.length}/150 words</p>
           {getError('termsAndConditions') && (
             <p className="text-sm text-red-500">
               <RiInformationLine className="inline align-text-bottom text-[1.1em] " />

@@ -31,8 +31,8 @@ function handleValidateDetails(quiz) {
 
   if (quiz.title.length === 0) {
     errors.push(['title', 'Must have a Quiz Title'])
-  } else if (quiz.title.length > 50) {
-    errors.push(['title', 'Quiz Title should be less than or 50 characters'])
+  } else if (quiz.title.length > 75) {
+    errors.push(['title', 'Quiz Title should be less than or 75 characters'])
   }
 
   if (quiz.description.length === 0) {

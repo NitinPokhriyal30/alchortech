@@ -37,7 +37,7 @@ export default function SelectParticipants () {
   return (
       <div>
           <div className="rounded-lg bg-white px-5 py-6 drop-shadow-md">
-              <div className="grid grid-cols-[1fr_2fr] items-center gap-8">
+              <div className="grid grid-row md:grid-cols-[1fr_2fr] items-center gap-4 md:gap-8"> 
                   {/* col 1 */}
                   <div>
                       <p className="text-18px font-bold text-text-black">Select Participant Type</p>
@@ -50,8 +50,8 @@ export default function SelectParticipants () {
                           onClick={() => setParticipantType('All')}
                           className={
                               participantType === 'All'
-                                  ? 'border border-[#5486E3] bg-[#5486E3] text-white rounded-md py-1 px-10'
-                                  : 'border border-[#5486E3] text-[#5486E3] rounded-md py-1 px-10'
+                                  ? 'border border-[#5486E3] bg-[#5486E3] text-white rounded-md py-1 px-2 md:px-10 md:py-1'
+                                  : 'border border-[#5486E3] text-[#5486E3] rounded-md py-1 px-2 md:px-10 md:py-1'
                           }
                       >
                           All
@@ -60,8 +60,8 @@ export default function SelectParticipants () {
                           onClick={() => setParticipantType('Team')}
                           className={
                               participantType === 'Team'
-                                  ? 'border border-[#5486E3] bg-[#5486E3] text-white rounded-md py-1 px-9'
-                                  : 'border border-[#5486E3] text-[#5486E3] rounded-md py-1 px-9'
+                                  ? 'border border-[#5486E3] bg-[#5486E3] text-white rounded-md py-1 px-2 md:px-10 md:py-1'
+                                  : 'border border-[#5486E3] text-[#5486E3] rounded-md py-1 px-2 md:px-10 md:py-1'
                           }
                       >
                           Team
@@ -70,8 +70,8 @@ export default function SelectParticipants () {
                           onClick={() => setParticipantType('Individual')}
                           className={
                               participantType === 'Individual'
-                                  ? 'border border-[#5486E3] bg-[#5486E3] text-white rounded-md py-1 px-5'
-                                  : 'border border-[#5486E3] text-[#5486E3] rounded-md py-1 px-5'
+                                  ? 'border border-[#5486E3] bg-[#5486E3] text-white rounded-md py-1 px-2 md:px-10 md:py-1'
+                                  : 'border border-[#5486E3] text-[#5486E3] rounded-md py-1 px-2 md:px-10 md:py-1'
                           }
                       >
                           Individual
@@ -80,8 +80,8 @@ export default function SelectParticipants () {
                           onClick={() => setParticipantType('Group')}
                           className={
                               participantType === 'Group'
-                                  ? 'border border-[#5486E3] bg-[#5486E3] text-white rounded-md py-1 px-2'
-                                  : 'border border-[#5486E3] text-[#5486E3] rounded-md py-1 px-2'
+                                  ? 'border border-[#5486E3] bg-[#5486E3] text-white rounded-md py-1 px-2 md:px-10 md:py-1'
+                                  : 'border border-[#5486E3] text-[#5486E3] rounded-md py-1 px-2 md:px-10 md:py-1'
                           }
                       >
                           + Create Group
@@ -92,7 +92,7 @@ export default function SelectParticipants () {
 
           {participantType === 'Individual' && (
               <div className="rounded-lg bg-white px-5 py-6 drop-shadow-md mt-2">
-                  <div className="grid grid-cols-[1fr_2fr] items-center gap-8">
+                  <div className="grid grid-rows  md:grid-cols-[1fr_2fr] items-center gap-4 md:gap-8">
                       {/* col 1 */}
                       <div>
                           <p className="text-18px font-bold text-text-black">Select Individual Participant</p>
@@ -128,7 +128,7 @@ export default function SelectParticipants () {
                           >
                               &#x2715; {/* Unicode cross symbol */}
                           </button>
-                          <div className="grid grid-cols-[1fr_2fr] items-center gap-8">
+                          <div className="grid grid-rows md:grid-cols-[1fr_2fr] items-center gap-4 md:gap-8">
                               {/* col 1 */}
                               <div>
                                   <p className="text-18px font-bold text-text-black">{group.groupName}</p>
@@ -185,7 +185,7 @@ export function RecipientsDropdown({ form, setForm }) {
     return (
         <>
             {/* dropdown trigger */}
-            <p className="flex cursor-pointer gap-[2px] hover:font-bold"
+            <div className="flex cursor-pointer gap-[2px]"
                 onClick={() => setShowDropdown(!showDropdown)}
             >
                 <span className="flex flex-wrap recipients-grid gap-2">
@@ -220,7 +220,7 @@ export function RecipientsDropdown({ form, setForm }) {
                         <p className='text-[#ACACAC]'>Add member by Name or Email Id</p>
                     )}
                 </span>
-            </p>
+            </div>
 
             {/* container */}
             {showDropdown && (
