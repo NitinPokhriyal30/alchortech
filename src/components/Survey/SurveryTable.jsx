@@ -6,6 +6,8 @@ import { RxCross1 } from 'react-icons/rx'
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import { SlArrowLeft, SlArrowRight } from 'react-icons/sl'
+import { useQuery } from 'react-query'
+import { api } from '@/api'
 
 const SORT_OPTIONS = [
   { label: 'Last 60 days', value: '1' },
@@ -21,6 +23,10 @@ const SurveyTable = () => {
   const navigate = useNavigate()
   const [tab, setTab] = React.useState('draft')
   const rows = tab === 'draft' ? 5 : tab === 'running' ? 1 : tab === 'closed' ? 8 : 7
+
+  const surveys = useQuery('surveys', () => api.surveys.all())
+
+  console.log(surveys.data);
 
   return (
     <div className="h-screen w-screen md:w-full"> 

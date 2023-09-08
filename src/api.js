@@ -84,6 +84,10 @@ const api = {
   faqs: {
     all: () => axios.get('api/v1/support/faqs/').then((r) => r.data),
     categories: () => axios.get('api/v1/suport/categories/').then((r) => r.data),
+  },
+
+  surveys: {
+    all: () => axios.get('api/v1/surveys/').then((r) => r.data),
   }
 
 }
