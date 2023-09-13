@@ -3,13 +3,52 @@ import { api } from '@/api';
 import { useQuery } from 'react-query';
 import Cookies from 'js-cookie';
 import { getAvatarAttributes, processAvatarUrl } from '@/utils';
+import { toast } from 'react-toastify';
 
 const COLORS = {
     gray: 'text-[#A5A5A5]',
 };
 
 export default function CampaignParticipants({campaigns, setCampaigns, errors}) {
-    const [participantType, setParticipantType] = useState('');
+
+    const [selectedDepartments, setSelectedDepartments] = useState([]);
+
+    const departments = useQuery('departments', () => api.departments());
+
+    const addDepartment = (departmentId) => {
+        setCampaigns((prev) => ({
+          ...prev,
+          teams: [...prev.teams, departmentId],
+        }));
+      };
+    
+      const removeDepartment = (departmentId) => {
+        setCampaigns((prev) => ({
+          ...prev,
+          teams: prev.teams.filter((id) => id !== departmentId),
+        }));
+      };
+    
+      const clearSelectedDepartments = () => {
+        setCampaigns((prev) => ({
+          ...prev,
+          teams: [],
+        }));
+      };
+
+    const clearIndividualParticipants = () => {
+        setCampaigns((prev) => ({
+        ...prev,
+        individuals: [],
+        }));
+    };
+
+    const clearGroupParticipants = () => {
+        setCampaigns((prev) => ({
+        ...prev,
+        groups: [], 
+        }));
+    };
 
     const addNewGroup = () => {
         const newGroup = {
@@ -20,16 +59,30 @@ export default function CampaignParticipants({campaigns, setCampaigns, errors}) 
             ...prev,
             groups: [...prev.groups, newGroup],
         }));
-        setNewGroupName('');
     };
-    
-   
-  useEffect(() => {
-    console.log('particpantType', participantType);
-    console.log("user");
-        }, [participantType])
-    
 
+    const addGroupHandler = async(index) =>{
+        try { 
+            const groupsString = campaigns.groups[index].participants.join(',');
+            const groupData = {
+                groupName: campaigns.groups[index].label,
+                participants: groupsString
+              }
+            const response = await api.campaigns.addGroup(groupData);
+
+            const newGroupId = response.id;
+            setCampaigns((prev) => ({
+                ...prev,
+                groupIds: [...prev.groupIds, newGroupId],
+            }))
+
+            
+            toast.success('Added')
+        } catch (error) {
+            console.error('Error adding group:', error);
+        } 
+    }
+    
     return (
         <div>
             <div className="rounded-lg bg-white px-5 py-6 drop-shadow-md">
@@ -43,9 +96,14 @@ export default function CampaignParticipants({campaigns, setCampaigns, errors}) 
                     {/* col 2 */}
                     <div className="flex flex-col md:flex-row gap-4">
                         <button
-                            onClick={() => setParticipantType('All')}
+                            onClick={() => {
+                                setCampaigns((prev) => ({
+                                    ...prev,
+                                    participantType: 'all',
+                                }))
+                            }}
                             className={
-                                participantType === 'All'
+                                campaigns.participantType === 'all'
                                     ? 'border border-[#5486E3] bg-[#5486E3] text-white rounded-md py-1 px-10'
                                     : 'border border-[#5486E3] text-[#5486E3] rounded-md py-1 px-10'
                             }
@@ -53,9 +111,16 @@ export default function CampaignParticipants({campaigns, setCampaigns, errors}) 
                             All
                         </button>
                         <button
-                            onClick={() => setParticipantType('Team')}
+                            onClick={() => {
+                                setCampaigns((prev) => ({
+                                    ...prev,
+                                    participantType: 'teams',
+                                }))
+                                clearIndividualParticipants();
+                                clearGroupParticipants();
+                            }}
                             className={
-                                participantType === 'Team'
+                                campaigns.participantType === 'teams'
                                     ? 'border border-[#5486E3] bg-[#5486E3] text-white rounded-md py-1 px-9'
                                     : 'border border-[#5486E3] text-[#5486E3] rounded-md py-1 px-9'
                             }
@@ -63,9 +128,16 @@ export default function CampaignParticipants({campaigns, setCampaigns, errors}) 
                             Team
                         </button>
                         <button
-                            onClick={() => setParticipantType('Individual')}
+                            onClick={() => {
+                                setCampaigns((prev) => ({
+                                    ...prev,
+                                    participantType: 'individual',
+                                }))
+                                clearGroupParticipants();
+                                clearSelectedDepartments();
+                            }}
                             className={
-                                participantType === 'Individual'
+                                campaigns.participantType === 'individual'
                                     ? 'border border-[#5486E3] bg-[#5486E3] text-white rounded-md py-1 px-5'
                                     : 'border border-[#5486E3] text-[#5486E3] rounded-md py-1 px-5'
                             }
@@ -73,9 +145,16 @@ export default function CampaignParticipants({campaigns, setCampaigns, errors}) 
                             Individual
                         </button>
                         <button
-                            onClick={() => setParticipantType('Group')}
+                            onClick={() => {
+                                setCampaigns((prev) => ({
+                                    ...prev,
+                                    participantType: 'groups',
+                                }))
+                                clearIndividualParticipants();
+                                clearSelectedDepartments();
+                            }}
                             className={
-                                participantType === 'Group'
+                                campaigns.participantType === 'groups'
                                     ? 'border border-[#5486E3] bg-[#5486E3] text-white rounded-md py-1 px-2'
                                     : 'border border-[#5486E3] text-[#5486E3] rounded-md py-1 px-2'
                             }
@@ -86,7 +165,48 @@ export default function CampaignParticipants({campaigns, setCampaigns, errors}) 
                 </div>
             </div>
 
-            {participantType === 'Individual' && (
+            {campaigns.participantType === 'teams' && (
+                <div className="rounded-lg bg-white px-5 py-6 drop-shadow-md mt-2">
+                    <div className="grid grid-cols-[1fr_2fr] items-center gap-8">
+                        {/* col 1 */}
+                        <div>
+                            <p className="text-18px font-bold text-text-black">Select Team</p>
+                        </div>
+
+                        {/* col 2 */}
+                        <div>   
+                            <select className="w-full p-2 border rounded"
+                            onChange={(e) => {
+                                const selectedValues = Array.from(e.target.options)
+                                  .filter((option) => option.selected)
+                                  .map((option) => option.value);
+                                
+                                const currentSelectedDepartments = [...campaigns.teams];
+                            
+                                selectedValues.forEach((departmentId) => {
+                                  if (currentSelectedDepartments.includes(departmentId)) {
+                                    removeDepartment(departmentId);
+                                  } else {
+                                    addDepartment(departmentId);
+                                  }
+                                });
+                              }}
+                              multiple
+                              value={campaigns.teams}
+                            >
+                            {departments.data.map((department) => (
+                              <option key={department.id} value={department.id}>
+                                {department.name}
+                              </option>
+                            ))}
+                          </select>
+                        
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {campaigns.participantType === 'individual' && (
                 <div className="rounded-lg bg-white px-5 py-6 drop-shadow-md mt-2">
                     <div className="grid grid-cols-[1fr_2fr] items-center gap-8">
                         {/* col 1 */}
@@ -102,7 +222,7 @@ export default function CampaignParticipants({campaigns, setCampaigns, errors}) 
                                 }
                             >
                                 <ul className="group p-2">
-                                    <RecipientsDropdown {...{campaigns, setCampaigns}} participantType={participantType} />
+                                    <RecipientsDropdown {...{campaigns, setCampaigns}}/>
                                 </ul>
                             </div>
                         </div>
@@ -110,7 +230,7 @@ export default function CampaignParticipants({campaigns, setCampaigns, errors}) 
                 </div>
             )}
 
-            {participantType == 'Group' &&
+            {campaigns.participantType == 'groups' &&
                 campaigns.groups.map((group, index) => (
                     <div key={index} className="relative">
 
@@ -138,12 +258,9 @@ export default function CampaignParticipants({campaigns, setCampaigns, errors}) 
                                     <input
                                         className="w-full py-2 px-2 my-4 rounded border-[2px]"
                                         type="text"
-                                   
                                         onChange={(e) => {
-                                            const updatedGroups = [...campaigns.groups]; // Clone the groups array
-                                            updatedGroups[index].label = e.target.value; // Update the label based on the index
-                                    
-                                            // Update the campaigns state with the modified groups array
+                                            const updatedGroups = [...campaigns.groups];
+                                            updatedGroups[index].label = e.target.value;
                                             setCampaigns((prev) => ({
                                                 ...prev,
                                                 groups: updatedGroups,
@@ -151,11 +268,15 @@ export default function CampaignParticipants({campaigns, setCampaigns, errors}) 
                                         }}
                                         placeholder="Name the Group"
                                     />
-                    
                                     <div className={'rounded border-[2px] ring-primary focus-within:ring-1'}>
                                         <ul className="group p-2">
-                                            <RecipientsDropdown {...{campaigns, setCampaigns }} participantType={participantType} groupIndex={index}/>
+                                            <RecipientsDropdown {...{campaigns, setCampaigns }} groupIndex={index}/>
                                         </ul>
+                                    </div>
+                                    <div className='flex justify-end'>
+                                    <button onClick={() => addGroupHandler(index)} className="text-[#ACACAC] hover:text-black border border-[#ACACAC] py-1 px-2 mt-4 rounded-md">
+                                        Add Group  
+                                    </button>
                                     </div>
                                 </div>
                             </div>
@@ -163,7 +284,7 @@ export default function CampaignParticipants({campaigns, setCampaigns, errors}) 
 
                     </div>
                 ))}
-            {participantType === 'Group' && (
+            {campaigns.participantType === 'groups' && (
                 <button className="text-primary mt-2 mx-4" onClick={addNewGroup}>
                 + Add new group
             </button>
@@ -172,7 +293,7 @@ export default function CampaignParticipants({campaigns, setCampaigns, errors}) 
     );
 }
 
-export function RecipientsDropdown({campaigns, setCampaigns, participantType, groupIndex }) {
+export function RecipientsDropdown({campaigns, setCampaigns, groupIndex }) {
 
     const [showDropdown, setShowDropdown] = useState(false)
 
@@ -188,14 +309,14 @@ export function RecipientsDropdown({campaigns, setCampaigns, participantType, gr
     JSON.stringify(user).toLocaleLowerCase().includes(searchUserQuery)
     );
 
-    const isSelectedIndividual = (user) => campaigns.participants.includes(user.id);
+    const isSelectedIndividual = (user) => campaigns.individuals.includes(user.id);
     const isSelectedGroupParticipant = (user) => {
         const group = campaigns.groups?.[groupIndex];
         return group?.participants?.includes(user.id);
     };
 
-    const excludedUsers = participantType === 'Individual'
-    ? campaigns.participants
+    const excludedUsers = campaigns.participantType === 'individual'
+    ? campaigns.individuals
     : campaigns.groups.reduce((acc, group, idx) => {
         if (idx !== groupIndex) {
             return acc.concat(group.participants);
@@ -207,7 +328,7 @@ export function RecipientsDropdown({campaigns, setCampaigns, participantType, gr
       const filteredSearchedUser = searchedUser.filter((user) => {
         return (
             !excludedUsers.includes(user.id) &&
-            (participantType === 'Individual'
+            (campaigns.participantType === 'individual'
                 ? !isSelectedGroupParticipant(user)
                 : !isSelectedIndividual(user))
         );
@@ -222,10 +343,10 @@ export function RecipientsDropdown({campaigns, setCampaigns, participantType, gr
             <span className="flex cursor-pointer gap-[2px] hover:font-bold"
                 onClick={() => setShowDropdown(!showDropdown)}
             >
-            {participantType === "Individual" && 
+            {campaigns.participantType === "individual" && 
             <span className="flex flex-wrap recipients-grid gap-2">
-             {campaigns.participants.length > 0 ? (
-                 campaigns.participants.map((userId) => {
+             {campaigns.individuals.length > 0 ? (
+                 campaigns.individuals.map((userId) => {
                      const user = usersWithoutMe.find((u) => u.id === userId);
                      return (
                          <span key={userId} className="border-[2px] px-2 py-1 rounded-lg mx-1">
@@ -237,17 +358,15 @@ export function RecipientsDropdown({campaigns, setCampaigns, participantType, gr
                                          onClick={() => {
                                              setCampaigns((prev) => {
                                                  if (isSelectedIndividual(user)) {
-                                                     // Remove the user ID from the participants array
-                                                     prev.participants = prev.participants.filter((id) => id !== user.id);
+                                                     prev.individuals = prev.individuals.filter((id) => id !== user.id);
                                                  } else {
-                                                     // Add the user ID to the participants array
-                                                     prev.participants.push(user.id);
+                                                     prev.individuals.push(user.id);
                                                  }
                                                  return { ...prev };
                                              });
                                          }}
                                      >
-                                         &#x2715; {/* Unicode cross symbol */}
+                                         &#x2715;
                                      </button>
                                  </span>
                              ) : (
@@ -260,7 +379,7 @@ export function RecipientsDropdown({campaigns, setCampaigns, participantType, gr
                  <p className='text-[#ACACAC]'>Add member by Name or Email Id</p>
              )}
             </span> }
-            {participantType === "Group" &&
+            {campaigns.participantType === "groups" &&
             <span className="flex flex-wrap recipients-grid gap-2">   
             {campaigns.groups[groupIndex].participants.length > 0 ? (
                 campaigns.groups[groupIndex].participants.map((userId) => {
@@ -310,8 +429,7 @@ export function RecipientsDropdown({campaigns, setCampaigns, participantType, gr
                         ) : (
                             <div>
                                 {filteredSearchedUser?.map((user) => {
-                                    return (
-                                        
+                                    return (  
                                         <button
                                             key={user.id}
                                             style={{ height: USER_BTN_HEIGHT }}
@@ -320,15 +438,15 @@ export function RecipientsDropdown({campaigns, setCampaigns, participantType, gr
                                             type="button"
                                            
                                             onClick={() => {
-                                                if (participantType === 'Individual') {                                                    setCampaigns((prev) => {
+                                                if (campaigns.participantType === 'individual') {                                                    setCampaigns((prev) => {
                                                         if (isSelectedIndividual(user)) {
-                                                            prev.participants = prev.participants.filter((id) => id !== user.id);
+                                                            prev.individuals = prev.individuals.filter((id) => id !== user.id);
                                                         } else {
-                                                            prev.participants.push(user.id);
+                                                            prev.individuals.push(user.id);
                                                         }
                                                         return { ...prev };
                                                     });
-                                                   } else if (participantType === 'Group') {
+                                                   } else if (campaigns.participantType === 'groups') {
                                                     setCampaigns((prev) => {
                                                         const updatedGroups = [...prev.groups];
                                                         const group = updatedGroups[groupIndex];
@@ -387,33 +505,3 @@ export function RecipientsDropdown({campaigns, setCampaigns, participantType, gr
         </>
     );
 }
-
-
-// {campaigns.groups.length > 0 ? (
-                
-//     campaigns.groups[groupIndex].participants.map((userId) => {
-        
-//         const user = usersWithoutMe.find((u) => u.id === userId);
-        
-//         return (
-//             <span key={userId} className="border-[2px] px-2 py-1 rounded-lg mx-1">
-//             {user ? ( 
-//                 <span className=''>
-//                     {user.full_name}{' '}
-//                     <button
-//                         className="ml-1 text-black cursor-pointer">
-//                         &#x2715; {/* Unicode cross symbol */}
-//                     </button>
-//                 </span>
-//             ) : (
-//                 ''
-//             )}
-//             </span>
-//         )
-        
-//     })
-    
-
-//  ) : (
-//     <p className='text-[#ACACAC]'>Add member by Name or Email</p>
-//  )}

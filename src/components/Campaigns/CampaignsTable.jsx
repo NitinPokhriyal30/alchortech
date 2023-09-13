@@ -1,9 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { AiOutlinePlus, AiFillClockCircle, AiFillCloseCircle, AiFillRightCircle, AiFillCaretDown } from 'react-icons/ai'
-import { BsPencilFill } from 'react-icons/bs'
+import { BsPencilFill, BsFillArrowRightCircleFill, BsFillArrowLeftCircleFill } from 'react-icons/bs'
 import { RxCross1 } from 'react-icons/rx'
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
+import { useQuery } from 'react-query';
+import { api } from '../../api'
+import Loader from '@/components/Loader'
 
 const SORT_OPTIONS = [
   { label: 'Last 60 days', value: '1' },
@@ -18,7 +21,19 @@ const CampaignTable = () => {
   const [sortBy, setSortBy] = useState(SORT_OPTIONS[0])
   const navigate = useNavigate()
   const [tab, setTab] = React.useState('draft')
-  const rows = tab === 'draft' ? 5 : tab === 'running' ? 1 : tab === 'closed' ? 8 : 7
+  const [page, setPage] = React.useState(1)
+  
+  const { data: campaigns, isLoading, isError } = useQuery(['campaigns', page], () => api.campaigns.all(page));
+
+  if (isLoading) {
+    return <div><Loader /></div>;
+  }
+
+  if (isError) {
+    return <div>Error loading campaigns</div>;
+  }
+
+
 
   return (
     <div className="h-screen w-screen md:w-full">
@@ -71,7 +86,7 @@ const CampaignTable = () => {
         <div className="h-[1px] w-full bg-[#cecece]"></div>
       </div>
 
-      <div className="mx-[25px] mt-2 flex overflow-auto rounded-lg bg-white drop-shadow-md">
+      <div className="mx-[25px] mt-2 flex flex-col overflow-auto rounded-lg bg-white drop-shadow-md">
         <table className="w-full  min-w-[550px] whitespace-nowrap">
           <thead>
             <tr className="border-b border-[#cecece] child:!py-[15.5px] child:!text-16px ">
@@ -85,21 +100,30 @@ const CampaignTable = () => {
             </tr>
           </thead>
           <tbody style={{ padding: '20px' }}>
-            {Array.from({ length: rows }).map(() => (
-              <tr className="group rounded-xl border-b border-[#cecece] hover:bg-[#ececec] " onClick={() => navigate('/campaign/preview')}>
+            {campaigns.map((campaign) => (
+              <tr
+                key={campaign.id}
+                className="group rounded-xl border-b border-[#cecece] hover:bg-[#ececec]"
+              >
                 <td className="py-3 text-[16px] font-semibold text-[#5486E3] md:pl-[45px] "></td>
-                <td className="py-3 text-left text-[16px] font-semibold text-[#5486E3] ">Gold Plan Sales Challenge</td>
-                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">Feb 13, 2023</td>
-                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">Feb 18, 2023</td>
-                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">Automatic</td>
-                <td className="py-3 text-right md:opacity-0 transition-opacity duration-200 group-hover:opacity-100 md:pl-[45px]">
-                  <RxCross1 className="cursor-pointer text-[#292929]" />
+                <td  onClick={() => navigate((`/campaign/preview?campaignId=${campaign.id}`))} className="py-3 cursor-pointer text-left text-[16px] font-semibold text-[#5486E3] ">{campaign.name}</td>
+                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">
+                  {campaign.start_date}
                 </td>
-                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]"></td>
+                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">
+                  {campaign.end_date}
+                </td>
+                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">
+                  {campaign.type}
+                </td>
               </tr>
             ))}
-          </tbody>
+          </tbody>;
         </table>
+        <div className='flex justify-end gap-2 py-2 px-8'>
+        <button onClick={() => setPage(page-1)}> <BsFillArrowLeftCircleFill/> </button>
+        <button onClick={() => setPage(page+1)}> <BsFillArrowRightCircleFill/> </button>
+        </div>
       </div>
     </div>
   )

@@ -151,6 +151,7 @@ export default function HomeSidebar({ }) {
               </div>
               <span>Campaigns</span>
             </MenuLink>
+            
             <MenuLink
               to="/survey"
               className="flex items-center gap-[13px] rounded pb-[15px] pl-[23px] pt-[9px]  text-16px leading-[22px] text-white text-opacity-[85%] [&.active]:bg-white/[8%]"
@@ -203,14 +204,14 @@ export default function HomeSidebar({ }) {
           {/*--------------- FAQ Section  ----------------*/}
 
           <div className="mt-auto pb-[22px] pl-[33px] pr-[30px]">
-            <div className="flex items-center justify-between gap-3">
+            <MenuLink to="/faqs" className="flex items-center justify-between gap-3">
               <p className="flex items-center gap-1  text-[16px] font-light leading-[19px] text-white">
                 <span className='text-primary'><HelpIcon fill="white" /></span> FAQs
               </p>
               <p className="flex items-center gap-1  text-[16px] font-light leading-[19px] text-white">
                 <img src={Icon2} alt="" /> Feedback
               </p>
-            </div>
+            </MenuLink>
           </div>
         </div>
 

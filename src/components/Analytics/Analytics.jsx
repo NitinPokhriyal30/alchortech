@@ -130,7 +130,7 @@ return (
                 <span className='font-black text-black'>{sortRegion}</span>
                 <span><AiFillCaretDown /></span>
               </button>
-              <div className="absolute right-[1px] top-full z-10 hidden w-auto flex-col rounded-lg bg-white py-2 text-end drop-shadow-[0px_2px_6px_#44444F1A] hover:flex peer-hover:flex child:cursor-pointer mt-[-2px]">
+              <div className="absolute right-[1px] top-full z-10 hidden w-40 flex-col rounded-lg bg-white py-2 text-end drop-shadow-[0px_2px_6px_#44444F1A] hover:flex peer-hover:flex child:cursor-pointer mt-[-2px]">
               {[
                 ...filters.region?.map((regionOption) => ({ value: regionOption, label: regionOption })),
                 { value: '', label: 'Clear'}
@@ -491,7 +491,7 @@ return (
 
         <div className="flex-col w-full min-w-[250px] md:w-full lg:w-[50%] rounded-lg  mx-auto bg-white">
          {total_recognitions && total_points ? 
-          <div className='flex flex-col md:flex-row justify-evenly gap-6 mx-3 my-4 px-2 py-2 md:py-0 bg-[#FCEAAE] rounded-xl items-center'>
+          <div className='flex flex-col md:flex-row justify-evenly gap-0 md:gap-6 mx-3 my-4 px-2 py-2 md:py-0 bg-[#FCEAAE] rounded-xl items-center'>
             <div>
             <span className='text-[36px] mx-1 md:text-[48px] font-Lato font-bold'>{total_recognitions}</span>
             <span className='font-Lato font-bold'>Recognitions</span>
@@ -513,7 +513,7 @@ return (
         </div> 
         
         <div className=" flex-col w-full min-w-[250px] md:w-full lg:w-[50%] rounded-lg   mx-auto bg-white">
-          <div className='flex flex-col md:flex-row justify-evenly gap-6 mx-3 my-4 px-2 py-2 md:py-0 bg-[#B3E2A8] rounded-xl items-center'>
+          <div className='flex flex-col md:flex-row justify-evenly gap-0 md:gap-6 mx-3 my-4 px-2 py-2 md:py-0 bg-[#B3E2A8] rounded-xl items-center'>
             <div>
               <span className='text-[36px] mx-1 md:text-[48px] font-Lato font-bold'>69</span>
               <span className='font-Lato font-bold'>Redemptions</span>
