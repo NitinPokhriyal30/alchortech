@@ -217,3 +217,8 @@ export const capitalizeWords = (str) => {
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
 }
+
+export const formatDate = (inputDate) => {
+  const options = { year: 'numeric', month: 'short', day: 'numeric' };
+  return new Date(inputDate).toLocaleDateString('en-US', options);
+}

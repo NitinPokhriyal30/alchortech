@@ -3,11 +3,14 @@ import React, { useState } from 'react'
 import { AiOutlinePlus, AiFillClockCircle, AiFillCloseCircle, AiFillRightCircle, AiFillCaretDown } from 'react-icons/ai'
 import { BsPencilFill } from 'react-icons/bs'
 import { RxCross1 } from 'react-icons/rx'
+import { RxPencil1 } from 'react-icons/rx'
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import { SlArrowLeft, SlArrowRight } from 'react-icons/sl'
 import { useQuery } from 'react-query'
 import { api } from '@/api'
+import { formatDate } from '@/utils'
+import Loader from '../Loader'
 
 const SORT_OPTIONS = [
   { label: 'Last 60 days', value: '1' },
@@ -22,11 +25,11 @@ const SurveyTable = () => {
   const [sortBy, setSortBy] = useState(SORT_OPTIONS[0])
   const navigate = useNavigate()
   const [tab, setTab] = React.useState('draft')
-  const rows = tab === 'draft' ? 5 : tab === 'running' ? 1 : tab === 'closed' ? 8 : 7
+  // const rows = tab === 'draft' ? 5 : tab === 'running' ? 1 : tab === 'closed' ? 8 : 7
 
   const surveys = useQuery('surveys', () => api.surveys.all())
 
-  console.log(surveys.data);
+  // const { title, status, is_owner, type, start_date, end_date } = surveys.data
 
   return (
     <div className="h-screen w-screen md:w-full"> 
@@ -93,19 +96,25 @@ const SurveyTable = () => {
             </tr>
           </thead>
           <tbody className="table-body" style={{ padding: '20px' }}>
-            {Array.from({ length: rows }).map(() => (
+            {surveys.isLoading ? <div className='flex justify-center py-20' >
+              <Loader />
+            </div> : surveys.data?.map((survey) => ( 
               <tr className="group rounded-xl border-b border-[#cecece] hover:bg-[#ececec] " onClick={() => navigate('/survey/preview')}>
                 <td className="py-3 text-[16px] font-semibold text-[#5486E3] md:pl-[45px] "></td>
-                <td className="py-3 text-left text-[16px] font-semibold text-[#5486E3] ">Survey 1</td>
-                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">Feb 13, 2023</td>
-                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">Feb 18, 2023</td>
-                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">Automatic</td>
-                <td className="py-3 text-right md:opacity-0 transition-opacity duration-200 group-hover:opacity-100 md:pl-[45px]">
+                <td className="py-3 text-left text-[16px] font-semibold text-[#5486E3] ">{survey.title}</td>
+                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">{formatDate(survey.start_date)}</td>
+                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">{formatDate(survey.end_date)}</td>
+                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">{survey.type}</td>
+                <td className="py-3 text-left md:opacity-0 transition-opacity duration-200 group-hover:opacity-100 md:px-[45px]">
+                  {/* {survey.type.is_owner && <RxPencil1 className="cursor-pointer text-[#292929]" />}  */}
+                  <RxPencil1 className="cursor-pointer text-[#292929]" />
+                </td>
+                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">
+                  {/* {survey.type.is_owner && <RxCross1 className="cursor-pointer text-[#292929]" />} */}
                   <RxCross1 className="cursor-pointer text-[#292929]" />
                 </td>
-                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]"></td>
               </tr>
-            ))}
+            )) }
           </tbody>
         </table>
        

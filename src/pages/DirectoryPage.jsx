@@ -34,8 +34,6 @@ export default function DirectoryPage({ ...props }) {
 
   const filteredUsers = users.data
 
-  console.log(filteredUsers);
-
   const response = useQuery("response", () => api.analytics.filters()) || []
 
   return (
