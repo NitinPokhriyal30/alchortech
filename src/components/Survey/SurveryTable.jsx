@@ -113,6 +113,7 @@ const SurveyTable = () => {
                   {/* {survey.type.is_owner && <RxCross1 className="cursor-pointer text-[#292929]" />} */}
                   <RxCross1 className="cursor-pointer text-[#292929]" />
                 </td>
+                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]"></td>
               </tr>
             )) }
           </tbody>

@@ -1,20 +1,22 @@
 import React, { useEffect, useRef } from 'react';
 import { css } from '@emotion/react';
 import * as d3 from 'd3';
+import './AreaStyle.css';
 
 const BarChart = ({ data }) => {
-  const chartRef = useRef(null);
+  const chartRef = useRef();
 
   useEffect(() => {
     // Clear any existing chart before creating a new one
     d3.select(chartRef.current).selectAll('*').remove();
 
     // Set up chart dimensions
-    const width = 574;
-    const height = 350;
+    const parentWidth = chartRef.current.clientWidth;
+    const width = parentWidth;
+    const height = 400;
     const margin = { top: 20, right: 20, bottom: 30, left: 50 };
     const chartWidth = width - margin.left - margin.right;
-    const chartHeight = height - margin.top - margin.bottom;
+    const chartHeight = height - 125;
 
     // Create SVG element
     const svg = d3.select(chartRef.current)
@@ -36,8 +38,11 @@ const BarChart = ({ data }) => {
       .attr('class', 'grid')
       .call(yGrid);
 
+
     // Hide the Y-axis line by selecting the specific path element with class "domain"
     gridGroup.select('path.domain').style('display', 'none');
+
+    
 
     gridGroup.selectAll('.grid line')
       .attr('stroke', 'lightgray');
@@ -68,6 +73,21 @@ const BarChart = ({ data }) => {
       .attr('ry', 10) // Set the vertical radius for the rounded corners
       .attr('fill', (d, i) => customColors[i % customColors.length]); // Access colors based on index
 
+
+      svg.selectAll('.bar-label')
+      .data(data)
+      .enter()
+      .append('text')
+      .attr('class', 'bar-label')
+      .attr('x', d => xScale(d.category) + xScale.bandwidth() / 2) // Position the label at the center of each bar
+      .attr('y', chartHeight + 40) // Position the label just below the bars
+      .attr('dy', '0') // Adjust the value as needed
+      .attr('text-anchor', 'middle') // Center-align the text
+      .attr('fill', '#292929') // Text color
+      .attr('transform', d => `rotate(-55 ${xScale(d.category) + xScale.bandwidth() / 2}, ${chartHeight + 70})`) // Rotate around a point below the bar
+      .text(d => d.category); // Use the category value as the label text
+  
+      
     // Add Y axis
     const yAxis = d3.axisLeft(yScale).ticks(11);
 

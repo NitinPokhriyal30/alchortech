@@ -4,17 +4,13 @@ import { useQuery } from 'react-query';
 import InteractionChart from './InteractionChart'
 import Loader from '@/components/Loader';
 
-const UserInteraction = ({ filterBy, userId }) => {
+const UserInteraction = ({ filterBy, userId, page, pageSize }) => {
   const [sortedSenders, setSortedSenders] = useState([]);
   const [sortedRecipients, setSortedRecipients] = useState([]);
   const [interactionData, setInteractionData] = useState([]);
   const [hoveredRowIndex, setHoveredRowIndex] = useState(null);
   const [hoveredImageIndex, setHoveredImageIndex] = useState(null);
 
-  useEffect(() => {
-    console.log(hoveredImageIndex)
-
-  }, [hoveredImageIndex])
 
   const handleRowHover = (index) => {
     setHoveredRowIndex(index); // Update hoveredRowIndex state
@@ -25,13 +21,13 @@ const UserInteraction = ({ filterBy, userId }) => {
 
   const receivedTransactions = useQuery(
     'receivedTransactions',
-    () => api.transactions.meAsRecipient(userId, filterBy),
+    () => api.transactions.meAsRecipient(userId, filterBy, page, pageSize),
     { enabled: false } // Disable the query by default and enable it manually
   );
 
   const givenTransactions = useQuery(
     'givenTransactions',
-    () => api.transactions.meAsSender(userId, filterBy),
+    () => api.transactions.meAsSender(userId, filterBy, page, pageSize),
     { enabled: false } // Disable the query by default and enable it manually
   );
 
@@ -148,10 +144,10 @@ const UserInteraction = ({ filterBy, userId }) => {
   return (
 
     <div className="h-auto flex flex-col md:flex-row items-center md:items-start md:justify-center">
-      <div className="my-4  block w-full md:w-[438px] lg:w-2/5 text-center ">
+      <div className="my-4 block w-full md:w-[438px] text-center ">
         <span className="text-[18px] mb-4 text-[#000000] font-Lato font-bold">{`${me?.full_name.split(' ')[0]}'s Interaction`}</span>
 
-        <div className='flex border-r-2'>
+        <div className='flex border-r-2 justify-center items-center'>
           <div className="w-[325px]">
             <InteractionChart
               interactionData={interactionData}
@@ -166,7 +162,7 @@ const UserInteraction = ({ filterBy, userId }) => {
       <div className="w-3/5 py-4 flex justify-center">
         <div>
           {interactionData.length > 0 ? (
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto px-2">
               <table className="border-collapse">
                 <thead>
                   <tr>
@@ -176,11 +172,9 @@ const UserInteraction = ({ filterBy, userId }) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {console.log(interactionData)}
-                  {interactionData?.map((interaction, index) => (
-                    <tr
+                  {interactionData.map((interaction, index) => (
+                    <tr id='table-row'
                       key={index}
-                      style={{ borderRadius: '0.5rem' }}
                       className={`group ${(hoveredImageIndex === index || (hoveredImageIndex === 0 && index === 0)) ? 'bg-gray-200' : 'hover:bg-gray-200 hover:bg-rounded-lg'
                         }`}
                       onMouseEnter={() => handleRowHover(index)} // Call handleRowHover with the index on mouse enter 

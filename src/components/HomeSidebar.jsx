@@ -203,14 +203,14 @@ export default function HomeSidebar({ }) {
           {/*--------------- FAQ Section  ----------------*/}
 
           <div className="mt-auto pb-[22px] pl-[33px] pr-[30px]">
-            <div className="flex items-center justify-between gap-3">
+            <MenuLink to="/faqs" className="flex items-center justify-between gap-3">
               <p className="flex items-center gap-1  text-[16px] font-light leading-[19px] text-white">
                 <span className='text-primary'><HelpIcon fill="white" /></span> FAQs
               </p>
               <p className="flex items-center gap-1  text-[16px] font-light leading-[19px] text-white">
                 <img src={Icon2} alt="" /> Feedback
               </p>
-            </div>
+            </MenuLink>
           </div>
         </div>
 

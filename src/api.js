@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {toast} from "react-toastify"
+import { toast } from "react-toastify"
 import Cookies from 'js-cookie'
 
 const wait = (ms) => (resolveWith) =>
@@ -54,8 +54,8 @@ const api = {
     all: (filters) => axios.get(`api/v1/transactions?${filters.toString()}`).then((r) => r.data),
     // meAsRecipient: (id) => axios.get(`api/posts/?recipients=${id}`).then((r) => r.data),
     // meAsSender: (id) => axios.get(`api/posts/?sender=${id}`).then((r) => r.data),
-    meAsRecipient: (id, filterBy) => axios.get(`api/v1/transactions?recipients=${id}&date_range=${filterBy}`).then((r) => r.data),
-    meAsSender: (id, filterBy) => axios.get(`api/v1/transactions?sender=${id}&date_range=${filterBy}`).then((r) => r.data),
+    meAsRecipient: (id, filterBy, page, pageSize) => axios.get(`api/v1/transactions?recipients=${id}&date_range=${filterBy}`).then((r) => r.data),
+    meAsSender: (id, filterBy, page, pageSize) => axios.get(`api/v1/transactions?sender=${id}&date_range=${filterBy}`).then((r) => r.data),
     react: (data) => axios.post('api/v1/transactions/add-reaction/', data).then((r) => r.data),
     allReactions: (data) => axios.get(`api/v1/transactions/transaction-reactions/${data.post_id}/`).then((r) => r.data),
     updateReaction: (data) => axios.patch(`api/v1/transactions/update-user-reaction/${data.post_id}/`, data).then((r) => r.data),
@@ -72,23 +72,58 @@ const api = {
     by_id: (data) => axios.get(`api/v1/transactions/comments/${data.post_id}/`).then((r) => r.data),
   },
   todayEvents: () => axios.get('api/v1/transactions/today-events/').then((r) => r.data),
-
+  departments: () => axios.get('api/v1/common/departments/').then((r) => r.data),
   properties: () => axios.get('api/v1/common/properties/').then((r) => r.data),
 
   analytics: {
-    all: () => axios.get('/api/v1/analytics/').then((r) => r.data),
+    all: (department, region, date) =>
+      axios
+        .get(`/api/v1/analytics/?department=${department}&region=${region}&Date_Ranges=${date}`)
+        .then((r) => r.data),
     filters: () => axios.get('/api/v1/analytics/filters/').then((r) => r.data),
+  },
 
+
+
+  campaigns: {
+    all: (page) => axios.get(`api/v1/campaigns?pagination=1&page_size=5&page=${page}`).then((r) => r.data),
+    mycampaign: () => axios.get('api/v1/campaigns/my-campaigns/').then((r) => r.data),
+    campaignDetails: (campaignId) => axios.get(`api/v1/campaigns/${campaignId}/`).then((r) => r.data),
+    create: (formData) =>
+      axios
+        .post('api/v1/campaigns/create-campaign/', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        })
+        .then((r) => r.data),
+
+    addParticipants: (formData, campaignId) =>
+      axios.post(`api/v1/campaigns/add-participants-to-campaign/${campaignId}/`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+        .then((r) => r.data),
+
+    addGroup: (formData) =>
+      axios.post(`api/v1/campaigns/add-group/`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+        .then((r) => r.data),
+
+    participate: (formData, campaignId) =>
+      axios.post(`api/v1/campaigns/participate/${campaignId}/`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+        .then((r) => r.data),
   },
 
   faqs: {
-    all: () => axios.get('api/v1/support/faqs/').then((r) => r.data),
-    categories: () => axios.get('api/v1/suport/categories/').then((r) => r.data),
+    list: () => axios.get('api/v1/support/faqs/').then((r) => r.data),
+    categories: () => axios.get('api/v1/support/categories').then((r) => r.data),
   },
 
   surveys: {
     all: () => axios.get('api/v1/surveys/').then((r) => r.data),
   }
+
 
 }
 

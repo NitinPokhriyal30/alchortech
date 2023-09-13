@@ -6,6 +6,8 @@ import { DesktopTimePicker } from '@mui/x-date-pickers'
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import './campaigns.css';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import dayjs from 'dayjs'
 
 const COLORS = {
     gray: 'text-[#A5A5A5]',
@@ -23,12 +25,84 @@ const handleDragOver = (e) => {
     e.preventDefault();
 };
 
-const CampaignDetails = () => {
+const CampaignDetails = ({ campaignDetails, setCampaignDetails, errors }) => {
+    const today = dayjs()
+    const yesterday = dayjs()
+    const todayStartOfTheDay = today.startOf('day')
+  
 
     const [description, setDescription] = useState("");
     const [tnc, setTnc] = useState("");
     const [isEvent, setIsEvent] = useState(false);
     const [isEndDate, setIsEndDate] = useState(false);
+
+      // Handler for updating the survey details
+    const handleCampaignDetailsChange = (property, value) => {
+        setCampaignDetails((prevCampaignDetails) => ({
+        ...prevCampaignDetails,
+        [property]: value,
+        }))
+    }
+
+    
+    const handleCoverImageChange = (event) => {
+        handleFileInputChange('coverImage', event.target.files[0]);
+    };
+
+    const handleBannerImageChange = (event) => {
+        handleFileInputChange('bannerImage', event.target.files[0]);
+    };
+
+    const handleAttachedDocumentChange = (event) => {
+        handleFileInputChange('attachedDocument', event.target.files[0]);
+    };
+
+    const handleFileInputChange = (property, file) => {
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                handleCampaignDetailsChange(property, reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+    
+    const handleQuillChange = (property, content) => {
+        handleCampaignDetailsChange(property, content);
+    };
+     
+   // Handler for updating the start date and time
+  const handleStartDateAndTimeChange = (property, value) => {
+    // Combine date and time and format it as needed
+    const combinedDateTime = dayjs(value).format('YYYY-MM-DD HH:mm:ss')
+
+    setCampaignDetails((prevCampaignDetails) => ({
+      ...prevCampaignDetails,
+      dateAndTime: {
+        ...prevCampaignDetails.dateAndTime,
+        [property]: combinedDateTime,
+      },
+    }))
+  }
+
+  // Handler for updating the end date and time
+  const handleEndDateAndTimeChange = (property, value) => {
+    // Combine date and time and format it as needed
+    const combinedDateTime = dayjs(value).format('YYYY-MM-DD HH:mm:ss')
+
+    setCampaignDetails((prevCampaignDetails) => ({
+      ...prevCampaignDetails,
+      dateAndTime: {
+        ...prevCampaignDetails.dateAndTime,
+        [property]: combinedDateTime,
+      },
+    }))
+  }
+
+  const [eventDateTime, setEventDateTime] = useState(todayStartOfTheDay);
+  const handleEventDateTimeChange = (value) => {
+    setEventDateTime(value);
+}
 
     useEffect(() => {
         console.log(description)
@@ -37,7 +111,7 @@ const CampaignDetails = () => {
 
     return (
         <div className="rounded-lg bg-white px-5 py-6 shadow-[0px_2px_3px_#00000029]">
-            <div className="grid grid-cols-[1fr_2fr] items-center gap-8">
+            <div className="grid md:grid-cols-[1fr_2fr] items-center gap-8">
                 {/* col 1 */}
                 <div>
                     <p className="text-18px font-bold text-text-black">Campaign Name*</p>
@@ -56,15 +130,18 @@ const CampaignDetails = () => {
                             className={
                                 'w-full bg-transparent px-3 py-2 text-[14px] leading-[16px] text-text-black outline-none placeholder:text-[#A5A5A5]'
                             }
+                            value={campaignDetails.campaignName} 
+                            onChange={(event) => handleCampaignDetailsChange('campaignName', event.target.value)}
                         />
                     </div>
+                    
                     <p className={'text-right ' + COLORS.gray}>0/75</p>
                 </div>
             </div>
 
             <hr className="border-px my-6 border-400" />
 
-            <div className="grid grid-cols-[1fr_2fr] items-center gap-8">
+            <div className="grid md:grid-cols-[1fr_2fr] items-center gap-8">
                 {/* col 1 */}
                 <div>
                     <p className="text-18px font-bold text-text-black">Cover Image*</p>
@@ -91,19 +168,19 @@ const CampaignDetails = () => {
                                     type="file"
                                     className="hidden"
                                     accept="image/*"
-                                    onChange={(e) => {
-                                        // Handle file selection here
-                                    }}
+                                    onChange={handleCoverImageChange}
                                 />
+                               
                             </div>
                         </label>
+
                     </div>
                 </div>
             </div>
 
             <hr className="border-px my-6 border-400" />
 
-            <div className="grid grid-cols-[1fr_2fr] items-center gap-8">
+            <div className="grid md:grid-cols-[1fr_2fr] items-center gap-8">
                 {/* col 1 */}
                 <div>
                     <p className="text-18px font-bold text-text-black">Banner Image*</p>
@@ -121,18 +198,16 @@ const CampaignDetails = () => {
                         onDragOver={handleDragOver}
                     >
                         {/* Button to choose file */}
-                        <label htmlFor="coverImageInput" className="cursor-pointer">
+                        <label htmlFor="bannerImageInput" className="cursor-pointer">
                             <div className="flex flex-col justify-center items-center border-dashed border-2 border-gray-300 rounded-md py-10">
                                 <label className='bg-[#5486E3] py-2 px-4 text-white rounded-md cursor-pointer'>Choose File</label>
                                 <span className="text-gray-500">or drop your file here</span>
                                 <input
-                                    id="coverImageInput"
+                                    id="bannerImageInput"
                                     type="file"
                                     className="hidden"
                                     accept="image/*"
-                                    onChange={(e) => {
-                                        // Handle file selection here
-                                    }}
+                                    onChange={handleBannerImageChange}
                                 />
                             </div>
                         </label>
@@ -142,7 +217,7 @@ const CampaignDetails = () => {
 
             <hr className="border-px my-6 border-400" />
 
-            <div className="grid grid-cols-[1fr_2fr] items-center gap-8">
+            <div className="grid md:grid-cols-[1fr_2fr] items-center gap-8">
                 {/* col 1 */}
                 <div>
                     <p className="text-18px font-bold text-text-black">Description*</p>
@@ -157,8 +232,8 @@ const CampaignDetails = () => {
                         }
                     >
                         <ReactQuill
-                            value={description} // Pass your description state value here
-                            onChange={(value) => setDescription(value)} // Update your description state here
+                            value={campaignDetails.description}
+                            onChange={(content, _, __, editor) => handleQuillChange('description', editor.getHTML())}
                             placeholder="Describe your campaign"
                             modules={{
                                 toolbar: [
@@ -179,7 +254,7 @@ const CampaignDetails = () => {
 
             <hr className="border-px my-6 border-400" />
 
-            <div className="grid grid-cols-[1fr_2fr] items-center gap-8">
+            <div className="grid md:grid-cols-[1fr_2fr] items-center gap-8">
                 {/* col 1 */}
                 <div>
                     <p className="text-18px font-bold text-text-black">Date*</p>
@@ -190,11 +265,11 @@ const CampaignDetails = () => {
                 <div>
                     <div className="w-fit flex items-center gap-2 border border-[#00BC9F] p-1 bg-[#F2FDEF]">
                         <span className="pl-4 text-18px font-bold min-w-[70px]">Start</span>
-                        <LocalizationProvider dateAdapter={AdapterMoment}>
-                            <DatePicker label="Date" />
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DatePicker label="Date" defaultValue={today} disablePast onChange={(date) => handleStartDateAndTimeChange('start', date)}  />
                         </LocalizationProvider>
-                        <LocalizationProvider dateAdapter={AdapterMoment}>
-                            <DesktopTimePicker label="Time" />
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DesktopTimePicker label="Time" defaultValue={todayStartOfTheDay} disablePast onChange={(time) => handleStartDateAndTimeChange('start', time)} />
                         </LocalizationProvider>
                     </div>
 
@@ -211,11 +286,11 @@ const CampaignDetails = () => {
                     {isEndDate &&
                         <div className="w-fit flex items-center gap-2 border border-[#F89D96] p-1 bg-[#FFF3F2] mt-6">
                             <span className="pl-4 text-18px font-bold min-w-[70px]">End</span>
-                            <LocalizationProvider dateAdapter={AdapterMoment}>
-                                <DatePicker label="Date" />
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DatePicker label="Date" defaultValue={today} disablePast onChange={(date) => handleEndDateAndTimeChange('end', date)} />
                             </LocalizationProvider>
-                            <LocalizationProvider dateAdapter={AdapterMoment}>
-                                <DesktopTimePicker label="Time" />
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DesktopTimePicker label="Time"  defaultValue={todayStartOfTheDay} disablePast onChange={(time) => handleEndDateAndTimeChange('end', time)}/>
                             </LocalizationProvider>
                         </div>
                     }
@@ -226,7 +301,7 @@ const CampaignDetails = () => {
 
             <hr className="border-px my-6 border-400" />
 
-            <div className="grid grid-cols-[1fr_2fr] items-center gap-8">
+            <div className="grid md:grid-cols-[1fr_2fr] items-center gap-8">
                 {/* col 1 */}
                 <div>
                     <p className="text-18px font-bold text-text-black">Is this an Event?</p>
@@ -247,13 +322,13 @@ const CampaignDetails = () => {
                     {isEvent && (
                         <div className='flex border w-fit p-2 mt-6 gap-2'>
                             <div>
-                                <LocalizationProvider dateAdapter={AdapterMoment}>
-                                    <DatePicker label="Date" />
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <DatePicker label="Date" disablePast onChange={(date) => handleEventDateTimeChange(date)}/>
                                 </LocalizationProvider>
                             </div>
                             <div>
-                                <LocalizationProvider dateAdapter={AdapterMoment}>
-                                    <DesktopTimePicker label="Time" />
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <DesktopTimePicker label="Time"  value={eventDateTime} disablePast onChange={(time) => handleEventDateTimeChange(time)}/>
                                 </LocalizationProvider>
                             </div>
                         </div>
@@ -263,7 +338,7 @@ const CampaignDetails = () => {
 
             <hr className="border-px my-6 border-400" />
 
-            <div className="grid grid-cols-[1fr_2fr] items-center gap-8">
+            <div className="grid md:grid-cols-[1fr_2fr] items-center gap-8">
                 {/* col 1 */}
                 <div>
                     <p className="text-18px font-bold text-text-black">Terms & Conditions*</p>
@@ -278,8 +353,8 @@ const CampaignDetails = () => {
                         }
                     >
                         <ReactQuill
-                            value={tnc}
-                            onChange={(value) => setTnc(value)}
+                            value={campaignDetails.termsAndConditions}
+                            onChange={(content, _, __, editor) => handleQuillChange('termsAndConditions', editor.getHTML())}
                             placeholder="Describe your campaign"
                             modules={{
                                 toolbar: [
@@ -298,7 +373,7 @@ const CampaignDetails = () => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-[1fr_2fr] items-center gap-8">
+            <div className="grid md:grid-cols-[1fr_2fr] items-center gap-8">
                 {/* col 1 */}
                 <div>
                     <p className="text-18px font-bold text-text-black">Attach a Document</p>
@@ -317,21 +392,19 @@ const CampaignDetails = () => {
                         onDragOver={handleDragOver}
                     >
                         {/* Button to choose file */}
-                        <label htmlFor="coverImageInput" className="cursor-pointer">
-                            <div className="flex flex-col justify-center items-center border-dashed border-2 border-gray-300 rounded-md py-10 ">
-                                <label className='bg-[#5486E3] py-2 px-4 text-white rounded-md cursor-pointer'>Choose File</label>
-                                <span className="text-gray-500">or drop your file here</span>
-                                <input
-                                    id="coverImageInput"
-                                    type="file"
-                                    className="hidden"
-                                    accept="image/*"
-                                    onChange={(e) => {
-                                        // Handle file selection here
-                                    }}
-                                />
-                            </div>
-                        </label>
+                        <label htmlFor="attachedDocument" className="cursor-pointer">
+                                <div className="flex flex-col justify-center items-center border-dashed border-2 border-gray-300 rounded-md py-10 ">
+                                    <label className='bg-[#5486E3] py-2 px-4 text-white rounded-md cursor-pointer'>Choose File</label>
+                                    <span className="text-gray-500">or drop your file here</span>
+                                    <input
+                                    id="attachedDocument"
+                                        type="file"
+                                        className="hidden"
+                                        accept="image/*"
+                                        onChange={handleAttachedDocumentChange}
+                                    />
+                                </div>
+                            </label>
                     </div>
                 </div>
             </div>

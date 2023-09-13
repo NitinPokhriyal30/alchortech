@@ -16,7 +16,6 @@ const COLORS = {
 }
 
 const SurveyDetails = ({ surveyDetails, setSurveyDetails, errors }) => {
-
   const today = dayjs()
   const yesterday = dayjs()
   const todayStartOfTheDay = today.startOf('day')

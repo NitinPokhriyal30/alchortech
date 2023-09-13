@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useRef } from 'react';
 import Flag from '../assets/images/user-profile/flag.png';
 import AnniversaryBg from '../assets/images/user-profile/anniversarybg1.png';
 import Uparrow from '../assets/svg/Uparrow.svg';
 import Downarrow from '../assets/svg/Downarrow.svg';
 import MyHashtags from './MyHashtags';
 import { AiFillCaretDown } from 'react-icons/ai';
+import {BsFillArrowRightCircleFill} from 'react-icons/bs'
 import PostCard from '../components/PostCard';
 import { AchievementBanner } from '../components/AchievementBanner';
 import { api } from '@/api';
@@ -20,7 +21,7 @@ const getChildTransactionsFor = (parentId, allTransactions) => {
 };
 
 const withIsChild = (allTransactions) => {
-  return allTransactions?.map((post) => {
+  return allTransactions.map((post) => {
     const hasParent = allTransactions.some((parentPost) => post.parent_id === parentPost.id);
     // if a transaction has a parent transaction then it's a child transaction
     post.isChild = hasParent;
@@ -58,6 +59,31 @@ export default function MyProfile() {
     day: '2-digit',
   });
 
+
+  const handleObserver = (entities) => {
+    const target = entities[0];
+    if (target.isIntersecting) {
+      // Load more data when the loading indicator comes into view
+      handleLoadMore();
+    }
+  };
+
+  const loadingIndicatorRef = useRef(null);
+
+
+  useEffect(() => {
+    
+    const observer = new IntersectionObserver(handleObserver, {
+      root: null,
+      rootMargin: '0px',
+      threshold: 1.0, // Fully visible
+    });
+    {console.log(observer);}
+    if (loadingIndicatorRef.current) {
+      observer.observe(loadingIndicatorRef.current);
+    }
+    return () => observer.disconnect();
+  }, []);
   const handleLoadMore = () => {
     if (!transactionsQuery.isLoading && hasNextPage) {
       setPage((prevPage) => prevPage + 1);
@@ -146,17 +172,14 @@ export default function MyProfile() {
       case 'last_month':
         return 'Last Month';
       case 'this_month':
-        return 'This Month'; 
+        return 'This Month';
       default:
         return filterBy;
     }
   };
 
   if (meQuery.isLoading === true) {
-    return <div className="space-y-2">
-      <p className="animate-pulse w-full bg-gray-300 rounded">&nbsp;</p>
-      <p className="animate-pulse w-full bg-gray-300 rounded">&nbsp;</p>
-    </div>
+    return "..."
   }
 
   return (
@@ -203,7 +226,7 @@ export default function MyProfile() {
           </div>
         </div>
 
-        <div className="md:w-[28%] drop-shadow-md h-auto flex flex-col items-center bg-[#5486E3] bg-center rounded-lg" style={{ backgroundImage: `url(${AnniversaryBg})`, backgroundRepeat: 'no-repeat' }}>
+        <div className="md:w-[28%] mx-2 drop-shadow-md h-auto flex flex-col items-center bg-[#5486E3] bg-center rounded-lg" style={{ backgroundImage: `url(${AnniversaryBg})`, backgroundRepeat: 'no-repeat' }}>
           <div className="font-bold font-Lato text-[#fdfbfb] text-[20px] pb-6 pt-4">Anniversaries</div>
           <div className="font-normal font-lato text-[#fbfbfb] text-[16px]">Birthday</div>
           <div className="font-semibold font-lato text-[#8DFFFF] text-[30px]">{formattedBirthDate}</div>
@@ -276,21 +299,22 @@ export default function MyProfile() {
                     <div className='flex justify-center'><Loader /></div>
                   ) : transactionsQuery.data && transactionsQuery.data.length > 0 ? (
                     <React.Fragment>
-                      {parentPosts.slice(0, page * pageSize)?.map((post, i) => (
+                      {parentPosts.slice(0, page * pageSize).map((post, i) => (
                         <div className='px-4 mt-4' key={post.id}>
                           <PostCard i={i} post={post} childrenTransactions={getChildTransactionsFor(post.id, allPosts)} />
                         </div>
                       ))}
                       {hasNextPage && (
-                        <div className="flex justify-center mt-4">
+                        <div className="flex justify-end mx-4 mt-4">
                           <button
-                            className="bg-primary text-white hover:text-black py-2 px-8 rounded-md"
+                            className=""
                             onClick={handleLoadMore}
                           >
-                            V
+                            <span className="text-[#A7A7A7]"><BsFillArrowRightCircleFill /></span>
                           </button>
                         </div>
                       )}
+                      {transactionsQuery.isLoading && <Loader />}
                     </React.Fragment>
                   ) : (
                     <p className='text-md font-semibold text-center my-4'>No recent activities found.</p>

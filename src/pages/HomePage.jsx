@@ -28,6 +28,7 @@ const stickBottomAlign = {
 }
 export default function HomePage() {
   const infiniteLoaderDivRef = React.useRef()
+  
   const [infiniteLoading, setInfiniteLoading] = React.useState(false)
   const [hasNextPage, setHasNextPage] = React.useState(true)
   const entry = useIntersectionObserver(infiniteLoaderDivRef, {})
