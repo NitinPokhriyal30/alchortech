@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DatePicker } from '@mui/x-date-pickers'
 import { DesktopTimePicker } from '@mui/x-date-pickers'
@@ -8,43 +7,30 @@ import 'react-quill/dist/quill.snow.css';
 import './campaigns.css';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import dayjs from 'dayjs'
+import { RiInformationLine } from 'react-icons/ri'
 
 const COLORS = {
     gray: 'text-[#A5A5A5]',
 }
 
-const handleDrop = (e) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file) {
-        // Handle the dropped file here
-    }
-};
-
-const handleDragOver = (e) => {
-    e.preventDefault();
-};
-
-const CampaignDetails = ({ campaignDetails, setCampaignDetails, errors }) => {
+const CampaignDetails = ({ campaignDetails, setCampaignDetails, errors, clearError }) => {
     const today = dayjs()
-    const yesterday = dayjs()
     const todayStartOfTheDay = today.startOf('day')
-  
-
-    const [description, setDescription] = useState("");
-    const [tnc, setTnc] = useState("");
-    const [isEvent, setIsEvent] = useState(false);
     const [isEndDate, setIsEndDate] = useState(false);
+      
+    const getError = (field) => errors?.[field];
 
-      // Handler for updating the survey details
+
     const handleCampaignDetailsChange = (property, value) => {
+        const updatedErrors = { ...errors };
+        delete updatedErrors[property];
         setCampaignDetails((prevCampaignDetails) => ({
         ...prevCampaignDetails,
         [property]: value,
         }))
+        clearError(updatedErrors);
     }
 
-    
     const handleCoverImageChange = (event) => {
         handleFileInputChange('coverImage', event.target.files[0]);
     };
@@ -54,59 +40,74 @@ const CampaignDetails = ({ campaignDetails, setCampaignDetails, errors }) => {
     };
 
     const handleAttachedDocumentChange = (event) => {
-        handleFileInputChange('attachedDocument', event.target.files[0]);
+        handleFileInputChange('attachedDocuments', event.target.files[0]);
     };
 
     const handleFileInputChange = (property, file) => {
+        const updatedErrors = { ...errors };
+        delete updatedErrors[property];
         if (file) {
-            const reader = new FileReader();
-            reader.onload = () => {
-                handleCampaignDetailsChange(property, reader.result);
-            };
-            reader.readAsDataURL(file);
+            setCampaignDetails((prevCampaignDetails) => ({
+                ...prevCampaignDetails,
+                [property]: file,
+            }));
         }
+        clearError(updatedErrors)
     };
+
+    const handleDrop = (e, property) => {
+        e.preventDefault();
+        const file = e.dataTransfer.files[0];
+        if (file) {
+          handleFileInputChange(property, file);
+        }
+      };
+      
+      const handleDragOver = (e) => {
+        e.preventDefault();
+      };
     
     const handleQuillChange = (property, content) => {
         handleCampaignDetailsChange(property, content);
     };
      
-   // Handler for updating the start date and time
-  const handleStartDateAndTimeChange = (property, value) => {
-    // Combine date and time and format it as needed
-    const combinedDateTime = dayjs(value).format('YYYY-MM-DD HH:mm:ss')
+    const handleStartDateAndTimeChange = (property, value) => {
+        const updatedErrors = { ...errors };
+        delete updatedErrors[property]; 
+        const combinedDateTime = dayjs(value).format('YYYY-MM-DD HH:mm:ss')
+        setCampaignDetails((prevCampaignDetails) => ({
+          ...prevCampaignDetails,
+            startDate: combinedDateTime,
+          
+        }))
+        clearError(updatedErrors)
+      }
 
+  const handleEndDateAndTimeChange = (property, value) => {  
+    const combinedDateTime = dayjs(value).format('YYYY-MM-DD HH:mm:ss')
     setCampaignDetails((prevCampaignDetails) => ({
       ...prevCampaignDetails,
-      dateAndTime: {
-        ...prevCampaignDetails.dateAndTime,
-        [property]: combinedDateTime,
-      },
+      endDate: combinedDateTime,
     }))
+   
   }
 
-  // Handler for updating the end date and time
-  const handleEndDateAndTimeChange = (property, value) => {
-    // Combine date and time and format it as needed
+  const handleEventDateTimeChange = (property, value) => {
+    const updatedErrors = { ...errors };
+    delete updatedErrors[property];
     const combinedDateTime = dayjs(value).format('YYYY-MM-DD HH:mm:ss')
-
     setCampaignDetails((prevCampaignDetails) => ({
-      ...prevCampaignDetails,
-      dateAndTime: {
-        ...prevCampaignDetails.dateAndTime,
-        [property]: combinedDateTime,
-      },
-    }))
-  }
+        ...prevCampaignDetails,
+        
+        eventDate: combinedDateTime,
+      }))
+    clearError(updatedErrors)
+    };
 
-  const [eventDateTime, setEventDateTime] = useState(todayStartOfTheDay);
-  const handleEventDateTimeChange = (value) => {
-    setEventDateTime(value);
-}
 
-    useEffect(() => {
-        console.log(description)
-    }, [description])
+  useEffect(() => {
+   
+  }, [])
 
 
     return (
@@ -133,9 +134,14 @@ const CampaignDetails = ({ campaignDetails, setCampaignDetails, errors }) => {
                             value={campaignDetails.campaignName} 
                             onChange={(event) => handleCampaignDetailsChange('campaignName', event.target.value)}
                         />
-                    </div>
-                    
+                    </div> 
                     <p className={'text-right ' + COLORS.gray}>0/75</p>
+                    {getError('campaignName') && (
+                        <p className="text-sm text-red-500">
+                          <RiInformationLine className="inline align-text-bottom text-[1.1em] " />
+                          {getError('campaignName')}
+                        </p>
+                      )}
                 </div>
             </div>
 
@@ -151,18 +157,9 @@ const CampaignDetails = ({ campaignDetails, setCampaignDetails, errors }) => {
 
                 {/* col 2 */}
                 <div>
-                    <div
-                        className={
-                            'rounded ring-primary focus-within:ring-1 ' + COLORS.gray
-                        }
-                        onDrop={handleDrop}
-                        onDragOver={handleDragOver}
-                    >
-                        {/* Button to choose file */}
+                    <div className={'rounded ring-primary focus-within:ring-1 ' + COLORS.gray} onDrop={(e) => handleDrop(e, 'coverImage')} onDragOver={handleDragOver}>
                         <label htmlFor="coverImageInput" className="cursor-pointer">
                             <div className="flex flex-col justify-center items-center border-dashed border-2 border-gray-300 rounded-md py-28 ">
-                                <label className='bg-[#5486E3] py-2 px-4 text-white rounded-md cursor-pointer'>Choose File</label>
-                                <span className="text-gray-500">or drop your file here</span>
                                 <input
                                     id="coverImageInput"
                                     type="file"
@@ -170,11 +167,22 @@ const CampaignDetails = ({ campaignDetails, setCampaignDetails, errors }) => {
                                     accept="image/*"
                                     onChange={handleCoverImageChange}
                                 />
-                               
+                                <label htmlFor="coverImageInput" className="bg-[#5486E3] py-2 px-4 text-white rounded-md cursor-pointer">
+                                Choose File
+                                </label>
+                                <span className="text-gray-500">
+                                  {campaignDetails.coverImage.name || 'or drop your file here'}  
+                                </span>
+                                
                             </div>
                         </label>
-
                     </div>
+                    {getError('coverImage') && (
+                        <p className="text-sm text-red-500">
+                          <RiInformationLine className="inline align-text-bottom text-[1.1em] " />
+                          {getError('coverImage')}
+                        </p>
+                    )}
                 </div>
             </div>
 
@@ -191,17 +199,9 @@ const CampaignDetails = ({ campaignDetails, setCampaignDetails, errors }) => {
                 {/* col 2 */}
                 <div>
                     <div
-                        className={
-                            'rounded ring-primary focus-within:ring-1 ' + COLORS.gray
-                        }
-                        onDrop={handleDrop}
-                        onDragOver={handleDragOver}
-                    >
-                        {/* Button to choose file */}
+                        className={'rounded ring-primary focus-within:ring-1 ' + COLORS.gray} onDrop={(e) => handleDrop(e, 'bannerImage')} onDragOver={handleDragOver}>
                         <label htmlFor="bannerImageInput" className="cursor-pointer">
                             <div className="flex flex-col justify-center items-center border-dashed border-2 border-gray-300 rounded-md py-10">
-                                <label className='bg-[#5486E3] py-2 px-4 text-white rounded-md cursor-pointer'>Choose File</label>
-                                <span className="text-gray-500">or drop your file here</span>
                                 <input
                                     id="bannerImageInput"
                                     type="file"
@@ -209,9 +209,21 @@ const CampaignDetails = ({ campaignDetails, setCampaignDetails, errors }) => {
                                     accept="image/*"
                                     onChange={handleBannerImageChange}
                                 />
+                                <label htmlFor="bannerImageInput" className="bg-[#5486E3] py-2 px-4 text-white rounded-md cursor-pointer">
+                                    Choose File
+                                </label>
+                                <span className="text-gray-500">
+                                    {campaignDetails.bannerImage.name || 'or drop your file here'}  
+                                </span>
                             </div>
                         </label>
                     </div>
+                    {getError('bannerImage') && (
+                        <p className="text-sm text-red-500">
+                          <RiInformationLine className="inline align-text-bottom text-[1.1em] " />
+                          {getError('bannerImage')}
+                        </p>
+                    )}
                 </div>
             </div>
 
@@ -249,6 +261,12 @@ const CampaignDetails = ({ campaignDetails, setCampaignDetails, errors }) => {
                         />
                     </div>
                     <p className={'text-right ' + COLORS.gray}>0/75</p>
+                    {getError('description') && (
+                        <p className="text-sm text-red-500">
+                          <RiInformationLine className="inline align-text-bottom text-[1.1em] " />
+                          {getError('description')}
+                        </p>
+                      )}
                 </div>
             </div>
 
@@ -272,6 +290,12 @@ const CampaignDetails = ({ campaignDetails, setCampaignDetails, errors }) => {
                             <DesktopTimePicker label="Time" defaultValue={todayStartOfTheDay} disablePast onChange={(time) => handleStartDateAndTimeChange('start', time)} />
                         </LocalizationProvider>
                     </div>
+                    {getError('startDate') && (
+                        <p className="text-sm text-red-500">
+                          <RiInformationLine className="inline align-text-bottom text-[1.1em] " />
+                          {getError('startDate')}
+                        </p>
+                    )}
 
                     <label className="flex items-center mt-6 space-x-2">
                         <input
@@ -294,8 +318,12 @@ const CampaignDetails = ({ campaignDetails, setCampaignDetails, errors }) => {
                             </LocalizationProvider>
                         </div>
                     }
-
-
+                    {getError('dateAndTime') && (
+                        <p className="text-sm text-red-500">
+                          <RiInformationLine className="inline align-text-bottom text-[1.1em] " />
+                          {getError('dateAndTime')}
+                        </p>
+                      )}
                 </div>
             </div>
 
@@ -313,22 +341,27 @@ const CampaignDetails = ({ campaignDetails, setCampaignDetails, errors }) => {
                     <label className="flex items-center space-x-2">
                         <input
                             type="checkbox"
-                            checked={isEvent}
-                            onChange={() => setIsEvent(!isEvent)}
+                            checked={campaignDetails.isEvent}
+                            onChange={() => handleCampaignDetailsChange('isEvent', !campaignDetails.isEvent)}
                             className="form-checkbox w-8 h-8"
                         />
                         <span className={COLORS.gray}>Yes</span>
                     </label>
-                    {isEvent && (
+                    {campaignDetails.isEvent && (
                         <div className='flex border w-fit p-2 mt-6 gap-2'>
                             <div>
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <DatePicker label="Date" disablePast onChange={(date) => handleEventDateTimeChange(date)}/>
+                                    <DatePicker 
+                                    label="Date" 
+                                    defaultValue={today}
+                                    disablePast
+                                    onChange={(date) => handleEventDateTimeChange(date)}
+                                    />
                                 </LocalizationProvider>
                             </div>
                             <div>
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <DesktopTimePicker label="Time"  value={eventDateTime} disablePast onChange={(time) => handleEventDateTimeChange(time)}/>
+                                    <DesktopTimePicker label="Time"  defaultValue={todayStartOfTheDay} disablePast onChange={(time) => handleEventDateTimeChange(time)}/>
                                 </LocalizationProvider>
                             </div>
                         </div>
@@ -370,8 +403,16 @@ const CampaignDetails = ({ campaignDetails, setCampaignDetails, errors }) => {
                         />
                     </div>
                     <p className={'text-right ' + COLORS.gray}>0/75</p>
+                    {getError('termsAndConditions') && (
+                        <p className="text-sm text-red-500">
+                          <RiInformationLine className="inline align-text-bottom text-[1.1em] " />
+                          {getError('termsAndConditions')}
+                        </p>
+                      )}
                 </div>
             </div>
+
+            <hr className="border-px my-6 border-400" />
 
             <div className="grid md:grid-cols-[1fr_2fr] items-center gap-8">
                 {/* col 1 */}
@@ -384,27 +425,24 @@ const CampaignDetails = ({ campaignDetails, setCampaignDetails, errors }) => {
 
                 {/* col 2 */}
                 <div>
-                    <div
-                        className={
-                            'rounded ring-primary focus-within:ring-1 ' + COLORS.gray
-                        }
-                        onDrop={handleDrop}
-                        onDragOver={handleDragOver}
-                    >
-                        {/* Button to choose file */}
+                    <div className={'rounded ring-primary focus-within:ring-1 ' + COLORS.gray} onDrop={(e) => handleDrop(e, 'attachedDocuments')} onDragOver={handleDragOver}>
                         <label htmlFor="attachedDocument" className="cursor-pointer">
-                                <div className="flex flex-col justify-center items-center border-dashed border-2 border-gray-300 rounded-md py-10 ">
-                                    <label className='bg-[#5486E3] py-2 px-4 text-white rounded-md cursor-pointer'>Choose File</label>
-                                    <span className="text-gray-500">or drop your file here</span>
-                                    <input
-                                    id="attachedDocument"
-                                        type="file"
-                                        className="hidden"
-                                        accept="image/*"
-                                        onChange={handleAttachedDocumentChange}
-                                    />
-                                </div>
-                            </label>
+                        <div className="flex flex-col justify-center items-center border-dashed border-2 border-gray-300 rounded-md py-10">
+                        <input
+                            id="attachedDocument"
+                            className="hidden"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleAttachedDocumentChange}
+                        />
+                        <label htmlFor="attachedDocument" className="bg-[#5486E3] py-2 px-4 text-white rounded-md cursor-pointer">
+                            Choose File
+                        </label>
+                        <span className="text-gray-500">
+                            {campaignDetails.attachedDocuments.name || 'No file chosen'}  
+                        </span>
+                        </div>
+                    </label>
                     </div>
                 </div>
             </div>

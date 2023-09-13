@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { AiOutlinePlus, AiFillClockCircle, AiFillCloseCircle, AiFillRightCircle, AiFillCaretDown } from 'react-icons/ai'
-import { BsPencilFill } from 'react-icons/bs'
+import { BsPencilFill, BsFillArrowRightCircleFill, BsFillArrowLeftCircleFill } from 'react-icons/bs'
 import { RxCross1 } from 'react-icons/rx'
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
@@ -20,7 +20,19 @@ const CampaignTable = () => {
   const [sortBy, setSortBy] = useState(SORT_OPTIONS[0])
   const navigate = useNavigate()
   const [tab, setTab] = React.useState('draft')
-  const rows = tab === 'draft' ? 5 : tab === 'running' ? 1 : tab === 'closed' ? 8 : 7
+  const [page, setPage] = React.useState(1)
+  
+  const { data: campaigns, isLoading, isError } = useQuery(['campaigns', page], () => api.campaigns.all(page));
+
+  if (isLoading) {
+    return <div><Loader /></div>;
+  }
+
+  if (isError) {
+    return <div>Error loading campaigns</div>;
+  }
+
+
 
   const { data: campaigns, isLoading, isError } = useQuery('campaigns', api.campaigns.all);
 
@@ -88,7 +100,7 @@ const CampaignTable = () => {
         <div className="h-[1px] w-full bg-[#cecece]"></div>
       </div>
 
-      <div className="mx-[25px] mt-2 flex overflow-auto rounded-lg bg-white drop-shadow-md">
+      <div className="mx-[25px] mt-2 flex flex-col overflow-auto rounded-lg bg-white drop-shadow-md">
         <table className="w-full  min-w-[550px] whitespace-nowrap">
           <thead>
             <tr className="border-b border-[#cecece] child:!py-[15.5px] child:!text-16px ">
@@ -106,6 +118,7 @@ const CampaignTable = () => {
               <tr
                 key={campaign.id}
                 className="group rounded-xl border-b border-[#cecece] hover:bg-[#ececec]"
+<<<<<<< HEAD
                 onClick={() => navigate('/campaign/preview')}
               >
                 <td className="py-3 text-[16px] font-semibold text-[#5486E3] md:pl-[45px] "></td>
@@ -120,10 +133,28 @@ const CampaignTable = () => {
                   {campaign.type}
                 </td>
                 {/* ... remaining columns ... */}
+=======
+              >
+                <td className="py-3 text-[16px] font-semibold text-[#5486E3] md:pl-[45px] "></td>
+                <td  onClick={() => navigate((`/campaign/preview?campaignId=${campaign.id}`))} className="py-3 cursor-pointer text-left text-[16px] font-semibold text-[#5486E3] ">{campaign.name}</td>
+                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">
+                  {campaign.start_date}
+                </td>
+                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">
+                  {campaign.end_date}
+                </td>
+                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">
+                  {campaign.type}
+                </td>
+>>>>>>> e7c1aa59c2713ce0a357943045186d9b565bee05
               </tr>
             ))}
           </tbody>;
         </table>
+        <div className='flex justify-end gap-2 py-2 px-8'>
+        <button onClick={() => setPage(page-1)}> <BsFillArrowLeftCircleFill/> </button>
+        <button onClick={() => setPage(page+1)}> <BsFillArrowRightCircleFill/> </button>
+        </div>
       </div>
     </div>
   )
