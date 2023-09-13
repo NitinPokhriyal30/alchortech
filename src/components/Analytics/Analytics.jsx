@@ -192,8 +192,8 @@ return (
       </div>
 
       
-      <div className="w-full mt-2 flex overflow-auto rounded-lg bg-white drop-shadow-md"> 
-        <div className="w-full px-4 py-2 min-w-[550px] ">
+      <div className="w-full  mt-2 flex overflow-auto rounded-lg bg-white drop-shadow-md"> 
+        <div className="w-full px-4 py-2 min-w-[950px] ">
           <p className='pb-4 font-bold font-Lato text-[18px]'>Leaderboard</p>
           <div className="w-full table-fixed">
           {leaderboard.length > 0 ? 
@@ -489,7 +489,7 @@ return (
      
       <div className="w-full max-w-[1536px] my-3 gap-3 flex flex-col md:flex-col lg:flex-row">
 
-        <div className="flex-col w-full min-w-[250px] md:w-full lg:w-[50%] rounded-lg  mx-auto bg-white">
+        <div className="flex-col w-full md:w-[50%] rounded-lg  mx-auto bg-white">
          {total_recognitions && total_points ? 
           <div className='flex flex-col md:flex-row justify-evenly gap-0 md:gap-6 mx-3 my-4 px-2 py-2 md:py-0 bg-[#FCEAAE] rounded-xl items-center'>
             <div>
