@@ -1,5 +1,5 @@
-import CampaignDetails from '@/components/Campaigns/CampaignDetails'
-import CampaignParticipants from '@/components/Campaigns/CampaignParticipants'
+import CampaignDetails from '@/components/Campaigns/steps/CampaignDetails'
+import CampaignParticipants from '@/components/Campaigns/steps/CampaignParticipants'
 import RulesnRewards from '@/components/Campaigns/RulesnRewards'
 import * as React from 'react'
 import { Link, useNavigate } from 'react-router-dom';
