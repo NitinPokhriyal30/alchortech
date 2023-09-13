@@ -33,7 +33,7 @@ export default function VoiceOutPage({ ...props }) {
         </div>
         <div className='flex flex-row flex-none item-center'>
           <span className='mt-1 mr-1'><GrAttachment /></span>
-          <div className='text-primary'>Atach File</div>
+          <div className='text-primary'>Attach File</div>
           {/* <input type="file" accept="image/*" onChange={(e) => e.target.files[0] && setData({ ...data, image: e.target.files[0] })} /> */}
         </div>
       </div>
