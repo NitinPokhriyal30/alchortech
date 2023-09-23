@@ -3,7 +3,9 @@ import { TbChartCircles } from 'react-icons/tb'
 import { MdOutlineCake, MdOutlineCelebration } from 'react-icons/md'
 import { useQuery } from 'react-query'
 import { api } from '@/api'
-import { getTodayDate } from '@/utils'
+import cake from '../../assets/svg/celibration-cake.svg';
+import anniversary from '../../assets/svg/celibration-anniversary.svg';
+import join from '../../assets/svg/celibration-join.svg';
 
 const Icons = {
   cake: MdOutlineCake,
@@ -13,6 +15,8 @@ const Icons = {
 
 export default function CelebrationWidget() {
   const events = useQuery('events', () => api.todayEvents())
+
+  console.log(events);
 
   const celebrations = [
     {
@@ -40,10 +44,11 @@ export default function CelebrationWidget() {
     },
   ]
 
-  const birthDays = events.data?.filter((user) => getTodayDate() == user.birth_date)
-  const workAniversaries = events.data?.filter((user) => getTodayDate() == user.hire_date)
+  const birthDays = events.data?.Birthday;
+  const workAniversaries = events.data?.Anniversary;
+  const joines = events.data?.Joined;
 
-  if (birthDays?.length == 0 && workAniversaries?.length == 0) {
+  if (birthDays?.length == 0 && workAniversaries?.length == 0 && joines?.length == 0) {
     return null
   }
 
@@ -65,35 +70,54 @@ export default function CelebrationWidget() {
               </div>
             ) : (
                 <>
-                  {birthDays && birthDays[0] ? <div className="flex pb-2 gap-3">
+                  {birthDays && birthDays[0] ? <div className="flex items-center pb-2 gap-3">
                     <p className="text-primary">
-                      <MdOutlineCake fontSize={22} />
+                      {/* <MdOutlineCake fontSize={22} /> */}
+                      <img src={cake} alt="cake" />
                     </p>
                     <p className="text-primary text-sm font-light pt-1">
-                      <strong>{birthDays[0]?.full_name}
+                      <strong>{birthDays[0]}
                       <span>
                         {birthDays.length > 1
                           ? ' & ' + pluralize(birthDays.length - 1, 'other', 's') + ' '
                           : ' '}
                         </span>
                       </strong>
-                      <span>has birthday today</span>
+                      <span>birthday today</span>
                     </p>
                   </div> : ''}
                 
-                  {workAniversaries && workAniversaries[0] ? <div className="flex pb-2 gap-3">
+                  {workAniversaries && workAniversaries[0] ? <div className="flex items-center pb-2 gap-3">
                     <p className="text-primary">
-                      <MdOutlineCelebration fontSize={22} />
+                      {/* <MdOutlineCelebration fontSize={22} /> */}
+                      <img src={anniversary} alt="cake" />
                     </p>
                     <p className="text-primary text-sm  font-light">
-                      <strong>{workAniversaries[0]?.full_name}
+                      <strong>{workAniversaries[0]}
                       <span>
                         {workAniversaries.length > 1
                           ? ` & ${pluralize(workAniversaries.length - 1, 'other', 's')} `
                           : ' '}
                         </span>
                       </strong>
-                      <span>has work anniversary today</span>
+                      <span>work anniversary is today</span>
+                    </p>
+                  </div> : ''}
+
+                  {joines && joines[0] ? <div className="flex items-center pb-2 gap-3">
+                    <p className="text-primary">
+                      {/* <MdOutlineCelebration fontSize={22} /> */}
+                      <img src={join} alt="cake" />
+                    </p>
+                    <p className="text-primary text-sm  font-light">
+                      <strong>{joines[0]}
+                        <span>
+                          {joines.length > 1
+                            ? ` & ${pluralize(joines.length - 1, 'other', 's')} `
+                            : ' '}
+                        </span>
+                      </strong>
+                      <span>joined the today</span>
                     </p>
                   </div> : ''}
 

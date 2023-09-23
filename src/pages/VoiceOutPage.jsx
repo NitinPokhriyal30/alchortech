@@ -8,6 +8,8 @@ import UploadIcon from '@/assets/svg/upload'
 import { RiCloseLine } from 'react-icons/ri'
 import { GrAttachment } from 'react-icons/gr'
 import { toast } from 'react-toastify'
+import ToolTip from '@/components/ToolTip'
+import clip from '../assets/svg/voice-out/voiceout-icon.png';
 
 export default function VoiceOutPage({ ...props }) {
   const [data, setData] = React.useState({
@@ -16,6 +18,9 @@ export default function VoiceOutPage({ ...props }) {
     image: null,
     allowMyName: false,
   })
+
+  const inputRef = React.useRef()
+
   return (
     <section className="min-h-screen text-text-black px-3 md:px-0">
       <h1 className="md:mt-9 text-[20px] font-bold px-3 md:px-0">Voice Out</h1>
@@ -32,14 +37,45 @@ export default function VoiceOutPage({ ...props }) {
           </button>
         </div>
         <div className='flex flex-row flex-none item-center'>
-          <span className='mt-1 mr-1'><GrAttachment /></span>
-          <div className='text-primary'>Attach File</div>
-          {/* <input type="file" accept="image/*" onChange={(e) => e.target.files[0] && setData({ ...data, image: e.target.files[0] })} /> */}
+          <label className="flex flex-row cursor-pointer">
+            {/* <GrAttachment className='mt-1 mr-1' /> */}
+            <img src={clip} alt="" style={{ 'width': '20px', 'height': '20px', 'margin': '3px 5px'}} />
+            <span className="inline-block text-center font-normal text-primary">Attach File</span>
+            <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files[0] && setData({ ...data, image: e.target.files[0] })} />
+          </label>
         </div>
+
       </div>
 
-      <textarea className="mt-2 w-full resize-y rounded-lg border border-[#d1d1d1] px-3 py-2 outline-primary" placeholder="Tell us about what you didn't find?" rows="5" value={data.description} onChange={(e) => setData({ ...data, description: e.target.value })}></textarea>
+      <div className='mt-2 w-full min-h-[120px] resize-y rounded-md border border-[#d1d1d1] px-3 py-2 outline-primary bg-white'>
 
+        <textarea spellCheck={false} className=" w-full h-12 resize-none outline-none transition-all placeholder:text-[#b1b1b1]" placeholder="Tell us about what you didn't find?" rows="5" value={data.description} onChange={(e) => setData({ ...data, description: e.target.value })}></textarea>
+        {/* <Img file={data.image} className="w-full flex-1 rounded-md" /> */}
+        {data.image && (
+          <div>
+            <div className="group flex items-center pb-2">
+              <img
+                src={URL.createObjectURL(data.image)}
+                key={data.image}
+                className="mt-0.5 w-40 rounded-md border"
+              />
+
+              <button
+                className="ml-4 hidden group-hover:inline-block"
+                onClick={
+                  () => {
+                    setData({ ...data, image: '' })
+                    if (inputRef.current) inputRef.current.value = ''
+                  }
+                }
+
+              >
+                <RiCloseLine />
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
       {/* {data.image == null ? (
         <label
           className="mt-2 flex md:w-2/3 flex-col items-center gap-2.5 rounded-lg border border-dashed border-[#d1d1d1] fill-[#d1d1d1] p-4"
