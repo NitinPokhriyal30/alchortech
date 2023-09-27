@@ -89,6 +89,20 @@ const CampaignCreate = () => {
         groupIds: [],
         owner: '',
       })
+      const [rulesNRewards, setRulesNRewards] = React.useState({
+        participationRewards: true,
+        winnerRewards: true,
+        allParticipationPoints: '',
+        units: '',
+        unitPoints: '',
+        numberOfWinners: '',
+        allWinnerPoints: '',
+        winnerPositions: [{
+            "position_name": '',
+            "position": '',
+            "points": ''
+        }]
+      })
 
     const handleStepClick = (newValue) => {
         if (step === 0) {
@@ -151,12 +165,22 @@ const CampaignCreate = () => {
             } finally {
                 setIsLoading(false)
             }
+        } else {
+            try {
+                setIsLoading(true)
+                await api.campaigns.addRulesAndRewards(rulesNRewards, campaignId);
+                toast.success('Campaign Created Successfully!')
+            } catch (error) {
+                console.error('Error creating campaign:', error);
+            } finally {
+                setIsLoading(false)
+            }
+
         }
       };
     
     React.useEffect(() => {
-        console.log(campaigns);
-
+        console.log(rulesNRewards);
     }, )
     
 
@@ -227,7 +251,7 @@ const CampaignCreate = () => {
                 {step === 1 ? 
                     <CampaignParticipants campaigns={campaigns} setCampaigns={setCampaigns} errors={errors} campaignId={campaignId}
                     /> : null}
-                {step === 2 ? <RulesnRewards /> : null}
+                {step === 2 ? <RulesnRewards rulesNRewards={rulesNRewards} setRulesNRewards={setRulesNRewards}/> : null}
             </section>
             
 
@@ -241,10 +265,10 @@ const CampaignCreate = () => {
                 </button>
                 <button
                     type="button"
-                    className="bg-primary text-white hover:text-black py-2 px-8 rounded-md"
+                    className="bg-primary text-white hover:text-black py-2 px-10 rounded-md"
                     onClick={handleContinueClick}
                 >
-                {step < 3 ? 'Continue' : 'Submit'}
+                {step < 2 ? 'Continue' : 'Create'}
                 </button>
             </section>
         </div>

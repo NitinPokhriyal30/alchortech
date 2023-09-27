@@ -104,6 +104,9 @@ const api = {
         headers: { 'Content-Type': 'multipart/form-data' },
       }) 
       .then((r) => r.data),
+    addRulesAndRewards: (formData, campaignId) => 
+      axios.post(`api/v1/campaigns/add-rules-and-rewards/${campaignId}/`, formData)
+      .then((r) => r.data)
   },
 
   faqs: {
