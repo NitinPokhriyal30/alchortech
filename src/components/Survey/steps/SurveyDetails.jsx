@@ -10,6 +10,7 @@ import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import dayjs from 'dayjs'
 import { RiInformationLine } from 'react-icons/ri'
+import { getTodayDate } from '@/utils'
 
 const COLORS = {
   gray: 'text-[#A5A5A5]',
@@ -17,7 +18,8 @@ const COLORS = {
 
 const SurveyDetails = ({ surveyDetails, setSurveyDetails, errors }) => {
   const today = dayjs()
-  const yesterday = dayjs()
+  
+  const yesterday = dayjs() 
   const todayStartOfTheDay = today.startOf('day')
 
   // Handler for updating the survey details

@@ -6,6 +6,8 @@ import SelectParticipants from './steps/SelectParticipants'
 import RuleAndRewards from './steps/RuleAndRewards'
 import { toast } from 'react-toastify'
 import dayjs from 'dayjs'
+import { api } from '@/api'
+import { getCurrentDateTime } from '@/utils'
 
 const STEPPER = [
   {
@@ -111,13 +113,40 @@ const SurveyCreate = () => {
     title: '',
     description: '',
     dateAndTime: {
-      start: '',
-      end: '',
+      start: getCurrentDateTime(),
+      end: getCurrentDateTime(),
     },
     termsAndConditions: '',
     isTimeBounded: false,
     questions: [],
   })
+
+  const handleSurveyDetails = async () => {
+    try {
+      // Create a new FormData object
+      const formData = new FormData();
+
+      // Append the data from your state to the FormData object
+      formData.append('title', survey.title);
+      formData.append('description', survey.description);
+      formData.append('termsAndConditions', survey.termsAndConditions);
+      formData.append('startDate', survey.dateAndTime.start);
+      formData.append('endDate', survey.dateAndTime.end);
+
+      // Make an HTTP POST request to your API endpoint
+      const response = await api.surveys.details(formData);
+
+      console.log(response);
+      // Handle the API response here
+      // toast.success('Saved successfully');
+    } catch (error) {
+      // Handle any errors that occurred during the request
+      console.log(error);
+      toast.error('Error:', error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   function handleGoNext() {
     if (step === 0) {
@@ -132,6 +161,8 @@ const SurveyCreate = () => {
         toast.error('Your details have some errors')
         setErrors((prev) => ({ ...prev, surveyDetails: errors }))
         return
+      } else {
+        handleSurveyDetails();
       }
     } else if (step === 1) {
       if (survey.questions.length === 0) {
@@ -152,7 +183,44 @@ const SurveyCreate = () => {
       }
     }
 
+
     setStep((p) => ++p)
+  }
+
+  function queErrorCheck() {
+    if (step === 0) {
+      // clear prev errors
+      setErrors((prev) => {
+        delete prev.surveyDetails
+        return { ...prev }
+      })
+
+      const errors = handleValidateSurveyDetails(survey)
+      if (errors.length > 0) {
+        toast.error('Your details have some errors')
+        setErrors((prev) => ({ ...prev, surveyDetails: errors }))
+        return
+      } else {
+        handleSurveyDetails();
+      }
+    } else if (step === 1) {
+      if (survey.questions.length === 0) {
+        toast.error('Your survey must have questions')
+        return
+      }
+
+      // clear prev errors
+      setErrors((prev) => {
+        delete prev.questions
+        return { ...prev }
+      })
+      const errors = handleValidateQuestions(survey.questions)
+      if (errors.length > 0) {
+        toast.error('Your question have some errors')
+        setErrors((prev) => ({ ...prev, questions: errors }))
+        return
+      }
+    }
   }
 
   return (
@@ -190,7 +258,7 @@ const SurveyCreate = () => {
           {step === 0 ? (
             <SurveyDetails surveyDetails={survey} setSurveyDetails={setServey} errors={errors.surveyDetails} />
           ) : step === 1 ? (
-            <Questions questions={survey} setQuestions={setServey} errors={errors.questions} isTimeBounded={survey.isTimeBounded} />
+              <Questions questions={survey} setQuestions={setServey} errors={errors.questions} isTimeBounded={survey.isTimeBounded} queErrorCheck={queErrorCheck} />
           ) : step === 2 ? (
             <SelectParticipants />
           ) : step === 3 ? (

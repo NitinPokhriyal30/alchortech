@@ -37,8 +37,6 @@ export default function VoiceOutPage({ ...props }) {
       formData.append('file', data.file);
       formData.append('allowMyName', data.allowMyName);
 
-      console.log(formData);
-
       // Make an HTTP POST request to your API endpoint
       const response = await api.voiceout.create(formData);
 

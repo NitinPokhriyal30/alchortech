@@ -123,6 +123,16 @@ const api = {
   surveys: {
     // all: () => axios.get('api/v1/surveys/').then((r) => r.data),
     all: (params) => axios.get(`api/v1/surveys?${params.toString()}`).then((r) => r.data),
+    details: (formData) =>
+      axios.post(`api/v1/surveys/create-survey/`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+        .then((r) => r.data),
+    questions: (formData) =>
+      axios.post(`api/v1/surveys/create-survey/`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+        .then((r) => r.data),
   },
 
   voiceout : {

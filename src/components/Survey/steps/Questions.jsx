@@ -17,7 +17,8 @@ import { RiAddLine, RiAttachmentLine, RiDeleteBin2Line, RiDeleteBin3Line, RiDele
  *  }
  * }} param0
  */
-const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
+const Questions = ({ questions, setQuestions, isTimeBounded, errors, queErrorCheck }) => {
+  console.log(errors);
   const [selectedOption, setSelectedOption] = useState('input')
   const questionImgRefs = useRef([])
   // const [isTimeBounded, setIsTimeBounded] = useState(true)
@@ -34,6 +35,34 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
     }
     setQuestions(updatedQuestions)
   }
+
+  const handleSurveyQuestions = async () => {
+    alert('working');
+    // try {
+    //   // Create a new FormData object
+    //   const formData = new FormData();
+
+    //   // Append the data from your state to the FormData object
+    //   formData.append('title', survey.title);
+    //   formData.append('description', survey.description);
+    //   formData.append('termsAndConditions', survey.termsAndConditions);
+    //   formData.append('startDate', survey.dateAndTime.start);
+    //   formData.append('endDate', survey.dateAndTime.end);
+
+    //   // Make an HTTP POST request to your API endpoint
+    //   const response = await api.surveys.details(formData);
+
+    //   console.log(response);
+    //   // Handle the API response here
+    //   // toast.success('Saved successfully');
+    // } catch (error) {
+    //   // Handle any errors that occurred during the request
+    //   console.log(error);
+    //   toast.error('Error:', error.message);
+    // } finally {
+    //   setLoading(false);
+    // }
+  };
 
   // Handler for adding a new question
   const addNewQuestion = () => {
@@ -122,6 +151,46 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
     const updatedQuestions = { ...questions }
     updatedQuestions.questions.splice(questionIndex, 1)
     setQuestions(updatedQuestions)
+  }
+
+  // const handleSurveyQuestion = async (data) => {
+  //   console.log(data);
+  //   alert('working')
+  //   const newOptions = data.options.map(item => ({ text: item }));
+  //   console.log(newOptions);
+  //   try {
+
+  //     const newOptions = data.options.map(item => ({ text: item }));
+  //     console.log(newOptions);
+  //     // Create a new FormData object
+  //     const formData = new FormData();
+
+  //     // Append the data from your state to the FormData object
+  //     formData.append('question', data.question);
+  //     formData.append('questionType', data.questionType);
+  //     formData.append('answerOptions', newOptions);
+
+  //     // Make an HTTP POST request to your API endpoint
+  //     // const response = await api.surveys.questions(formData);
+
+  //     console.log(response);
+  //     // Handle the API response here
+  //     // toast.success('Saved successfully');
+  //   } catch (error) {
+  //     // Handle any errors that occurred during the request
+  //     console.log(error);
+  //     toast.error('Error:', error.message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // Handler for saving a question
+  const saveThisQuestion = (questionIndex) => {
+    queErrorCheck()
+    if (errors == undefined) {
+      // handleSurveyQuestion(questions.questions[questionIndex])
+    }
   }
 
   const COLORS = {
@@ -299,6 +368,9 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
               <div className="mt-5 flex">
 
                 {/* Delete Question Button */}
+                <button className="ml-auto text-[1.2em]" variant="contained" onClick={() => saveThisQuestion(index)}>
+                  <EditIcon />
+                </button>
                 <button className="ml-auto text-[1.2em]" variant="contained" onClick={() => handleDeleteQuestion(index)}>
                   <RiDeleteBin7Line />
                 </button>
