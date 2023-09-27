@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import { useQuery } from 'react-query';
 import { api } from '../../api'
-import Loader from '@/components/Loader'
 
 const SORT_OPTIONS = [
   { label: 'Last 60 days', value: '1' },
@@ -34,6 +33,21 @@ const CampaignTable = () => {
   }
 
 
+
+  const { data: campaigns, isLoading, isError } = useQuery('campaigns', api.campaigns.all);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isError) {
+    return <div>Error loading campaigns</div>;
+  }
+
+  useEffect(() => {
+   console.log(data);
+  }, [])
+  
 
   return (
     <div className="h-screen w-screen md:w-full">
@@ -104,6 +118,22 @@ const CampaignTable = () => {
               <tr
                 key={campaign.id}
                 className="group rounded-xl border-b border-[#cecece] hover:bg-[#ececec]"
+<<<<<<< HEAD
+                onClick={() => navigate('/campaign/preview')}
+              >
+                <td className="py-3 text-[16px] font-semibold text-[#5486E3] md:pl-[45px] "></td>
+                <td className="py-3 text-left text-[16px] font-semibold text-[#5486E3] ">{campaign.name}</td>
+                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">
+                  {campaign.start_date}
+                </td>
+                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">
+                  {campaign.end_date}
+                </td>
+                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">
+                  {campaign.type}
+                </td>
+                {/* ... remaining columns ... */}
+=======
               >
                 <td className="py-3 text-[16px] font-semibold text-[#5486E3] md:pl-[45px] "></td>
                 <td  onClick={() => navigate((`/campaign/preview?campaignId=${campaign.id}`))} className="py-3 cursor-pointer text-left text-[16px] font-semibold text-[#5486E3] ">{campaign.name}</td>
@@ -116,6 +146,7 @@ const CampaignTable = () => {
                 <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">
                   {campaign.type}
                 </td>
+>>>>>>> e7c1aa59c2713ce0a357943045186d9b565bee05
               </tr>
             ))}
           </tbody>;

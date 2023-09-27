@@ -87,7 +87,6 @@ const handleMyTeamClick  = () => {
 }
 
 
-
 return (
     <div>
     <div className="h-full w-screen max-w-[1536px] md:w-full">

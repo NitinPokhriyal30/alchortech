@@ -5,7 +5,9 @@ import './AreaStyle.css'
 const AreaChart = ({ data }) => {
   const svgRef = useRef();
 
+  console.log(data)
   useEffect(() => {
+    
     const svg = d3.select(svgRef.current);
     const margin = { top: 20, right: 0, bottom: 30, left: 60 };
     const parentWidth = svgRef.current.clientWidth; // Get the width of the container
@@ -33,7 +35,7 @@ const AreaChart = ({ data }) => {
 
     const y = d3
       .scaleLinear()
-      .domain([0, 25])
+      .domain([0, 35])
       .nice()
       .range([height - margin.bottom, margin.top]);
 
@@ -71,9 +73,11 @@ const AreaChart = ({ data }) => {
       .call(
         d3
           .axisLeft(y)
-          .tickValues([0, 5, 10, 15, 20, 25]) // Set your desired tick values here
+          .tickValues([0, 5, 10, 15, 20, 35]) // Set your desired tick values here
           .tickSize(0) // Remove tick lines
       );
+
+     
 
     // Add vertical grid lines
     svg.append('g')
