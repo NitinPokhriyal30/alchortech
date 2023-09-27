@@ -12,8 +12,7 @@ const RulesnRewards = ({rulesNRewards, setRulesNRewards}) => {
     const [assignRule, setAssignRule] = useState('');
     const [assignPoints, setAssignPoints] = useState('');
     const [positionsCount, setPositionsCount] = useState(0)
-
-    const winnerPositions = rulesNRewards.winnerPositions.map(str => JSON.parse(str));
+    
 
     const handleRulesNRewards = (property, value) => {
         setRulesNRewards((prevRulesNRewards) => ({
