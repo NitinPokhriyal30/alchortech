@@ -299,13 +299,15 @@ const PostCard = ({ post, childrenTransactions, ...props }) => {
                 >
                   {post.user_reaction_info != null ? (
                     <>
-                      <span>
-                        <span className='text-lg'>
+                      <span className='flex items-center'>
+                        <span className='text-lg mr-1'>
                         {post.user_reaction_info.reaction_hashes?.map((hash) =>
                           unicodeToEmoji(hash)
                           )}
                         </span>
-                        {' ' + post.user_reaction_info.latest_user_reaction_full_name + ' '}
+                        <span>
+                          {' ' + post.user_reaction_info.latest_user_reaction_full_name + ' '}
+                        </span>
                         {post.user_reaction_info.total_reaction_counts > 1
                           ? 'and ' +
                             pluralize(

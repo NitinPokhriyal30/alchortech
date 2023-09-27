@@ -25,14 +25,22 @@ const SurveyTable = () => {
   const [sortBy, setSortBy] = useState(SORT_OPTIONS[0])
   const navigate = useNavigate()
   const [tab, setTab] = React.useState('draft')
-  // const rows = tab === 'draft' ? 5 : tab === 'running' ? 1 : tab === 'closed' ? 8 : 7
+  const [page, setPage] = React.useState(1)
+  const [sortByStartDate, setSortByStartDate] = React.useState(true)
+  const [sortByTitle, setSortByTitle] = React.useState(true)
 
-  const surveys = useQuery('surveys', () => api.surveys.all())
+  // const surveys = useQuery('surveys', () => api.surveys.all())
 
-  // const { title, status, is_owner, type, start_date, end_date } = surveys.data
+  const surveys = useQuery(
+    ['surveys', sortByStartDate, sortByTitle, page],
+    () =>
+      api.surveys.all(
+        new URLSearchParams({ sortByStartDate: sortByStartDate, sortByTitle: sortByTitle, page: page, pagination: 1, page_size: 3 })
+      )
+  )
 
   return (
-    <div className="h-screen w-screen md:w-full"> 
+    <div className="h-screen w-screen md:w-full">
       <div className="mt-2 flex justify-between px-3 md:px-0 ">
         <div className="font-Lato text-[20px] font-bold text-[#464646]">Survey</div>
         <div className="rounded-md bg-[#5486E3]  font-Lato text-white">
@@ -98,7 +106,7 @@ const SurveyTable = () => {
           <tbody className="table-body" style={{ padding: '20px' }}>
             {surveys.isLoading ? <div className='flex justify-center py-20' >
               <Loader />
-            </div> : surveys.data?.map((survey) => ( 
+            </div> : surveys.data.filter(item => item.status === tab).map((survey) => (
               <tr className="group rounded-xl border-b border-[#cecece] hover:bg-[#ececec] " onClick={() => navigate('/survey/preview')}>
                 <td className="py-3 text-[16px] font-semibold text-[#5486E3] md:pl-[45px] "></td>
                 <td className="py-3 text-left text-[16px] font-semibold text-[#5486E3] ">{survey.title}</td>
@@ -107,18 +115,18 @@ const SurveyTable = () => {
                 <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">{survey.type}</td>
                 <td className="py-3 text-left md:opacity-0 transition-opacity duration-200 group-hover:opacity-100 md:px-[45px]">
                   {/* {survey.type.is_owner && <RxPencil1 className="cursor-pointer text-[#292929]" />}  */}
-                  <RxPencil1 className="cursor-pointer text-[#292929]" />
+                  {survey.is_owner && <RxPencil1 className="cursor-pointer text-[#292929]" />}
                 </td>
                 <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">
                   {/* {survey.type.is_owner && <RxCross1 className="cursor-pointer text-[#292929]" />} */}
-                  <RxCross1 className="cursor-pointer text-[#292929]" />
+                  {survey.is_owner && <RxCross1 className="cursor-pointer text-[#292929]" />}
                 </td>
                 <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]"></td>
               </tr>
-            )) }
+            ))}
           </tbody>
         </table>
-       
+
       </div>
       <div className="mx-auto mt-5 flex max-w-[14rem] items-center justify-between ">
         <div className="flex">

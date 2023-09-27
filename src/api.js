@@ -121,9 +121,18 @@ const api = {
   },
 
   surveys: {
-    all: () => axios.get('api/v1/surveys/').then((r) => r.data),
-  }
+    // all: () => axios.get('api/v1/surveys/').then((r) => r.data),
+    all: (params) => axios.get(`api/v1/surveys?${params.toString()}`).then((r) => r.data),
+  },
 
+  voiceout : {
+    categories: () => axios.get('api/v1/support/voiceoutcategories/').then((r) => r.data),
+    create: (formData) =>
+      axios.post(`api/v1/support/voiceouts/`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+        .then((r) => r.data),
+  },
 
 }
 
