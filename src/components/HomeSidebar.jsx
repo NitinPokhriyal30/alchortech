@@ -245,3 +245,140 @@ const COLORS = {
     terms: 'text-[#0143BC]',
   },
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// .margin-top-r3{
+//  margin-top: 1.25em;
+// }
+
+// .margin-top-r5{
+//  margin-top: 2.5em;
+// }
+
+
+
+
+// function($scope, spUtil, $timeout) {
+
+//   var c = this;
+//   spUtil.recordWatch($scope, "sc_req_item","",function(name, data){
+//     spUtil.update($scope);
+//   });
+//   CreateChart('chart_ageing', 'problems associated with Users', c.data.pause_categories, c.data.pause_series, 'pie')
+//   function CreateChart(container, title, categories, series, chartType)
+//   {
+//     var chart = new Highcharts.Chart({
+//        chart: {
+//          renderTo:container,
+//          type:chartType
+//        },
+//        title:{
+//          text:title,
+//          style:{'font-weight': 'bold'}   
+//        }, 
+//        credits: 
+//        {
+//          enabled:false 
+//        },
+//        plotOptions:
+//        {
+//        column: {
+//        colorByPoint: {enabled:true},
+//        dataLables: {enabled:true}
+//  } 
+//  },
+//   colors:['#42b0f5'],
+//   xAxis: {
+//     categories:categories,
+//     title:
+//     {
+//        text:null
+//     },
+//     lable: {
+//       enabled:true
+//     }
+//   },
+//   yAxis: {
+//     min:0,
+//     tickInterval:20,
+//     tickAmount:10,
+//     title: {
+//     text:null
+//   }
+//   },
+//       legent: {
+//         enables: true
+//       },
+//       series: series
+//     }, function(chart){
+//       setInterval(function() {
+//         if(chart.axes){
+//           if(container=='chart_sla') 
+//           {
+//             chart.series[0].setData(c.data.series[0].data);
+//           }
+//           else if(container=='chart_ageing') {
+//             chart.series[0].setData(c.data.pause.series[0].data);
+//           }
+//            else if(container=='slaremaining') {
+//             chart.series[0].setData(c.data.sla.series[0].data);
+//           }
+//         }
+//       }, 3000);
+//     });
+//   }
+//  }
+ 
+
+
+
+
+
+
+
+// (function() {
+  /* populate the 'data' object */
+  /* e.g., data.table = $sp.getValue('table'); */
+	
+// 	var count=1;
+// 	data.pause_series=[];
+// 	var series=[];
+// 	var user = new GlideAggregate('sys_user');
+// 	user.addEncodedQuery('nameISNOTEMPTY');
+// 	user.query();
+// 	while(user.next())
+// 		{
+// 			var problem = new GlideRecord('problem');
+// 			problem.addQuery('assigned_to', user.sys_id.toString());
+// 			problem.query();
+// 			if(problem.next())
+// 				{
+// 					series[user.name.getDisplayValue()]= parseInt(problem.getRowCount());
+// 				}
+// 		}
+// 	data.pause_series=[{
+// 		'name': 'Total Users Present',
+// 		'legendIndex':0,
+// 		'data':[]
+// 	}];
+//   data.pause_categories.forEach(function(it){
+// 		data.pause_series[0].data.push(series[it]);
+// 	})
+// })();

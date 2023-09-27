@@ -16,7 +16,7 @@ const api = {
     profiles: () => axios.get('api/v1/accounts/').then((r) => r.data),
     userById: (id) => axios.get(`api/v1/accounts/userprofile/${id}/`).then((r) => r.data),
     // search: (params) => axios.post('api/v1/accounts/search-user/', params, {headers: {"Content-Type": "multipart/form-data"}}).then((r) => r.data),
-    search: (params) => axios.get(`api/v1/accounts/search-user?${params.toString()}`).then((r) => r.data),
+    search: () => axios.get(`api/v1/accounts/search-user?${params.toString()}`).then((r) => r.data),
   },
 
   auth: {
@@ -107,8 +107,9 @@ const api = {
   },
 
   faqs: {
-    list: () => axios.get('api/v1/support/faqs/').then((r) => r.data),
+    list: ({id}) => axios.get(`api/v1/support/faqs/?category=${id}`).then((r) => r.data),
     categories: () => axios.get('api/v1/support/categories').then((r) => r.data), 
+    search: ({params}) => axios.get(`api/v1/support/search-faq/?params=${params}`).then((r) => r.data), 
   },
 
   todayEvents: () => axios.get('api/v1/transactions/today-events/').then((r) => r.data),
