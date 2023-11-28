@@ -3,12 +3,14 @@ import { Radio, RadioGroup, Select, FormControl, FormControlLabel, TextField, In
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { RiAddLine, RiAttachmentLine, RiDeleteBin2Line, RiDeleteBin3Line, RiDeleteBin4Line, RiDeleteBin5Line, RiDeleteBin6Line, RiDeleteBin7Line, RiInformationLine } from 'react-icons/ri'
+import { api } from '@/api'
+import { toast } from 'react-toastify'
 
 /**
  * @param {{
  *  questions: {
  *    questions: {
- *      type: "input" | "text-area" | "radio" | "check-box" | "dropdown";
+ *      type: "text" | "char" | "radio" | "checkbox" | "dropdown";
  *      options?: string[];
  *      answer: string;
  *      question: string;
@@ -17,8 +19,7 @@ import { RiAddLine, RiAttachmentLine, RiDeleteBin2Line, RiDeleteBin3Line, RiDele
  *  }
  * }} param0
  */
-const Questions = ({ questions, setQuestions, isTimeBounded, errors, queErrorCheck }) => {
-  console.log(errors);
+const Questions = ({ questions, setQuestions, isTimeBounded, errors, setErrors, surveyId, queErrorCheck, handleValidateQuestions }) => {
   const [selectedOption, setSelectedOption] = useState('input')
   const questionImgRefs = useRef([])
   // const [isTimeBounded, setIsTimeBounded] = useState(true)
@@ -28,51 +29,11 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors, queErrorChe
     const updatedQuestions = { ...questions }
     updatedQuestions.questions[questionIndex].type = event.target.value
     // preserve options;
-    if (['radio', 'dropdown', 'check-box'].includes(event.target.value)) {
+    if (['radio', 'dropdown', 'checkbox'].includes(event.target.value)) {
       updatedQuestions.questions[questionIndex].options = ['option 1']
-    } else if (['input', 'text-area'].includes(event.target.value)) {
-      updatedQuestions.questions[questionIndex].options = undefined
+    } else if (['text', 'char'].includes(event.target.value)) {
+      updatedQuestions.questions[questionIndex].options = undefined 
     }
-    setQuestions(updatedQuestions)
-  }
-
-  const handleSurveyQuestions = async () => {
-    alert('working');
-    // try {
-    //   // Create a new FormData object
-    //   const formData = new FormData();
-
-    //   // Append the data from your state to the FormData object
-    //   formData.append('title', survey.title);
-    //   formData.append('description', survey.description);
-    //   formData.append('termsAndConditions', survey.termsAndConditions);
-    //   formData.append('startDate', survey.dateAndTime.start);
-    //   formData.append('endDate', survey.dateAndTime.end);
-
-    //   // Make an HTTP POST request to your API endpoint
-    //   const response = await api.surveys.details(formData);
-
-    //   console.log(response);
-    //   // Handle the API response here
-    //   // toast.success('Saved successfully');
-    // } catch (error) {
-    //   // Handle any errors that occurred during the request
-    //   console.log(error);
-    //   toast.error('Error:', error.message);
-    // } finally {
-    //   setLoading(false);
-    // }
-  };
-
-  // Handler for adding a new question
-  const addNewQuestion = () => {
-    const updatedQuestions = { ...questions }
-    updatedQuestions.questions.push({
-      type: 'radio',
-      options: ['option1'],
-      question: '',
-      answer: isTimeBounded ? '' : undefined,
-    })
     setQuestions(updatedQuestions)
   }
 
@@ -153,54 +114,114 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors, queErrorChe
     setQuestions(updatedQuestions)
   }
 
-  // const handleSurveyQuestion = async (data) => {
-  //   console.log(data);
-  //   alert('working')
-  //   const newOptions = data.options.map(item => ({ text: item }));
-  //   console.log(newOptions);
-  //   try {
+  // Handler for adding a new question
+  const addNewQuestion = () => {
+    const questionIndex = questions.questions.length - 1;
 
-  //     const newOptions = data.options.map(item => ({ text: item }));
-  //     console.log(newOptions);
-  //     // Create a new FormData object
-  //     const formData = new FormData();
-
-  //     // Append the data from your state to the FormData object
-  //     formData.append('question', data.question);
-  //     formData.append('questionType', data.questionType);
-  //     formData.append('answerOptions', newOptions);
-
-  //     // Make an HTTP POST request to your API endpoint
-  //     // const response = await api.surveys.questions(formData);
-
-  //     console.log(response);
-  //     // Handle the API response here
-  //     // toast.success('Saved successfully');
-  //   } catch (error) {
-  //     // Handle any errors that occurred during the request
-  //     console.log(error);
-  //     toast.error('Error:', error.message);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  // Handler for saving a question
-  const saveThisQuestion = (questionIndex) => {
-    queErrorCheck()
-    if (errors == undefined) {
-      // handleSurveyQuestion(questions.questions[questionIndex])
+    if (questions.questions.length > 0) { 
+      if (questions.questions[questionIndex].type !== 'text' && questions.questions[questionIndex].type !== 'char') { 
+        if (questions.questions[questionIndex].question !== '' && questions.questions[questionIndex].options.length > 1) {
+          const updatedQuestions = { ...questions }
+          updatedQuestions.questions.push({
+            type: 'radio',
+            options: ['option1'],
+            question: '',
+            answer: isTimeBounded ? '' : undefined,
+          })
+          setQuestions(updatedQuestions)
+          if (questionIndex >= 0) {
+            saveQuestion(questionIndex)
+          }
+        } else {
+          queErrorCheck();
+        }
+      } else {
+        if (questions.questions[questionIndex].question !== '') {
+          const updatedQuestions = { ...questions }
+          updatedQuestions.questions.push({
+            type: 'radio',
+            options: ['option1'],
+            question: '',
+            answer: isTimeBounded ? '' : undefined,
+          })
+          setQuestions(updatedQuestions)
+          if (questionIndex >= 0) {
+            saveQuestion(questionIndex)
+          }
+        } else {
+          queErrorCheck();
+        }
+      }
+      
+    } else {
+      const updatedQuestions = { ...questions }
+      console.log(updatedQuestions);
+      updatedQuestions.questions.push({
+        type: 'radio',
+        options: ['option1'],
+        question: '',
+        answer: isTimeBounded ? '' : undefined,
+      })
+      setQuestions(updatedQuestions)
     }
+  }
+  
+  const saveQuestion = async (questionIndex) => { 
+
+    try {
+      if (questions.questions[questionIndex].type !== 'text' && questions.questions[questionIndex].type !== 'char') {
+        const inputArray = questions.questions[questionIndex].options;
+
+        let outputArray = inputArray.map(function (item) {
+          return { "text": item };
+        });
+
+        const data = {
+          question: questions.questions[questionIndex].question,
+          questionType: questions.questions[questionIndex].type,
+          answerOptions: JSON.stringify(outputArray)
+        };
+
+        console.log(data);
+
+        // Make an HTTP POST request to your API endpoint
+        const response = await api.surveys.questions(data, surveyId);
+        // Handle the API response here
+        toast.success(response.message);
+      } else {
+
+        const data = {
+          question: questions.questions[questionIndex].question,
+          questionType: questions.questions[questionIndex].type,
+        };
+
+        console.log(data);
+
+        // Make an HTTP POST request to your API endpoint
+        const response = await api.surveys.questions(data, surveyId);
+        // Handle the API response here
+        toast.success(response.message);
+        
+       }
+    } catch (error) {
+      // Handle any errors that occurred during the request
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+
   }
 
   const COLORS = {
     gray: 'text-[#A5A5A5]',
   }
 
+  const getError = (index) => errors?.find(([_index]) => _index === index)?.[1]
+
   return (
     <div className="space-y-5">
       {questions.questions?.map((question, index) => (
-        <div className="rounded-lg bg-white px-5 py-5 shadow-[0px_2px_3px_#00000029]">
+        <div className="rounded-lg bg-white px-5 py-5 shadow-[0px_2px_3px_#00000029]" key={index}>
           <div className="items-top mb-5 grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-8" key={index}>
             {/* Question Type Selector */}
             <div>
@@ -209,15 +230,15 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors, queErrorChe
                 {isTimeBounded ? (
                   <>
                     <option value="radio">Radio Button</option>
-                    <option value="check-box">Checkboxes</option>
+                    <option value="checkbox">Checkboxes</option>
                     <option value="dropdown">Dropdown</option>
                   </>
                 ) : (
                   <>
-                    <option value="input">Text Box</option>
-                    <option value="text-area">Text Area</option>
+                    <option value="text">Text Box</option>
+                    <option value="char">Text Area</option>
                     <option value="radio">Radio Button</option>
-                    <option value="check-box">Checkboxes</option>
+                    <option value="checkbox">Checkboxes</option>
                     <option value="dropdown">Dropdown</option>
                   </>
                 )}
@@ -249,9 +270,9 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors, queErrorChe
                 }
               />
 
-              {question.type === 'input' && <div>{isTimeBounded === true && <TextField margin="normal" fullWidth variant="outlined" placeholder="Answer" value={question.answer} onChange={(event) => handleInputAnswerChange(event, index)} />}</div>}
+              {question.type === 'text' && <div>{isTimeBounded === true && <TextField margin="normal" fullWidth variant="outlined" placeholder="Answer" value={question.answer} onChange={(event) => handleInputAnswerChange(event, index)} />}</div>}
 
-              {question.type === 'text-area' && <div>{isTimeBounded === true && <TextField fullWidth margin="normal" variant="outlined" multiline placeholder="Answer" rows={4} value={question.answer} onChange={(event) => handleAnswerChange(event, index)} />}</div>}
+              {question.type === 'char' && <div>{isTimeBounded === true && <TextField fullWidth margin="normal" variant="outlined" multiline placeholder="Answer" rows={4} value={question.answer} onChange={(event) => handleAnswerChange(event, index)} />}</div>}
 
               {question.type === 'radio' && (
                 <div className="pt-2">
@@ -281,7 +302,7 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors, queErrorChe
                   </RadioGroup>
                 </div>
               )}
-              {question.type === 'check-box' && (
+              {question.type === 'checkbox' && (
                 <div>
                   <FormGroup>
                     {question.options?.map((item, optionIndex) => (
@@ -351,14 +372,21 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors, queErrorChe
                 </div>
               )}
 
-              {errors?.find(([_index]) => _index === index)?.[1] && (
-                <p className="text-small mt-2 text-red-500">
-                  <RiInformationLine className="inline align-text-bottom text-[1.1em]" />
-                  {errors.find(([_index]) => _index === index)[1]}
+              {getError('questionTitle') && questions.questions.length - 1 == index && (
+                <p className="text-sm text-red-500">
+                  <RiInformationLine className="inline align-text-bottom text-[1.1em] " />
+                  {getError('questionTitle')}
                 </p>
               )}
 
-              {['radio', 'check-box', 'dropdown'].includes(question.type) && (
+              {getError('questionOptions') && questions.questions[index].type !== 'text' && questions.questions[index].type !== 'char'  && questions.questions.length - 1 == index && (
+                <p className="text-sm text-red-500">
+                  <RiInformationLine className="inline align-text-bottom text-[1.1em] " />
+                  {getError('questionOptions')}
+                </p>
+              )}
+
+              {['radio', 'checkbox', 'dropdown'].includes(question.type) && (
                 <div className="-ml-3 flex cursor-pointer items-center rounded-md pl-3 hover:bg-paper">
                   {/* Checkbox Option */}
                   <FormControlLabel className="!cursor-pointer" value={'add new option'} control={question.type === 'radio' ? <Radio /> : <Checkbox />} label={<span className="text-primary">Add new option</span>} onClick={() => handleAddOption(index)} disabled />
@@ -368,9 +396,6 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors, queErrorChe
               <div className="mt-5 flex">
 
                 {/* Delete Question Button */}
-                <button className="ml-auto text-[1.2em]" variant="contained" onClick={() => saveThisQuestion(index)}>
-                  <EditIcon />
-                </button>
                 <button className="ml-auto text-[1.2em]" variant="contained" onClick={() => handleDeleteQuestion(index)}>
                   <RiDeleteBin7Line />
                 </button>

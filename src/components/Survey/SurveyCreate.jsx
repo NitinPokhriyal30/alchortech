@@ -60,13 +60,57 @@ function handleValidateQuestions(questions) {
   const errors = []
   questions.forEach((question, i) => {
     if (question.question.length === 0) {
-      errors.push([i, 'Must have question filled'])
+      errors.push(['questionTitle', 'Must have question filled'])
     }
 
-    if (['radio', 'check-box', 'dropdown'].includes(question.type) && question.options.length === 0) {
-      errors.push([i, 'Must have at least one options'])
+    if (['radio', 'checkbox', 'dropdown'].includes(question.type) && question.options.length < 2) {
+      errors.push(['questionOptions', 'Must have at least two options'])
     }
   })
+  return errors
+}
+
+function handleValidateParticipants(survey) {
+  const errors = []
+
+  if (survey.participantType === 'teams' && survey.teams.length < 2) {
+    errors.push(['teams', 'Must have at least two participant in teams'])
+  } else if (survey.participantType === 'individual' && survey.individuals.length < 2) {
+    errors.push(['individual', 'Must have at least two participant in individual'])
+  }
+
+  if (survey.participantType === 'groups' && survey.groups.length < 1) {
+    errors.push(['groups', 'Must have at least one groups']) 
+  }
+
+  if (survey.participantType === 'groups') {
+    survey.groups.forEach((group, i) => {
+      if (group.label === "") {
+        errors.push(['groupLabel', 'Must have group name filled'])
+      } else if (group.participants.length < 2) {
+        errors.push(['groupParticipants', 'Must have at least two participant in Group'])
+      }
+    })
+  }
+
+  return errors
+}
+
+function handleValidateRules(rulesNRewards) { 
+  const errors = []
+
+  if (rulesNRewards.participationRewards === false) {
+    errors.push(['participationRewards', 'Must select participation Points'])
+  } else if (rulesNRewards.participationRewardsType === '') {
+    errors.push(['participationRewardsType', 'Must select participation Type'])
+  } else if (rulesNRewards.participationRewards === true && rulesNRewards.participationRewardsType === "all" && rulesNRewards.allParticipationPoints === 0) {
+    errors.push(['allParticipationPoints', 'Points to be given must have greater than 0'])
+  }
+
+  if (rulesNRewards.participationRewards === true && rulesNRewards.participationRewardsType === "few" && rulesNRewards.unitPoints === 0 && rulesNRewards.units === 0) {
+    errors.push(['unitPoints', 'Both values must have greater than 0'])
+  }
+
   return errors
 }
 
@@ -105,10 +149,37 @@ const SurveyCreate = () => {
         setErrors((prev) => ({ ...prev, questions: errors }))
         return
       }
+    } else if (step === 2) { 
+      // clear prev errors
+      setErrors((prev) => {
+        delete prev.surveyParticipants
+        return { ...prev }
+      })
+
+      const errors = handleValidateParticipants(survey)
+      if (errors.length > 0) {
+        toast.error('Your details have some errors')
+        setErrors((prev) => ({ ...prev, surveyParticipants: errors }))
+        return
+      }
+    } else if (step === 3) {
+      // clear prev errors
+      setErrors((prev) => {
+        delete prev.surveyRules
+        return { ...prev }
+      })
+
+      const errors = handleValidateRules(rulesNRewards)
+      if (errors.length > 0) {
+        toast.error('Your details have some errors')
+        setErrors((prev) => ({ ...prev, surveyRules: errors }))
+        return
+      }
     }
     setStep(newValue);
   };
 
+  const [surveyId, setSurveyId] = React.useState();
   const [survey, setServey] = React.useState({
     title: '',
     description: '',
@@ -119,6 +190,25 @@ const SurveyCreate = () => {
     termsAndConditions: '',
     isTimeBounded: false,
     questions: [],
+    participantType: '',
+    teams: [],
+    individuals: [],
+    groups: [
+      {
+        label: '',
+        participants: []
+      }
+    ],
+    groupIds: [],
+    owner: '',
+  })
+
+  const [rulesNRewards, setRulesNRewards] = React.useState({
+    participationRewards: false,
+    participationRewardsType: '',
+    allParticipationPoints: 0,
+    units: 0,
+    unitPoints: 0,
   })
 
   const handleSurveyDetails = async () => {
@@ -135,20 +225,135 @@ const SurveyCreate = () => {
 
       // Make an HTTP POST request to your API endpoint
       const response = await api.surveys.details(formData);
-
-      console.log(response);
+      setSurveyId(response.id)
       // Handle the API response here
-      // toast.success('Saved successfully');
+      toast.success('Saved successfully');
     } catch (error) {
       // Handle any errors that occurred during the request
       console.log(error);
       toast.error('Error:', error.message);
-    } finally {
-      setLoading(false);
     }
   };
 
-  function handleGoNext() {
+  const handleSurveyParticipant = async () => {
+
+    try {
+
+      if (survey.participantType === 'groups') { 
+        const groupIndex = survey.groups.length - 1;
+        const groupsString = survey.groups[groupIndex].participants.join(',');
+        const groupData = {
+          groupName: survey.groups[groupIndex].label,
+          participants: groupsString
+        }
+        const response = await api.surveys.addGroup(groupData);
+        toast.success('Groupe Saved')
+
+        const newGroupId = response.id;
+        setServey((prev) => ({
+          ...prev,
+          groupIds: [...prev.groupIds, newGroupId],
+        }))
+      } else {
+        const teamsString = survey.teams.join(',');
+        const individualsString = survey.individuals.join(',');
+        const groupsString = survey.groupIds.join(',');
+        const participantsData = {
+          participantType: survey.participantType,
+          teams: teamsString,
+          individuals: individualsString,
+          groups: groupsString
+        };
+        await api.surveys.addParticipants(participantsData, surveyId);
+        toast.success('Saved successfully')
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error('Error:', error.message);
+    }
+  };
+  
+  const handleSurveyRules = async () => {
+
+    try {
+      console.log(rulesNRewards);
+      const filteredRulesNRewards = Object.fromEntries(
+        Object.entries(rulesNRewards).filter(([key, value]) => value !== "")
+      );
+
+      await api.surveys.addRulesAndRewards(filteredRulesNRewards, surveyId); 
+      toast.success('Survey Created Successfully!');
+      // navigate(`/survey/published`)
+    } catch (error) {
+      toast.error(error.message);
+      console.log(error);
+    }
+  };
+
+  const saveQuestion = async (questionIndex) => {
+    
+    try {
+      if (survey.questions[questionIndex].type !== 'text' && survey.questions[questionIndex].type !== 'char') { 
+        const inputArray = survey.questions[questionIndex].options;
+
+        let outputArray = inputArray.map(function (item) {
+          return { "text": item };
+        });
+
+        const data = {
+          question: survey.questions[questionIndex].question,
+          questionType: survey.questions[questionIndex].type,
+          answerOptions: JSON.stringify(outputArray)
+        };
+
+        // Make an HTTP POST request to your API endpoint
+        const response = await api.surveys.questions(data, surveyId);
+        // Handle the API response here
+        toast.success(response.message);
+      } else {
+
+        const data = {
+          question: survey.questions[questionIndex].question,
+          questionType: survey.questions[questionIndex].type,
+        };
+
+        // Make an HTTP POST request to your API endpoint
+        const response = await api.surveys.questions(data, surveyId);
+        // Handle the API response here
+        toast.success(response.message);
+      }
+      
+
+    } catch (error) {
+      // Handle any errors that occurred during the request
+      console.error(error);
+    }
+
+  }
+
+  const saveLastQuestion = async () => {
+    const questionIndex = survey.questions.length - 1;
+
+    if (survey.questions.length > 0) {
+      if (survey.questions[questionIndex].type !== 'text' && survey.questions[questionIndex].type !== 'char') { 
+        if (survey.questions[questionIndex].question !== '' && survey.questions[questionIndex].options.length > 1) {
+          saveQuestion(questionIndex)
+        } else {
+          queErrorCheck();
+        }
+      } else {
+        
+        if (survey.questions[questionIndex].question !== '') {
+          saveQuestion(questionIndex)
+        } else {
+          queErrorCheck();
+        }
+      }
+      
+    }
+  }
+
+  const handleGoNext = async () => {
     if (step === 0) {
       // clear prev errors
       setErrors((prev) => {
@@ -163,6 +368,7 @@ const SurveyCreate = () => {
         return
       } else {
         handleSurveyDetails();
+        setStep((p) => ++p)
       }
     } else if (step === 1) {
       if (survey.questions.length === 0) {
@@ -175,16 +381,49 @@ const SurveyCreate = () => {
         delete prev.questions
         return { ...prev }
       })
+
       const errors = handleValidateQuestions(survey.questions)
       if (errors.length > 0) {
         toast.error('Your question have some errors')
         setErrors((prev) => ({ ...prev, questions: errors }))
         return
+      } else {
+        saveLastQuestion()
+        setStep((p) => ++p)
+      }
+    } else if (step === 2) {
+      // clear prev errors
+      setErrors((prev) => {
+        delete prev.surveyParticipants
+        return { ...prev }
+      })
+
+      const errors = handleValidateParticipants(survey)
+      if (errors.length > 0) {
+        toast.error('Your details have some errors')
+        setErrors((prev) => ({ ...prev, surveyParticipants: errors }))
+        return
+      } else {
+        handleSurveyParticipant();
+        setStep((p) => ++p)
+      }
+    } else if (step === 3) {
+      // clear prev errors
+      setErrors((prev) => {
+        delete prev.surveyRules
+        return { ...prev }
+      })
+
+      const errors = handleValidateRules(rulesNRewards)
+      if (errors.length > 0) {
+        console.log(errors);
+        toast.error('Your details have some errors')
+        setErrors((prev) => ({ ...prev, surveyRules: errors }))
+        return
+      } else {
+        handleSurveyRules();
       }
     }
-
-
-    setStep((p) => ++p)
   }
 
   function queErrorCheck() {
@@ -218,6 +457,20 @@ const SurveyCreate = () => {
       if (errors.length > 0) {
         toast.error('Your question have some errors')
         setErrors((prev) => ({ ...prev, questions: errors }))
+        return
+      }
+    } else if (step === 2) {
+      // clear prev errors
+      setErrors((prev) => {
+        delete prev.surveyParticipants
+        return { ...prev }
+      })
+
+      const errors = handleValidateParticipants(survey)
+      console.log(errors);
+      if (errors.length > 0) {
+        toast.error('Your details have some errors')
+        setErrors((prev) => ({ ...prev, surveyParticipants: errors }))
         return
       }
     }
@@ -258,11 +511,11 @@ const SurveyCreate = () => {
           {step === 0 ? (
             <SurveyDetails surveyDetails={survey} setSurveyDetails={setServey} errors={errors.surveyDetails} />
           ) : step === 1 ? (
-              <Questions questions={survey} setQuestions={setServey} errors={errors.questions} isTimeBounded={survey.isTimeBounded} queErrorCheck={queErrorCheck} />
+              <Questions questions={survey} setQuestions={setServey} errors={errors.questions} setErrors={setErrors.questions} isTimeBounded={survey.isTimeBounded} queErrorCheck={queErrorCheck} surveyId={surveyId} handleValidateQuestions={handleValidateQuestions} />
           ) : step === 2 ? (
-            <SelectParticipants />
+                <SelectParticipants survey={survey} setServey={setServey} surveyId={surveyId} errors={errors.surveyParticipants} queErrorCheck={queErrorCheck} />
           ) : step === 3 ? (
-            <RuleAndRewards />
+                  <RuleAndRewards rulesNRewards={rulesNRewards} setRulesNRewards={setRulesNRewards} errors={errors.surveyRules} />
           ) : (
             '🚧dev. in progress 🏗️'
           )}
@@ -281,7 +534,7 @@ const SurveyCreate = () => {
               Continue
             </button>
           ) : (
-            <button type="button" className="btn-ghost bg-primary text-white transition-colors hover:text-primary">
+              <button type="button" className="btn-ghost bg-primary text-white transition-colors hover:text-primary" onClick={handleGoNext}>
               submit
             </button>
           )}

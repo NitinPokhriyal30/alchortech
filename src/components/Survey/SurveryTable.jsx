@@ -13,12 +13,13 @@ import { formatDate } from '@/utils'
 import Loader from '../Loader'
 
 const SORT_OPTIONS = [
-  { label: 'Last 60 days', value: '1' },
-  { label: 'Last 6 months', value: '2' },
-  { label: 'Last quarter', value: '3' },
-  { label: 'This quarter', value: '4' },
-  { label: 'Last month', value: '5' },
-  { label: 'This month', value: '6' },
+  { label: 'All', value: '' },
+  { label: 'This Month', value: 'this_month' },
+  { label: 'Last Month', value: 'last_month' },
+  { label: 'This quarter', value: 'this_quarter' },
+  { label: 'Last quarter', value: 'last_quarter' },
+  { label: 'Last Six Month', value: 'last_six_months' },
+  { label: 'Year To Date', value: 'year_to_date' },
 ]
 
 const SurveyTable = () => {
@@ -31,13 +32,21 @@ const SurveyTable = () => {
 
   // const surveys = useQuery('surveys', () => api.surveys.all())
 
+  console.log(sortBy.value);
+
   const surveys = useQuery(
-    ['surveys', sortByStartDate, sortByTitle, page],
+    ['surveys', sortByStartDate, sortByTitle, page, sortBy.value],
     () =>
       api.surveys.all(
-        new URLSearchParams({ sortByStartDate: sortByStartDate, sortByTitle: sortByTitle, page: page, pagination: 1, page_size: 3 })
+        new URLSearchParams({ sortByStartDate: sortByStartDate, sortByTitle: sortByTitle, page: page, pagination: 1, page_size: 10, date_range: sortBy.value})
       )
   )
+
+  if (surveys.isLoading) {
+    return (<div className='flex justify-center' >
+      <Loader />
+    </div>)
+  }
 
   return (
     <div className="h-screen w-screen md:w-full">
@@ -95,8 +104,8 @@ const SurveyTable = () => {
           <thead>
             <tr className="border-b border-[#cecece] child:!py-[15.5px] child:!text-16px ">
               <th className="text-left py-[15.5px] pl-8 text-start font-Lato text-16px font-medium text-[#292929] md:pl-[45px]"></th>
-              <th className="md:w-1/3 text-left py-[15.5px] text-start font-Lato text-16px font-medium text-[#292929]">Name</th>
-              <th className="md:w-1/5 text-left py-4 font-Lato text-[16px] font-medium text-[#292929]">Start date</th>
+              <th className="md:w-1/3 text-left py-[15.5px] text-start font-Lato text-16px font-medium text-[#292929] cursor-pointer" onClick={() => setSortByTitle(!sortByTitle)}>Name</th>
+              <th className="md:w-1/5 text-left py-4 font-Lato text-[16px] font-medium text-[#292929] cursor-pointer" onClick={() => setSortByStartDate(!sortByStartDate)}>Start date</th>
               <th className="md:w-1/5 text-left py-4 font-Lato text-[16px] font-medium text-[#292929]">End date</th>
               <th className="md:w-1/6 text-left py-4 font-Lato text-[16px] font-medium text-[#292929]">Type</th>
               <th className="md:w-1/1 py-4 text-right font-Lato text-[16px] font-medium text-[#292929]"></th>
@@ -106,10 +115,10 @@ const SurveyTable = () => {
           <tbody className="table-body" style={{ padding: '20px' }}>
             {surveys.isLoading ? <div className='flex justify-center py-20' >
               <Loader />
-            </div> : surveys.data.filter(item => item.status === tab).map((survey) => (
-              <tr className="group rounded-xl border-b border-[#cecece] hover:bg-[#ececec] " onClick={() => navigate('/survey/preview')}>
+            </div> : surveys.data.data.filter(item => item.status === tab).map((survey,index) => (
+              <tr className="group rounded-xl border-b border-[#cecece] hover:bg-[#ececec] " key={index} onClick={() => navigate('/survey/preview')}>
                 <td className="py-3 text-[16px] font-semibold text-[#5486E3] md:pl-[45px] "></td>
-                <td className="py-3 text-left text-[16px] font-semibold text-[#5486E3] ">{survey.title}</td>
+                <td className="py-3 text-left text-[16px] font-semibold text-[#5486E3] cursor-pointer">{survey.title}</td>
                 <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">{formatDate(survey.start_date)}</td>
                 <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">{formatDate(survey.end_date)}</td>
                 <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">{survey.type}</td>
@@ -130,17 +139,17 @@ const SurveyTable = () => {
       </div>
       <div className="mx-auto mt-5 flex max-w-[14rem] items-center justify-between ">
         <div className="flex">
-          <button disabled='' className="grid h-9 w-9 text-[#8d8d8d] place-items-center rounded-[3px] border border-[#d5d5d5] disabled:text-gray-300">
+          <button disabled={page <= 1} onClick={() => setPage((p) => Math.max(1, --p))} className="grid h-9 w-9 text-[#8d8d8d] place-items-center rounded-[3px] border border-[#d5d5d5] disabled:text-gray-300">
             <SlArrowLeft className="text-xl" />
           </button>
 
-          <button disabled='' className="ml-3 grid h-9 w-9 text-[#8d8d8d] place-items-center rounded-[3px] border border-[#d5d5d5] disabled:text-gray-300" >
+          <button disabled={surveys.data.next == null} onClick={() => setPage((p) => ++p)} className="ml-3 grid h-9 w-9 text-[#8d8d8d] place-items-center rounded-[3px] border border-[#d5d5d5] disabled:text-gray-300" >
             <SlArrowRight className="text-xl" />
           </button>
         </div>
 
         <span className='text-[#8d8d8d]'>
-          Page 1 of - 2
+          Page {page} of - { surveys.data.total_pages }
           {/* {users.data?.count} */}
         </span>
       </div>

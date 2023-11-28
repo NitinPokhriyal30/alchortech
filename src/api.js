@@ -75,49 +75,59 @@ const api = {
   departments: () => axios.get('api/v1/common/departments/').then((r) => r.data),
   properties: () => axios.get('api/v1/common/properties/').then((r) => r.data),
 
+
+  rewards: {
+    redeemable: () => axios.get('api/v1/rewards/redeemable-rewards/').then((r) => r.data),
+    redeem: (formData) => axios.post(`api/v1/rewards/redeem-voucher/`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }).then((r) => r.data),
+  },
+
   analytics: {
     all: (department, region, date) =>
       axios
-        .get(`/api/v1/analytics/?department=${department}&region=${region}&Date_Ranges=${date}`)
+        .get(`/api/v1/analytics/?region=${region}&Date_Ranges=${date}`)
         .then((r) => r.data),
     filters: () => axios.get('/api/v1/analytics/filters/').then((r) => r.data),
   },
 
-
-
   campaigns: {
-    all: (page) => axios.get(`api/v1/campaigns?pagination=1&page_size=5&page=${page}`).then((r) => r.data),
+    all: (page, tab, dateRange) => axios.get(`api/v1/campaigns?pagination=1&page_size=5&page=${page}&status=${tab}&date_range=${dateRange}`).then((r) => r.data),
     mycampaign: () => axios.get('api/v1/campaigns/my-campaigns/').then((r) => r.data),
     campaignDetails: (campaignId) => axios.get(`api/v1/campaigns/${campaignId}/`).then((r) => r.data),
+    deleteCampaign: (campaignId) => axios.delete(`api/v1/campaigns/delete/${campaignId}/`).then((r) => r.data),
     create: (formData) =>
       axios
         .post('api/v1/campaigns/create-campaign/', formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         })
         .then((r) => r.data),
-
     addParticipants: (formData, campaignId) =>
       axios.post(`api/v1/campaigns/add-participants-to-campaign/${campaignId}/`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
         .then((r) => r.data),
-
     addGroup: (formData) =>
       axios.post(`api/v1/campaigns/add-group/`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
         .then((r) => r.data),
-
     participate: (formData, campaignId) =>
       axios.post(`api/v1/campaigns/participate/${campaignId}/`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
         .then((r) => r.data),
+    addRulesAndRewards: (formData, campaignId) =>
+      axios.post(`api/v1/campaigns/add-rules-and-rewards/${campaignId}/`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+        .then((r) => r.data)
   },
 
   faqs: {
-    list: () => axios.get('api/v1/support/faqs/').then((r) => r.data),
+    list: ({ id }) => axios.get(`api/v1/support/faqs/?category=${id}`).then((r) => r.data),
     categories: () => axios.get('api/v1/support/categories').then((r) => r.data),
+    search: ({ params }) => axios.get(`api/v1/support/search-faq/?params=${params}`).then((r) => r.data),
   },
 
   surveys: {
@@ -128,14 +138,59 @@ const api = {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
         .then((r) => r.data),
-    questions: (formData) =>
-      axios.post(`api/v1/surveys/create-survey/`, formData, {
+    questions: (formData, suveyId) =>
+      axios.post(`api/v1/surveys/add-questions/${suveyId}/`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
         .then((r) => r.data),
+    addParticipants: (formData, surveyId) =>
+      axios.post(`api/v1/surveys/add-participants-to-survey/${surveyId}/`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+        .then((r) => r.data),
+    addGroup: (formData) =>
+      axios.post(`api/v1/surveys/add-group/`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+        .then((r) => r.data),
+    addRulesAndRewards: (formData, surveyId) =>
+      axios.post(`api/v1/surveys/add-rules-and-rewards/${surveyId}/`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+        .then((r) => r.data)
   },
 
-  voiceout : {
+  quizs: {
+    // all: () => axios.get('api/v1/quizs/').then((r) => r.data),
+    all: (params) => axios.get(`api/v1/quizs?${params.toString()}`).then((r) => r.data),
+    details: (formData) =>
+      axios.post(`api/v1/quizs/create-quiz/`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+        .then((r) => r.data),
+    questions: (formData, suveyId) =>
+      axios.post(`api/v1/quizs/add-questions/${suveyId}/`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+        .then((r) => r.data),
+    addParticipants: (formData, quizId) =>
+      axios.post(`api/v1/quizs/add-participants-to-quiz/${quizId}/`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+        .then((r) => r.data),
+    addGroup: (formData) =>
+      axios.post(`api/v1/quizs/add-group/`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+        .then((r) => r.data),
+    addRulesAndRewards: (formData, quizId) =>
+      axios.post(`api/v1/quizs/add-rules-and-rewards/${quizId}/`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+        .then((r) => r.data)
+  },
+
+  voiceout: {
     categories: () => axios.get('api/v1/support/voiceoutcategories/').then((r) => r.data),
     create: (formData) =>
       axios.post(`api/v1/support/voiceouts/`, formData, {
@@ -143,6 +198,17 @@ const api = {
       })
         .then((r) => r.data),
   },
+
+  // Admin APIS
+
+  adminUsers: {
+    all: () => axios.get('api/v1/accounts/admin/all/').then((r) => r.data),
+    userDetails: ({userId}) => axios.get(`api/v1/accounts/admin/user-details/${userId}`).then((r) => r.data),
+    deactivate: (formData) => axios.post(`api/v1/accounts/deactivate-user/`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+      .then((r) => r.data),
+  }
 
 }
 

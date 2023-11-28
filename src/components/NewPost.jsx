@@ -21,6 +21,7 @@ import gif from '../assets/images/new-post/gif.svg'
 import link from '../assets/images/new-post/link.svg'
 import smiley from '../assets/images/new-post/smiley.svg'
 import Loader from './Loader'
+import { useParams } from 'react-router-dom';
 
 function validateNewPostForm(form, me) {
   let isValid = true
@@ -52,6 +53,11 @@ function validateNewPostForm(form, me) {
 
 export default function NewPost({ ...props }) {
 
+  // Access the parameter named 'parameter'
+  let { parameter } = useParams();
+
+  console.log(parameter);
+
   const me = useQuery('me', () => api.auth.me(Cookies.get('user_id')))
   const users = useQuery('users', () => api.users.profiles(), {
     initialData: [],
@@ -75,13 +81,15 @@ export default function NewPost({ ...props }) {
 
   const [form, setForm] = React.useState({
     point: 0,
-    recipients: [],
+    recipients: parameter !== undefined ? [`${parameter}`] : [],
     hashtags: [],
     image: '',
     gif: '',
     link: '',
     message: '',
   })
+
+  console.log(form);
 
   const showPlaceholder =
     form.point === 0 && form.recipients.length === 0 && form.hashtags.length === 0
@@ -158,8 +166,7 @@ export default function NewPost({ ...props }) {
             ) : (
               <>
                 <span className="text-[#464646]">{form.point ? '+' + form.point : ''} </span>{' '}
-                {form.recipients
-                  .map((userId) => (users.data || []).find((user) => user.id === userId))
+                {form.recipients?.map((userId) => (users.data || []).find((user) => user.id === userId))
                   .map((user) => `@${user.full_name}`)
                   .map((fullName) => (
                     <span className="text-[#464646]" key={fullName}>

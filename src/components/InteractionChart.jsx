@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, {useState } from 'react';
+import {Link} from 'react-router-dom';
 import { getAvatarAttributes, processAvatarUrl } from '@/utils';
 
 const InteractionChart = ({ interactionData, me, hoveredRowIndex, onRowHover, setHoveredImageIndex }) => {
@@ -26,18 +27,21 @@ const InteractionChart = ({ interactionData, me, hoveredRowIndex, onRowHover, se
             onMouseEnter={() => handleMouseEnter(0)}
             onMouseLeave={handleMouseLeave}
           >
-            <img
-              className={`rounded-full h-12 w-12 ${(hoveredIndex === 0 || hoveredRowIndex === 0 || isCenterImageHovered) ? 'border-2 border-[#5486E3]' : 'hover:border-[#5486E3]'}`}
-              src={getAvatarAttributes(`${interactionData[0]?.name.split(' ')[0]} ${interactionData[0]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[0]?.avtar)).src}
-              alt={getAvatarAttributes(`${interactionData[0]?.name.split(' ')[0]} ${interactionData[0]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[0]?.avtar)).alt}
-              onError={(e) => {
-                // If the image fails to load, use the name initials instead
-                e.target.onerror = null;
-                e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                  interactionData[0]?.name.split(' ')[0].charAt(0) + interactionData[0]?.name.split(' ')[1].charAt(0)
-                )}&color=${"#464646"}&background=${"FFFFFF"}`;
-              }}
-            />
+          <Link to={`/myProfile/?userId=${interactionData[0].id}`}>
+          <img
+            className={`rounded-full cursor-pointer h-12 w-12 ${(hoveredIndex === 0 || hoveredRowIndex === 0 || isCenterImageHovered) ? 'border-2 border-[#5486E3]' : 'hover:border-[#5486E3]'}`}
+            src={getAvatarAttributes(`${interactionData[0]?.name.split(' ')[0]} ${interactionData[0]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[0]?.avtar)).src}
+            alt={getAvatarAttributes(`${interactionData[0]?.name.split(' ')[0]} ${interactionData[0]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[0]?.avtar)).alt}
+            onError={(e) => {
+              // If the image fails to load, use the name initials instead
+              e.target.onerror = null;
+              e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                interactionData[0]?.name.split(' ')[0].charAt(0) + interactionData[0]?.name.split(' ')[1].charAt(0)
+              )}&color=${"#464646"}&background=${"FFFFFF"}`;
+            }}
+          />
+          </Link>
+           
           </div>
         )}
         {interactionData[1] && (
@@ -46,8 +50,9 @@ const InteractionChart = ({ interactionData, me, hoveredRowIndex, onRowHover, se
             onMouseEnter={() => handleMouseEnter(1)}
             onMouseLeave={handleMouseLeave}
           >
+          <Link to={`/myProfile/?userId=${interactionData[1].id}`}>
             <img
-              className={`rounded-full h-12 w-12 ${(hoveredIndex === 1 || hoveredRowIndex === 1 || isCenterImageHovered) ? 'border-2 border-[#5486E3]' : 'hover:border-[#5486E3]'}`}
+              className={`rounded-full h-12 w-12 cursor-pointer ${(hoveredIndex === 1 || hoveredRowIndex === 1 || isCenterImageHovered) ? 'border-2 border-[#5486E3]' : 'hover:border-[#5486E3]'}`}
               src={getAvatarAttributes(`${interactionData[1]?.name.split(' ')[0]} ${interactionData[1]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[1]?.avtar)).src}
               alt={getAvatarAttributes(`${interactionData[1]?.name.split(' ')[0]} ${interactionData[1]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[1]?.avtar)).alt}
               onError={(e) => {
@@ -58,14 +63,16 @@ const InteractionChart = ({ interactionData, me, hoveredRowIndex, onRowHover, se
                 )}&color=${"#464646"}&background=${"FFFFFF"}`;
               }}
             />
+          </Link>
           </div>
         )}
       </div>
 
       <div className="mx-32 fixed">
 
+      <Link to={`/myProfile/?userId=${me.id}`}>
         <img
-          className={`rounded-full h-16 w-16 border-2 ${isCenterImageHovered ? 'border-[#5486E3]' : 'hover:border-[#5486E3]'} z-10`}
+          className={`rounded-full h-16 w-16 cursor-pointer border-2 ${isCenterImageHovered ? 'border-[#5486E3]' : 'hover:border-[#5486E3]'} z-10`}
           onMouseEnter={() => setIsCenterImageHovered(true)} onMouseLeave={handleMouseLeave}
           src={getAvatarAttributes(`${me?.full_name.split(' ')[0]} ${me?.full_name.split(' ')[1]}`, processAvatarUrl(me?.avtar)).src}
           alt={getAvatarAttributes(`${me?.full_name.split(' ')[0]} ${me?.full_name.split(' ')[1]}`, processAvatarUrl(me?.avtar)).alt}
@@ -77,6 +84,7 @@ const InteractionChart = ({ interactionData, me, hoveredRowIndex, onRowHover, se
             )}&color=${"#464646"}&background=${"FFFFFF"}`;
           }}
         />
+      </Link>
       </div>
 
       <div className="flex justify-between mx-6 z-10 mt-10">
@@ -86,8 +94,9 @@ const InteractionChart = ({ interactionData, me, hoveredRowIndex, onRowHover, se
             onMouseEnter={() => handleMouseEnter(2)}
             onMouseLeave={handleMouseLeave}
           >
+          <Link to={`/myProfile/?userId=${interactionData[2].id}`}>
             <img
-              className={`rounded-full h-12 w-12 ${(hoveredIndex === 2 || hoveredRowIndex === 2 || isCenterImageHovered) ? 'border-2 border-[#5486E3]' : 'hover:border-[#5486E3]'}`}
+              className={`rounded-full h-12 w-12 cursor-pointer ${(hoveredIndex === 2 || hoveredRowIndex === 2 || isCenterImageHovered) ? 'border-2 border-[#5486E3]' : 'hover:border-[#5486E3]'}`}
               src={getAvatarAttributes(`${interactionData[2]?.name.split(' ')[0]} ${interactionData[2]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[2]?.avtar)).src}
               alt={getAvatarAttributes(`${interactionData[2]?.name.split(' ')[0]} ${interactionData[2]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[2]?.avtar)).alt}
               onError={(e) => {
@@ -98,6 +107,7 @@ const InteractionChart = ({ interactionData, me, hoveredRowIndex, onRowHover, se
                 )}&color=${"#464646"}&background=${"FFFFFF"}`;
               }}
             />
+          </Link>
           </div>
         )}
         {interactionData[3] && (
@@ -106,8 +116,9 @@ const InteractionChart = ({ interactionData, me, hoveredRowIndex, onRowHover, se
             onMouseEnter={() => handleMouseEnter(3)}
             onMouseLeave={handleMouseLeave}
           >
+          <Link to={`/myProfile/?userId=${interactionData[3].id}`}>
             <img
-              className={`rounded-full h-12 w-12 ${(hoveredIndex === 3 || hoveredRowIndex === 3 || isCenterImageHovered) ? 'border-2 border-[#5486E3]' : 'hover:border-[#5486E3]'}`}
+              className={`rounded-full h-12 w-12 cursor-pointer ${(hoveredIndex === 3 || hoveredRowIndex === 3 || isCenterImageHovered) ? 'border-2 border-[#5486E3]' : 'hover:border-[#5486E3]'}`}
               src={getAvatarAttributes(`${interactionData[3]?.name.split(' ')[0]} ${interactionData[3]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[3]?.avtar)).src}
               alt={getAvatarAttributes(`${interactionData[3]?.name.split(' ')[0]} ${interactionData[3]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[3]?.avtar)).alt}
               onError={(e) => {
@@ -118,6 +129,7 @@ const InteractionChart = ({ interactionData, me, hoveredRowIndex, onRowHover, se
                 )}&color=${"#464646"}&background=${"FFFFFF"}`;
               }}
             />
+          </Link>
           </div>
         )}
       </div>
@@ -130,8 +142,9 @@ const InteractionChart = ({ interactionData, me, hoveredRowIndex, onRowHover, se
             onMouseEnter={() => handleMouseEnter(4)} // Pass the index to the handler
             onMouseLeave={handleMouseLeave}
           >
+          <Link to={`/myProfile/?userId=${interactionData[4].id}`}>
             <img
-              className={`rounded-full h-12 w-12 ${(hoveredIndex === 4 || hoveredRowIndex === 4 || isCenterImageHovered) ? 'border-2 border-[#5486E3]' : 'hover:border-[#5486E3]'}`}
+              className={`rounded-full h-12 w-12 cursor-pointer ${(hoveredIndex === 4 || hoveredRowIndex === 4 || isCenterImageHovered) ? 'border-2 border-[#5486E3]' : 'hover:border-[#5486E3]'}`}
               src={getAvatarAttributes(`${interactionData[4]?.name.split(' ')[0]} ${interactionData[4]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[4]?.avtar)).src}
               alt={getAvatarAttributes(`${interactionData[4]?.name.split(' ')[0]} ${interactionData[4]?.name.split(' ')[1]}`, processAvatarUrl(interactionData[4]?.avtar)).alt}
               onError={(e) => {
@@ -142,6 +155,7 @@ const InteractionChart = ({ interactionData, me, hoveredRowIndex, onRowHover, se
                 )}&color=${"#464646"}&background=${"FFFFFF"}`;
               }}
             />
+          </Link>
           </div>
         )}
       </div>

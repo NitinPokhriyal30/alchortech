@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import growUp from '../../assets/images/analytics/growUp.svg';
+import shrinkDown from '../../assets/images/analytics/shrinkDown.svg';
 import { AiFillCaretDown, AiFillCaretUp } from 'react-icons/ai';
 import './Analytics.css'
 export default function ColumnGroupingTable({ departmentData }) {
@@ -13,8 +14,8 @@ export default function ColumnGroupingTable({ departmentData }) {
     departmentPercentage: item.percentage_difference,
     withinDepartment: item.within_department,
     received: item.recipient_outside_department,
-    given: item.sender_outside_department,
-    total: item.within_department + item.recipient_outside_department + item.sender_outside_department
+    given: item.sender_outside_deparment,
+    total: item.total_counts,
   }));
 
   const sortedData = [...data];
@@ -53,6 +54,12 @@ export default function ColumnGroupingTable({ departmentData }) {
   };
 
 
+  useEffect(() => {
+    
+   console.log(data);
+ 
+  })
+  
   
   
   
@@ -113,9 +120,17 @@ export default function ColumnGroupingTable({ departmentData }) {
                 </td>
                 <td >
                   <div className='pr-4 border-b-[1px] py-[14px]'>
-                  <div className='w-28 flex rounded-md justify-evenly text-[12px] md:text-[8px] bg-[#D6FBF0] text-[#285C55] font-semibold py-1'>
+                  <div >
+                  {rowData.departmentPercentage > 0 ? 
+                    <span className='w-28 flex rounded-md justify-evenly text-[12px] md:text-[8px] bg-[#D6FBF0] text-[#285C55] font-semibold py-1'>
                     <img src={growUp} alt='grow-up'/>
-                    {`${rowData.departmentPercentage}% from last month`}
+                    {rowData.departmentPercentage.toFixed(2)}% from last month
+                    </span>
+                    :  <span className='w-28 flex rounded-md justify-evenly text-[12px] md:text-[8px] bg-[#FBE5E6] text-[#C74056] font-semibold py-1'>
+                    <img src={shrinkDown} alt='grow-up'/>
+                    {rowData.departmentPercentage.toFixed(2)}% from last month
+                    </span>
+                  }
                   </div>
                   </div>
                 </td>

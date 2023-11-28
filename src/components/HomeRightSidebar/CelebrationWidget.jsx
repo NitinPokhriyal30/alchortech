@@ -69,59 +69,59 @@ export default function CelebrationWidget() {
                 <p className="animate-pulse w-full bg-gray-300 rounded">&nbsp;</p>
               </div>
             ) : (
-                <>
-                  {birthDays && birthDays[0] ? <div className="flex items-center pb-2 gap-3">
-                    <p className="text-primary">
-                      {/* <MdOutlineCake fontSize={22} /> */}
-                      <img src={cake} alt="cake" />
-                    </p>
-                    <p className="text-primary text-sm font-light pt-1">
-                      <strong>{birthDays[0]}
+              <>
+                {birthDays && birthDays[0] ? <div className="flex items-center pb-2 gap-3">
+                  <p className="text-primary">
+                    {/* <MdOutlineCake fontSize={22} /> */}
+                    <img src={cake} alt="cake" />
+                  </p>
+                  <p className="text-primary text-sm font-light pt-1">
+                    <strong>{birthDays[0]}
                       <span>
                         {birthDays.length > 1
                           ? ' & ' + pluralize(birthDays.length - 1, 'other', 's') + ' '
                           : ' '}
-                        </span>
-                      </strong>
-                      <span>birthday today</span>
-                    </p>
-                  </div> : ''}
-                
-                  {workAniversaries && workAniversaries[0] ? <div className="flex items-center pb-2 gap-3">
-                    <p className="text-primary">
-                      {/* <MdOutlineCelebration fontSize={22} /> */}
-                      <img src={anniversary} alt="cake" />
-                    </p>
-                    <p className="text-primary text-sm  font-light">
-                      <strong>{workAniversaries[0]}
+                      </span>
+                    </strong>
+                    <span>birthday today</span>
+                  </p>
+                </div> : ''}
+
+                {workAniversaries && workAniversaries[0] ? <div className="flex items-center pb-2 gap-3">
+                  <p className="text-primary">
+                    {/* <MdOutlineCelebration fontSize={22} /> */}
+                    <img src={anniversary} alt="cake" />
+                  </p>
+                  <p className="text-primary text-sm  font-light">
+                    <strong>{workAniversaries[0]}
                       <span>
                         {workAniversaries.length > 1
                           ? ` & ${pluralize(workAniversaries.length - 1, 'other', 's')} `
                           : ' '}
-                        </span>
-                      </strong>
-                      <span>work anniversary is today</span>
-                    </p>
-                  </div> : ''}
+                      </span>
+                    </strong>
+                    <span>work anniversary is today</span>
+                  </p>
+                </div> : ''}
 
-                  {joines && joines[0] ? <div className="flex items-center pb-2 gap-3">
-                    <p className="text-primary">
-                      {/* <MdOutlineCelebration fontSize={22} /> */}
-                      <img src={join} alt="cake" />
-                    </p>
-                    <p className="text-primary text-sm  font-light">
-                      <strong>{joines[0]}
-                        <span>
-                          {joines.length > 1
-                            ? ` & ${pluralize(joines.length - 1, 'other', 's')} `
-                            : ' '}
-                        </span>
-                      </strong>
-                      <span>joined the today</span>
-                    </p>
-                  </div> : ''}
+                {joines && joines[0] ? <div className="flex items-center pb-2 gap-3">
+                  <p className="text-primary">
+                    {/* <MdOutlineCelebration fontSize={22} /> */}
+                    <img src={join} alt="cake" />
+                  </p>
+                  <p className="text-primary text-sm  font-light">
+                    <strong>{joines[0]}
+                      <span>
+                        {joines.length > 1
+                          ? ` & ${pluralize(joines.length - 1, 'other', 's')} `
+                          : ' '}
+                      </span>
+                    </strong>
+                    <span>joined the today</span>
+                  </p>
+                </div> : ''}
 
-                
+
               </>
             )}
           </div>

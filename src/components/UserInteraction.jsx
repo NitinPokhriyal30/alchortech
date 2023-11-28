@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '@/api';
 import { useQuery } from 'react-query';
+import {Link} from 'react-router-dom';
 import InteractionChart from './InteractionChart'
 import Loader from '@/components/Loader';
 
@@ -108,6 +109,7 @@ const UserInteraction = ({ filterBy, userId, page, pageSize }) => {
     sortedSenders.forEach(({ id, count, name, avtar }) => {
       const recipientCount = sortedRecipients.find((recipient) => recipient.id === id)?.count || 0;
       mergedData[id] = {
+        id,
         name,
         received: count,
         given: recipientCount,
@@ -119,6 +121,7 @@ const UserInteraction = ({ filterBy, userId, page, pageSize }) => {
     sortedRecipients.forEach(({ id, count, name, avtar }) => {
       if (!mergedData[id]) {
         mergedData[id] = {
+          id,
           name,
           received: 0,
           given: count,
@@ -130,7 +133,7 @@ const UserInteraction = ({ filterBy, userId, page, pageSize }) => {
     // Convert the mergedData object to an array of objects and sort them by the total sum of interactions
     const sortedData = Object.values(mergedData).sort((a, b) => b.received + b.given - (a.received + a.given));
 
-    setInteractionData(sortedData);
+    setInteractionData(sortedData)
   }, [sortedSenders, sortedRecipients]);
 
   if (meQuery.isLoading || receivedTransactions.isLoading || givenTransactions.isLoading) {
@@ -179,8 +182,13 @@ const UserInteraction = ({ filterBy, userId, page, pageSize }) => {
                         }`}
                       onMouseEnter={() => handleRowHover(index)} // Call handleRowHover with the index on mouse enter 
                       onMouseLeave={() => handleRowHover(null)}   // Clear hoveredRowIndex on mouse leave
+                      onClick={() => navigate('')}
                     >
-                      <td className="p-4 text-[#5486E3] font-semibold text-[18px]">{interaction.name}</td>
+                      <td className="p-4 text-[#5486E3] cursor-pointer font-semibold text-[18px]">
+                        <Link to={`/myProfile/?userId=${interaction.id}`}>
+                        <span>{interaction.name}</span>
+                      </Link>
+                      </td>
                       <td className="p-4 text-center text-[18px] text-[#000000] font-Lato font-normal">{interaction.received}</td>
                       <td className="p-4 text-center text-[18px] text-[#000000] font-Lato font-normal md:pl-6">{interaction.given}</td>
                     </tr>

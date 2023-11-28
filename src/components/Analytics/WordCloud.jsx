@@ -61,4 +61,3 @@ const WordCloud = ({data}) => {
 };
 
 export default WordCloud;
-

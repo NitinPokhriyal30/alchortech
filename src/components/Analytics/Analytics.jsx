@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import GoldBadge from '../../assets/images/analytics/gold.svg'
 import SilverBadge from '../../assets/images/analytics/silver.svg'
 import BronzeBadge from '../../assets/images/analytics/bronze.svg'
@@ -31,8 +31,8 @@ const meQuery = useQuery('me', () => api.auth.me());
 const me = meQuery.data
 
 const { data: response, isLoading, isError } = useQuery(
-    ['analyticsData', sortRegion, sortDepartment, sortDate],
-    () => api.analytics.all(sortDepartment, sortRegion, sortDate)
+    ['analyticsData', sortRegion, sortDate],
+    () => api.analytics.all(sortRegion, sortDate)
 );
 
 const { data: filterData, isLoading: isLoadingFilters, isError: isErrorFilters } = useQuery('filterData', api.analytics.filters);
@@ -87,7 +87,6 @@ const handleMyTeamClick  = () => {
 }
 
 
-
 return (
     <div>
     <div className="h-full w-screen max-w-[1536px] md:w-full">
@@ -130,7 +129,7 @@ return (
                 <span className='font-black text-black'>{sortRegion}</span>
                 <span><AiFillCaretDown /></span>
               </button>
-              <div className="absolute right-[1px] top-full z-10 hidden w-auto flex-col rounded-lg bg-white py-2 text-end drop-shadow-[0px_2px_6px_#44444F1A] hover:flex peer-hover:flex child:cursor-pointer mt-[-2px]">
+              <div className="absolute right-[1px] top-full z-10 hidden w-40 h-[200px] overflow-y-auto overflow-hidden flex-col rounded-lg bg-white py-2 text-end drop-shadow-[0px_2px_6px_#44444F1A] hover:flex peer-hover:flex child:cursor-pointer mt-[-2px]">
               {[
                 ...filters.region?.map((regionOption) => ({ value: regionOption, label: regionOption })),
                 { value: '', label: 'Clear'}
@@ -139,27 +138,6 @@ return (
                   key={index}
                   className={option.label === 'Clear' ? "text-[#d48989] text-center px-2 border-t-[1px]": `py-1 px-2 font-Lato text-sm hover:bg-translucent-black`}
                   onClick={() => setSortRegion(option.value === '' ? '' : option.value)}
-                >
-                  {option.label}
-                </p>
-              ))}
-              </div>
-            </div>
-            <div className={isOverall ? "font-Lato font-bold text-[#747474] text-sm relative flex items-center" : "hidden"}>
-              Departments
-              <button className="peer flex items-center gap-1 px-1 font-Lato text-sm font-semibold">
-              <span className='font-black text-black'>{sortDepartment}</span>
-                <span><AiFillCaretDown /></span>
-              </button>
-              <div className="absolute right-[1px] top-full z-10 hidden w-40 flex-col rounded-lg bg-white py-2 text-end drop-shadow-[0px_2px_6px_#44444F1A] hover:flex peer-hover:flex child:cursor-pointer mt-[-2px]">
-              {[
-                ...filters.departments?.map((departmentOption) => ({ value: departmentOption, label: departmentOption })),
-                { value: '', label: 'Clear'}
-              ].map((option, index) => (
-                <p
-                  key={index}
-                  className={option.label === 'Clear' ? "text-[#d48989] px-2 text-center border-t-[1px]": `py-1 px-2 font-Lato text-sm hover:bg-translucent-black`}
-                  onClick={() => setSortDepartment(option.value === '' ? '' : option.value)}
                 >
                   {option.label}
                 </p>
@@ -491,7 +469,7 @@ return (
 
         <div className="flex-col w-full md:w-[50%] rounded-lg  mx-auto bg-white">
          {total_recognitions && total_points ? 
-          <div className='flex flex-col md:flex-row justify-evenly gap-6 mx-3 my-4 px-2 py-2 md:py-0 bg-[#FCEAAE] rounded-xl items-center'>
+          <div className='flex flex-col md:flex-row justify-evenly gap-0 md:gap-6 mx-3 my-4 px-2 py-2 md:py-0 bg-[#FCEAAE] rounded-xl items-center'>
             <div>
             <span className='text-[36px] mx-1 md:text-[48px] font-Lato font-bold'>{total_recognitions}</span>
             <span className='font-Lato font-bold'>Recognitions</span>
@@ -500,9 +478,17 @@ return (
               <span className='text-[36px] mx-1 md:text-[48px] font-Lato font-bold'>{total_points}</span>
               <span className='font-Lato font-bold'>Points</span>
             </div>
-            <div className='flex rounded-md justify-evenly text-[12px] md:text-[8px] py-1 px-1 bg-white text-[#285C55]'>
+            <div >
+            {percentage > 0 ? 
+              <span className='flex gap-1 rounded-md justify-evenly text-[12px] md:text-[8px] py-1 px-1 bg-white text-[#285C55]'>
               <img src={growUp} alt='grow-up'/>
-              {`${percentage}% from last month`}
+              {percentage.toFixed(2)}% from last month
+              </span>
+              :  <span className='flex gap-1 rounded-md justify-evenly text-[12px] md:text-[8px] py-1 px-1 bg-[#FBE5E6] text-[#C74056]'>
+              <img src={shrinkDown} alt='grow-up'/>
+              {percentage.toFixed(2)}% from last month
+              </span>
+            }
             </div>
           </div> 
           : <div className='text-center text-[#c3406e] font-bold'>No data found for this filter !</div>
@@ -513,7 +499,7 @@ return (
         </div> 
         
         <div className=" flex-col w-full min-w-[250px] md:w-full lg:w-[50%] rounded-lg   mx-auto bg-white">
-          <div className='flex flex-col md:flex-row justify-evenly gap-6 mx-3 my-4 px-2 py-2 md:py-0 bg-[#B3E2A8] rounded-xl items-center'>
+          <div className='flex flex-col md:flex-row justify-evenly gap-0 md:gap-6 mx-3 my-4 px-2 py-2 md:py-0 bg-[#B3E2A8] rounded-xl items-center'>
             <div>
               <span className='text-[36px] mx-1 md:text-[48px] font-Lato font-bold'>69</span>
               <span className='font-Lato font-bold'>Redemptions</span>
@@ -522,9 +508,17 @@ return (
               <span className='text-[36px] mx-1 md:text-[48px] font-Lato font-bold'>4100</span>
               <span className='font-Lato font-bold'>Points</span>
             </div>
-            <div className='flex rounded-md justify-evenly text-[12px] md:text-[8px] py-1 px-1 bg-white text-[#285C55]'>
-              <img  src={growUp} alt='grow-up'/>  
-              {`${percentage}% from last month`}
+            <div>
+            {percentage > 0 ? 
+              <span className='flex gap-1 rounded-md justify-evenly text-[12px] md:text-[8px] py-1 px-1 bg-white text-[#285C55]'>
+              <img src={growUp} alt='grow-up'/>
+              {percentage.toFixed(2)}% from last month
+              </span>
+              :  <span className='flex gap-1 rounded-md justify-evenly text-[12px] md:text-[8px] py-1 px-1 bg-[#FBE5E6] text-[#C74056]'>
+              <img src={shrinkDown} alt='grow-up'/>
+              {percentage.toFixed(2)}% from last month
+              </span>
+            }
             </div>
           </div>
 
@@ -535,9 +529,17 @@ return (
               <span className='font-Lato font-semibold'>23</span>
             </div>
             <div className='flex items-center'>
-              <div className='flex mr-2 px-2 py-[1px] text-[9px] rounded-md bg-[#D6FBF0] text-[#285C55]'>
-                <img className='mr-[1px]' src={growUp} alt='grow-up'/>  
-                {`${percentage}% from last month`}
+              <div >
+              {percentage > 0 ? 
+                <span className='flex gap-1 mr-4 px-2 py-[1px] text-[9px] rounded-md bg-[#FBE5E6] text-[#C74056]'>
+                <img src={growUp} alt='grow-up'/>
+                {percentage.toFixed(2)}% from last month
+                </span>
+                :  <span className='flex gap-1 rounded-md justify-evenly text-[12px] md:text-[8px] py-1 px-1 bg-[#FBE5E6] text-[#C74056]'>
+                <img src={shrinkDown} alt='grow-up'/>
+                {percentage.toFixed(2)}% from last month
+                </span>
+              }
               </div>  
               <div className='text-[18px] font-Lato font-bold'>1250 Pts.</div>
             </div>
@@ -549,9 +551,17 @@ return (
                 <span className='font-Lato font-semibold'>12</span>
             </div>
             <div className='flex items-center'>  
-                <div className='flex mr-4 px-2 py-[1px] text-[9px] rounded-md bg-[#FBE5E6] text-[#C74056]'>
-                  <img className='mr-[1px]' src={shrinkDown} alt='shrink-down'/>  
-                  {`${percentage}% from last month`}
+                <div>
+                {percentage > 0 ? 
+                  <span className='flex mr-4 px-2 py-[1px] text-[9px] rounded-md bg-[#FBE5E6] text-[#C74056]'>
+                  <img src={growUp} alt='grow-up'/>
+                  {percentage.toFixed(2)}% from last month
+                  </span>
+                  :  <span className='flex gap-1 rounded-md justify-evenly text-[12px] md:text-[8px] py-1 px-1 bg-[#FBE5E6] text-[#C74056]'>
+                  <img src={shrinkDown} alt='grow-up'/>
+                  {percentage.toFixed(2)}% from last month
+                  </span>
+                }
                 </div>   
                 <div className='text-[18px] font-Lato font-bold'>950 Pts.</div>     
             </div>
@@ -562,9 +572,17 @@ return (
                 <span className='font-Lato font-semibold'>09</span>
               </div>
               <div className='flex items-center'>
-              <div className='flex mr-4 px-2 py-[1px] text-[9px] rounded-md bg-[#D6FBF0] text-[#285C55]'>
-                <img className='mr-[1px]' src={growUp} alt='grow-up'/>  
-                {`${percentage}% from last month`}
+              <div>
+              {percentage > 0 ? 
+                <span className='flex mr-4 px-2 py-[1px] text-[9px] rounded-md bg-[#FBE5E6] text-[#C74056]'>
+                <img src={growUp} alt='grow-up'/>
+                {percentage.toFixed(2)}% from last month
+                </span>
+                :  <span className='flex gap-1 rounded-md justify-evenly text-[12px] md:text-[8px] py-1 px-1 bg-[#FBE5E6] text-[#C74056]'>
+                <img src={shrinkDown} alt='grow-up'/>
+                {percentage.toFixed(2)}% from last month
+                </span>
+              }
               </div>  
               <div className='text-[18px] font-Lato font-bold'>700 Pts.</div>
             </div>
@@ -575,9 +593,17 @@ return (
               <span className='font-Lato font-semibold'>08</span>
             </div>
             <div className='flex items-center'>
-              <div className='flex mr-4 px-2 py-[1px] text-[9px] rounded-md bg-[#FBE5E6] text-[#C74056]'>
-                <img className='mr-[1px]' src={shrinkDown} alt='shrink-down'/>  
-                {`${percentage}% from last month`}
+              <div>
+              {percentage > 0 ? 
+                <span className='flex mr-4 px-2 py-[1px] text-[9px] rounded-md bg-[#FBE5E6] text-[#C74056]'>
+                <img src={growUp} alt='grow-up'/>
+                {percentage.toFixed(2)}% from last month
+                </span>
+                :  <span className='flex gap-1 rounded-md justify-evenly text-[12px] md:text-[8px] py-1 px-1 bg-[#FBE5E6] text-[#C74056]'>
+                <img src={shrinkDown} alt='grow-up'/>
+                {percentage.toFixed(2)}% from last month
+                </span>
+              }
               </div>  
               <div className='text-[18px] font-Lato font-bold'>550 Pts.</div>
             </div>
@@ -588,9 +614,17 @@ return (
               <span className='font-Lato font-semibold'>07</span>
             </div>
             <div className='flex items-center'>
-              <div className='flex mr-4 px-2 py-[1px] text-[9px] rounded-md bg-[#FBE5E6] text-[#C74056]'>
-                <img className='mr-[1px]' src={shrinkDown} alt='shrink-down'/>  
-                {`${percentage}% from last month`}
+              <div>
+              {percentage > 0 ? 
+                <span className='flex mr-4 px-2 py-[1px] text-[9px] rounded-md bg-[#FBE5E6] text-[#C74056]'>
+                <img src={growUp} alt='grow-up'/>
+                {percentage.toFixed(2)}% from last month
+                </span>
+                :  <span className='flex gap-1 rounded-md justify-evenly text-[12px] md:text-[8px] py-1 px-1 bg-[#FBE5E6] text-[#C74056]'>
+                <img src={shrinkDown} alt='grow-up'/>
+                {percentage.toFixed(2)}% from last month
+                </span>
+              }
               </div>  
               <span className='text-[18px] font-Lato font-bold'>300 Pts.</span>
             </div>

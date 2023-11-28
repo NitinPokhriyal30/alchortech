@@ -17,7 +17,7 @@ import { RiAddLine, RiAttachmentLine, RiDeleteBin7Line, RiInformationLine } from
  *  }
  * }} param0
  */
-const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
+const Questions = ({ questions, setQuestions, isTimeBounded, errors, quizId, queErrorCheck, handleValidateQuestions }) => {
   const [selectedOption, setSelectedOption] = useState('input')
   const questionImgRefs = useRef([])
   // const [isTimeBounded, setIsTimeBounded] = useState(true)
@@ -32,18 +32,6 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
     } else if (['input', 'text-area'].includes(event.target.value)) {
       updatedQuestions.questions[questionIndex].options = undefined
     }
-    setQuestions(updatedQuestions)
-  }
-
-  // Handler for adding a new question
-  const addNewQuestion = () => {
-    const updatedQuestions = { ...questions }
-    updatedQuestions.questions.push({
-      type: 'radio',
-      options: ['option1'],
-      question: '',
-      answer: isTimeBounded ? '' : undefined,
-    })
     setQuestions(updatedQuestions)
   }
 
@@ -140,6 +128,62 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
     const updatedQuestions = { ...questions }
     updatedQuestions.questions.splice(questionIndex, 1)
     setQuestions(updatedQuestions)
+  }
+
+  // Handler for adding a new question
+  const addNewQuestion = () => {
+    const questionIndex = questions.questions.length - 1;
+
+    if (questions.questions.length > 0) {
+
+      if (questions.questions[questionIndex].question !== '') {
+        const updatedQuestions = { ...questions }
+        updatedQuestions.questions.push({
+          type: 'radio',
+          options: ['option1'],
+          question: '',
+          answer: isTimeBounded ? '' : undefined,
+        })
+        setQuestions(updatedQuestions)
+        if (questionIndex >= 0) {
+          saveQuestion(questionIndex)
+        }
+      } else {
+        queErrorCheck();
+      }
+
+    } else {
+      const updatedQuestions = { ...questions }
+      console.log(updatedQuestions);
+      updatedQuestions.questions.push({
+        type: 'radio',
+        options: ['option1'],
+        question: '',
+        answer: isTimeBounded ? '' : undefined,
+      })
+      setQuestions(updatedQuestions)
+    }
+  }
+
+  const saveQuestion = async (questionIndex) => {
+
+    try {
+      const data = {
+        question: questions.questions[questionIndex].question,
+        questionType: questions.questions[questionIndex].type,
+      };
+
+      // Make an HTTP POST request to your API endpoint
+      const response = await api.surveys.questions(data, surveyId);
+      // Handle the API response here
+      toast.success(response.message);
+    } catch (error) {
+      // Handle any errors that occurred during the request
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+
   }
 
   const COLORS = {
@@ -321,7 +365,7 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors }) => {
 
                 {/* Delete Question Button */}
                 <button className="ml-auto text-[1.2em]" variant="contained" onClick={() => handleDeleteQuestion(index)}>
-                  <RiDeleteBin7Line /> 
+                  <RiDeleteBin7Line />
                 </button>
               </div>
             </div>

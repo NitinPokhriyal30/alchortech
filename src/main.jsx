@@ -13,12 +13,11 @@ import SingleComponentTestPage from './pages/SingleComponentTestPage'
 import HomeSidebar from './components/HomeSidebar'
 import MainNavbar from './components/MainNavbar'
 import MyRewards from './components/MyRewards'
+import RewardsHistory from './components/RewardsHistory'
 import DirectoryPage from './pages/DirectoryPage'
 import Login from './components/Auth/Login'
 import ForgotPassword from './components/Auth/ForgotPassword'
 import ResetPassword from './components/Auth/ResetPassword'
-import ManageUsers from './components/AdminPanel/ManageUsers'
-import Earnings from './components/AdminPanel/Earnings'
 import MyProfile from './components/MyProfile'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import { QueryClientProvider, useQuery, useQueryClient } from 'react-query'
@@ -38,6 +37,19 @@ import Loader from '@/components/Loader'
 import VoiceOutPage from '@/pages/VoiceOutPage'
 import CampaignPreview from './components/Campaigns/CampaignPreview'
 import Faqs from './components/Faqs'
+import CampaignPublished from './components/Campaigns/CampaignPublished'
+
+import CompanyAppearance from './components/AdminPanel/CompanyAppearance'
+import CompanyRecognitionSettings from './components/AdminPanel/CompanyRecognitionSettings'
+import ManageUsers from './components/AdminPanel/ManageUsers'
+import EditUserDetails from './components/AdminPanel/EditUserDetails'
+import AvailableVouchers from './components/AdminPanel/AvailableVoucher'
+import RedemptionHistory from './components/AdminPanel/RedemptionHistory'
+import RewardsApprovals from './components/AdminPanel/RewardsApprovals'
+import Billings from './components/AdminPanel/Billings'
+import AdminLogs from './components/AdminPanel/AdminLogs'
+import AdminAnalytics from './components/AdminPanel/AdminAnalytics'
+
 
 const QuizCreate = React.lazy(() => import('@/components/QuizPoll/QuizCreate'))
 
@@ -61,19 +73,32 @@ const router = createBrowserRouter(
           </ProtectedRoute>
         }
       >
+        <Route path="/admin/company/appearance" element={<CompanyAppearance />} />
+        <Route path="/admin/company/recognition/settings" element={<CompanyRecognitionSettings />} />
+        <Route path="/admin/users/" element={<ManageUsers />} />
+        <Route path="/admin/users/details/settings" element={<EditUserDetails />} />
+        <Route path="/admin/rewards/available-vouchers" element={<AvailableVouchers />} />
+        <Route path="/admin/rewards/redemption-history" element={<RedemptionHistory />} />
+        <Route path="/admin/rewards/approvals" element={<RewardsApprovals />} />
+        <Route path="/admin/billings" element={<Billings />} />
+        <Route path="/admin/logs" element={<AdminLogs />} />
+        <Route path="/admin/analytics" element={<AdminAnalytics />} />
+
+
         <Route index element={<HomePage />} />
+        <Route path="/:parameter" element={<HomePage />} />
         <Route path="my-rewards" element={<MyRewards />} />
+        <Route path="my-rewards/rewards-history" element={<RewardsHistory />} />
         <Route path="directory" element={<DirectoryPage />} />
         <Route path="myProfile" element={<MyProfile />} />
         <Route path="profile/:id" element={'Not Implemented specific user profile page'} />
         <Route path="analytics" element={<Analytics />} />
-        <Route path="company/users" element={<ManageUsers />} />
-        <Route path="company/account" element={<Earnings />} />
         <Route path="transactions/:id" element={<Transactions />} />
         <Route path="campaigns" element={<CampaignsTable />} />
         <Route path="campaign/create" element={<CampaignCreate />} />
         <Route path="voice-out" element={<VoiceOutPage />} />
-        <Route path="campaign/preview" element={<CampaignPreview />} />
+        <Route path="campaign/:id" element={<CampaignPreview />} />
+        <Route path="campaign/published" element={<CampaignPublished />} />
         <Route path="faqs" element={<Faqs />} />
       </Route>
       <Route path="/reset/password/passwordreset/:uidb64/:token" element={<ResetPassword />} />
@@ -118,6 +143,8 @@ const router = createBrowserRouter(
           }
         />
       </Route>
+
+      
 
       <Route
         path="/survey/preview"

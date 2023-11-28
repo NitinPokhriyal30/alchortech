@@ -1,169 +1,168 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { RiInformationLine } from 'react-icons/ri';
 
 
 const COLORS = {
     gray: 'text-[#A5A5A5]',
 };
 
-const RuleAndRewards = () => {
+const RuleAndRewards = ({ rulesNRewards, setRulesNRewards, errors }) => {
 
     const [rewardType, setRewardType] = useState('');
+
+
+    const handleRulesNRewards = (property, value) => {
+        setRulesNRewards((prevRulesNRewards) => ({
+            ...prevRulesNRewards,
+            [property]: value,
+        }))
+    }
+
+    const handleParticipationCriteria = (value) => {
+        setRewardType(value);
+        if (value === 'Participant') {
+            setRulesNRewards((prevRulesNRewards) => ({
+                ...prevRulesNRewards,
+                participationRewards: !prevRulesNRewards.participationRewards,
+            }));
+        }
+    }
+
+    const handleParticipationRewardsType = (value) => {
+        setRulesNRewards((prevRulesNRewards) => ({
+            ...prevRulesNRewards,
+            participationRewardsType: value,
+        }));
+    }
+
+    const getError = (index) => errors?.find(([_index]) => _index === index)?.[1]
 
     return (
         <div>
             <div className="rounded-lg bg-white px-5 py-6 drop-shadow-md">
-                <div className="grid grid-row md:grid-cols-[1fr_2fr] items-center gap-5 md:gap-40">
+
+                <div className="grid md:grid-cols-[1fr_2fr] items-center gap-40">
                     {/* col 1 */}
                     <div>
-                        <p className="text-18px font-bold text-text-black">Select Award Payout Format</p>
-                        <p className={'mt-2.5 ' + COLORS.gray}>Automatically/manually reward the incentive to participants when they hit the targets you set</p>
+                        <p className="text-18px font-bold text-text-black">Select Points Criteria</p>
                     </div>
 
                     {/* col 2 */}
                     <div className="flex gap-2">
                         <button
-                            onClick={() => setRewardType('Automatic')}
+                            onClick={() => handleParticipationCriteria('Participant')}
                             className={
-                                rewardType === 'Automatic'
+                                rulesNRewards.participationRewards
                                     ? 'border border-[#5486E3] bg-[#5486E3] text-white rounded-md py-1 px-5'
                                     : 'border border-[#5486E3] text-[#5486E3] rounded-md py-1 px-5'
                             }
                         >
-                            Automatic
+                            Particpation Points
                         </button>
-                        <button
-                            onClick={() => setRewardType('Manual')}
-                            className={
-                                rewardType === 'Manual'
-                                    ? 'border border-[#5486E3] bg-[#5486E3] text-white rounded-md py-1 px-9'
-                                    : 'border border-[#5486E3] text-[#5486E3] rounded-md py-1 px-9'
-                            }
-                        >
-                            Manual
-                        </button>
+                        {getError('participationRewards') && (
+                            <p className="text-sm text-red-500">
+                                <RiInformationLine className="inline align-text-bottom text-[1.1em] " />
+                                {getError('participationRewards')}
+                            </p>
+                        )}
                     </div>
                 </div>
-                <hr className="border-px my-6 border-400" />
 
-                <div className="grid grid-row md:grid-cols-[1fr_2fr] items-center gap-40">
-                    {/* col 1 */}
-                    <div>
-                        <p className="text-18px font-bold text-text-black">Select Points</p>
-                    </div>
+                {rewardType != '' && <hr className="border-px my-6 border-400" />}
 
-                    {/* col 2 */}
-                    <div>
+
+                {rewardType === 'Participant' &&
+                    <div className="grid md:grid-cols-[1fr_2fr] items-center gap-40">
+
+                        {/* col 1 */}
                         <div>
-                            <select className="border-[2px] rounded p-2 w-full">
-                                <option value="" disabled selected>Select Points</option>
-                                <option value="10">10</option>
-                                <option value="20">20</option>
-                                <option value="30">30</option>
-                                <option value="40">40</option>
-                                <option value="50">50</option>
-                            </select>
+                            <p className="text-18px font-bold text-text-black">Select Points Receivers</p>
                         </div>
-                    </div>
-                </div>
-                <hr className="border-px my-6 border-400" />
 
-                <div className="grid grid-row md:grid-cols-[1fr_2fr] items-center gap-40">
-                    {/* col 1 */}
-                    <div>
-                        <p className="w-44 text-18px font-bold text-text-black">Define the campaign award rules 1 or more</p>
-                    </div>
-
-                    {/* col 2 */}
-
-                    <div className="flex flex-col space-y-4">
-                        <label className="flex gap-8 items-center">
-                            <div className='flex flex-col md:flex-row gap-10'>
-                                <div className='flex gap-10'>
-                                    <input type="checkbox" className="form-checkbox h-10 w-20" />
-                                    <div className='w-44'>
-                                        <span>Ongoing Earn</span>
-                                        <p className={COLORS.gray}>Earn X points for every Y units during campaign</p>
+                        {/* col 2 */}
+                        <div className="flex flex-col  gap-10">
+                            <div className='flex gap-8'>
+                                <label className='flex gap-2'>
+                                    <input
+                                        type="checkbox"
+                                        checked={rulesNRewards.participationRewardsType === 'all'}
+                                        onChange={() => handleParticipationRewardsType('all')}
+                                        className='h-6 w-6'
+                                    />
+                                    All Participants
+                                </label>
+                                <label className='flex gap-2'>
+                                    <input
+                                        type="checkbox"
+                                        checked={rulesNRewards.participationRewardsType === 'few'}
+                                        onChange={() => handleParticipationRewardsType('few')}
+                                        className='h-6 w-6'
+                                    />
+                                    Few Participants
+                                </label>
+                                <div>
+                                    {getError('participationRewardsType') && (
+                                        <p className="text-sm text-red-500">
+                                            <RiInformationLine className="inline align-text-bottom text-[1.1em] " />
+                                            {getError('participationRewardsType')}
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+                            {rulesNRewards.participationRewardsType === 'all' && (
+                                <div className='flex items-center gap-4'>
+                                    <input
+                                        type="number"
+                                        className="border-[1px] border-[#909090] rounded w-20 p-1"
+                                        value={rulesNRewards.allParticipationPoints}
+                                        min={0}
+                                        onChange={(event) => handleRulesNRewards('allParticipationPoints', Number(event.target.value))}
+                                    />
+                                    <span >Points to be given</span>
+                                    <div>
+                                        {getError('allParticipationPoints') && (
+                                            <p className="text-sm text-red-500">
+                                                <RiInformationLine className="inline align-text-bottom text-[1.1em] " />
+                                                {getError('allParticipationPoints')}
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
-                                <div className='flex gap-10'>
-                                    <div className='flex flex-col text-center'>
-                                        <span >X</span>
-                                        <input type="number" className="border rounded w-14 p-2" />
+
+                            )}
+                            {rulesNRewards.participationRewardsType === 'few' && (
+                                <>
+                                    <div className='flex items-center gap-2'>
+                                        <span >First</span>
+                                        <input
+                                            type="number"
+                                            className="border-[1px] border-[#909090] rounded w-16 p-1"
+                                            value={rulesNRewards.units}
+                                            min={0}
+                                            onChange={(event) => handleRulesNRewards('units', Number(event.target.value))}
+                                        />
+                                        <span >Participants will get points</span>
+                                        <input
+                                            type="number"
+                                            className="border-[1px] border-[#909090] rounded w-16 p-1"
+                                            value={rulesNRewards.unitPoints}
+                                            min={0}
+                                            onChange={(event) => handleRulesNRewards('unitPoints', Number(event.target.value))}
+                                        />
                                     </div>
-                                    <div className='flex flex-col text-center'>
-                                        <span>Y</span>
-                                        <input type="number" className="border rounded w-14 p-2" />
+                                    <div>
+                                        {getError('unitPoints') && (
+                                            <p className="text-sm text-red-500">
+                                                <RiInformationLine className="inline align-text-bottom text-[1.1em] " />
+                                                {getError('unitPoints')}
+                                            </p>
+                                        )}
                                     </div>
-                                </div>
-                            </div>
-                        </label>
-                        <label className="flex gap-8 items-center">
-                            <div className='flex flex-col md:flex-row gap-10'>
-                            <div className='flex gap-10'>
-                            <input type="checkbox" className="form-checkbox h-10 w-20" />
-                            <div className='w-44'>
-                                <span>Threshold bonus</span>
-                                <p className={COLORS.gray}>Earn X when Y threshold met</p>
-                                </div>
-                            </div>
-                            <div className='flex gap-10'>
-                                <div className='flex flex-col text-center'>
-                                    <span >X</span>
-                                    <input type="number" className="border rounded w-14 p-2" />
-                                </div>
-                                <div className='flex flex-col text-center'>
-                                    <span>Y</span>
-                                    <input type="number" className="border rounded w-14 p-2" />
-                                </div>
-                                </div>
-                            </div>
-                        </label>
-                        <label className="flex gap-8 items-center">
-                            <div className='flex flex-col md:flex-row gap-10'>
-                            <div className='flex gap-10'>
-                            <input type="checkbox" className="form-checkbox h-10 w-20" />
-                            <div className='w-44'>
-                                <span>Winner takes all</span>
-                                <p className={COLORS.gray}>The participant with the most Sales. The amount of points earned</p>
-                                </div>
-                            </div>
-                            <div className='flex gap-10'>
-                                <div className='flex flex-col text-center'>
-                                    <span >X</span>
-                                    <input type="number" className="border rounded w-14 p-2" />
-                                </div>
-                                <div className='flex flex-col text-center'>
-                                    <span>Y</span>
-                                    <input type="number" className="border rounded w-14 p-2" />
-                                </div>
-                                </div>
-                            </div>
-                        </label>
-                    </div>
-
-                </div>
-                <hr className="border-px my-6 border-400" />
-
-                <div className="grid grid-row md:grid-cols-[1fr_2fr] items-center mb-10 gap-40">
-                    {/* col 1 */}
-                    <div>
-                        <p className="text-18px font-bold text-text-black">Select how results will be entered into the campaign</p>
-                    </div>
-
-                    {/* col 2 */}
-                    <div className='flex justify-evenly'>
-                        <div>
-                            <input className="mr-2 h-4 w-4" type="radio" id="option1" name="entryOption" value="option1" />
-                            <label htmlFor="option1">By participating employees</label>
-                            <p className="ml-6 text-gray-400">Participants enter their own results throughout the campaign</p>
-                        </div>
-                        <div>
-                            <input className="mr-2 h-4 w-4" type="radio" id="option2" name="entryOption" value="option2" />
-                            <label htmlFor="option2">By you, the campaign owner</label>
-                            <p className="ml-6 text-gray-400">Upload your participants results using an Excel template</p>
+                                </>
+                            )}
                         </div>
                     </div>
-                </div>
+                }
             </div>
 
         </div>

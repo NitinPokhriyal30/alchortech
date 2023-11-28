@@ -5,7 +5,9 @@ import './AreaStyle.css'
 const AreaChart = ({ data }) => {
   const svgRef = useRef();
 
+  console.log(data)
   useEffect(() => {
+    
     const svg = d3.select(svgRef.current);
     const margin = { top: 20, right: 0, bottom: 30, left: 60 };
     const parentWidth = svgRef.current.clientWidth; // Get the width of the container
@@ -25,15 +27,22 @@ const AreaChart = ({ data }) => {
 
     const xData = modifiedData.map(d => formatDate(parseDate(d.date_range.split(' - ')[0])) + ' - ' + formatDate(parseDate(d.date_range.split(' - ')[1])));
 
+    const maxTransactionCount = Math.max(...data.map(d => d.transaction_count));
+    const yMax = Math.max(maxTransactionCount + 5);
+    const numTicks = 10;
+    const tickInterval = Math.ceil(yMax / numTicks);
+    const yTickValues = Array.from({ length: numTicks + 1 }, (_, i) => i * tickInterval);
+
+    {console.log(xData);}
     
     const x = d3
       .scaleBand()
       .domain(xData)
       .range([margin.left, width - margin.right - (width / modifiedData.length)]); // Adjust the range
 
-    const y = d3
+      const y = d3
       .scaleLinear()
-      .domain([0, 25])
+      .domain([0, yMax]) // Set the y-axis domain dynamically
       .nice()
       .range([height - margin.bottom, margin.top]);
 
@@ -47,45 +56,46 @@ const AreaChart = ({ data }) => {
 
     svg.append('path')
       .datum(modifiedData)
-      .attr('fill', '#E5EDFB') // Set fill color to #4CDFE8
-      .attr('stroke', '#4CDFE8') // Set border line color to red
-      .attr('stroke-width', 1) // Adjust border line width
+      .attr('fill', '#E5EDFB') 
+      .attr('stroke', '#4CDFE8')
+      .attr('stroke-width', 1) 
       .attr('d', area);
 
     svg.append('g')
       .attr('transform', `translate(0,${height - margin.bottom})`)
       .call(
         d3.axisBottom(x)
-          .tickSize(0) // Adjust padding to avoid overlapping labels
-          .tickPadding(-10)
-          
+          .tickSize(0) 
+          .tickPadding(-10)  
           .tickFormat((d, i) => i === 0 ? '' : d)
       )
-      .selectAll('text') // Select all tick labels
-      .style('text-anchor', 'end') // Align the labels to the end of ticks
-      .attr('transform', 'rotate(-45) translate(-15, 0)'); // Rotate labels at -45 degrees
+      .selectAll('text') 
+      .style('text-anchor', 'end') 
+      .attr('transform', 'rotate(-45) translate(-15, 0)');
 
-    // Customize y-axis tick values
+    
     svg.append('g')
       .attr('transform', `translate(${margin.left},0)`)
       .call(
         d3
           .axisLeft(y)
-          .tickValues([0, 5, 10, 15, 20, 25]) // Set your desired tick values here
-          .tickSize(0) // Remove tick lines
+          .tickValues(yTickValues) 
+          .tickSize(0) 
       );
 
-    // Add vertical grid lines
+     
+
+  
     svg.append('g')
     .selectAll('line')
-    .data(modifiedData) // Skip the last data point
+    .data(modifiedData) 
     .enter()
     .append('line')
     .attr('x1', d => x(formatDate(parseDate(d.date_range.split(' - ')[0])) + ' - ' + formatDate(parseDate(d.date_range.split(' - ')[1]))))
     .attr('x2', d => x(formatDate(parseDate(d.date_range.split(' - ')[0])) + ' - ' + formatDate(parseDate(d.date_range.split(' - ')[1]))))
     .attr('y1', margin.top)
     .attr('y2', height - margin.bottom)
-    .attr('stroke', '#D3D3D3'); // Set grid line color
+    .attr('stroke', '#D3D3D3'); 
 
     }, [data]);
 

@@ -1,6 +1,6 @@
 import React from "react";
 
-const PopularCategories = () => {
+const PopularCategories = ({voucherCategories}) => {
     return (
         <div>
             <div className="right-sidebar-container">
@@ -10,62 +10,17 @@ const PopularCategories = () => {
                     </p>
                 </div>
                 <div className=" px-4 pt-3 ">
+
+                {voucherCategories.voucherCategories.map((category) => (
                     <div className="flex items-top pb-2 justify-between">
-                        <div>
-                            <p className="text-[#585858]  text-[16px]">Recomended For You</p>
-                        </div>
-                        <div>
-                            <p className="text-[#BCBCBC] text-[14px]">03</p>
-                        </div>
+                    <div>
+                        <p className="text-[#585858]  text-[16px]">{category.name}</p>
                     </div>
-                    <div className="flex items-top pb-2 justify-between">
-                        <div>
-                            <p className="text-[#585858]  text-[16px]">Apparel</p>
-                        </div>
-                        <div>
-                            <p className="text-[#BCBCBC] text-[14px]">02</p>
-                        </div>
+                    <div>
+                        <p className="text-[#BCBCBC] text-[14px]">{category.vouchers.length}</p>
                     </div>
-                    <div className="flex items-top pb-2 justify-between">
-                        <div>
-                            <p className="text-[#585858]  text-[16px]">Cash & Points Boots</p>
-                        </div>
-                        <div>
-                            <p className="text-[#BCBCBC] text-[14px]">06</p>
-                        </div>
-                    </div>
-                    <div className="flex items-top pb-2 justify-between">
-                        <div>
-                            <p className="text-[#585858]  text-[16px]">Donations</p>
-                        </div>
-                        <div>
-                            <p className="text-[#BCBCBC] text-[14px]">04</p>
-                        </div>
-                    </div>
-                    <div className="flex items-top pb-2 justify-between">
-                        <div>
-                            <p className="text-[#585858]  text-[16px]">Entertainment & Electronics</p>
-                        </div>
-                        <div>
-                            <p className="text-[#BCBCBC] text-[14px]">06</p>
-                        </div>
-                    </div>
-                    <div className="flex items-top pb-2 justify-between">
-                        <div>
-                            <p className="text-[#585858]  text-[16px]">General</p>
-                        </div>
-                        <div>
-                            <p className="text-[#BCBCBC] text-[14px]">02</p>
-                        </div>
-                    </div>
-                    <div className="flex items-top pb-2 justify-between">
-                        <div>
-                            <p className="text-[#585858]  text-[16px]">Gifts & Services</p>
-                        </div>
-                        <div>
-                            <p className="text-[#BCBCBC] text-[14px]">02</p>
-                        </div>
-                    </div>
+                </div>
+                ))}
                 </div>
             </div>
         </div>

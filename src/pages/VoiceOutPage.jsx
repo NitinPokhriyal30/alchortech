@@ -56,8 +56,8 @@ export default function VoiceOutPage({ ...props }) {
       <h1 className="md:mt-9 text-[20px] font-bold px-3 md:px-0">Voice Out</h1>
       <div className='flex items-center flex-row justify-between mt-2'>
         <div className='flex flex-row flex-auto'>
-          <button className={data.category === 'Grievance' ? ' w-full max-w-[125px] rounded-md bg-primary py-1 font-normal text-white mr-2 border border-primary' : ' w-full max-w-[125px] rounded-md text-primary py-1 font-normal border border-primary mr-2'} label="Grievance" onClick={() => setData({ ...data, category: 'Grievance' })}>
-              {voiceout.data[0].name}
+          <button className={data.category === 'Grievance' ? ' w-full max-w-[125px] rounded-md bg-primary py-1 font-normal text-white mr-2 border border-primary' : ' w-full max-w-[125px] rounded-md text-primary py-1 font-normal border border-primary mr-2'} label="Grievance" onClick={() => setData({ ...data, category: 'Grievance' })}> 
+            {voiceout.data[0].name}
           </button>
           <button className={data.category === 'Suggestion' ? ' w-full max-w-[125px] rounded-md bg-primary py-1 font-normal text-white mr-2 border border-primary' : ' w-full max-w-[125px] rounded-md text-primary py-1 font-normal border border-primary mr-2'} label="Grievance" onClick={() => setData({ ...data, category: 'Suggestion' })}>
             {voiceout.data[1].name}

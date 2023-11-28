@@ -67,7 +67,7 @@ function handleValidateQuestions(questions) {
       errors.push([i, 'Must have question filled'])
     }
 
-    if (['radio', 'check-box', 'dropdown'].includes(question.type) && question.options.length === 0) {
+    if (['radio', 'check-box', 'dropdown'].includes(question.type) && question.options.length < 2) {
       errors.push([i, 'Must have at least one options'])
     }
 
@@ -75,6 +75,32 @@ function handleValidateQuestions(questions) {
       errors.push([i, 'Must have answer filled'])
     }
   })
+  return errors
+}
+
+function handleValidateParticipants(quiz) {
+  const errors = []
+
+  if (quiz.participantType === 'teams' && quiz.teams.length < 2) {
+    errors.push(['teams', 'Must have at least two participant in teams'])
+  } else if (quiz.participantType === 'individual' && quiz.individuals.length < 2) {
+    errors.push(['individual', 'Must have at least two participant in individual'])
+  }
+
+  if (quiz.participantType === 'groups' && quiz.groups.length < 1) {
+    errors.push(['groups', 'Must have at least one groups'])
+  }
+
+  if (quiz.participantType === 'groups') {
+    quiz.groups.forEach((group, i) => {
+      if (group.label === "") {
+        errors.push(['groupLabel', 'Must have group name filled'])
+      } else if (group.participants.length < 2) {
+        errors.push(['groupParticipants', 'Must have at least two participant in Group'])
+      }
+    })
+  }
+
   return errors
 }
 
@@ -90,15 +116,15 @@ const QuizCreate = () => {
         return { ...prev }
       })
 
-      const errors = handleValidateDetails(survey)
+      const errors = handleValidateDetails(quiz)
       if (errors.length > 0) {
         toast.error('Your details have some errors')
         setErrors((prev) => ({ ...prev, details: errors }))
         return
       }
     } else if (step === 1) {
-      if (survey.questions.length === 0) {
-        toast.error('Your survey must have questions')
+      if (quiz.questions.length === 0) {
+        toast.error('Your quiz must have questions')
         return
       }
 
@@ -107,7 +133,7 @@ const QuizCreate = () => {
         delete prev.questions
         return { ...prev }
       })
-      const errors = handleValidateQuestions(survey.questions)
+      const errors = handleValidateQuestions(quiz.questions)
       if (errors.length > 0) {
         toast.error('Your question have some errors')
         setErrors((prev) => ({ ...prev, questions: errors }))
@@ -117,7 +143,8 @@ const QuizCreate = () => {
     setStep(newValue)
   }
 
-  const [survey, setServey] = React.useState({
+  const [quizId, setQuizId] = React.useState();
+  const [quiz, setQuiz] = React.useState({
     title: '',
     description: '',
     dateAndTime: {
@@ -131,7 +158,112 @@ const QuizCreate = () => {
       forceSubmit: 'yes',
     },
     questions: [],
+    participantType: '',
+    teams: [],
+    individuals: [],
+    groups: [
+      {
+        label: '',
+        participants: []
+      }
+    ],
+    groupIds: [],
+    owner: '',
   })
+
+  const handleQuizDetails = async () => {
+    try {
+      // Create a new FormData object
+      const formData = new FormData();
+
+      // Append the data from your state to the FormData object
+      formData.append('title', quiz.title);
+      formData.append('description', quiz.description);
+      formData.append('termsAndConditions', quiz.termsAndConditions);
+      formData.append('startDate', quiz.dateAndTime.start);
+      formData.append('endDate', quiz.dateAndTime.end);
+
+      // Make an HTTP POST request to your API endpoint
+      // const response = await api.quizs.details(formData);
+      setQuizId(response.id)
+      // Handle the API response here
+      toast.success('Saved successfully');
+    } catch (error) {
+      // Handle any errors that occurred during the request
+      console.log(error);
+      toast.error('Error:', error.message);
+    }
+  };
+
+  const handleQuizParticipant = async () => {
+
+    try {
+
+      if (quiz.participantType === 'groups') {
+        const groupIndex = quiz.groups.length - 1;
+        const groupsString = quiz.groups[groupIndex].participants.join(',');
+        const groupData = {
+          groupName: quiz.groups[groupIndex].label,
+          participants: groupsString
+        }
+        const response = await api.quizs.addGroup(groupData);
+        toast.success('Groupe Saved')
+
+        const newGroupId = response.id;
+        setQuiz((prev) => ({
+          ...prev,
+          groupIds: [...prev.groupIds, newGroupId],
+        }))
+      } else {
+        const teamsString = quiz.teams.join(',');
+        const individualsString = quiz.individuals.join(',');
+        const groupsString = quiz.groupIds.join(',');
+        const participantsData = {
+          participantType: quiz.participantType,
+          teams: teamsString,
+          individuals: individualsString,
+          groups: groupsString
+        };
+        await api.quizs.addParticipants(participantsData, quizId);
+        toast.success('Saved successfully')
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error('Error:', error.message);
+    }
+  };
+
+  const saveQuestion = async (questionIndex) => {
+
+    try {
+      const data = {
+        question: survey.questions[questionIndex].question,
+        questionType: survey.questions[questionIndex].type,
+      };
+
+      // Make an HTTP POST request to your API endpoint
+      const response = await api.surveys.questions(data, surveyId);
+      // Handle the API response here
+      toast.success(response.message);
+
+    } catch (error) {
+      // Handle any errors that occurred during the request
+      console.error(error);
+    }
+
+  }
+
+  const saveLastQuestion = async () => {
+    const questionIndex = quiz.questions.length - 1;
+
+    if (quiz.questions.length > 0) {
+      if (quiz.questions[questionIndex].question !== '') {
+        saveQuestion(questionIndex)
+      } else {
+        queErrorCheck();
+      }
+    }
+  }
 
   function handleGoNext() {
     if (step === 0) {
@@ -141,15 +273,18 @@ const QuizCreate = () => {
         return { ...prev }
       })
 
-      const errors = handleValidateDetails(survey)
+      const errors = handleValidateDetails(quiz)
       if (errors.length > 0) {
         toast.error('Your details have some errors')
         setErrors((prev) => ({ ...prev, details: errors }))
         return
+      } else {
+        handleQuizDetails();
+        setStep((p) => ++p)
       }
     } else if (step === 1) {
-      if (survey.questions.length === 0) {
-        toast.error('Your survey must have questions')
+      if (quiz.questions.length === 0) {
+        toast.error('Your quiz must have questions')
         return
       }
 
@@ -158,15 +293,86 @@ const QuizCreate = () => {
         delete prev.questions
         return { ...prev }
       })
-      const errors = handleValidateQuestions(survey.questions)
+      const errors = handleValidateQuestions(quiz.questions)
+      if (errors.length > 0) {
+        toast.error('Your question have some errors')
+        setErrors((prev) => ({ ...prev, questions: errors }))
+        return
+      } else {
+        saveLastQuestion()
+        setStep((p) => ++p)
+      }
+    } else if (step === 2) {
+      // clear prev errors
+      setErrors((prev) => {
+        delete prev.quizParticipants
+        return { ...prev }
+      })
+
+      const errors = handleValidateParticipants(quiz)
+      if (errors.length > 0) {
+        toast.error('Your details have some errors')
+        setErrors((prev) => ({ ...prev, quizParticipants: errors }))
+        return
+      } else {
+        handleQuizParticipant();
+        setStep((p) => ++p)
+      }
+    }
+  }
+
+  function queErrorCheck() {
+    if (step === 0) {
+      // clear prev errors
+      setErrors((prev) => {
+        delete prev.details
+        return { ...prev }
+      })
+
+      const errors = handleValidateDetails(quiz)
+      if (errors.length > 0) {
+        toast.error('Your details have some errors')
+        setErrors((prev) => ({ ...prev, details: errors }))
+        return
+      } else {
+        handleQuizDetails();
+      }
+    } else if (step === 1) {
+      if (quiz.questions.length === 0) {
+        toast.error('Your quiz must have questions')
+        setErrors((prev) => ({ ...prev, details: errors }))
+        return
+      } else {
+        setStep((p) => ++p)
+      }
+
+      // clear prev errors
+      setErrors((prev) => {
+        delete prev.questions
+        return { ...prev }
+      })
+      const errors = handleValidateQuestions(quiz.questions)
       if (errors.length > 0) {
         toast.error('Your question have some errors')
         setErrors((prev) => ({ ...prev, questions: errors }))
         return
       }
-    }
+    } else if (step === 2) {
+      // clear prev errors
+      setErrors((prev) => {
+        delete prev.quizParticipants
+        return { ...prev }
+      })
 
-    setStep((p) => ++p)
+      const errors = handleValidateParticipants(quiz)
+      if (errors.length > 0) {
+        toast.error('Your details have some errors')
+        setErrors((prev) => ({ ...prev, quizParticipants: errors }))
+        return
+      } else {
+        handleQuizParticipant();
+      }
+    }
   }
 
   return (
@@ -202,11 +408,11 @@ const QuizCreate = () => {
 
         <section className="px-3 md:px-0">
           {step === 0 ? (
-            <QuizDetails details={survey} setDetails={setServey} errors={errors.details} />
+            <QuizDetails details={quiz} setDetails={setQuiz} errors={errors.details} />
           ) : step === 1 ? (
-            <Questions questions={survey} setQuestions={setServey} errors={errors.questions} isTimeBounded={survey.isTimeBounded} />
+            <Questions questions={quiz} setQuestions={setQuiz} errors={errors.questions} isTimeBounded={quiz.isTimeBounded} queErrorCheck={queErrorCheck} quizId={quizId} handleValidateQuestions={handleValidateQuestions} />
           ) : step === 2 ? (
-            <SelectParticipants />
+            <SelectParticipants quiz={quiz} setQuiz={setQuiz} quizId={quizId} errors={errors.quizParticipants} queErrorCheck={queErrorCheck} />
           ) : step === 3 ? (
             <RuleAndRewards />
           ) : (
