@@ -196,17 +196,21 @@ const CampaignCreate = () => {
                 setIsLoading(false)
             }
         } else {
+            console.log("Working")
             try {
                 setIsLoading(true);
                 const filteredRulesNRewards = Object.fromEntries(
                     Object.entries(rulesNRewards).filter(([key, value]) => value !== "")
-                );
+                )
+                console.log("Filtered", filteredRulesNRewards)
+              
     
                 await api.campaigns.addRulesAndRewards(filteredRulesNRewards, campaignId);
                 toast.success('Campaign Created Successfully!');
                 navigate(`/campaign/published`)
             } catch (error) {
                toast.error(error.message);
+               console.log("Not working")
             } finally {
                 setIsLoading(false);
             }

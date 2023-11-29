@@ -204,7 +204,15 @@ const api = {
   adminUsers: {
     all: () => axios.get('api/v1/accounts/admin/all/').then((r) => r.data),
     userDetails: ({userId}) => axios.get(`api/v1/accounts/admin/user-details/${userId}`).then((r) => r.data),
+    patchUser: ({userId, formData}) => axios.patch(`api/v1/accounts/admin/user-details/${userId}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+      .then((r) => r.data),
     deactivate: (formData) => axios.post(`api/v1/accounts/deactivate-user/`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+      .then((r) => r.data),
+    register: (formData) => axios.post('api/v1/accounts/admin/create-user/', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
       .then((r) => r.data),

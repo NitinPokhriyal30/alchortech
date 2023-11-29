@@ -291,11 +291,11 @@ const RulesnRewards = ({ rulesNRewards, setRulesNRewards }) => {
                                                                 const newWinnerPositions = [...rulesNRewards.winnerPositions];
                                                                 const positionIndex = index;
                                                                 const newPosition = {
-                                                                    position_name: getPositionName(index),
-                                                                    position: positionIndex + 1,
-                                                                    points: Number(event.target.value),
+                                                                    "position_name": getPositionName(index),
+                                                                    "position": positionIndex + 1,
+                                                                    "points": Number(event.target.value),
                                                                 };
-                                                                newWinnerPositions[positionIndex] = (newPosition);
+                                                                newWinnerPositions[positionIndex] = JSON.stringify(newPosition);
                                                                 handleRulesNRewards('winnerPositions', newWinnerPositions);
                                                             }}
                                                         />
