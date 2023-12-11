@@ -56,6 +56,35 @@
   border-radius: 4px;
 }
 
+/* country flag css start */
+
+.PhoneInputCountrySelect{
+  pointer-events: none;
+}
+
+.PhoneInputInput{
+  display: none;
+}
+
+.PhoneInputCountryIcon--border{
+    width: 35px!important;
+    height:25px!important;
+    margin-bottom: 10px;
+    box-shadow: none!important;
+}
+
+.PhoneInputCountryIconImg{
+  display: block;
+  max-width: 35px!important;
+  max-height: 25px!important;
+}
+
+.PhoneInputCountrySelectArrow{
+  display: none!important;
+}
+
+/* country flag css end */
+
 /* Questions */
 
 

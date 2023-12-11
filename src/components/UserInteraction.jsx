@@ -175,7 +175,7 @@ const UserInteraction = ({ filterBy, userId, page, pageSize }) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {interactionData.map((interaction, index) => (
+                  {interactionData.slice(0, 5).map((interaction, index) => (
                     <tr id='table-row'
                       key={index}
                       className={`group ${(hoveredImageIndex === index || (hoveredImageIndex === 0 && index === 0)) ? 'bg-gray-200' : 'hover:bg-gray-200 hover:bg-rounded-lg'

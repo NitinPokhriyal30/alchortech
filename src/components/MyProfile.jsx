@@ -15,6 +15,8 @@ import { useLocation } from 'react-router-dom';
 import UserInteraction from './UserInteraction'
 import { getAvatarAttributes, processAvatarUrl } from '@/utils';
 import Loader from '@/components/Loader';
+import CountryFlag from 'react-country-flag';
+import countryList from 'country-list';
 
 const getChildTransactionsFor = (parentId, allTransactions) => {
   return allTransactions.filter((post) => post.parent_id === parentId);
@@ -91,7 +93,7 @@ export default function MyProfile() {
   };
 
   const transactionsQuery = useQuery(
-    ['transactions', appreciationType], // Added appreciationType as a dependency to trigger the query when it changes
+    ['transactions', appreciationType],
     () => {
       if (appreciationType === 'received') {
         return api.transactions.meAsRecipient(userId, filterBy);
@@ -111,7 +113,6 @@ export default function MyProfile() {
 
 
   useEffect(() => {
-    // Refetch the transactions query when appreciationType changes
     { transactionsQuery.refetch(); }
 
     console.log(transactionsQuery)
@@ -143,20 +144,22 @@ export default function MyProfile() {
       const confirmation = window.confirm('Do you want to change your profile picture?');
       if (confirmation) {
         const formData = new FormData();
-        formData.append('avtar', file);
+        formData.append('image', file);
+        console.log("formData", formData);
+  
         try {
-          const response = await api.auth.changeAvatar(userId, formData);
-          toast.success("Profile Picture changed !")
+          const response = await api.auth.updateAvatar({formData});
+          toast.success("Profile Picture changed !");
           setTimeout(() => {
             window.location.reload();
-          }, 2000)
+          }, 2000);
         } catch (error) {
-          toast.error("Size too large !")
+          toast.error("Error changing profile picture: " + error.message);
         }
       }
     }
-  }
-
+  };
+  
   const getFilterByLabel = (filterBy) => {
     switch (filterBy) {
       case 'all':
@@ -182,6 +185,9 @@ export default function MyProfile() {
     return "..."
   }
 
+  const normalizedCountryName = me?.country_name.toLowerCase();
+  const countryCode = countryList.getCode(normalizedCountryName);
+
   return (
     <div className="drop-shadow-md">
       <div className="flex flex-col md:flex-row gap-3 mt-3">
@@ -206,9 +212,11 @@ export default function MyProfile() {
             <input id='imageInput' type='file' accept='image/*' className='hidden' onChange={handleImageChange} />
           </div>
           <div className='flex-col text-center md:text-left pr-2'>
-            <div className='ml-[78px] md:ml-[-8px]'>
+
+
+            <div className='ml-[90px] md:ml-[-8px]'>
               <div>
-                <img className="" src={Flag} alt="flag" />
+                 {countryCode ? <CountryFlag style={{ width: '2em', height: '2em' }} countryCode={countryCode} svg /> : <div>Flag not found</div>}
               </div>
             </div>
             <p className="font-bold  text-[#292929] text-[25px]">{me.full_name}</p>

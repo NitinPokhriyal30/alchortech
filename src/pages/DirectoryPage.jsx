@@ -28,7 +28,7 @@ export default function DirectoryPage({ ...props }) {
     ['users', query, departmentFilter, locationFilter, page],
     () =>
       api.users.search(
-        new URLSearchParams({ params: query, location: locationFilter, department: departmentFilter, page: page, pagination: 1, page_size: 3 })
+        new URLSearchParams({ params: query, location: locationFilter, department: departmentFilter, page: page, pagination: 1, page_size: 9 })
       )
   )
 

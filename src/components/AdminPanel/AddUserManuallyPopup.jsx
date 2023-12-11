@@ -4,35 +4,28 @@ import { api } from '../../api'
 import Loader from '@/components/Loader'
 import { useQuery } from 'react-query'
 import { getAvatarAttributes, processAvatarUrl } from '@/utils';
+import { toast } from 'react-toastify';
 
 
-const UserDetailsPopUp = ({setShowAddManuallyPopup,setIsEditPopup ,userId}) => {
-  
-  const { data: user } = useQuery(
-    ['user', userId],
-    () => api.adminUsers.userDetails({ userId }),
-    {
-      enabled: !!userId,
-    }
+const AddUserManuallyPopup = ({setShowAddManuallyPopup, setSelectedRowIndex}) => {
+
+  const [formData, setFormData] = React.useState({});
+
+  const { data: departments } = useQuery(
+    ['departments'],
+    () => api.departments()
   );
 
-  const [formData, setFormData] = React.useState({
-    fullName: user?.full_name || '',
-    email: user?.email || '',
-    employeeId: user?.employee_id || '',
-    gender: user?.gender || '',
-    birthDate: user?.birth_date || '',
-    hireDate: user?.hire_date || '',
-    phoneNumber: user?.phone_number || '',
-    department: user?.department || '',
-    employmentType: user?.employment_type || '',
-    title: user?.title || '',
-    manager: user?.manager || '',
-    location: user?.location || '',
-  });
-
-
-
+  const { data: accounts } = useQuery(
+    ['accounts'],
+    () => api.users.profiles()
+  );
+  
+  const { data: countries } = useQuery(
+    ['countries'],
+    () => api.countries()
+  );
+  
   const handleFieldChange = (fieldName, value) => {
     setFormData((prevData) => ({
       ...prevData,
@@ -41,28 +34,27 @@ const UserDetailsPopUp = ({setShowAddManuallyPopup,setIsEditPopup ,userId}) => {
   };
 
   const handleClosePopup = () => {
-    if(!userId) {
       setShowAddManuallyPopup(false)
-    } else {
-      setIsEditPopup(false)
-    }
+      setSelectedRowIndex(null);
   }
 
-  const handleUpdateUser = async () => {
+  const handleAddUser = async () => {
     try {
-      await api.adminUsers.patchUser({userId, formData});
-      toast.success('User Updated!');
-    } catch (error) {
-      console.error('Error updating user:', error);
-    }
+        await api.adminUsers.register({formData});
+        toast.success('User Registered!');
+        setShowAddManuallyPopup(false);
+      } catch (error) {
+        console.error('Error registering user:', error);
+      }
   }
+ 
 
   return (
     <div className="bg-black bg-opacity-20 fixed z-50 inset-0">
         <div className="fixed z-[99] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
           <div className="bg-white shadow border border-[#efefef] rounded-md px-20 py-10 relative w-screen md:max-w-[42rem] max-w-xs">
-           <div className="p-2 cursor-pointer absolute right-0 top-0 rounded-sm hover:bg-translucent hover:text-primary block w-fit ml-auto">
-            <span onClick={() => handleClosePopup()}><IoMdClose /></span>
+           <div onClick={() => handleClosePopup()} className="p-2 cursor-pointer absolute right-0 top-0 rounded-sm hover:bg-translucent hover:text-primary block w-fit ml-auto">
+            <span><IoMdClose /></span>
            </div>
           
            <div><span className='text-[20px] font-bold'>Add User</span></div>
@@ -99,7 +91,7 @@ const UserDetailsPopUp = ({setShowAddManuallyPopup,setIsEditPopup ,userId}) => {
               <div className="flex flex-col w-[50%]">
                 <label className="text-[13px] text-[#464646]">Gender</label>
                 <select
-                  value={formData?.gender}
+                  value={formData ? formData.gender : '' }
                   onChange={(e) => handleFieldChange('gender', e.target.value)}
                   className="w-full border border-[#D1D1D1] bg-transparent px-3 py-2 text-[14px] leading-[16px] text-text-black outline-none"
                 >
@@ -142,13 +134,14 @@ const UserDetailsPopUp = ({setShowAddManuallyPopup,setIsEditPopup ,userId}) => {
               <div className="flex flex-col w-[50%]">
                 <label className="text-[13px] text-[#464646]">Department</label>
                 <select
-                  value={formData?.department}
+                  value={formData.department}
                   onChange={(e) => handleFieldChange('department', e.target.value)}
                   className="w-full border border-[#D1D1D1] bg-transparent px-3 py-2 text-[14px] leading-[16px] text-text-black outline-none"
                 >
-                  <option value="Product Development">Product Development</option>
-                  <option value="Cloud">Cloud</option>
-                  <option value="HR">HR</option>
+                <option value="">Select Department</option>
+                  {departments?.map((department) => (
+                    <option key={department.id} value={department.name}>{department.name}</option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -156,13 +149,13 @@ const UserDetailsPopUp = ({setShowAddManuallyPopup,setIsEditPopup ,userId}) => {
               <div className="flex flex-col w-[50%]">
                 <label className="text-[13px] text-[#464646]">Employee Type</label>
                 <select
-                  value={formData?.employmentType}
-                  onChange={(e) => handleFieldChange('employmentType', e.target.value)}
+                  value={formData?.employeeType}
+                  onChange={(e) => handleFieldChange('employeeType', e.target.value)}
                   className="w-full border border-[#D1D1D1] bg-transparent px-3 py-2 text-[14px] leading-[16px] text-text-black outline-none"
                 >
+                  <option value="">Select Employment Type</option>
                   <option value="full-time">Full-Time</option>
                   <option value="part-time">Part-Time</option>
-                  <option value="contract-based">Contract Based</option>
                 </select>
               </div>
               <div className="flex flex-col w-[50%]">
@@ -172,6 +165,7 @@ const UserDetailsPopUp = ({setShowAddManuallyPopup,setIsEditPopup ,userId}) => {
                   onChange={(e) => handleFieldChange('title', e.target.value)}
                   className="w-full border border-[#D1D1D1] bg-transparent px-3 py-2 text-[14px] leading-[16px] text-text-black outline-none"
                 >
+                  <option value="">Select Designation</option>
                   <option value="Developer">Developer</option>
                   <option value="HR">HR</option>
                   <option value="Sr Developer">Sr Developer</option>
@@ -182,13 +176,14 @@ const UserDetailsPopUp = ({setShowAddManuallyPopup,setIsEditPopup ,userId}) => {
               <div className="flex flex-col w-[50%]">
                 <label className="text-[13px] text-[#464646]">Reports To</label>
                 <select
-                  value={formData?.manager}
+                  value={formData?.manager ? formData.manager.id : ''}
                   onChange={(e) => handleFieldChange('manager', e.target.value)}
                   className="w-full border border-[#D1D1D1] bg-transparent px-3 py-2 text-[14px] leading-[16px] text-text-black outline-none"
                 >
-                  <option value="Vikas Patel">Vikas Patel</option>
-                  <option value="Pulkit Aggarwal">Pulkit Aggarwal</option>
-                  <option value="Sunita Gulia">Sunita Gulia</option>
+                <option value="">Select Reports To</option>
+                {accounts?.map((account) => (
+                  <option key={account.id} value={account.id}>{account.full_name}</option>
+                ))}
                 </select>
               </div>
               <div className="flex flex-col w-[50%]">
@@ -198,25 +193,21 @@ const UserDetailsPopUp = ({setShowAddManuallyPopup,setIsEditPopup ,userId}) => {
                   onChange={(e) => handleFieldChange('location', e.target.value)}
                   className="w-full border border-[#D1D1D1] bg-transparent px-3 py-2 text-[14px] leading-[16px] text-text-black outline-none"
                 >
-                  <option value="India">India</option>
-                  <option value="Japan">Japan</option>
-                  <option value="Australia">Australia</option>
+                {countries?.map((country) => (
+                  <option key={country.name} value={country.name}>{country.name}</option>
+                ))}
                 </select>
               </div>
             </div>
            
            </div>
 
-           <div className='mt-6 mb-6'>
-           {
-            userId ?  
-            <div className='flex gap-6'>
-              <button className='text-[#fff] text-[14px] bg-primary rounded-md px-8 py-1' onClick={() => handleUpdateUser()}>Update</button>
-              <button className='text-[14px] border-primary border text-primary rounded-md px-8 py-1' onClick={() => handleClosePopup()}>Cancel</button>
-            </div> 
-            : 
-            <button className='text-[#fff] text-[14px] bg-primary rounded-md px-8 py-1'>Submit</button>
-           }
+           <div className='mt-6 mb-6'>  
+            <button 
+            onClick={() => handleAddUser()}
+            className='text-[#fff] text-[14px] bg-primary rounded-md px-8 py-1'>
+            Submit
+            </button>
            </div>
 
           </div>
@@ -226,4 +217,4 @@ const UserDetailsPopUp = ({setShowAddManuallyPopup,setIsEditPopup ,userId}) => {
   )
 }
 
-export default UserDetailsPopUp
+export default AddUserManuallyPopup

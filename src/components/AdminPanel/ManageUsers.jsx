@@ -5,8 +5,9 @@ import userPic from '../../assets/images/user-profile/male_avatar.jpg'
 import { BsSearch } from 'react-icons/bs'
 import { IoIosCloseCircle } from "react-icons/io";
 import { Link } from 'react-router-dom';
-import UserDetailsPopUp from './UserDetailsPopUp.jsx'
+import PatchUserDetailsPopUp from './PatchUserDetailsPopUp.jsx'
 import BulkUploadPopUp from './BulkUploadPopUp.jsx';
+import AddUserManuallyPopup from './AddUserManuallyPopup'
 import { api } from '../../api'
 import Loader from '@/components/Loader'
 import { useQuery } from 'react-query'
@@ -25,10 +26,10 @@ const ManageUsers = () => {
   const [isEditPopup, setIsEditPopup] = React.useState(false);
   const [id, setId] = React.useState(null);
 
-  const handleEditClick = (index, userId) => {
+  const handleEditClick = async (index, userId) => {
     setSelectedRowIndex(selectedRowIndex === index ? null : index);
     setId(userId);
-    console.log(id);
+    await refetch();
   };
 
   const handleAddManuallyClick = () => {
@@ -36,7 +37,7 @@ const ManageUsers = () => {
     setShowAddManuallyPopup(true);
   };
 
-  const { data: users, isLoading, isError } = useQuery(
+  const { data: users, isLoading, isError, refetch } = useQuery(
     ['all'], 
     () => api.adminUsers.all()
   );
@@ -67,7 +68,7 @@ const ManageUsers = () => {
           </button>
           {isAddUser && 
             <div className='absolute z-10 drop-shadow-md cursor-pointer w-[132px] flex flex-col bg-[#fff] rounded-md top-full'>
-              <span onClick={handleAddManuallyClick} className='w-full text-center border-b-[1px] py-2 text-[14px] text-[#747474]'>Add Manually</span>
+              <span onClick={() => handleAddManuallyClick()} className='w-full text-center border-b-[1px] py-2 text-[14px] text-[#747474]'>Add Manually</span>
               <span onClick={() => setShowBulkUploadPopup(true)} className='w-full text-center py-2 text-[14px] text-[#747474]'>Bulk Upload</span>
             </div>
           }
@@ -199,8 +200,8 @@ const ManageUsers = () => {
                       className="cursor-pointer hover:text-primary h-6 w-6"
                     />
                     {selectedRowIndex === index && (
-                      <div className='absolute z-10 drop-shadow-lg cursor-pointer w-[70px] bg-[#fff] rounded-sm py-1 text-center right-5'>
-                        <span onClick={() => setIsEditPopup(true)}  className='text-primary'>Edit</span>
+                      <div onClick={() => setIsEditPopup(true)} className='absolute z-10 drop-shadow-lg cursor-pointer w-[70px] bg-[#fff] rounded-sm py-1 text-center right-5'>
+                        <span className='text-primary'>Edit</span>
                       </div>
                     )}
                   </div>
@@ -231,11 +232,11 @@ const ManageUsers = () => {
 
 
       {isEditPopup && (
-        <UserDetailsPopUp setIsEditPopup={setIsEditPopup} userId={id}/>
+        <PatchUserDetailsPopUp setIsEditPopup={setIsEditPopup} userId={id} setSelectedRowIndex={setSelectedRowIndex}/>
       )}
 
       {showAddManuallyPopup && (
-        <UserDetailsPopUp setShowAddManuallyPopup={setShowAddManuallyPopup}/>
+        <AddUserManuallyPopup setShowAddManuallyPopup={setShowAddManuallyPopup} setSelectedRowIndex={setSelectedRowIndex}/>
       )}
 
       {showBulkUploadPopup && (

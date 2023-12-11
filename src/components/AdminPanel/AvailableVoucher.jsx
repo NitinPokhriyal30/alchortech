@@ -1,35 +1,51 @@
 import React from "react";
 import { BsSearch } from "react-icons/bs";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { api } from '../../api'
+import Loader from '@/components/Loader'
+import { useQuery } from 'react-query'
+import goBack from '../../assets/images/admin/chevron-left.svg';
+import goNext from '../../assets/images/admin/chevron-right.svg';
 
 const AvailableVouchers = () => {
   const [selectedRowIndex, setSelectedRowIndex] = React.useState(null);
   const [expandedRow, setExpandedRow] = React.useState(null);
+  const [pageSize, setPageSize] = React.useState(10);
+  const [page, setPage]= React.useState(1);
+
+  const { data: vouchers, isLoading, isError } = useQuery(
+    ['vouchers', pageSize, page], 
+    () => api.adminUsers.availableVouchers({pageSize, page})
+  );
+
+    if (isLoading) {
+      return <div><Loader /></div>;
+    }
+  
+    if (isError) {
+      return <div>Error loading campaigns</div>;
+    }
+
+
+    function formatRedeemDate(redeemDate) {
+      const options = {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true,
+      };
+      const date = new Date(redeemDate)
+      const formattedDate = `${date.toLocaleDateString('en-US', options).replace(',', '')}`;
+      return formattedDate;
+    }
+    
 
   const toggleRow = (index) => {
     setExpandedRow((prev) => (prev === index ? null : index));
   };
-
-  const users = [
-    {
-      id: "E1198",
-      name: "Flipkart",
-      order_id: "7686153",
-      product_id: "7686153",
-      country: "India",
-      number_of_points: 100,
-      redemption_date: "21-01-2023 12:08:01 Am",
-    },
-    {
-      id: "E1198",
-      name: "Amazon",
-      order_id: "7686153",
-      product_id: "7686153",
-      country: "India",
-      number_of_points: 100,
-      redemption_date: "21-01-2023 12:08:01 Am",
-    },
-  ];
 
   const depart = 'Product Development';
   const loc = 'San Diego';
@@ -37,7 +53,7 @@ const AvailableVouchers = () => {
 
   return (
     <div>
-      <div className="h-screen w-screen md:w-full">
+      <div className=" md:w-full mb-16">
         <div className="my-4 flex px-[25px]">
           <div className="font-Lato  text-[20px] font-bold text-[#464646]">
             Available Vouchers
@@ -95,15 +111,12 @@ const AvailableVouchers = () => {
         </div>
 
           </div>
-          <table className="z-0 w-full  min-w-[550px] whitespace-nowrap">
+          <table className="z-0 w-full overflow-y-auto  min-w-[550px] whitespace-nowrap">
             <thead>
               <tr className="child:!text-12px border-b border-[#cecece] bg-primary child:!py-[15.5px]">
                 <th></th>
                 <th className="py-[15.5px] text-left font-Lato text-[12px] font-medium text-[#fff] md:w-4/12">
                   Product Name
-                </th>
-                <th className="py-4 text-left font-Lato text-[12px] font-medium text-[#fff] md:w-2/12">
-                  Order Id
                 </th>
                 <th className="py-4 text-left font-Lato text-[12px] font-medium text-[#fff] md:w-2/12">
                   Product Id
@@ -112,7 +125,7 @@ const AvailableVouchers = () => {
                   Country
                 </th>
                 <th className="py-4 text-left font-Lato text-[12px] font-medium text-[#fff] md:w-2/12">
-                  Quantity
+                  Quantity Limit
                 </th>
                 <th className="py-4 text-left font-Lato text-[12px] font-medium text-[#fff]">
                   Validity
@@ -122,32 +135,29 @@ const AvailableVouchers = () => {
               </tr>
             </thead>
             <tbody>
-              {users.map((user, index) => (
-                <React.Fragment key={user.id}>
+              {vouchers.vouchers.map((voucher, index) => (
+                <React.Fragment key={voucher.id}>
                   <tr
                     onClick={() => toggleRow(index)}
-                    className="group rounded-xl   border-[#cecece] hover:bg-[#ececec]"
+                    className="group rounded-xl cursor-pointer  border-[#cecece] hover:bg-[#ececec]"
                   >
                     <td className="border-b-0 py-3 text-[16px] font-semibold text-[#5486E3] md:pl-[25px]"></td>
-                    <td className="border-b cursor-pointer py-3 text-left">
-                      <span className="text-[16px] font-bold">{user.name}</span>
+                    <td className="border-b  py-3 text-left">
+                      <span className="text-[16px] font-bold">{voucher.name}</span>
                     </td>
                     <td className="border-b py-3 text-left font-Lato text-[12px] font-normal text-[#292929]">
-                      {user.order_id}
+                      {voucher.product_id}
                     </td>
                     <td className="border-b py-3 text-left font-Lato text-[12px] font-normal text-[#292929]">
-                      {user.product_id}
+                      {voucher.countries[0].name}
                     </td>
                     <td className="border-b py-3 text-left font-Lato text-[12px] font-normal text-[#292929]">
-                      {user.country}
+                      {voucher.order_quantity_limit}
                     </td>
                     <td className="border-b py-3 text-left font-Lato text-[12px] font-normal text-[#292929]">
-                      {user.number_of_points}
+                      <p dangerouslySetInnerHTML={{ __html: voucher.expiry_and_validity }} />
                     </td>
-                    <td className="border-b py-3 text-left font-Lato text-[12px] font-normal text-[#292929]">
-                      <span> {user.redemption_date}</span>
-                    </td>
-                    <td className="border-b py-4 pl-[20px] text-left font-Lato text-[12px] font-medium text-primary md:pl-[25px]">
+                    <td className="border-b  py-4 pl-[20px] text-left font-Lato text-[12px] font-medium text-primary md:pl-[25px]">
                       {expandedRow === index ? (
                         <IoIosArrowUp />
                       ) : (
@@ -170,15 +180,7 @@ const AvailableVouchers = () => {
                                   Product Name
                                 </p>
                                 <span className="font-sans text-[16px] text-[#464646]">
-                                  Flipkart
-                                </span>
-                              </div>
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Order Id
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  1235633
+                                  {voucher.name}
                                 </span>
                               </div>
                               <div>
@@ -186,7 +188,7 @@ const AvailableVouchers = () => {
                                   Product Id
                                 </p>
                                 <span className="font-sans text-[16px] text-[#464646]">
-                                  1007
+                                  {voucher.product_id}
                                 </span>
                               </div>
                               <div>
@@ -194,7 +196,7 @@ const AvailableVouchers = () => {
                                   Quantity
                                 </p>
                                 <span className="font-sans text-[16px] text-[#464646]">
-                                  15
+                                  {voucher.order_quantity_limit}
                                 </span>
                               </div>
                               <div>
@@ -202,29 +204,22 @@ const AvailableVouchers = () => {
                                   Categories
                                 </p>
                                 <span className="font-sans text-[16px] text-[#464646]">
-                                  Flipkart
+                                  {voucher.categories[0].name}
                                 </span>
                               </div>
                             </div>
 
-                            <div className="pb-4">
-                              <p className="text-[13px] text-[#ACACAC]">
+                            <div className="pb-4 wrap">
+                              <p className="text-[13px]  text-[#ACACAC]">
                                 Product Description
                               </p>
                               <p className="font-sans whitespace-normal text-[16px] text-[#464646]">
-                                Croma has always been dedicated towards giving
-                                its customers an easy and hassle-free access to
-                                best consumer electronics products. Croma Gift
-                                Card is a perfect gifting option for your loved
-                                ones to choose from categories such as Phones,
-                                Camera, Computers, Entertainment, Home
-                                Appliances, Kitchen Appliances, Gaming and
-                                Accessories
+                                <p dangerouslySetInnerHTML={{ __html: voucher.description }} />
                               </p>
                             </div>
 
                             <span className="text-[14px] text-[#747474]">
-                              Product Details
+                              Currency Details
                             </span>
 
                             <div className="flex gap-[134px] pb-4 items-center">
@@ -233,60 +228,33 @@ const AvailableVouchers = () => {
                                   Country
                                 </p>
                                 <span className="font-sans text-[16px] text-[#464646]">
-                                  IN - India
+                                  {voucher.countries[0].name}
                                 </span>
                               </div>
                               <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Pin
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  1235633
-                                </span>
-                              </div>
+                              <p className="text-[13px] text-[#ACACAC]">
+                                Currency Code
+                              </p>
+                              <span className="font-sans text-[16px] text-[#464646]">
+                                {voucher.currency_code}
+                              </span>
                             </div>
-
-                            <div className="flex gap-[113px] pb-4 items-center">
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Currency Code
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  INR
-                                </span>
-                              </div>
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Currency Name
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  Rupees
-                                </span>
-                              </div>
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Currency Value
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  1007
-                                </span>
-                              </div>
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Amount
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  100
-                                </span>
-                              </div>
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Categories
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  Flipkart
-                                </span>
-                              </div>
+                            <div>
+                              <p className="text-[13px] text-[#ACACAC]">
+                                Currency Name
+                              </p>
+                              <span className="font-sans text-[16px] text-[#464646]">
+                                {voucher.currency_name}
+                              </span>
+                            </div>
+                            <div>
+                              <p className="text-[13px] text-[#ACACAC]">
+                                Currency Fee
+                              </p>
+                              <span className="font-sans text-[16px] text-[#464646]">
+                                {voucher.fee}
+                              </span>
+                            </div>
                             </div>
 
                             <span className="text-[14px] text-[#747474]">
@@ -299,7 +267,7 @@ const AvailableVouchers = () => {
                                   Expiry & Validity
                                 </p>
                                 <span className="font-sans text-[16px] text-[#464646]">
-                                  INR
+                                   <p dangerouslySetInnerHTML={{ __html: voucher.expiry_and_validity }} />
                                 </span>
                               </div>
                               <div>
@@ -307,15 +275,7 @@ const AvailableVouchers = () => {
                                   Last Updated Date
                                 </p>
                                 <span className="font-sans text-[16px] text-[#464646]">
-                                  Rupees
-                                </span>
-                              </div>
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Order Quantity
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  10
+                                  {formatRedeemDate(voucher.last_update_date)}
                                 </span>
                               </div>
                               <div>
@@ -323,34 +283,34 @@ const AvailableVouchers = () => {
                                   Order Quantity Limit
                                 </p>
                                 <span className="font-sans text-[16px] text-[#464646]">
-                                  100
+                                  {voucher.order_quantity_limit}
                                 </span>
                               </div>
                               <div>
                                 <p className="text-[13px] text-[#ACACAC]">
-                                  Product Status
+                                  Value Type
                                 </p>
                                 <span className="font-sans text-[16px] text-[#464646]">
-                                  Flipkart
+                                  {voucher.valueType}
                                 </span>
                               </div>
                             </div>
 
-                            <div className="flex gap-[120px] pb-4 items-center">
-                              <div>
+                            <div className="flex flex-col pb-4">
+                              <div >
                                 <p className="text-[13px] text-[#ACACAC]">
-                                  Voucher Code
+                                  Redemption Instruction
                                 </p>
                                 <span className="font-sans text-[16px] text-[#464646]">
-                                  INR
+                                <p dangerouslySetInnerHTML={{ __html: voucher.redemption_instructions }} />
                                 </span>
                               </div>
                               <div>
                                 <p className="text-[13px] text-[#ACACAC]">
                                   Image Url
                                 </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  Flipkart
+                                <span className="font-sans text-[16px]  text-[#464646]">
+                                  <img className="h-20 w-40" src={voucher.image_url} alt="logo"/>
                                 </span>
                               </div>
                             </div>
@@ -363,6 +323,19 @@ const AvailableVouchers = () => {
               ))}
             </tbody>
           </table>
+          <div className='w-full py-6 px-14 flex items-center gap-10 justify-end font-semibold text-[12px] text-[#747474]'>
+          <div className=''>
+            <span>Rows per Page: </span>
+            <span>{pageSize}</span>
+          </div>
+          <div>
+            <span>{page}-{pageSize} of {vouchers.count}</span>
+          </div>
+          <div className='flex'>
+            <span className='cursor-pointer'><img onClick={() => setPage(Math.max(1, page - 1))}  src={goBack}/></span>
+            <span className='cursor-pointer'><img onClick={() => setPage(Math.min(Math.ceil(vouchers.count / pageSize), page + 1))} src={goNext}/></span>
+          </div>
+        </div>
         </div>
       </div>
     </div>

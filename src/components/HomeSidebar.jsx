@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import User from "../assets/images/user-profile/user.png";
+import React from "react";
 import HighLogo from "../assets/images/navbar/high5mobile.png";
 import CampaignIcon from "@/assets/svg/home-sidebar/Group 672";
 import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
@@ -372,7 +371,7 @@ export default function HomeSidebar({}) {
 
           {/*--------------- FAQ Section  ----------------*/}
 
-          <div className="mt-auto pb-[22px] pl-[33px] pr-[30px]">
+          <div className="flex justify-between mt-auto pb-[22px] pl-[33px] pr-[30px]">
             <MenuLink
               to="/faqs"
               className="flex items-center justify-between gap-3"
@@ -383,20 +382,18 @@ export default function HomeSidebar({}) {
                 </span>{" "}
                 FAQs
               </p>
-              <p className="flex items-center gap-1  text-[16px] font-light leading-[19px] text-white">
-                <img src={Icon2} alt="" /> Feedback
-              </p>
             </MenuLink>
+            <MenuLink
+            to="/feedback"
+          >
+          <p className="flex items-center gap-1  text-[16px] font-light leading-[19px] text-white">
+            <img src={Icon2} alt="" /> Feedback
+          </p>
+          </MenuLink>
           </div>
         </div>
 
-        <p className="my-[10px] text-center text-10px lg:my-[10px]">
-          A product of Alcor | All rights reserved 2023
-          <br />
-          <Link to="#" className={COLORS.footer.terms}>
-            Terms & Conditions | Privacy Policy
-          </Link>
-        </p>
+       
       </div>
     </>
   );

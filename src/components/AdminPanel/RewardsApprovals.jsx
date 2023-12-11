@@ -1,47 +1,54 @@
 import React from "react";
-import { HiDotsHorizontal } from "react-icons/hi";
 import { BsSearch } from "react-icons/bs";
-import { IoIosCloseCircle, IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-import { Link } from "react-router-dom";
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { api } from '../../api'
+import Loader from '@/components/Loader'
+import { useQuery } from 'react-query'
+import {toast} from 'react-toastify'
+import goBack from '../../assets/images/admin/chevron-left.svg';
+import goNext from '../../assets/images/admin/chevron-right.svg';
 
 const AvailableVouchers = () => {
-  const [selectedRowIndex, setSelectedRowIndex] = React.useState(null);
-  const [expandedRow, setExpandedRow] = React.useState(null);
   const [tab, setTab] = React.useState("pending");
+  const [pageSize, setPageSize] = React.useState(10);
+  const [page, setPage]= React.useState(1);
+
+
+  const { data: approvals, isLoading, isError } = useQuery(
+    ['approvals', tab], 
+    () => api.adminUsers.approvals({tab})
+  );
+
+  if (isLoading) {
+    return <div><Loader /></div>;
+  }
+
+  if (isError) {
+    return <div>Error loading approvals</div>;
+  }
 
   const toggleRow = (index) => {
     setExpandedRow((prev) => (prev === index ? null : index));
   };
 
-  const users = [
-    {
-      id: "E1198",
-      user_name: "Kinjal Shaha",
-      department: "Finance",
-      product_name: "Flipkart",
-      order_id: "7686153",
-      country: "Usa-United States of America",
-      quantity: 1,
-      validity: "21-01-2023 12:08:01 Am",
-    },
-    {
-      id: "E1198",
-      user_name: "Kinjal Shaha",
-      department: "Finance",
-      product_name: "Flipkart",
-      order_id: "7686153",
-      country: "Usa-United States of America",
-      quantity: 1,
-      validity: "21-01-2023 12:08:01 Am",
-    },
-  ];
-
   const depart = "Product Development";
   const loc = "San Diego";
 
+  const handleApproveRequest = async (id) => {
+    const formData = new FormData();
+    formData.append('requestId', id)
+    try {
+      await api.adminUsers.approveRewards({formData});
+      toast.success('Request Approved!');
+    } catch (error) {
+      console.error('Error approving request:', error);
+    }
+  }
+
+
   return (
     <div>
-      <div className="h-screen w-screen md:w-full">
+      <div className="md:w-full mb-16">
         <div className="my-4 flex px-[25px]">
           <div className="font-Lato  text-[20px] font-bold text-[#464646]">
             Approvals
@@ -88,7 +95,11 @@ const AvailableVouchers = () => {
           <div className="h-[1px] w-full bg-[#cecece]"></div>
         </div>
 
-        <div className="mx-[25px]  mt-2 flex flex-col overflow-auto rounded-lg bg-white drop-shadow-md">
+        {approvals.length < 1 ? 
+         <div className="bg-white flex py-4 justify-center drop-shadow-md rounded-lg mt-2 mx-6">
+           <span className="text-red-500 font-bold">No Record Available!</span>
+         </div> :
+         <div className="mx-[25px]  mt-2 flex flex-col overflow-auto rounded-lg bg-white drop-shadow-md">
           <div className="flex px-6 py-4">
             <div className=" grid w-[90%] grid-cols-1 gap-2 p-2 sm:grid-cols-2 md:grid-cols-5">
               <div className="flex items-center rounded border border-400 bg-[#fff] px-3 text-[14px] text-[#acacac] outline-1 outline-primary-400 focus-within:outline">
@@ -148,33 +159,28 @@ const AvailableVouchers = () => {
               <tr className="child:!text-12px border-b border-[#cecece] bg-primary child:!py-[15.5px]">
                 <th></th>
                 <th className="py-[15.5px] text-left font-Lato text-[12px] font-medium text-[#fff] md:w-3/12">
-                  User Name
+                  Voucher Name
                 </th>
                 <th className="py-4 text-left font-Lato text-[12px] font-medium text-[#fff] md:w-2/12">
-                  Department
-                </th>
-                <th className="py-4 text-left font-Lato text-[12px] font-medium text-[#fff] md:w-2/12">
-                  Product Name
-                </th>
-                <th className="py-4 text-left font-Lato text-[12px] font-medium text-[#fff] md:w-1/12">
-                  Order Id
-                </th>
-                <th className="py-4 text-left font-Lato text-[12px] font-medium text-[#fff] md:w-2/12">
-                  Country
-                </th>
-                <th className="py-4 text-left font-Lato text-[12px] font-medium text-[#fff] md:w-1/12">
                   Quantity
                 </th>
                 <th className="py-4 text-left font-Lato text-[12px] font-medium text-[#fff] md:w-2/12">
-                  Validity
+                  Request By
+                </th>
+                <th className="py-4 text-left font-Lato text-[12px] font-medium text-[#fff] md:w-1/12">
+                  Contact
+                </th>
+                <th className="py-4 text-left font-Lato text-[12px] font-medium text-[#fff] md:w-1/12">
+                  Status
                 </th>
                 <th></th>
                 <th></th>
+                
               </tr>
             </thead>
             <tbody>
-              {users.map((user, index) => (
-                <React.Fragment key={user.id}>
+              {approvals.map((approval, index) => (
+                <React.Fragment key={approval.id}>
                   <tr
                     onClick={() => toggleRow(index)}
                     className="group rounded-xl   border-[#cecece] hover:bg-[#ececec]"
@@ -182,244 +188,54 @@ const AvailableVouchers = () => {
                     <td className="border-b-0 py-3 text-[16px] font-semibold text-[#5486E3] md:pl-[25px]"></td>
                     <td className="cursor-pointer border-b py-3 text-left">
                       <span className="text-[16px] font-bold">
-                        {user.user_name}
+                        {approval.voucher_name}
                       </span>
                     </td>
                     <td className="border-b py-3 text-left font-Lato text-[12px] font-normal text-[#292929]">
-                      {user.department}
+                      {approval.quantity}
                     </td>
                     <td className="border-b py-3 text-left font-Lato text-[12px] font-normal text-[#292929]">
-                      {user.product_name}
+                      {approval.email}
                     </td>
                     <td className="border-b py-3 text-left font-Lato text-[12px] font-normal text-[#292929]">
-                      {user.order_id}
+                      {approval.contact}
                     </td>
                     <td className="border-b py-3 text-left font-Lato text-[12px] font-normal text-[#292929]">
-                      {user.country}
-                    </td>
-                    <td className="border-b py-3 text-left font-Lato text-[12px] font-normal text-[#292929]">
-                      <span> {user.quantity}</span>
-                    </td>
-                    <td className="border-b py-3 text-left font-Lato text-[12px] font-normal text-[#292929]">
-                      <span> {user.validity}</span>
-                    </td>
+                      {approval.approved}
+                    </td>  
                     <td className="border-b py-4 pl-[20px] text-left font-Lato text-[12px] font-medium text-primary md:pl-[25px]">
-                      {expandedRow === index ? (
-                        <IoIosArrowUp />
-                      ) : (
-                        <IoIosArrowDown />
-                      )}
+                       <div className="flex gap-3">
+                          <button 
+                            className="border rounded-md border-primary py-1 px-3"
+                            onClick={() => handleApproveRequest(approval.id)}
+                            >
+                            Approve
+                          </button>
+                          <button className="border rounded-md text-gray-500  border-gray-500 py-1 px-3">Reject</button>
+                       </div>
                     </td>
                     <td className="border-b-0 py-4 pl-[20px] text-left font-Lato text-[12px] font-medium text-primary md:pl-[25px]"></td>
                   </tr>
-                  {expandedRow === index && (
-                    <tr className="expanded-row">
-                      <td colSpan="10">
-                        <div className="border-b border-[#cecece] px-4 pb-4 drop-shadow-lg">
-                          <div className="rounded-md bg-[#EDEDED] p-4">
-                            <span className="text-[14px] text-[#747474]">
-                              Product Details
-                            </span>
-                            <div className="flex items-center gap-[115px] pb-4">
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Product Name
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  Flipkart
-                                </span>
-                              </div>
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Order Id
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  1235633
-                                </span>
-                              </div>
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Product Id
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  1007
-                                </span>
-                              </div>
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Quantity
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  15
-                                </span>
-                              </div>
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Categories
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  Flipkart
-                                </span>
-                              </div>
-                            </div>
-
-                            <div className="pb-4">
-                              <p className="text-[13px] text-[#ACACAC]">
-                                Product Description
-                              </p>
-                              <p className="whitespace-normal font-sans text-[16px] text-[#464646]">
-                                Croma has always been dedicated towards giving
-                                its customers an easy and hassle-free access to
-                                best consumer electronics products. Croma Gift
-                                Card is a perfect gifting option for your loved
-                                ones to choose from categories such as Phones,
-                                Camera, Computers, Entertainment, Home
-                                Appliances, Kitchen Appliances, Gaming and
-                                Accessories
-                              </p>
-                            </div>
-
-                            <span className="text-[14px] text-[#747474]">
-                              Product Details
-                            </span>
-
-                            <div className="flex items-center gap-[134px] pb-4">
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Country
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  IN - India
-                                </span>
-                              </div>
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Pin
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  1235633
-                                </span>
-                              </div>
-                            </div>
-
-                            <div className="flex items-center gap-[113px] pb-4">
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Currency Code
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  INR
-                                </span>
-                              </div>
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Currency Name
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  Rupees
-                                </span>
-                              </div>
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Currency Value
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  1007
-                                </span>
-                              </div>
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Amount
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  100
-                                </span>
-                              </div>
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Categories
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  Flipkart
-                                </span>
-                              </div>
-                            </div>
-
-                            <span className="text-[14px] text-[#747474]">
-                              Product Validity & Order Details
-                            </span>
-
-                            <div className="flex items-center gap-[106px] pb-4">
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Expiry & Validity
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  INR
-                                </span>
-                              </div>
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Last Updated Date
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  Rupees
-                                </span>
-                              </div>
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Order Quantity
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  10
-                                </span>
-                              </div>
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Order Quantity Limit
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  100
-                                </span>
-                              </div>
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Product Status
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  Flipkart
-                                </span>
-                              </div>
-                            </div>
-
-                            <div className="flex items-center gap-[120px] pb-4">
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Voucher Code
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  INR
-                                </span>
-                              </div>
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Image Url
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  Flipkart
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                  )}
+                 
                 </React.Fragment>
               ))}
             </tbody>
           </table>
+          <div className='w-full py-6 px-14 flex items-center gap-10 justify-end font-semibold text-[12px] text-[#747474]'>
+          <div className=''>
+            <span>Rows per Page: </span>
+            <span>{pageSize}</span>
+          </div>
+          <div>
+            <span>{page} of {approvals.total_pages}</span>
+          </div>
+          <div className='flex'>
+            <span className='cursor-pointer'><img onClick={() => setPage(Math.max(1, page - 1))}  src={goBack}/></span>
+            <span className='cursor-pointer'><img onClick={() => setPage(Math.min(Math.ceil(approvals.count / pageSize), page + 1))} src={goNext}/></span>
+          </div>
         </div>
+        </div>
+        }
       </div>
     </div>
   );

@@ -8,15 +8,19 @@ import './campaigns.css';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import dayjs from 'dayjs'
 import { RiInformationLine } from 'react-icons/ri'
+import { RxCross1 } from 'react-icons/rx'
 
 const COLORS = {
     gray: 'text-[#A5A5A5]',
 }
 
-const CampaignDetails = ({ campaignDetails, setCampaignDetails, errors, clearError }) => {
+const CampaignDetails = ({ campaignDetails, setCampaignDetails,coverImageUrl, bannerImageUrl, attachedDocumentUrl, errors, clearError }) => {
     const today = dayjs()
     const todayStartOfTheDay = today.startOf('day')
     const [isEndDate, setIsEndDate] = useState(false);
+    const [coverImageDataUrl, setCoverImageDataUrl] = useState(campaignDetails.coverImage);
+    const [bannerImageDataUrl, setBannerImageDataUrl] = useState('');
+    const [attachedDocumentImageDataUrl, setAttachedDocumentImageDataUrl] = useState('');
       
     const getError = (field) => errors?.[field];
 
@@ -32,16 +36,64 @@ const CampaignDetails = ({ campaignDetails, setCampaignDetails, errors, clearErr
     }
 
     const handleCoverImageChange = (event) => {
-        handleFileInputChange('coverImage', event.target.files[0]);
+        const file = event.target.files[0];
+        handleFileInputChange('coverImage', file);
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                setCoverImageDataUrl(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
     };
-
+    
     const handleBannerImageChange = (event) => {
-        handleFileInputChange('bannerImage', event.target.files[0]);
+        const file = event.target.files[0];
+        handleFileInputChange('bannerImage', file);
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                setBannerImageDataUrl(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+    
+    const handleAttachedDocumentChange = (event) => {
+        const file = event.target.files[0];
+        handleFileInputChange('attachedDocuments', file);
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                setAttachedDocumentImageDataUrl(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
     };
 
-    const handleAttachedDocumentChange = (event) => {
-        handleFileInputChange('attachedDocuments', event.target.files[0]);
-    };
+    const removeCoverImage = () => {
+        setCampaignDetails((prevCampaignDetails) => ({
+          ...prevCampaignDetails,
+          coverImage: null, 
+        }));
+        setCoverImageDataUrl('');
+      };
+    
+      const removeBannerImage = () => {
+        setCampaignDetails((prevCampaignDetails) => ({
+          ...prevCampaignDetails,
+          bannerImage: null, 
+        }));
+        setBannerImageDataUrl(''); 
+      };
+    
+      const removeAttachedDocument = () => {
+        setCampaignDetails((prevCampaignDetails) => ({
+          ...prevCampaignDetails,
+          attachedDocuments: null,
+        }));
+        setAttachedDocumentImageDataUrl(''); 
+      };
 
     const handleFileInputChange = (property, file) => {
         const updatedErrors = { ...errors };
@@ -106,8 +158,14 @@ const CampaignDetails = ({ campaignDetails, setCampaignDetails, errors, clearErr
 
 
   useEffect(() => {
-   
-  }, [])
+        setCoverImageDataUrl(coverImageUrl);
+        setBannerImageDataUrl(bannerImageUrl);
+        setAttachedDocumentImageDataUrl(attachedDocumentUrl);
+        console.log("campaignDetails.startDate:", campaignDetails.startDate);
+        if(campaignDetails.endDate) {
+            setIsEndDate(true)
+        }
+  }, [coverImageUrl, bannerImageUrl, attachedDocumentUrl])
 
 
     return (
@@ -158,24 +216,31 @@ const CampaignDetails = ({ campaignDetails, setCampaignDetails, errors, clearErr
                 {/* col 2 */}
                 <div>
                     <div className={'rounded ring-primary focus-within:ring-1 ' + COLORS.gray} onDrop={(e) => handleDrop(e, 'coverImage')} onDragOver={handleDragOver}>
-                        <label htmlFor="coverImageInput" className="cursor-pointer">
-                            <div className="flex flex-col justify-center items-center border-dashed border-2 border-gray-300 rounded-md py-28 ">
-                                <input
-                                    id="coverImageInput"
-                                    type="file"
-                                    className="hidden"
-                                    accept="image/*"
-                                    onChange={handleCoverImageChange}
-                                />
-                                <label htmlFor="coverImageInput" className="bg-[#5486E3] py-2 px-4 text-white rounded-md cursor-pointer">
+                    {coverImageDataUrl ? 
+                        <div className='flex items-center gap-6'>
+                            <img src={coverImageDataUrl} alt="Cover Image" className="mt-2 w-[60%] h-60 object-cover" />
+                            <RxCross1 className='text-black cursor-pointer' onClick={removeCoverImage}/>
+                        </div>
+                        :
+                     <label htmlFor="coverImageInput" className="cursor-pointer">
+                         
+                        <div className="flex flex-col justify-center items-center border-dashed border-2 border-gray-300 rounded-md py-28 ">
+                            <input
+                                id="coverImageInput"
+                                type="file"
+                                className="hidden"
+                                accept="image/*"
+                                onChange={handleCoverImageChange}
+                            />
+                            <label htmlFor="coverImageInput" className="bg-[#5486E3] py-2 px-4 text-white rounded-md cursor-pointer">
                                 Choose File
-                                </label>
-                                <span className="text-gray-500">
-                                  {campaignDetails.coverImage.name || 'or drop your file here'}  
-                                </span>
-                                
-                            </div>
+                            </label>
+                            <span className="text-gray-500">
+                                   or drop your file here
+                            </span>
+                            </div>                        
                         </label>
+                    }
                     </div>
                     {getError('coverImage') && (
                         <p className="text-sm text-red-500">
@@ -200,6 +265,11 @@ const CampaignDetails = ({ campaignDetails, setCampaignDetails, errors, clearErr
                 <div>
                     <div
                         className={'rounded ring-primary focus-within:ring-1 ' + COLORS.gray} onDrop={(e) => handleDrop(e, 'bannerImage')} onDragOver={handleDragOver}>
+                        {bannerImageDataUrl ? 
+                            <div className='flex items-center gap-6'>
+                                 <img src={bannerImageDataUrl} alt="Banner Image" className="mt-2 w-[60%] h-60 object-cover" />
+                                 <RxCross1 className='text-black cursor-pointer' onClick={removeBannerImage}/>
+                            </div> : 
                         <label htmlFor="bannerImageInput" className="cursor-pointer">
                             <div className="flex flex-col justify-center items-center border-dashed border-2 border-gray-300 rounded-md py-10">
                                 <input
@@ -213,10 +283,11 @@ const CampaignDetails = ({ campaignDetails, setCampaignDetails, errors, clearErr
                                     Choose File
                                 </label>
                                 <span className="text-gray-500">
-                                    {campaignDetails.bannerImage.name || 'or drop your file here'}  
+                                   or drop your file here
                                 </span>
                             </div>
                         </label>
+                        }
                     </div>
                     {getError('bannerImage') && (
                         <p className="text-sm text-red-500">
@@ -283,11 +354,17 @@ const CampaignDetails = ({ campaignDetails, setCampaignDetails, errors, clearErr
                 <div>
                     <div className="w-fit flex items-center gap-2 border border-[#00BC9F] p-1 bg-[#F2FDEF]">
                         <span className="pl-4 text-18px font-bold min-w-[70px]">Start</span>
+                        
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DatePicker label="Date" defaultValue={today} disablePast onChange={(date) => handleStartDateAndTimeChange('start', date)}  />
+                        <DatePicker 
+                            label="Date"  
+                            defaultValue={campaignDetails.startDate? dayjs(campaignDetails.startDate, { format: 'YYYY-MM-DD' }) : today} 
+                            disablePast 
+                            onChange={(date) => handleStartDateAndTimeChange('start', date)} 
+                         />
                         </LocalizationProvider>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DesktopTimePicker label="Time" defaultValue={todayStartOfTheDay} onChange={(time) => handleStartDateAndTimeChange('start', time)} />
+                            <DesktopTimePicker label="Time" defaultValue={campaignDetails.startDate ? dayjs(campaignDetails.startDate, { format: 'YYYY-MM-DD' }) : todayStartOfTheDay} onChange={(time) => handleStartDateAndTimeChange('start', time)} />
                         </LocalizationProvider>
                     </div>
                     {getError('startDate') && (
@@ -311,10 +388,10 @@ const CampaignDetails = ({ campaignDetails, setCampaignDetails, errors, clearErr
                         <div className="w-fit flex items-center gap-2 border border-[#00BC9F] p-1 bg-[#F2FDEF] mt-6">
                             <span className="pl-4 text-18px font-bold min-w-[70px]">End</span>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DatePicker label="Date" defaultValue={today} disablePast onChange={(date) => handleEndDateAndTimeChange('end', date)} />
+                                <DatePicker label="Date" defaultValue={campaignDetails.endDate ? dayjs(campaignDetails.endDate, { format: 'YYYY-MM-DD' }) : today} disablePast onChange={(date) => handleEndDateAndTimeChange('end', date)} />
                             </LocalizationProvider>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DesktopTimePicker label="Time"  defaultValue={todayStartOfTheDay} onChange={(time) => handleEndDateAndTimeChange('end', time)}/>
+                                <DesktopTimePicker label="Time"  defaultValue={campaignDetails.endDate ? dayjs(campaignDetails.endDate, { format: 'YYYY-MM-DD' }) : todayStartOfTheDay} onChange={(time) => handleEndDateAndTimeChange('end', time)}/>
                             </LocalizationProvider>
                         </div>
                     }
@@ -353,7 +430,7 @@ const CampaignDetails = ({ campaignDetails, setCampaignDetails, errors, clearErr
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                     <DatePicker 
                                     label="Date" 
-                                    defaultValue={today}
+                                    defaultValue={campaignDetails.eventDate ? dayjs(campaignDetails.eventDate, { format: 'YYYY-MM-DD' }) : today}
                                     disablePast
                                     onChange={(date) => handleEventDateTimeChange(date)}
                                     />
@@ -361,7 +438,7 @@ const CampaignDetails = ({ campaignDetails, setCampaignDetails, errors, clearErr
                             </div>
                             <div>
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <DesktopTimePicker label="Time"  defaultValue={todayStartOfTheDay} onChange={(time) => handleEventDateTimeChange(time)}/>
+                                    <DesktopTimePicker label="Time"  defaultValue={campaignDetails.eventDate ? dayjs(campaignDetails.eventDate, { format: 'YYYY-MM-DD' }) : todayStartOfTheDay} onChange={(time) => handleEventDateTimeChange(time)}/>
                                 </LocalizationProvider>
                             </div>
                         </div>
@@ -426,7 +503,12 @@ const CampaignDetails = ({ campaignDetails, setCampaignDetails, errors, clearErr
                 {/* col 2 */}
                 <div>
                     <div className={'rounded ring-primary focus-within:ring-1 ' + COLORS.gray} onDrop={(e) => handleDrop(e, 'attachedDocuments')} onDragOver={handleDragOver}>
-                        <label htmlFor="attachedDocument" className="cursor-pointer">
+                    {attachedDocumentImageDataUrl ? 
+                        <div className='flex items-center gap-6'>
+                          <img src={attachedDocumentImageDataUrl} alt="Attached Document" className="mt-2 w-[60%] h-60 object-cover" />
+                          <RxCross1 className='text-black cursor-pointer' onClick={removeAttachedDocument}/>
+                        </div> :
+                       <label htmlFor="attachedDocument" className="cursor-pointer"> 
                         <div className="flex flex-col justify-center items-center border-dashed border-2 border-gray-300 rounded-md py-10">
                         <input
                             id="attachedDocument"
@@ -439,10 +521,11 @@ const CampaignDetails = ({ campaignDetails, setCampaignDetails, errors, clearErr
                             Choose File
                         </label>
                         <span className="text-gray-500">
-                            {campaignDetails.attachedDocuments || 'No file chosen'}  
+                           or drop your file here
                         </span>
                         </div>
                     </label>
+                    }
                     </div>
                 </div>
             </div>

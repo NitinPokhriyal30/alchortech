@@ -61,6 +61,18 @@ export default function RecentCampaignWidget({ ...props }) {
           </div>
         </div>
       </div>
+      <h1 className="my-[10px] text-center text-[10px] lg:my-[10px]">
+        <Link to="#" className={COLORS.footer.terms}>
+          Terms & Conditions | Privacy Policy
+        </Link>
+      </h1>
     </div>
   )
 }
+
+const COLORS = {
+  footer: {
+    terms: "text-[#0143BC]",
+
+  },
+};

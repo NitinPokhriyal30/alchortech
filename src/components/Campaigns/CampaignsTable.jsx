@@ -20,16 +20,34 @@ const SORT_OPTIONS = [
 ]
 
 const CampaignTable = () => {
-  const [sortBy, setSortBy] = useState('all')
+  const [sortBy, setSortBy] = useState({
+    label: "All"
+  })
   const navigate = useNavigate()
   const [tab, setTab] = React.useState('draft')
   const [page, setPage] = React.useState(1)
   const [dateRange, setDateRange] = useState('');
+  const [dropdownVisible, setDropdownVisible] = useState(false);
 
   const { data: campaigns, isLoading, isError } = useQuery(
     ['campaigns', page, tab, dateRange], 
     () => api.campaigns.all(page, tab, dateRange)
   );
+
+  const { data: currentUser } = useQuery(
+    ['currentUser'], 
+    () => api.users.currentUser()
+  );
+
+
+  useEffect(() => {
+    if (currentUser?.role === 'admin') {
+      setTab('draft');
+    } else {
+      setTab('running');
+    }
+  }, [currentUser]);
+
 
   if (isLoading) {
     return <div><Loader /></div>;
@@ -80,22 +98,28 @@ const CampaignTable = () => {
     {console.log("campaigns Loading", campaigns)}
       <div className="mt-4 flex justify-between px-[25px]">
         <div className="font-Lato text-[20px] font-bold text-[#464646]">Campaigns</div>
+        {currentUser?.role === 'admin' && (
         <div className="rounded-md bg-[#5486E3]  font-Lato text-white">
           <Link to="/campaign/create" className="flex items-center px-5 py-2 gap-1">
             <span>{<AiOutlinePlus />}</span>
             Create Campaign
           </Link>
         </div>
+        )}
       </div>
 
       <div className="mt-4 flex flex-col md:flex-row flex-wrap gap-y-4 px-[25px] md:justify-start">
         <div className="flex flex-1 justify-around md:justify-start md:gap-6">
-          <button className={'flex items-center gap-2 border-b-2 border-b-transparent text-[14px] text-[#8D8D8D] ' + (tab === 'draft' && '!border-primary  text-primary')} onClick={() => tabHandler('draft')}>
-            <span>{<BsPencilFill />}</span>Draft
-          </button>
-          <button className={'flex items-center gap-2 border-b-2 border-b-transparent text-[14px] text-[#8D8D8D] ' + (tab === 'scheduled' && '!border-primary  text-primary')} onClick={() => tabHandler('scheduled')}>
-            <span>{<AiFillClockCircle />}</span> Scheduled
-          </button>
+         {currentUser?.role === 'admin' && (
+            <>
+              <button className={`flex items-center gap-2 border-b-2 border-b-transparent text-[14px] text-[#8D8D8D] ${tab === 'draft' && '!border-primary  text-primary'}`} onClick={() => tabHandler('draft')}>
+                <span>{<BsPencilFill />}</span>Draft
+              </button>
+              <button className={`flex items-center gap-2 border-b-2 border-b-transparent text-[14px] text-[#8D8D8D] ${tab === 'scheduled' && '!border-primary  text-primary'}`} onClick={() => tabHandler('scheduled')}>
+                <span>{<AiFillClockCircle />}</span> Scheduled
+              </button>
+            </>
+          )}
           <button className={'flex items-center gap-2 border-b-2 border-b-transparent text-[14px] text-[#8D8D8D] ' + (tab === 'running' && '!border-primary  text-primary')} onClick={() => tabHandler('running')}>
             <span>{<AiFillRightCircle />}</span>Running
           </button>
@@ -104,24 +128,31 @@ const CampaignTable = () => {
           </button>
         </div>
         <div className="flex justify-center">
-          <div className="relative flex items-center text-sm text-[#7B7B7B]">
-            Sort By:
-            <button 
-            className="peer flex items-center gap-1 pl-1 font-Lato text-sm font-semibold">
-              {sortBy.label}
-              <span>
-                <AiFillCaretDown />
-              </span>
-            </button>
-            <div className="absolute right-[1px] top-full z-10 hidden w-36 flex-col rounded-lg bg-white py-2 text-end drop-shadow-[0px_2px_6px_#44444F1A]  hover:flex peer-hover:flex child:cursor-pointer">
+        <div  onMouseEnter={() => setDropdownVisible(true)}
+        onMouseLeave={() => setDropdownVisible(false)} 
+        className="relative flex items-center text-sm text-[#7B7B7B]">
+          <button 
+            className="peer flex items-center gap-1 pl-1 font-Lato text-sm font-semibold hover:cursor-pointer"
+           
+          >
+            {`Sort By: ${sortBy.label}`}
+            <span>
+              <AiFillCaretDown />
+            </span>
+          </button>
+          {dropdownVisible && (
+            <div className="absolute cursor-pointer right-[1px] top-full z-20  w-36 flex-col rounded-lg bg-white  text-end drop-shadow-[0px_2px_6px_#44444F1A]">
               {SORT_OPTIONS?.map((option) => (
-                <p key={option.value} className=" px-4 py-1 font-Lato text-sm hover:bg-translucent-black"  onClick={() => handleSortByChange(option)}>
+                <p key={option.value}
+                 className="px-4 py-1 font-Lato text-sm hover:bg-translucent-black" onClick={() => handleSortByChange(option)}>
                   {option.label}
                 </p>
               ))}
             </div>
-          </div>
+          )}
         </div>
+      </div>
+      
       </div>
 
       <div className="mb-1 px-[25px]">
@@ -137,6 +168,9 @@ const CampaignTable = () => {
               <th className="md:w-1/5 text-left py-4 font-Lato text-[16px] font-medium text-[#292929]">Start date</th>
               <th className="md:w-1/5 text-left py-4 font-Lato text-[16px] font-medium text-[#292929]">End date</th>
               <th className="md:w-1/6 text-left py-4 font-Lato text-[16px] font-medium text-[#292929]">Type</th>
+              { (tab === 'running' || tab === 'closed') &&
+                <th className="md:w-1/6 text-left py-4 font-Lato text-[16px] font-medium text-[#292929]">Engagements</th>
+              }
               <th className="md:w-1/1 py-4 text-right font-Lato text-[16px] font-medium text-[#292929]"></th>
               <th className="py-4 text-right font-Lato text-[16px] font-medium text-[#292929] pl-[20px] md:pl-[45px]"></th>
             </tr>
@@ -158,6 +192,11 @@ const CampaignTable = () => {
                 <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">
                   {campaign.type}
                 </td>
+                { (tab === 'running' || tab === 'closed') &&
+                  <td 
+                  onClick={() => navigate((`/campaign/engagements/${campaign.id}`))}
+                  className="md:w-1/6 text-center cursor-pointer py-4 font-Lato text-[16px] font-black text-[#292929]">12</td>
+                }
                 <td className="py-3 text-left md:opacity-0 transition-opacity duration-200 group-hover:opacity-100 md:px-[45px]">
                   {campaign.is_owner && 
                     <Link to={`/campaign/create?campaignId=${campaign.id}`}>

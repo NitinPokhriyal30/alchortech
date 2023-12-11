@@ -57,7 +57,7 @@ const CampaignPreview = () => {
         <div>
             <div className='flex flex-col md:flex-row gap-3 mb-4'>
                 <div className='w-[72%] ml-2 flex flex-col bg-white p-3 mt-3 rounded-lg drop-shadow-md'>
-                    <Link to='/campaign/create' className='flex items-center gap-2 ml-2 text-[12px] text-[#A5A5A5]'>
+                    <Link to='/campaigns' className='flex items-center gap-2 ml-2 text-[12px] text-[#A5A5A5]'>
                         <p><img src={goBack} /></p>
                         Go Back
                     </Link>

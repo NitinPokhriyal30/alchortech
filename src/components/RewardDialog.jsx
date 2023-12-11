@@ -55,7 +55,7 @@ const RewardPopup = ({ voucher, onClose }) => {
               <div>
                 <p className=" text-md font-bold text-[#7B7B7B]">{voucher?.name}</p>
               </div>
-              <div className="flex gap-4 flex-wrap mt-7">
+              <div className="flex gap-4 flex-wrap my-7">
               {voucher.point_mappings.map((mapping) => (
                 <div
                   key={mapping.denomination}
@@ -69,33 +69,7 @@ const RewardPopup = ({ voucher, onClose }) => {
                 </div>
               ))}
               </div>
-              <div className="flex items-center mt-3">
-                <input
-                  id="link-checkbox"
-                  type="checkbox"
-                  value=""
-                  checked={sendToFriend}
-                  onChange={() => setSendToFriend(!sendToFriend)}
-                  className="w-4 h-4 text-blue-600 bg-transparent border-[1px] border-[#D1D1D1] rounded focus:border-[#D1D1D1] dark:focus:ring-[#D1D1D1] "
-                />
-                <label
-                  htmlFor="link-checkbox"
-                  className="ml-2 text-[13px]   text-[#747474] dark:text-gray-300"
-                >
-                  Send this gift card to a friend
-                </label>
-              </div>
-              {sendToFriend && (
-                <div className="mt-3">
-                  <input
-                    type="email"
-                    placeholder="Enter email address"
-                    value={friendEmail}
-                    onChange={(e) => setFriendEmail(e.target.value)}
-                    className="w-full px-2 py-1 border-[1px] border-[#D1D1D1] rounded focus:border-[#D1D1D1] dark:focus:ring-[#D1D1D1]"
-                  />
-                </div>
-              )}
+              
               <div className="py-5">
                 <Dialog.Close>
                   <button

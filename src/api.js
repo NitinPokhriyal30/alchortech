@@ -17,6 +17,7 @@ const api = {
     userById: (id) => axios.get(`api/v1/accounts/userprofile/${id}/`).then((r) => r.data),
     // search: (params) => axios.post('api/v1/accounts/search-user/', params, {headers: {"Content-Type": "multipart/form-data"}}).then((r) => r.data),
     search: (params) => axios.get(`api/v1/accounts/search-user?${params.toString()}`).then((r) => r.data),
+    currentUser: () => axios.get(`api/v1/accounts/current-user/`).then((r) => r.data),
   },
 
   auth: {
@@ -26,7 +27,9 @@ const api = {
     // and other routes are Protected Routes
     forgotPassword: (email) => axios.post('/request/password/', email).then((r) => r.data),
     resetPassword: (password, token, uidb64) => axios.patch('passwordreset/complete', { password, token, uidb64 }).then((r) => r.data),
-    changeAvatar: (id, formData) => axios.put(`updateUserAvtar/${id}/`, formData).then((r) => r.data),
+    updateAvatar: ({formData}) => axios.post(`api/v1/accounts/update-profile/avatar/`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }).then((r) => r.data),
     me: (id) => axios.get(`api/v1/accounts/userprofile/${id}/`).then((r) => r.data),
     currentUser: () => axios.get(`api/v1/accounts/current-user/`).then((r) => r.data),
     verifyToken: (token) =>
@@ -71,9 +74,12 @@ const api = {
     react: (data) => axios.post('api/v1/transactions/add-reaction/', data).then((r) => r.data),
     by_id: (data) => axios.get(`api/v1/transactions/comments/${data.post_id}/`).then((r) => r.data),
   },
+
+
   todayEvents: () => axios.get('api/v1/transactions/today-events/').then((r) => r.data),
   departments: () => axios.get('api/v1/common/departments/').then((r) => r.data),
   properties: () => axios.get('api/v1/common/properties/').then((r) => r.data),
+  countries: () => axios.get('api/v1/common/countries/').then((r) => r.data),
 
 
   rewards: {
@@ -81,6 +87,7 @@ const api = {
     redeem: (formData) => axios.post(`api/v1/rewards/redeem-voucher/`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     }).then((r) => r.data),
+    rewardsHistory: () => axios.get('api/v1/rewards/reward-history/').then((r) => r.data),
   },
 
   analytics: {
@@ -107,8 +114,8 @@ const api = {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
         .then((r) => r.data),
-    addGroup: (formData) =>
-      axios.post(`api/v1/campaigns/add-group/`, formData, {
+    addRulesAndRewards: (formData, campaignId) =>
+      axios.post(`api/v1/campaigns/add-rules-and-rewards/${campaignId}/`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
         .then((r) => r.data),
@@ -117,11 +124,22 @@ const api = {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
         .then((r) => r.data),
-    addRulesAndRewards: (formData, campaignId) =>
-      axios.post(`api/v1/campaigns/add-rules-and-rewards/${campaignId}/`, formData, {
+    update: (formData, campaignId) =>
+      axios
+        .patch(`api/v1/campaigns/update-campaign/${campaignId}`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        })
+        .then((r) => r.data),
+    updateParticipants: (formData, campaignId) =>
+      axios.patch(`api/v1/campaigns/add-participants-to-campaign/${campaignId}/`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
-        .then((r) => r.data)
+        .then((r) => r.data),
+    updateRulesAndRewards: (formData, campaignId) =>
+      axios.patch(`api/v1/campaigns/add-rules-and-rewards/${campaignId}/`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+        .then((r) => r.data),
   },
 
   faqs: {
@@ -133,13 +151,19 @@ const api = {
   surveys: {
     // all: () => axios.get('api/v1/surveys/').then((r) => r.data),
     all: (params) => axios.get(`api/v1/surveys?${params.toString()}`).then((r) => r.data),
-    details: (formData) =>
+    surveyById: (id) => axios.get(`api/v1/surveys/get-survey-by-id/${id}/`).then((r) => r.data),
+    createDetails: (formData) =>
       axios.post(`api/v1/surveys/create-survey/`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
         .then((r) => r.data),
-    questions: (formData, suveyId) =>
-      axios.post(`api/v1/surveys/add-questions/${suveyId}/`, formData, {
+    updateDetails: (formData, surveyId) =>
+      axios.patch(`api/v1/surveys/update-survey/${surveyId}/`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+        .then((r) => r.data),
+    questions: (formData, surveyId) =>
+      axios.post(`api/v1/surveys/add-questions/${surveyId}/`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
         .then((r) => r.data),
@@ -148,8 +172,13 @@ const api = {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
         .then((r) => r.data),
-    addGroup: (formData) =>
-      axios.post(`api/v1/surveys/add-group/`, formData, {
+    updateParticipants: (formData, surveyId) =>
+      axios.patch(`api/v1/surveys/add-participants-to-survey/${surveyId}/`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+        .then((r) => r.data),
+    addGroup: (formData, surveyId) =>
+      axios.post(`api/v1/surveys/add-participants-to-survey/${surveyId}/`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
         .then((r) => r.data),
@@ -157,19 +186,24 @@ const api = {
       axios.post(`api/v1/surveys/add-rules-and-rewards/${surveyId}/`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
+        .then((r) => r.data),
+    updateRulesAndRewards: (formData, surveyId) =>
+      axios.patch(`api/v1/surveys/add-rules-and-rewards/${surveyId}/`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
         .then((r) => r.data)
   },
 
   quizs: {
     // all: () => axios.get('api/v1/quizs/').then((r) => r.data),
-    all: (params) => axios.get(`api/v1/quizs?${params.toString()}`).then((r) => r.data),
+    all: (params) => axios.get(`api/v1/quizzes/?${params.toString()}`).then((r) => r.data),
     details: (formData) =>
-      axios.post(`api/v1/quizs/create-quiz/`, formData, {
+      axios.post(`api/v1/quizzes/create-quiz/`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
         .then((r) => r.data),
-    questions: (formData, suveyId) =>
-      axios.post(`api/v1/quizs/add-questions/${suveyId}/`, formData, {
+    questions: (formData, quizId) =>
+      axios.post(`api/v1/quizzes/add-questions/${quizId}/`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
         .then((r) => r.data),
@@ -212,13 +246,23 @@ const api = {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
       .then((r) => r.data),
-    register: (formData) => axios.post('api/v1/accounts/admin/create-user/', formData, {
+    register: ({formData}) => axios.post('api/v1/accounts/admin/create-user/', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
       .then((r) => r.data),
+    availableVouchers: ({pageSize, page}) => axios.get(`api/v1/rewards?pagination=1&page_size=${pageSize}&page=${page}`).then((r) => r.data),
+    redemptionHistory: () => axios.get('api/v1/rewards/admin/redemption-history/').then((r) => r.data),
+    approvals: ({tab}) => axios.get(`api/v1/rewards/admin/order-requests?status=${tab}`).then((r) => r.data),
+    approveRewards: ({formData}) => axios.post('api/v1/rewards/approve-reward/', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+      .then((r) => r.data),
+    adminLogs: ({pageSize, page}) => axios.get(`api/v1/accounts/admin/user-login-logs?pagination=1&page_size=${pageSize}&page=${page}`).then((r) => r.data),
   }
 
 }
+
+let isVerifyingPromise = null;
 
 axios.interceptors.request.use(
   async (request) => {
@@ -226,14 +270,19 @@ axios.interceptors.request.use(
 
     if (token && !request.url.includes('jwt')) {
       // verify access token
-      const isValid = await api.auth.verifyToken(token)
+      isVerifyingPromise = isVerifyingPromise ?? api.auth.verifyToken(token).finally(() => { isVerifyingPromise = null })
+      const isValid = await isVerifyingPromise;
 
       if (!isValid) {
         try {
           // get new access token from /refresh-token
           console.info('refreshing token')
           const refreshToken = Cookies.get('refresh')
+          //isRefreshPromise = isRefreshPromise ?? api.auth.refreshToken(refreshToken).finally(() => { isRefreshPromise = null });
+          //const { access: newToken } = await isRefreshPromise
+
           const { access: newToken } = await api.auth.refreshToken(refreshToken)
+
           request.headers.Authorization = 'Bearer ' + newToken
           Cookies.set('token', newToken)
           console.info('refreshed token ✔️')

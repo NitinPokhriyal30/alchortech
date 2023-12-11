@@ -6,6 +6,7 @@ import RuleAndRewards from './steps/RuleAndRewards'
 import { toast } from 'react-toastify'
 import dayjs from 'dayjs'
 import QuizDetails from '@/components/QuizPoll/steps/QuizDetails'
+import { api } from '@/api'
 
 const STEPPER = [
   {
@@ -104,6 +105,48 @@ function handleValidateParticipants(quiz) {
   return errors
 }
 
+function handleValidateRuleNRewards(rulesNRewards) {
+  const errors = []
+
+  if (rulesNRewards.participationRewards === false && rulesNRewards.winnerRewards === false) {
+    errors.push(['rewards', 'Must select any one Participation Points or Winner Points'])
+  } else if (rulesNRewards.participationRewards === true && rulesNRewards.participationRewardsType === '') {
+    errors.push(['participationRewardsType', 'Must select participation Type'])
+  }
+
+  if (rulesNRewards.participationRewards === true && rulesNRewards.participationRewardsType === "all" && rulesNRewards.allParticipationPoints === 0) {
+    errors.push(['allParticipationPoints', 'Points to be given must have greater than 0'])
+  } else if (rulesNRewards.participationRewards === true && rulesNRewards.participationRewardsType === "few" && rulesNRewards.unitPoints === 0 && rulesNRewards.units === 0) {
+    errors.push(['unitPoints', 'Both values must have greater than 0'])
+  }
+
+  if (rulesNRewards.winnerRewards === true && rulesNRewards.assignRulesTime === '') {
+    errors.push(['assignRulesTime', 'Must select any one assign rule now or later'])
+  } else if (rulesNRewards.winnerRewards === true && rulesNRewards.assignRulesTime === 'now' && rulesNRewards.numberOfWinners === 0) {
+    errors.push(['numberOfWinners', 'Number of winners must have greater than 0'])
+  }
+  
+  if (rulesNRewards.assignPointsType === '') {
+    errors.push(['assignPointsType', 'Must select any one assign points equal or position based'])
+  } else if (rulesNRewards.assignPointsType === 'equal' && rulesNRewards.allWinnerPoints === 0) {
+    errors.push(['allWinnerPoints', 'Number of points given must have greater than 0'])
+  }
+
+  if (rulesNRewards.assignPointsType === 'positionBased' && rulesNRewards.winnerPositions.length === 0) {
+    errors.push(['winnerPositionsLength', 'Must have at least one Winner Position'])
+  }
+
+  if (rulesNRewards.assignPointsType === 'positionBased' && rulesNRewards.winnerPositions.length !== 0) {
+    rulesNRewards.winnerPositions.forEach((item, i) => {
+      if (item.points === 0) {
+        errors.push(['winnerPositionsPoint', 'Number of points given must have greater than 0'])
+      }
+    })
+  }
+
+  return errors
+}
+
 const QuizCreate = () => {
   const [step, setStep] = React.useState(STEPPER[0].value)
   const [errors, setErrors] = React.useState({})
@@ -171,6 +214,20 @@ const QuizCreate = () => {
     owner: '',
   })
 
+  const [rulesNRewards, setRulesNRewards] = React.useState({
+    participationRewards: false,
+    winnerRewards: false,
+    assignRulesTime: '',
+    participationRewardsType: '',
+    assignPointsType: '',
+    allParticipationPoints: 0,
+    units: 0,
+    unitPoints: 0,
+    numberOfWinners: 0,
+    allWinnerPoints: 0,
+    winnerPositions: []
+  })
+
   const handleQuizDetails = async () => {
     try {
       // Create a new FormData object
@@ -184,8 +241,8 @@ const QuizCreate = () => {
       formData.append('endDate', quiz.dateAndTime.end);
 
       // Make an HTTP POST request to your API endpoint
-      // const response = await api.quizs.details(formData);
-      setQuizId(response.id)
+      const response = await api.quizs.details(formData); 
+      setQuizId(response.id) 
       // Handle the API response here
       toast.success('Saved successfully');
     } catch (error) {
@@ -194,6 +251,27 @@ const QuizCreate = () => {
       toast.error('Error:', error.message);
     }
   };
+
+  const saveQuestion = async (questionIndex) => {
+
+    try {
+      const data = {
+        question: survey.questions[questionIndex].question,
+        questionType: survey.questions[questionIndex].type,
+        answerOptions: survey.questions[questionIndex].answer
+      };
+
+      // Make an HTTP POST request to your API endpoint
+      const response = await api.surveys.questions(data, surveyId);
+      // Handle the API response here
+      toast.success(response.message);
+
+    } catch (error) {
+      // Handle any errors that occurred during the request
+      console.error(error);
+    }
+
+  }
 
   const handleQuizParticipant = async () => {
 
@@ -233,24 +311,18 @@ const QuizCreate = () => {
     }
   };
 
-  const saveQuestion = async (questionIndex) => {
-
+  const handleRulesNRewards = async () => {
     try {
-      const data = {
-        question: survey.questions[questionIndex].question,
-        questionType: survey.questions[questionIndex].type,
-      };
+      const filteredRulesNRewards = Object.fromEntries(
+        Object.entries(rulesNRewards).filter(([key, value]) => value !== "")
+      );
 
-      // Make an HTTP POST request to your API endpoint
-      const response = await api.surveys.questions(data, surveyId);
-      // Handle the API response here
-      toast.success(response.message);
-
+      await api.quizs.addRulesAndRewards(filteredRulesNRewards, quizId);
+      toast.success('Survey Created Successfully!');
+      // navigate(`/survey/published`)
     } catch (error) {
-      // Handle any errors that occurred during the request
-      console.error(error);
+      toast.error(error.message);
     }
-
   }
 
   const saveLastQuestion = async () => {
@@ -264,8 +336,11 @@ const QuizCreate = () => {
       }
     }
   }
+  
+  
 
   function handleGoNext() {
+    console.log(quiz);
     if (step === 0) {
       // clear prev errors
       setErrors((prev) => {
@@ -317,6 +392,23 @@ const QuizCreate = () => {
       } else {
         handleQuizParticipant();
         setStep((p) => ++p)
+      }
+    } else {
+      console.log(rulesNRewards);
+      // clear prev errors
+      setErrors((prev) => {
+        delete prev.rulesNRewards
+        return { ...prev }
+      })
+
+      const errors = handleValidateRuleNRewards(rulesNRewards)
+      console.log(errors);
+      if (errors.length > 0) {
+        toast.error('Your details have some errors')
+        setErrors((prev) => ({ ...prev, rulesNRewards: errors }))
+        return
+      } else {
+        handleRulesNRewards();
       }
     }
   }
@@ -381,9 +473,9 @@ const QuizCreate = () => {
         <section className="flex justify-between px-3 pb-3 mt-0 md:px-0 md:mt-4">
           <p className="text-[20px] font-bold text-text-black">Create Quiz</p>
 
-          <Link to="#" className="rounded-md bg-[#5486E3] px-6 py-2 font-Lato text-white">
+          {step > 2 && <Link to={`/quiz/preview/${quizId}`} className="rounded-md bg-[#5486E3] px-6 py-2 font-Lato text-white">
             Preview
-          </Link>
+          </Link>}
         </section>
 
         <section className="hidden md:flex gap-2 px-3 py-5 md:px-0">
@@ -414,7 +506,7 @@ const QuizCreate = () => {
           ) : step === 2 ? (
             <SelectParticipants quiz={quiz} setQuiz={setQuiz} quizId={quizId} errors={errors.quizParticipants} queErrorCheck={queErrorCheck} />
           ) : step === 3 ? (
-            <RuleAndRewards />
+                  <RuleAndRewards rulesNRewards={rulesNRewards} setRulesNRewards={setRulesNRewards} errors={errors.rulesNRewards} />
           ) : (
             '🚧dev. in progress 🏗️'
           )}
@@ -424,15 +516,14 @@ const QuizCreate = () => {
           <button type="button" className="btn-ghost" onClick={() => setStep((p) => --p)}>
             back
           </button>
-          {step < 3 ? (
-            <button type="button" className="btn-ghost bg-primary text-white transition-colors hover:text-primary" onClick={handleGoNext}>
-              Continue
-            </button>
-          ) : (
-            <button type="button" className="btn-ghost bg-primary text-white transition-colors hover:text-primary">
-              submit
-            </button>
-          )}
+
+          {step < 4 && (<button
+            type="button"
+            className="btn-ghost bg-primary text-white transition-colors hover:text-primary"
+            onClick={handleGoNext}
+          >
+            {step < 3 ? 'Continue' : 'submit'}
+          </button>)}
         </section>
       </div>
     </>

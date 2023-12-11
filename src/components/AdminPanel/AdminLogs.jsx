@@ -3,37 +3,54 @@ import { HiDotsHorizontal } from "react-icons/hi";
 import { BsSearch } from "react-icons/bs";
 import { IoIosCloseCircle, IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { Link } from "react-router-dom";
+import { api } from '../../api'
+import Loader from '@/components/Loader'
+import { useQuery } from 'react-query'
+import goBack from '../../assets/images/admin/chevron-left.svg';
+import goNext from '../../assets/images/admin/chevron-right.svg';
 
 const AdminLogs = () => {
   const [selectedRowIndex, setSelectedRowIndex] = React.useState(null);
   const [expandedRow, setExpandedRow] = React.useState(null);
+  const [pageSize, setPageSize] = React.useState(10);
+  const [page, setPage]= React.useState(1);
+
+  const { data: logs, isLoading, isError } = useQuery(
+    ['logs', pageSize, page], 
+    () => api.adminUsers.adminLogs({pageSize, page})
+  );
+
+    if (isLoading) {
+      return <div><Loader /></div>;
+    }
+  
+    if (isError) {
+      return <div>Error loading logs</div>;
+    }
+
+
+    function formatRedeemDate(redeemDate) {
+      const options = {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true,
+      };
+    
+      const date = new Date(redeemDate);
+    
+      const formattedDate = `${date.toLocaleDateString('en-US', options).replace(',', '')}`;
+    
+      return formattedDate;
+    }
+    
 
   const toggleRow = (index) => {
     setExpandedRow((prev) => (prev === index ? null : index));
   };
-
-  const users = [
-    {
-      id: "E1198",
-      name: "Lisa Phillips",
-      date_and_time: "16/10/2023, 9:28:54 AM",
-      ip_address: "10.256.8.240",
-      platform: "Windows 10",
-      browser: "IE",
-      location: "Mumbai, India(IN)",
-      login_result: "Successfull"
-    },
-    {
-      id: "E1198",
-      name: "Lisa Phillips",
-      date_and_time: "16/10/2023, 9:28:54 AM",
-      ip_address: "10.256.8.240",
-      platform: "Windows 10",
-      browser: "IE",
-      location: "Mumbai, India(IN)",
-      login_result: "Successfull"
-    },
-  ];
 
   const depart = 'Product Development';
   const loc = 'San Diego';
@@ -117,10 +134,10 @@ const AdminLogs = () => {
                 <th className="py-4 text-left font-Lato text-[12px] font-medium text-[#fff] md:w-1/12">
                   Platform
                 </th>
-                <th className="py-4 text-left font-Lato text-[12px] font-medium text-[#fff] md:w-1/12">
+                <th className="py-4 text-left font-Lato text-[12px] font-medium text-[#fff] md:w-2/12">
                   Browser
                 </th>
-                <th className="py-4 text-left font-Lato text-[12px] font-medium text-[#fff] md:w-2/12">
+                <th className="py-4 text-left font-Lato text-[12px] font-medium text-[#fff] md:w-1/12">
                   Location
                 </th>
                 <th className="py-4 text-left font-Lato text-[12px] font-medium text-[#fff] md:w-2/12">
@@ -131,33 +148,33 @@ const AdminLogs = () => {
               </tr>
             </thead>
             <tbody>
-              {users.map((user, index) => (
-                <React.Fragment key={user.id}>
+              {logs.data.map((log, index) => (
+                <React.Fragment key={log.user.id}>
                   <tr
                     onClick={() => toggleRow(index)}
-                    className="group rounded-xl   border-[#cecece] hover:bg-[#ececec]"
+                    className="group rounded-xl  cursor-pointer border-[#cecece] hover:bg-[#ececec]"
                   >
                     <td className="border-b-0 py-3 text-[16px] font-semibold text-[#5486E3] md:pl-[25px]"></td>
                     <td className="border-b cursor-pointer py-3 text-left">
-                      <span className="text-[16px] font-bold">{user.name}</span>
+                      <span className="text-[16px] font-bold">{log.user.full_name}</span>
                     </td>
                     <td className="border-b py-3 text-left font-Lato text-[12px] font-normal text-[#292929]">
-                      {user.date_and_time}
+                      {formatRedeemDate(log.timestamp)}
                     </td>
                     <td className="border-b py-3 text-left font-Lato text-[12px] font-normal text-[#292929]">
-                      {user.ip_address}
+                      {log.ip}
                     </td>
                     <td className="border-b py-3 text-left font-Lato text-[12px] font-normal text-[#292929]">
-                      {user.platform}
+                      {log.device}
                     </td>
                     <td className="border-b py-3 text-left font-Lato text-[12px] font-normal text-[#292929]">
-                      {user.browser}
+                      {log.browser}
                     </td>
                     <td className="border-b py-3 text-left font-Lato text-[12px] font-normal text-[#292929]">
-                      <span> {user.location}</span>
+                      <span> {log.user.location}</span>
                     </td>
                     <td className="border-b py-3 text-left font-Lato text-[12px] font-normal text-[#292929]">
-                      <span> {user.login_result}</span>
+                      <span> {log.success ? <p className="text-[#00BC9F]">Successful</p> : <p className="text-[#E89019]">Failed</p>}</span>
                     </td>
                     <td className="border-b py-4 pl-[20px] text-left font-Lato text-[12px] font-medium text-primary md:pl-[25px]">
                       {expandedRow === index ? (
@@ -174,195 +191,99 @@ const AdminLogs = () => {
                         <div className="border-b border-[#cecece] drop-shadow-lg px-4 pb-4">
                           <div className="rounded-md bg-[#EDEDED] p-4">
                             <span className="text-[14px] text-[#747474]">
-                              Product Details
+                              <p className="pb-4">User Details</p>
                             </span>
-                            <div className="flex gap-[115px] pb-4 items-center">
-                              <div>
+                            <div className="flex flex-wrap gap-2 w-full pb-4 items-center">
+                              <div className="w-[20%]">
                                 <p className="text-[13px] text-[#ACACAC]">
-                                  Product Name
+                                  User Name
                                 </p>
                                 <span className="font-sans text-[16px] text-[#464646]">
-                                  Flipkart
+                                  {log.user.full_name}
                                 </span>
                               </div>
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Order Id
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  1235633
-                                </span>
-                              </div>
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Product Id
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  1007
-                                </span>
-                              </div>
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Quantity
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  15
-                                </span>
-                              </div>
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Categories
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  Flipkart
-                                </span>
-                              </div>
-                            </div>
-
-                            <div className="pb-4">
-                              <p className="text-[13px] text-[#ACACAC]">
-                                Product Description
-                              </p>
-                              <p className="font-sans whitespace-normal text-[16px] text-[#464646]">
-                                Croma has always been dedicated towards giving
-                                its customers an easy and hassle-free access to
-                                best consumer electronics products. Croma Gift
-                                Card is a perfect gifting option for your loved
-                                ones to choose from categories such as Phones,
-                                Camera, Computers, Entertainment, Home
-                                Appliances, Kitchen Appliances, Gaming and
-                                Accessories
-                              </p>
-                            </div>
-
-                            <span className="text-[14px] text-[#747474]">
-                              Product Details
-                            </span>
-
-                            <div className="flex gap-[134px] pb-4 items-center">
-                              <div>
+                              <div className="w-[20%]">
                                 <p className="text-[13px] text-[#ACACAC]">
                                   Country
                                 </p>
                                 <span className="font-sans text-[16px] text-[#464646]">
-                                  IN - India
+                                  {log.user.country}
                                 </span>
                               </div>
-                              <div>
+                              <div className="w-[20%]">
                                 <p className="text-[13px] text-[#ACACAC]">
-                                  Pin
+                                  Location
                                 </p>
                                 <span className="font-sans text-[16px] text-[#464646]">
-                                  1235633
+                                {log.user.location}
+                                </span>
+                              </div>
+                              <div className="w-[30%]">
+                                <p className="text-[13px] text-[#ACACAC]">
+                                  Email ID
+                                </p>
+                                <span className="font-sans text-[16px] text-[#464646]">
+                                  {log.user.email}
+                                </span>
+                              </div>
+                              <div className="w-[20%]">
+                                <p className="text-[13px] text-[#ACACAC]">
+                                  Employee ID
+                                </p>
+                                <span className="font-sans text-[16px] text-[#464646]">
+                                  {log.user.employee_id}
                                 </span>
                               </div>
                             </div>
 
-                            <div className="flex gap-[113px] pb-4 items-center">
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Currency Code
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  INR
-                                </span>
-                              </div>
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Currency Name
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  Rupees
-                                </span>
-                              </div>
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Currency Value
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  1007
-                                </span>
-                              </div>
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Amount
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  100
-                                </span>
-                              </div>
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Categories
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  Flipkart
-                                </span>
-                              </div>
-                            </div>
+      
 
                             <span className="text-[14px] text-[#747474]">
-                              Product Validity & Order Details
+                              <p className="pb-4">System Log Details</p>
                             </span>
 
-                            <div className="flex gap-[106px] pb-4 items-center">
-                              <div>
+                            <div className="flex gap-2 flex-wrap pb-4 items-center">
+                              <div className="w-[30%]">
                                 <p className="text-[13px] text-[#ACACAC]">
-                                  Expiry & Validity
+                                  Login Date & Time
                                 </p>
                                 <span className="font-sans text-[16px] text-[#464646]">
-                                  INR
+                                  {formatRedeemDate(log.timestamp)}
                                 </span>
                               </div>
-                              <div>
+                              <div className="w-[20%]">
                                 <p className="text-[13px] text-[#ACACAC]">
-                                  Last Updated Date
+                                  IP Addresses
                                 </p>
                                 <span className="font-sans text-[16px] text-[#464646]">
-                                  Rupees
+                                  {log.ip_adderess}
                                 </span>
                               </div>
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Order Quantity
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  10
-                                </span>
-                              </div>
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Order Quantity Limit
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  100
-                                </span>
-                              </div>
-                              <div>
-                                <p className="text-[13px] text-[#ACACAC]">
-                                  Product Status
-                                </p>
-                                <span className="font-sans text-[16px] text-[#464646]">
-                                  Flipkart
-                                </span>
-                              </div>
-                            </div>
 
-                            <div className="flex gap-[120px] pb-4 items-center">
-                              <div>
+                              <div className="w-[40%]">
                                 <p className="text-[13px] text-[#ACACAC]">
-                                  Voucher Code
+                                  Platform
                                 </p>
                                 <span className="font-sans text-[16px] text-[#464646]">
-                                  INR
+                                  {log.user_agent}
                                 </span>
                               </div>
+
                               <div>
                                 <p className="text-[13px] text-[#ACACAC]">
-                                  Image Url
+                                  Browser
                                 </p>
                                 <span className="font-sans text-[16px] text-[#464646]">
-                                  Flipkart
+                                  {log.browser}
+                                </span>
+                              </div>
+
+                              <div>
+                                <p className="text-[13px] text-[#ACACAC]">
+                                  Login Result
+                                </p>
+                                <span className="font-sans text-[16px] text-[#464646]">
+                                  {log.browser}
                                 </span>
                               </div>
                             </div>
@@ -375,6 +296,19 @@ const AdminLogs = () => {
               ))}
             </tbody>
           </table>
+          <div className='w-full py-6 px-14 flex items-center gap-10 justify-end font-semibold text-[12px] text-[#747474]'>
+          <div className=''>
+            <span>Rows per Page: </span>
+            <span>{pageSize}</span>
+          </div>
+          <div>
+            <span>{page} of {logs.total_pages}</span>
+          </div>
+          <div className='flex'>
+            <span className='cursor-pointer'><img onClick={() => setPage(Math.max(1, page - 1))}  src={goBack}/></span>
+            <span className='cursor-pointer'><img onClick={() => setPage(Math.min(Math.ceil(logs.count / pageSize), page + 1))} src={goNext}/></span>
+          </div>
+        </div>
         </div>
       </div>
     </div>

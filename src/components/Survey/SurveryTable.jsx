@@ -16,31 +16,68 @@ const SORT_OPTIONS = [
   { label: 'All', value: '' },
   { label: 'This Month', value: 'this_month' },
   { label: 'Last Month', value: 'last_month' },
-  { label: 'This quarter', value: 'this_quarter' },
-  { label: 'Last quarter', value: 'last_quarter' },
+  { label: 'This quarter', value: 'this_quater' },
+  { label: 'Last quarter', value: 'last_quater' },
   { label: 'Last Six Month', value: 'last_six_months' },
   { label: 'Year To Date', value: 'year_to_date' },
 ]
 
 const SurveyTable = () => {
-  const [sortBy, setSortBy] = useState(SORT_OPTIONS[0])
-  const navigate = useNavigate()
-  const [tab, setTab] = React.useState('draft')
-  const [page, setPage] = React.useState(1)
-  const [sortByStartDate, setSortByStartDate] = React.useState(true)
-  const [sortByTitle, setSortByTitle] = React.useState(true)
+  const [sortBy, setSortBy] = useState(SORT_OPTIONS[0]);
+  const navigate = useNavigate();
+  const [tab, setTab] = React.useState('draft');
+  const [page, setPage] = React.useState(1);
+  const [sortByStartDate, setSortByStartDate] = React.useState('');
+  const [sortByEndDate, setSortByEndDate] = React.useState('');
+  const [sortByTitle, setSortByTitle] = React.useState('');
+  const [sortTitleAsc, setSortTitleAsc] = React.useState(true);
+  const [sortStartDateAsc, setSortStartDateAsc] = React.useState(true);
+  const [sortEndDateAsc, setSortEndDateAsc] = React.useState(true);
 
-  // const surveys = useQuery('surveys', () => api.surveys.all())
+  const handleSortByTitle = () => {
+    setSortByStartDate('');
+    setSortByEndDate('');
+    setSortByTitle((prevSort) => {
+      setSortTitleAsc(!sortTitleAsc);
+      return sortTitleAsc ? true : false;
+    });
+  };
 
-  console.log(sortBy.value);
+  const handleSortByStartDate = () => {
+    setSortByTitle('');
+    setSortByEndDate('');
+    setSortByStartDate((prevSort) => {
+      setSortStartDateAsc(!sortStartDateAsc);
+      return sortStartDateAsc ? true : false;
+    });
+  };
+
+  const handleSortByEndDate = () => {
+    setSortByTitle('');
+    setSortByStartDate('');
+    setSortByEndDate((prevSort) => {
+      setSortEndDateAsc(!sortEndDateAsc);
+      return sortEndDateAsc ? true : false;
+    });
+  };
 
   const surveys = useQuery(
-    ['surveys', sortByStartDate, sortByTitle, page, sortBy.value],
+    ['surveys', sortByEndDate, sortByStartDate, sortByTitle, page, sortBy.value],
     () =>
       api.surveys.all(
-        new URLSearchParams({ sortByStartDate: sortByStartDate, sortByTitle: sortByTitle, page: page, pagination: 1, page_size: 10, date_range: sortBy.value})
+        new URLSearchParams({
+          sortByStartDate: sortByStartDate,
+          sortByEndDate: sortByEndDate,
+          sortByTitle: sortByTitle,
+          page: page,
+          pagination: 1,
+          page_size: 10,
+          date_range: sortBy.value,
+        })
       )
-  )
+  );
+
+  console.log(surveys.data);
 
   if (surveys.isLoading) {
     return (<div className='flex justify-center' >
@@ -104,9 +141,24 @@ const SurveyTable = () => {
           <thead>
             <tr className="border-b border-[#cecece] child:!py-[15.5px] child:!text-16px ">
               <th className="text-left py-[15.5px] pl-8 text-start font-Lato text-16px font-medium text-[#292929] md:pl-[45px]"></th>
-              <th className="md:w-1/3 text-left py-[15.5px] text-start font-Lato text-16px font-medium text-[#292929] cursor-pointer" onClick={() => setSortByTitle(!sortByTitle)}>Name</th>
-              <th className="md:w-1/5 text-left py-4 font-Lato text-[16px] font-medium text-[#292929] cursor-pointer" onClick={() => setSortByStartDate(!sortByStartDate)}>Start date</th>
-              <th className="md:w-1/5 text-left py-4 font-Lato text-[16px] font-medium text-[#292929]">End date</th>
+              <th
+                className="md:w-1/3 text-left py-[15.5px] text-start font-Lato text-16px font-medium text-[#292929] cursor-pointer"
+                onClick={handleSortByTitle}
+              >
+                Name
+              </th>
+              <th
+                className="md:w-1/5 text-left py-4 font-Lato text-[16px] font-medium text-[#292929] cursor-pointer"
+                onClick={handleSortByStartDate}
+              >
+                Start date
+              </th>
+              <th
+                className="md:w-1/5 text-left py-4 font-Lato text-[16px] font-medium text-[#292929] cursor-pointer"
+                onClick={handleSortByEndDate}
+              >
+                End date
+              </th>
               <th className="md:w-1/6 text-left py-4 font-Lato text-[16px] font-medium text-[#292929]">Type</th>
               <th className="md:w-1/1 py-4 text-right font-Lato text-[16px] font-medium text-[#292929]"></th>
               <th className="py-4 text-right font-Lato text-[16px] font-medium text-[#292929] pl-[20px] md:pl-[45px]"></th>
@@ -115,23 +167,23 @@ const SurveyTable = () => {
           <tbody className="table-body" style={{ padding: '20px' }}>
             {surveys.isLoading ? <div className='flex justify-center py-20' >
               <Loader />
-            </div> : surveys.data.data.filter(item => item.status === tab).map((survey,index) => (
-              <tr className="group rounded-xl border-b border-[#cecece] hover:bg-[#ececec] " key={index} onClick={() => navigate('/survey/preview')}>
-                <td className="py-3 text-[16px] font-semibold text-[#5486E3] md:pl-[45px] "></td>
-                <td className="py-3 text-left text-[16px] font-semibold text-[#5486E3] cursor-pointer">{survey.title}</td>
-                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">{formatDate(survey.start_date)}</td>
-                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">{formatDate(survey.end_date)}</td>
-                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">{survey.type}</td>
-                <td className="py-3 text-left md:opacity-0 transition-opacity duration-200 group-hover:opacity-100 md:px-[45px]">
-                  {/* {survey.type.is_owner && <RxPencil1 className="cursor-pointer text-[#292929]" />}  */}
-                  {survey.is_owner && <RxPencil1 className="cursor-pointer text-[#292929]" />}
-                </td>
-                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">
-                  {/* {survey.type.is_owner && <RxCross1 className="cursor-pointer text-[#292929]" />} */}
-                  {survey.is_owner && <RxCross1 className="cursor-pointer text-[#292929]" />}
-                </td>
-                <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]"></td>
-              </tr>
+            </div> : surveys.data.data.length === 0 ? <tr className="group rounded-xl border-b border-[#cecece]"><td className="py-3 text-[16px] font-semibold text-[#5486E3] md:pl-[45px] ">No Data Available</td></tr> : surveys.data.data.filter(item => item.status === tab).map((survey, index) => (
+                <tr className="group rounded-xl border-b border-[#cecece] hover:bg-[#ececec] " key={index} onClick={() => { navigate(`/survey/participate/${survey.id}`) }}>
+                  <td className="py-3 text-[16px] font-semibold text-[#5486E3] md:pl-[45px] "></td>
+                  <td className="py-3 text-left text-[16px] font-semibold text-[#5486E3] cursor-pointer">{survey.title}</td>
+                  <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">{formatDate(survey.start_date)}</td>
+                  <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">{formatDate(survey.end_date)}</td>
+                  <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">{survey.type}</td>
+                  <td className="py-3 text-left md:opacity-0 transition-opacity duration-200 group-hover:opacity-100 md:px-[45px]">
+                    {/* {survey.type.is_owner && <RxPencil1 className="cursor-pointer text-[#292929]" />}  */}
+                    {survey.is_owner && <RxPencil1 className="cursor-pointer text-[#292929]" />}
+                  </td>
+                  <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]">
+                    {/* {survey.type.is_owner && <RxCross1 className="cursor-pointer text-[#292929]" />} */}
+                    {survey.is_owner && <RxCross1 className="cursor-pointer text-[#292929]" />}
+                  </td>
+                  <td className="py-3 text-left font-Lato text-[16px] font-normal text-[#292929]"></td>
+                </tr>
             ))}
           </tbody>
         </table>
@@ -149,7 +201,7 @@ const SurveyTable = () => {
         </div>
 
         <span className='text-[#8d8d8d]'>
-          Page {page} of - { surveys.data.total_pages }
+          Page {page} of - {surveys.data.total_pages}
           {/* {users.data?.count} */}
         </span>
       </div>

@@ -29,6 +29,7 @@ import { Analytics } from './components/Analytics/Analytics'
 import Transactions from '@/pages/Transactions'
 import CampaignsTable from '@/components/Campaigns/CampaignsTable'
 import CampaignCreate from '@/components/Campaigns/CampaignCreate'
+import CampaignEngagements from './components/Campaigns/CampaignEngagements'
 import SurveyTable from '@/components/Survey/SurveryTable'
 import SurveyCreate from '@/components/Survey/SurveyCreate'
 import SurveyPreview from '@/components/Survey/SurveyPreview'
@@ -38,7 +39,7 @@ import VoiceOutPage from '@/pages/VoiceOutPage'
 import CampaignPreview from './components/Campaigns/CampaignPreview'
 import Faqs from './components/Faqs'
 import CampaignPublished from './components/Campaigns/CampaignPublished'
-
+import Feedback from './pages/Feedback'
 import CompanyAppearance from './components/AdminPanel/CompanyAppearance'
 import CompanyRecognitionSettings from './components/AdminPanel/CompanyRecognitionSettings'
 import ManageUsers from './components/AdminPanel/ManageUsers'
@@ -49,6 +50,11 @@ import RewardsApprovals from './components/AdminPanel/RewardsApprovals'
 import Billings from './components/AdminPanel/Billings'
 import AdminLogs from './components/AdminPanel/AdminLogs'
 import AdminAnalytics from './components/AdminPanel/AdminAnalytics'
+import SurveyEngagements from './components/Survey/SurveyEngagements'
+import QuizEngagements from './components/QuizPoll/QuizEngagements'
+import SurveyParticipate from './components/Survey/SurveyParticipate'
+import QuizParticipate from './components/QuizPoll/QuizParticipate'
+
 
 
 const QuizCreate = React.lazy(() => import('@/components/QuizPoll/QuizCreate'))
@@ -99,23 +105,52 @@ const router = createBrowserRouter(
         <Route path="voice-out" element={<VoiceOutPage />} />
         <Route path="campaign/:id" element={<CampaignPreview />} />
         <Route path="campaign/published" element={<CampaignPublished />} />
+        <Route path="campaign/engagements/:id" element={<CampaignEngagements />} />
+        <Route path="survey/engagements/:id" element={<SurveyEngagements/>} />
+        <Route path="quiz/engagements/:id" element={<QuizEngagements />} />
         <Route path="faqs" element={<Faqs />} />
+        <Route path="feedback" element={<Feedback />} />
       </Route>
       <Route path="/reset/password/passwordreset/:uidb64/:token" element={<ResetPassword />} />
 
       <Route
-        path="/quiz"
-        element={
-          <ProtectedRoute>
-            <main className="bg-[#ededed]">
-              <MainNavbar />
-              <div className="mx-auto grid w-full max-w-[1536px] grid-cols-[1fr] pl-0 pt-nav md:grid-cols-smallDevice md:px-[40px] lg:grid-cols-mediumDevice">
-                <Outlet />
-              </div>
-            </main>
-          </ProtectedRoute>
-        }
-      >
+      path="/quiz/preview/:id"
+      element={
+        <main className="bg-[#ededed]">
+          <MainNavbar />
+          <div className="mx-auto grid w-full max-w-[1536px] grid-cols-[1fr] pl-0 pt-nav md:grid-cols-smallDevice md:px-[40px] lg:grid-cols-mediumDevice">
+            <HomeSidebar />
+            <SurveyPreview />
+          </div>
+        </main>
+      }
+    />
+    <Route
+      path="/quiz/participate/:id"
+      element={
+        <main className="bg-[#ededed]">
+          <MainNavbar />
+          <div className="mx-auto grid w-full max-w-[1536px] grid-cols-[1fr] pl-0 pt-nav md:grid-cols-smallDevice md:px-[40px] lg:grid-cols-mediumDevice">
+            <HomeSidebar />
+            <QuizParticipate />
+          </div>
+        </main>
+      }
+    />
+    <Route
+      path="/quiz"
+      element={
+        <ProtectedRoute>
+          <main className="bg-[#ededed]">
+            <MainNavbar />
+            <div className="mx-auto grid w-full max-w-[1536px] grid-cols-[1fr] pl-0 pt-nav md:grid-cols-smallDevice md:px-[40px] lg:grid-cols-mediumDevice">
+              <Outlet />
+            </div>
+          </main>
+        </ProtectedRoute>
+      }
+    >
+
         <Route
           index
           element={
@@ -147,30 +182,42 @@ const router = createBrowserRouter(
       
 
       <Route
-        path="/survey/preview"
-        element={
+      path="/survey/preview/:id"
+      element={
+        <main className="bg-[#ededed]">
+          <MainNavbar />
+          <div className="mx-auto grid w-full max-w-[1536px] grid-cols-[1fr] pl-0 pt-nav md:grid-cols-smallDevice md:px-[40px] lg:grid-cols-mediumDevice">
+            <HomeSidebar />
+            <SurveyPreview />
+          </div>
+        </main>
+      }
+    />
+    <Route
+      path="/survey/participate/:id"
+      element={
+        <main className="bg-[#ededed]">
+          <MainNavbar />
+          <div className="mx-auto grid w-full max-w-[1536px] grid-cols-[1fr] pl-0 pt-nav md:grid-cols-smallDevice md:px-[40px] lg:grid-cols-mediumDevice">
+            <HomeSidebar />
+            <SurveyParticipate />
+          </div>
+        </main>
+      }
+    />
+    <Route
+      path="/survey"
+      element={
+        <ProtectedRoute>
           <main className="bg-[#ededed]">
             <MainNavbar />
             <div className="mx-auto grid w-full max-w-[1536px] grid-cols-[1fr] pl-0 pt-nav md:grid-cols-smallDevice md:px-[40px] lg:grid-cols-mediumDevice">
-              <HomeSidebar />
-              <SurveyPreview />
+              <Outlet />
             </div>
           </main>
-        }
-      />
-      <Route
-        path="/survey"
-        element={
-          <ProtectedRoute>
-            <main className="bg-[#ededed]">
-              <MainNavbar />
-              <div className="mx-auto grid w-full max-w-[1536px] grid-cols-[1fr] pl-0 pt-nav md:grid-cols-smallDevice md:px-[40px] lg:grid-cols-mediumDevice">
-                <Outlet />
-              </div>
-            </main>
-          </ProtectedRoute>
-        }
-      >
+        </ProtectedRoute>
+      }
+    >
         <Route
           index
           element={

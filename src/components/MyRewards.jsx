@@ -11,6 +11,8 @@ import Loader from '@/components/Loader'
 
 const MyRewards = () => {
 
+  const [searchQuery, setSearchQuery] = React.useState('');
+
   const { data: voucherCategories, isLoading, isError } = useQuery(
     ['rewards'], 
     () => api.rewards.redeemable()
@@ -23,6 +25,19 @@ const MyRewards = () => {
   if (isError) {
     return <div>Error loading campaigns</div>;
   }
+
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const filteredVoucherCategories = voucherCategories.voucherCategories.map((category) => ({
+    ...category,
+    vouchers: category.vouchers.filter((voucher) =>
+      voucher.name.toLowerCase().includes(searchQuery.toLowerCase())
+    ),
+  }));
+
 
   const openRewardPopup = (voucher) => {
     setSelectedVoucher(voucher);
@@ -37,12 +52,17 @@ const MyRewards = () => {
   return (
     <>
       {/* rewards (center slot) */}
-      <div className="pl-3 pr-3 lg:pl-0">
+      <div className="pl-3 pr-3 lg:pl-0 mb-6">
 
       <div className="bg-[#fff] mt-3 rounded-tl-lg rounded-tr-lg p-4 flex w-full justify-between">
       <div className="flex w-[40%] bg-[#fff] items-center rounded border border-400 px-3 text-[#acacac] outline-1 outline-primary-400 focus-within:outline">
         <BsSearch />
-        <input className="w-full ml-1.5 border-none pb-2 pt-1.5 font-semibold leading-none outline-none placeholder:text-inherit text-[12px] text-[#A5A5A5]"  placeholder="Search Users by Name or Email"  />
+        <input 
+            className="w-full ml-1.5 border-none pb-2 pt-1.5 font-semibold leading-none outline-none placeholder:text-inherit text-[12px] text-[#A5A5A5]"
+            placeholder="Search Vouchers by Name"
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
       </div>
 
   
@@ -50,7 +70,7 @@ const MyRewards = () => {
         <span className="cursor-pointer font-semibold text-[14px] text-primary" >Reward History</span>
       </Link>
     </div>
-    {voucherCategories.voucherCategories.map((voucherCategory) => (
+    {filteredVoucherCategories.map((voucherCategory) => (
       <div key={voucherCategory.id} className="mt-2">
         <div className="rounded-t-lg bg-primary px-6 py-2 text-sm text-white">
           <p className=" ">{voucherCategory.name}</p>
@@ -87,7 +107,7 @@ function RewardCard({ voucher }) {
     <Dialog.Root>
       <div className="flex flex-col items-center justify-between rounded-[4px] border-[1px] border-[#EFEFEF] px-4 py-3">
         <div className="my-3 flex items-center justify-center p-2">
-          <img className="m-auto" src={image_url} alt="logo" />
+          <img className="m-auto w-46 h-32" src={image_url} alt="logo" />
         </div>
 
         <div className="text-center">

@@ -3,6 +3,7 @@ import { Radio, RadioGroup, Select, FormControl, FormControlLabel, TextField, In
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { RiAddLine, RiAttachmentLine, RiDeleteBin7Line, RiInformationLine } from 'react-icons/ri'
+import { api } from '@/api'
 
 /**
  * @param {{
@@ -171,10 +172,13 @@ const Questions = ({ questions, setQuestions, isTimeBounded, errors, quizId, que
       const data = {
         question: questions.questions[questionIndex].question,
         questionType: questions.questions[questionIndex].type,
+        answerOptions: questions.questions[questionIndex].answer,
       };
 
+      console.log(data);
+
       // Make an HTTP POST request to your API endpoint
-      const response = await api.surveys.questions(data, surveyId);
+      const response = await api.quizs.questions(data, quizId);
       // Handle the API response here
       toast.success(response.message);
     } catch (error) {
